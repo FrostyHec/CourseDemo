@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: demo
+  profiles:
+      active: dev, nonpublic-dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+
