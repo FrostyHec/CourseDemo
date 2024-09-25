@@ -17,11 +17,14 @@
     "cy:open": "cypress open"
   },
   "dependencies": {
+    "element-plus": "^2.8.3",
     "pinia": "^2.1.7",
+    "unocss": "^0.62.4",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
+    "@iconify-json/ep": "^1.1.15",
     "@eslint/js": "^9.11.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
@@ -46,6 +49,8 @@
     "jsdom": "^24.1.0",
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.2.5",
+    "sass": "~1.72.0",
+    "unplugin-vue-components": "^0.26.0",
     "start-server-and-test": "^2.0.4",
     "typescript": "~5.4.0",
     "typescript-eslint": "^8.6.0",
