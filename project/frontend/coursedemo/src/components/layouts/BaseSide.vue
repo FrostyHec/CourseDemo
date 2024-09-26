@@ -1,37 +1,17 @@
 <template>
-  <el-menu
-    default-active="1"
-    :default-openeds="['1']"
-    class="el-menu-vertical-demo"
-    @open="handleOpen"
-    @close="handleClose"
-    style="height: 100%;"
-  >
-    <el-sub-menu index="1">
-      <template #title>
-        <h3>Navigator One</h3>
-      </template>
-        <el-menu-item index="1-1">item one</el-menu-item>
-        <el-menu-item index="1-2">item two</el-menu-item>
-        <el-menu-item index="1-3">item three</el-menu-item>
-        <el-sub-menu index="1-4">
-          <template #title>item four</template>
-          <el-menu-item index="1-4-1">item one</el-menu-item>
-        </el-sub-menu>
-    </el-sub-menu>
-    <el-menu-item index="2">
-      <el-icon><icon-menu /></el-icon>
-      <span>Navigator Two</span>
-    </el-menu-item>
-    <el-menu-item index="3" disabled>
-      <el-icon><document /></el-icon>
-      <span>Navigator Three</span>
-    </el-menu-item>
-    <el-menu-item index="4">
-      <el-icon><setting /></el-icon>
-      <span>Navigator Four</span>
-    </el-menu-item>
-  </el-menu>
+  <el-scrollbar style="border-right: solid 1px var(--ep-border-color);">
+    <el-tree
+      style="max-width: 200px;"
+      :default-expand-all="true"
+      :expand-on-click-node="false"
+      :data="[folder]"
+      :props="{
+        children: 'children',
+        label: 'label',
+      }"
+      @node-click="click_jump"
+    />
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -42,12 +22,42 @@ import {
   Menu as IconMenu,
   Setting,
 } from "@element-plus/icons-vue";
+import { useRoute, useRouter } from "vue-router";
 
-const isCollapse = ref(true);
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
+interface Tree {
+  label: string,
+  link?: string,
+  children?: Tree[],
+}
+
+function generate_link(t: Tree, prefix: string = '') {
+  t.link = prefix + '/' + t.label.replace(/ /g, '-')
+  t.children?.forEach((value: Tree) => generate_link(value, t.link))
+}
+
+const folder: Tree = 
+{ label: 'Object Oriented Analysis Design', children: [
+  { label: 'Chapter1', children: [
+    { label: 'video' }, 
+    { label: 'pdf' },
+  ]},
+  { label: 'Chapter2', children: [
+    { label: 'video'},
+    { label: 'md'},
+    { label: 'test'},
+  ]},
+  { label: 'Chapter3', children: [
+    { label: 'video'}, 
+    { label: 'md'},
+    { label: 'quiz'},
+  ]},
+]}
+
+generate_link(folder)
+
+const router = useRouter()
+const click_jump = (data: Tree) => {
+  router.push('/course' + data.link)
+}
+
 </script>

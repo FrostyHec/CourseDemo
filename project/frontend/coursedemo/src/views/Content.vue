@@ -1,3 +1,3 @@
 <template>
-  content
+  {{ $route.fullPath }}
 </template>

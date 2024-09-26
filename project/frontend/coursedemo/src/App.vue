@@ -4,8 +4,8 @@
       <el-header style="padding: 0%; height: auto;">
         <BaseHeader />
       </el-header>
-      <el-container>
-        <el-aside width="auto">
+      <el-container style="height: calc(100% - 49px);">
+        <el-aside style="width: auto; height: auto;">
           <BaseSide/>
         </el-aside>
         <el-main>
