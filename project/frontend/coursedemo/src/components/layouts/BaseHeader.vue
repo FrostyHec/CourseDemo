@@ -10,7 +10,9 @@ const l: {key: number, label: string, link?: string}[] = [
   {key:1, label: 'world'},
 ]
 
-function generate_breadcrumb(s: string[] | string): {key: number, label: string, link?: string}[] {
+function generate_breadcrumb(s: string[] | string | undefined): {key: number, label: string, link?: string}[] {
+  if(!s)
+    return []
   if(typeof s === "string")
     s = [s]
   let prefix = '/course'
