@@ -68,6 +68,8 @@
         <module>server</module>
         <module>common</module>
         <module>restful-template</module>
+        <module>auth-filter</module>
+        <module>auth</module>
     </modules>
     <packaging>pom</packaging>
 
