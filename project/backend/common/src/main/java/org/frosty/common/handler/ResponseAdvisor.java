@@ -2,8 +2,10 @@ package org.frosty.common.handler;
 
 import io.micrometer.common.lang.NonNullApi;
 import io.micrometer.common.lang.Nullable;
+import org.frosty.common.constant.AdvisorConstant;
 import org.frosty.common.response.Response;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @NonNullApi
 @ControllerAdvice
+@Order(AdvisorConstant.defaultLevel)
 public class ResponseAdvisor implements ResponseBodyAdvice<Object> {
 
     @Override

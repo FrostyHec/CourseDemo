@@ -11,7 +11,11 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ImportWebTemplate
+
+@DefaultExceptionAdvisor
+@DefaultResponseAdvisor
+@DefaultHTTPLogAdvisor
+
 @SpringBootApplication
 @MapperScan
 public @interface WebTemplateApplication {
@@ -32,4 +36,7 @@ public @interface WebTemplateApplication {
      */
     @AliasFor(annotation = MapperScan.class, attribute = "basePackages")
     String[] basePackages() default {};
+
+    @AliasFor(annotation = DefaultHTTPLogAdvisor.class, attribute = "value")
+    boolean httpLog() default false;
 }

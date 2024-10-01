@@ -4,9 +4,9 @@ import org.frosty.server.config.SpringConfigConstant;
 import org.frosty.common.annotation.WebTemplateApplication;
 import org.springframework.boot.SpringApplication;
 
-@WebTemplateApplication({SpringConfigConstant.MAPPER_SCAN_PACKAGE})
+@WebTemplateApplication(value = {SpringConfigConstant.MAPPER_SCAN_PACKAGE}, httpLog = true)
 public class ServerApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(ServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ServerApplication.class, args);
+    }
 }

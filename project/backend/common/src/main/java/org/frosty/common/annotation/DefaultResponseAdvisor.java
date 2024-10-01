@@ -1,6 +1,6 @@
 package org.frosty.common.annotation;
 
-import org.frosty.common.config.AutoConfiguration;
+import org.frosty.common.config.DefaultResponseAdvisorConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import(AutoConfiguration.class)
-public @interface ImportWebTemplate {
+@Import(DefaultResponseAdvisorConfig.class)
+public @interface DefaultResponseAdvisor {
 }

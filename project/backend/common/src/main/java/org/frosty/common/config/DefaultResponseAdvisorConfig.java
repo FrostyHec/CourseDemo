@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AutoConfiguration {
+public class DefaultResponseAdvisorConfig {
     @Bean
     public ResponseAdvisor responseAdvisor() {
         return new ResponseAdvisor();
