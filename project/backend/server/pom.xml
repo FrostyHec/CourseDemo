@@ -14,9 +14,10 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.frosty.demo</groupId>
-            <artifactId>common</artifactId>
+            <groupId>org.forsty.demo</groupId>
+            <artifactId>auth</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

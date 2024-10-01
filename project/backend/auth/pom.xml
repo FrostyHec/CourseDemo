@@ -10,7 +10,7 @@
         <relativePath>../restful-template</relativePath>
     </parent>
 
-    <groupId>org.forsty</groupId>
+    <groupId>org.forsty.demo</groupId>
     <artifactId>auth</artifactId>
 
     <properties>

@@ -2,7 +2,7 @@ package org.frosty.server.controller;
 
 import java.util.Map;
 
-import org.frosty.server.config.CommonConstant;
+import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.services.HelloWorldService;
 import org.frosty.common.verify.Ex;
@@ -15,7 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(CommonConstant.API_VERSION + "/hello")
+@RequestMapping(PathConstant.API + "/hello")
 @RequiredArgsConstructor
 public class HelloWorldController {
 
