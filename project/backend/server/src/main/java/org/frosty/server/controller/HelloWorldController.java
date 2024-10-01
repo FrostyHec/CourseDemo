@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,8 +21,8 @@ public class HelloWorldController {
     private final HelloWorldService helloService;
 
     @GetMapping
-    public Map<String, String> sayHello(@NonNull String say) {
-        Ex.check(say.equals("hello"), Response.getBadRequest("invalid-input"));
+    public Map<String, String> sayHello(String say) {
+        Ex.check("hello".equals(say), Response.getBadRequest("invalid-input"));
         return Map.of("say", helloService.getHelloMessage());
     }
 }

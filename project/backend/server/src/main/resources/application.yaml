@@ -6,4 +6,5 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
-
+server:
+  port: 9977

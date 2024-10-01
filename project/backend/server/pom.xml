@@ -5,19 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.frosty.demo</groupId>
-        <artifactId>restful-template</artifactId>
+        <artifactId>web-template-starter</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../restful-template</relativePath>
+        <relativePath>../web-template-starter</relativePath>
     </parent>
 
     <artifactId>server</artifactId>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.forsty.demo</groupId>
+            <groupId>org.frosty.demo</groupId>
             <artifactId>auth</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
