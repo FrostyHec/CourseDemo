@@ -1,0 +1,2 @@
+server:
+  port: # define port for each different module

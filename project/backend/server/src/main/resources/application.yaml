@@ -1,10 +1,10 @@
 spring:
   application:
-    name: demo
+    name: server
   profiles:
-      active: dev, nonpublic-dev
+      active: dev, resource-nonpublic-dev, self-nonpublic-dev
+#      active: prod, resource-nonpublic-prod, self-nonpublic-prod
   jackson:
     property-naming-strategy: SNAKE_CASE
 
-server:
-  port: 9977
+

@@ -8,6 +8,7 @@
         <artifactId>backend</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <packaging>pom</packaging>
     <artifactId>web-dependency</artifactId>
 
@@ -74,4 +75,5 @@
             <artifactId>jjwt-jackson</artifactId>
         </dependency>
     </dependencies>
+
 </project>

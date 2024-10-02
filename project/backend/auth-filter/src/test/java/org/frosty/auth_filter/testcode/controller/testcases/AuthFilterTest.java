@@ -3,18 +3,16 @@ package org.frosty.auth_filter.testcode.controller.testcases;
 import org.frosty.auth.config.AuthConstant;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.auth.entity.TokenInfo;
-import org.frosty.auth_filter.testcode.controller.AuthFilterAPI;
 import org.frosty.auth.utils.JwtHandler;
 import org.frosty.auth.utils.TokenUtils;
+import org.frosty.auth_filter.testcode.controller.AuthFilterAPI;
+import org.frosty.test_common.annotation.ControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ControllerTest
 public class AuthFilterTest {
     @Autowired
     private AuthFilterAPI authFilterAPI;

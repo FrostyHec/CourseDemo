@@ -1,5 +1,6 @@
 package org.frosty.server.config;
 
+
 import org.frosty.auth.annotation.GetAuthArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
