@@ -6,8 +6,8 @@ server:
   port: 9983
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: test_user
-    password: password
-    driver-class-name: org.postgresql.Driver
+  application:
+    name: auth-filter
+  profiles:
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+#    active: prod, resource-nonpublic-prod, self-nonpublic-prod

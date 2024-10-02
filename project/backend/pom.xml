@@ -15,15 +15,18 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!--pom-->
         <module>web-dependency</module>
         <module>web-template-starter</module>
+        <module>web-dependency/common-root</module>
+        <!--microservices-->
         <module>server</module>
-        <module>common</module>
         <module>auth-filter</module>
         <module>auth</module>
     </modules>
 
     <properties>
+
         <!--dependency version-->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
