@@ -1,0 +1,13 @@
+jwt: # ensure same with auth
+  secret: secret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf
+  expiration: 86400000
+
+server:
+  port: 9983
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: test_user
+    password: password
+    driver-class-name: org.postgresql.Driver
