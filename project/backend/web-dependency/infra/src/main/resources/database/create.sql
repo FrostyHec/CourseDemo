@@ -4,32 +4,33 @@
 -- CREATE DATABASE CourseDemo;
 
 -- 删除所有表格（如果存在）
-DROP TABLE IF EXISTS Users;
-DROP TABLE IF EXISTS Courses;
-DROP TABLE IF EXISTS Chapters;
-DROP TABLE IF EXISTS Materials;
-DROP TABLE IF EXISTS Assignments;
-DROP TABLE IF EXISTS Submissions;
-DROP TABLE IF EXISTS Enrollments;
-DROP TABLE IF EXISTS CourseLikes;
-DROP TABLE IF EXISTS Notifications;
-DROP TABLE IF EXISTS Comments;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS chapters;
+DROP TABLE IF EXISTS materials;
+DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS submissions;
+DROP TABLE IF EXISTS enrollments;
+DROP TABLE IF EXISTS course_likes;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS comments;
 
 -- 创建用户表（Users）
-CREATE TABLE IF NOT EXISTS Users
+CREATE TABLE users
 (
-    user_id    SERIAL PRIMARY KEY,                             -- 自增用户ID
+    user_id    BIGSERIAL PRIMARY KEY,                             -- 自增用户ID
     username   VARCHAR(50) NOT NULL,                           -- 用户名
-    email      VARCHAR(100) NOT NULL UNIQUE,                   -- 邮箱，必须唯一
+--     email      VARCHAR(100) NOT NULL UNIQUE,                   -- 邮箱，必须唯一
     password   VARCHAR(255) NOT NULL,                          -- 密码
     role       VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')) NOT NULL,  -- 用户角色，限定为'admin'，'teacher'或'student'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 用户创建时间
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- 用户创建时间
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 用户更新时间
 );
 
 -- 创建课程表（Courses）
-CREATE TABLE IF NOT EXISTS Courses
+CREATE TABLE courses
 (
-    course_id   SERIAL PRIMARY KEY,                                                  -- 自增课程ID
+    course_id   BIGSERIAL PRIMARY KEY,                                                  -- 自增课程ID
     course_name VARCHAR(100) NOT NULL,                                               -- 课程名称
     description TEXT,                                                                -- 课程描述
     teacher_id  INT NOT NULL,                                                        -- 教师ID
@@ -40,9 +41,9 @@ CREATE TABLE IF NOT EXISTS Courses
 );
 
 -- 创建章节表（Chapters）
-CREATE TABLE IF NOT EXISTS Chapters
+CREATE TABLE chapters
 (
-    chapter_id    SERIAL PRIMARY KEY,                                               -- 自增章节ID
+    chapter_id    BIGSERIAL PRIMARY KEY,                                               -- 自增章节ID
     course_id     INT NOT NULL,                                                     -- 课程ID
     chapter_title VARCHAR(100) NOT NULL,                                            -- 章节标题
     chapter_type  VARCHAR(20) CHECK (chapter_type IN ('teaching', 'assignment', 'project')) NOT NULL, -- 章节类型
@@ -52,9 +53,9 @@ CREATE TABLE IF NOT EXISTS Chapters
 );
 
 -- 创建课件表（Materials）
-CREATE TABLE IF NOT EXISTS Materials
+CREATE TABLE materials
 (
-    material_id     SERIAL PRIMARY KEY,                                             -- 自增课件ID
+    material_id     BIGSERIAL PRIMARY KEY,                                             -- 自增课件ID
     chapter_id      INT NOT NULL,                                                   -- 章节ID
     file_path       VARCHAR(255) NOT NULL,                                          -- 文件路径
     file_type       VARCHAR(10) CHECK (file_type IN ('pdf', 'md')) NOT NULL,        -- 文件类型，限定为'pdf'或'md'
@@ -65,9 +66,9 @@ CREATE TABLE IF NOT EXISTS Materials
 );
 
 -- 创建作业表（Assignments）
-CREATE TABLE IF NOT EXISTS Assignments
+CREATE TABLE assignments
 (
-    assignment_id          SERIAL PRIMARY KEY,                                      -- 自增作业ID
+    assignment_id          BIGSERIAL PRIMARY KEY,                                      -- 自增作业ID
     chapter_id             INT NOT NULL,                                            -- 章节ID
     assignment_description TEXT NOT NULL,                                           -- 作业描述
     due_date               DATE NOT NULL                                            -- 作业截止日期
@@ -75,9 +76,9 @@ CREATE TABLE IF NOT EXISTS Assignments
 );
 
 -- 创建提交作业表（Submissions）
-CREATE TABLE IF NOT EXISTS Submissions
+CREATE TABLE submissions
 (
-    submission_id   SERIAL PRIMARY KEY,                                             -- 自增提交ID
+    submission_id   BIGSERIAL PRIMARY KEY,                                             -- 自增提交ID
     assignment_id   INT NOT NULL,                                                   -- 作业ID
     student_id      INT NOT NULL,                                                   -- 学生ID
     file_path       VARCHAR(255) NOT NULL,                                          -- 提交文件路径
@@ -89,9 +90,9 @@ CREATE TABLE IF NOT EXISTS Submissions
 );
 
 -- 创建评论表（Comments）
-CREATE TABLE IF NOT EXISTS Comments
+CREATE TABLE comments
 (
-    comment_id   SERIAL PRIMARY KEY,                                                -- 自增评论ID
+    comment_id   BIGSERIAL PRIMARY KEY,                                                -- 自增评论ID
     chapter_id   INT NOT NULL,                                                      -- 章节ID
     user_id      INT NOT NULL,                                                      -- 用户ID
     comment_text TEXT NOT NULL,                                                     -- 评论内容
@@ -101,9 +102,9 @@ CREATE TABLE IF NOT EXISTS Comments
 );
 
 -- 创建通知表（Notifications）
-CREATE TABLE IF NOT EXISTS Notifications
+CREATE TABLE notifications
 (
-    notification_id SERIAL PRIMARY KEY,                                             -- 自增通知ID
+    notification_id BIGSERIAL PRIMARY KEY,                                             -- 自增通知ID
     course_id       INT NOT NULL,                                                   -- 课程ID
     sender_id       INT NOT NULL,                                                   -- 发送者ID
     receiver_id     INT NOT NULL,                                                   -- 接收者ID
@@ -116,9 +117,9 @@ CREATE TABLE IF NOT EXISTS Notifications
 );
 
 -- 创建课程点赞表（CourseLikes）
-CREATE TABLE IF NOT EXISTS CourseLikes
+CREATE TABLE course_likes
 (
-    like_id    SERIAL PRIMARY KEY,                                                  -- 自增点赞ID
+    like_id    BIGSERIAL PRIMARY KEY,                                                  -- 自增点赞ID
     course_id  INT NOT NULL,                                                        -- 课程ID
     student_id INT NOT NULL                                                         -- 学生ID
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
@@ -126,9 +127,9 @@ CREATE TABLE IF NOT EXISTS CourseLikes
 );
 
 -- 创建课程注册表（Enrollments）
-CREATE TABLE IF NOT EXISTS Enrollments
+CREATE TABLE enrollments
 (
-    enrollment_id   SERIAL PRIMARY KEY,                                             -- 自增注册ID
+    enrollment_id   BIGSERIAL PRIMARY KEY,                                             -- 自增注册ID
     student_id      INT NOT NULL,                                                   -- 学生ID
     course_id       INT NOT NULL,                                                   -- 课程ID
     enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP                             -- 注册时间
