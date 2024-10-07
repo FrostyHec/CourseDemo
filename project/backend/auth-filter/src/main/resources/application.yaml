@@ -1,7 +1,3 @@
-jwt: # ensure same with auth
-  secret: secret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf
-  expiration: 86400000
-
 server:
   port: 9983
 
