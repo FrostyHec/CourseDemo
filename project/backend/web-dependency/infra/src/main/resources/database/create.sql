@@ -23,8 +23,8 @@ CREATE TABLE users
 --     email      VARCHAR(100) NOT NULL UNIQUE,                   -- 邮箱，必须唯一
     password   VARCHAR(255) NOT NULL,                          -- 密码
     role       VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')) NOT NULL,  -- 用户角色，限定为'admin'，'teacher'或'student'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- 用户创建时间
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 用户更新时间
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,             -- 用户创建时间
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP             -- 用户更新时间
 );
 
 -- 创建课程表（Courses）
@@ -35,7 +35,8 @@ CREATE TABLE courses
     description TEXT,                                                                -- 课程描述
     teacher_id  INT NOT NULL,                                                        -- 教师ID
     status      VARCHAR(20) CHECK (status IN ('created', 'submitted', 'approved', 'rejected', 'archived')) NOT NULL, -- 课程状态
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                                 -- 课程创建时间
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,                                 -- 课程创建时间
+    updated_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     visibility  VARCHAR(20) CHECK (status IN ('open', 'closed', 'semi-open')) NOT NULL  -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
 );
@@ -48,10 +49,11 @@ CREATE TABLE chapters
     chapter_title VARCHAR(100) NOT NULL,                                            -- 章节标题
     chapter_type  VARCHAR(20) CHECK (chapter_type IN ('teaching', 'assignment', 'project')) NOT NULL, -- 章节类型
     content       TEXT,                                                             -- 章节内容
-    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP                               -- 章节创建时间
+    created_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,                               -- 章节创建时间
+    updated_at     TIMESTAMP WITH TIME ZONE  DEFAULT CURRENT_TIMESTAMP
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
 );
-
+--------------------hzd:后面的我还没管
 -- 创建课件表（Materials）
 CREATE TABLE materials
 (

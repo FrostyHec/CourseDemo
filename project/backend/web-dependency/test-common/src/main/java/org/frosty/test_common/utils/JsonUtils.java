@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.frosty.common.exception.InternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MvcResult;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JsonUtils {
@@ -23,13 +25,26 @@ public class JsonUtils {
     public void init() {
         objectMapper = injectedObjectMapper;
     }
-
-    private JsonUtils() {
+    public static String toString(Object o){
+        try {
+            return objectMapper.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            throw new InternalException("unable to parse object:"+o,e);
+        }
+    }
+    public static Map toMapData(MvcResult mvcResult) throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.treeToValue(toJsonData(mvcResult), Map.class);
+    }
+    private static String getJsonString(MvcResult mvcResult) throws UnsupportedEncodingException {
+        return mvcResult.getResponse().getContentAsString();
     }
 
+    public static <T> T toObject(MvcResult mvcResult, Class<T> clazz) throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.treeToValue(toJsonData(mvcResult), clazz);
+    }
     public static JsonNode toJson(MvcResult result) throws UnsupportedEncodingException,
                                                            JsonProcessingException {
-        return objectMapper.readTree(result.getResponse().getContentAsString());
+        return objectMapper.readTree(getJsonString(result));
     }
 
     public static JsonNode toJsonData(MvcResult result) throws UnsupportedEncodingException,

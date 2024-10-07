@@ -2,6 +2,7 @@ package org.frosty.auth.annotation;
 
 import io.micrometer.common.lang.Nullable;
 import lombok.extern.slf4j.Slf4j;
+import org.frosty.auth.config.AuthConstant;
 import org.frosty.auth.utils.TokenUtils;
 import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
@@ -21,12 +22,12 @@ public class GetTokenArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(@Nullable MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         // 从请求头中获取 token 信息
-        String token = webRequest.getHeader("X-Forwarded-User");
+        String token = webRequest.getHeader(AuthConstant.parsedHeader);
         try {
             return TokenUtils.tokenInfoFromString(token);
         } catch (Exception e) {
             log.warn("X-Forwarded-User invalid:{}", token, e);
-            throw new ExternalException(Response.getBadRequest("X-Forwarded-User invalid:" + token));
+            throw new ExternalException(Response.getBadRequest(AuthConstant.parsedHeader+" invalid:" + token));
         }
     }
 }
