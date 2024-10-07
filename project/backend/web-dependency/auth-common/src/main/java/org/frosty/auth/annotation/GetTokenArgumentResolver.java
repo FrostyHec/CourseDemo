@@ -11,11 +11,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 @Slf4j
-public class GetAuthArgumentResolver implements HandlerMethodArgumentResolver {
+public class GetTokenArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         // 检查参数是否有 @GetAuth 注解
-        return parameter.hasParameterAnnotation(GetAuth.class);
+        return parameter.hasParameterAnnotation(GetToken.class);
     }
 
     @Override

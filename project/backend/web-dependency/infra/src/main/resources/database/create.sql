@@ -23,7 +23,8 @@ CREATE TABLE users
 --     email      VARCHAR(100) NOT NULL UNIQUE,                   -- 邮箱，必须唯一
     password   VARCHAR(255) NOT NULL,                          -- 密码
     role       VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')) NOT NULL,  -- 用户角色，限定为'admin'，'teacher'或'student'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 用户创建时间
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- 用户创建时间
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 用户更新时间
 );
 
 -- 创建课程表（Courses）
