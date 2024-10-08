@@ -1,8 +1,6 @@
 package org.frosty.server.entity.bo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +19,9 @@ public class User {
     private String username;
     private String password;
     private Role role;
+//    @TableField(fill = FieldFill.INSERT) // TODO
     private OffsetDateTime createdAt;
+//    @TableField(fill = FieldFill.INSERT_UPDATE)
     private OffsetDateTime updatedAt;
 
     public enum Role {

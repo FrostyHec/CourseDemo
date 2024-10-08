@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class UserAPI {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+
     public User addTestUser(String name, String password, User.Role role) {
         var user = new User()
                 .setUsername(name)
@@ -18,8 +19,9 @@ public class UserAPI {
                 .setRole(role);
         return addTestUser(user);
     }
+
     public User addTestUser(User user) {
-       mapper.insert(user);
-         return user;
+        mapper.insert(user);
+        return user;
     }
 }

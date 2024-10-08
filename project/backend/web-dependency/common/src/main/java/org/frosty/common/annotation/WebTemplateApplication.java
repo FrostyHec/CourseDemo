@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 @DefaultExceptionAdvisor
 @DefaultResponseAdvisor
 @DefaultHTTPLogAdvisor
+//@DefaultTableTimeHandler // TODO clean
 
 @SpringBootApplication
 @MapperScan
