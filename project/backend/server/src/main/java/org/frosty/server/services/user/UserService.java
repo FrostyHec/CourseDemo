@@ -1,8 +1,9 @@
 package org.frosty.server.services.user;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.frosty.server.event.UserDeleteEvent;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,16 @@ public class UserService {
     @EventListener
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
+    }
+
+    @Getter
+    public static class UserDeleteEvent extends ApplicationEvent {
+        private final Long userId;
+
+        public UserDeleteEvent(Object source, Long userId) {
+            super(source);
+            this.userId = userId;
+        }
+
     }
 }
