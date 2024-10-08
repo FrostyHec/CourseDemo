@@ -1,4 +1,4 @@
-package org.frosty.server.event;
+package org.frosty.server.event.delete_event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

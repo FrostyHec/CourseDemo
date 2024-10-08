@@ -2,7 +2,7 @@ package org.frosty.server.services.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.frosty.server.event.UserDeleteEvent;
+import org.frosty.server.event.delete_event.UserDeleteEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
