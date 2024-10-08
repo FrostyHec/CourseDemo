@@ -24,4 +24,5 @@ public class UserAPI {
         mapper.insert(user);
         return user;
     }
+
 }
