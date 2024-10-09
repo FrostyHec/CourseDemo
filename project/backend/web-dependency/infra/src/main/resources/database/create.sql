@@ -48,7 +48,7 @@ CREATE TABLE courses
     course_name VARCHAR(100)                                                                               NOT NULL, -- 课程名称
     description TEXT,                                                                                                -- 课程描述
     teacher_id  BIGINT                                                                                     NOT NULL, -- 教师ID
-    status      VARCHAR(20) CHECK (status IN ('created', 'submitted', 'approved', 'rejected', 'archived')) NOT NULL, -- 课程状态
+    status      VARCHAR(20) CHECK (status IN ('creating', 'submitted', 'published', 'rejected', 'archived')) NOT NULL, -- 课程状态
     created_at  TIMESTAMP WITH TIME ZONE                                                                   NOT NULL, -- 课程创建时间
     updated_at  TIMESTAMP WITH TIME ZONE                                                                   NOT NULL
 --     visibility  VARCHAR(20) CHECK (status IN ('open', 'closed', 'semi-open'))                              NOT NULL  -- 课程可见性

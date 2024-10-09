@@ -7,6 +7,7 @@ import org.frosty.server.controller.course.CourseController;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
 import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
@@ -111,6 +112,18 @@ public class CourseAPI {
     public void updateStatusSuccess(String teacherToken, Long courseId, Course.CourseStatus courseStatus) throws Exception {
         updateStatus(teacherToken,courseId,courseStatus)
                 .andExpect(RespChecker.success());
+    }
+
+    public void checkSingle(Course origin, List<Course> rcvdLi, Course.CourseStatus targetStatus) {
+        var rcvdCourse = CommonCheck.checkSingleAndGet(rcvdLi);
+        checkSingle(origin, rcvdCourse, targetStatus);
+    }
+
+    public void checkSingle(Course origin, Course rcvdCourse, Course.CourseStatus targetStatus) {
+        assert rcvdCourse.getCourseName().equals(origin.getCourseName());
+        assert rcvdCourse.getDescription().equals(origin.getDescription());
+        assert rcvdCourse.getTeacherId().equals(origin.getTeacherId());
+        assert rcvdCourse.getStatus().equals(targetStatus);
     }
 
 }
