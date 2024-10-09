@@ -3,9 +3,8 @@ package org.frosty.server.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.entity.bo.Chapter;
-import org.frosty.demo.services.ChapterService;
 import org.frosty.server.mapper.ChapterMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.frosty.server.services.ChapterService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
