@@ -32,16 +32,16 @@ public class CourseSmokeTest {
         courseAPI.createSuccess(teacherToken, course);
         System.out.println("course :" + course);
         var li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
-        checkSingle(course, li, Course.CourseStatus.created);
+        checkSingle(course, li, Course.CourseStatus.creating);
         var cid = li.get(0).getCourseId();
 
-        course.setCourseId(cid); // set course id to 1 to test idempotent
+        course.setCourseId(cid);
 
         // 2. update info
         course.setCourseName("new " + course.getCourseName());
         courseAPI.updateSuccess(teacherToken, cid, course);
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
-        checkSingle(course, li, Course.CourseStatus.created);
+        checkSingle(course, li, Course.CourseStatus.creating);
 
 
         // submit course
@@ -53,14 +53,14 @@ public class CourseSmokeTest {
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         var pCourse = CommonCheck.checkAndGetOne(li);
         checkSingle(course, pCourse, Course.CourseStatus.submitted);
-        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Course.CourseStatus.approved);
+        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Course.CourseStatus.published);
 
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         assert li.isEmpty();
 
         //see approved
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
-        checkSingle(course, li, Course.CourseStatus.approved);
+        checkSingle(course, li, Course.CourseStatus.published);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class CourseSmokeTest {
         // 1. create and fetch
         courseAPI.createSuccess(teacherToken, course);
         var li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
-        checkSingle(course, li, Course.CourseStatus.created);
+        checkSingle(course, li, Course.CourseStatus.creating);
         var cid = li.get(0).getCourseId();
 
         course.setCourseId(1L); // set course id to 1 to test idempotent
@@ -86,7 +86,7 @@ public class CourseSmokeTest {
         course.setCourseName("new " + course.getCourseName());
         courseAPI.updateSuccess(teacherToken, cid, course);
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
-        checkSingle(course, li, Course.CourseStatus.created);
+        checkSingle(course, li, Course.CourseStatus.creating);
 
         // submit course
         courseAPI.updateStatusSuccess(teacherToken, course.getCourseId(), Course.CourseStatus.submitted);

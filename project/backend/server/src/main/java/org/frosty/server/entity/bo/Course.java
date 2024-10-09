@@ -25,9 +25,9 @@ public class Course {
     private OffsetDateTime updatedAt;
 
     public enum CourseStatus {
-        created, //
+        creating,
         submitted,
-        approved,
+        published,
         rejected,
         archived,
         deleted
