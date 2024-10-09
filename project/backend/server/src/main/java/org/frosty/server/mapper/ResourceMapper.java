@@ -1,7 +1,7 @@
 package org.frosty.demo.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.frosty.demo.entity.dto.Resource;
+import org.frosty.server.entity.bo.Resource;
 
 import java.util.List;
 

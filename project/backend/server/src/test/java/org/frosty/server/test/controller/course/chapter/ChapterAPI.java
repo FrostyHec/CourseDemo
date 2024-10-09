@@ -41,7 +41,7 @@ public class ChapterAPI {
     }
 
     public Chapter createSuccess(String token, Long courseId, Chapter chapter) throws Exception {
-        var resp =  create(token,courseId,templateTeachingChapter)
+        var resp =  create(token,courseId,chapter)
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp,Chapter.class);

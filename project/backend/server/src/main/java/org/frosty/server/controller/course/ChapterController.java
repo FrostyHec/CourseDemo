@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Chapter;
 import org.springframework.web.bind.annotation.*;
-import org.frosty.server.services.ChapterService;
+import org.frosty.server.services.course.ChapterService;
 import java.util.List;
 import java.util.Map;
 

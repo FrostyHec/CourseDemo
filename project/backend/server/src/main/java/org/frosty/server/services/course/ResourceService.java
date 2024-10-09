@@ -1,7 +1,7 @@
-package org.frosty.demo.services;
+package org.frosty.server.services.course;
 
 
-import org.frosty.demo.entity.dto.Resource;
+import org.frosty.server.entity.bo.Resource;
 
 import java.util.List;
 

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final ApplicationEventPublisher eventPublisher;
 
+
+
+
     // TODO example for event mechanism to handle delete
     public void deleteUserById(Long userId) {
         publishDeleteUser(userId);
@@ -24,5 +27,8 @@ public class UserService {
     @EventListener
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
+    }
+
+    public void create(String username, String password) {
     }
 }

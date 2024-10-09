@@ -1,4 +1,4 @@
-package org.frosty.server.services;
+package org.frosty.server.services.course;
 
 
 import org.frosty.server.entity.bo.Chapter;

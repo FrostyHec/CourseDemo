@@ -1,16 +1,16 @@
-package org.frosty.demo.controller;
+package org.frosty.server.controller.course;
 
 import lombok.RequiredArgsConstructor;
-import org.frosty.demo.config.CommonConstant;
-import org.frosty.demo.entity.dto.Resource;
-import org.frosty.demo.services.ResourceService;
+import org.frosty.common.constant.PathConstant;
+import org.frosty.server.entity.bo.Resource;
+import org.frosty.server.services.course.ResourceService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(CommonConstant.API_VERSION + "/chapter/{chapterId}/resource")
+@RequestMapping(PathConstant.API + "/chapter/{chapterId}/resource")
 @RequiredArgsConstructor
 // 先这样写着做一个占位，具体三种chapter，以及其所有的不同resource具体内容再具体分析
 public class ResourceController {

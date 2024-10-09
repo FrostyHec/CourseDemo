@@ -1,4 +1,4 @@
-package org.frosty.demo.entity.dto;
+package org.frosty.server.entity.bo;
 
 
 import lombok.AllArgsConstructor;
