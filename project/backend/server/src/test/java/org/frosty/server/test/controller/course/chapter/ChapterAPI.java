@@ -24,9 +24,11 @@ public class ChapterAPI {
     private final AuthAPI authAPI;
     private final String courseBaseUrl = PathConstant.API + "/course";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
-    public final Chapter templateTeachingChapter = new Chapter()
-            .setChapterTitle("Chapter Title")
-            .setChapterType(ChapterType.teaching);
+    public Chapter getTemplateTeachingChapter() {
+        return new Chapter()
+                .setChapterTitle("Chapter Title")
+                .setChapterType(ChapterType.teaching);
+    }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
         String url = courseBaseUrl + "/" + courseId + "/chapter";
