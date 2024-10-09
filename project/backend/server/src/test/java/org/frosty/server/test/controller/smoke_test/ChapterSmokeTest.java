@@ -17,7 +17,6 @@ public class ChapterSmokeTest {
     private ChapterAPI chapterAPI;
     @Autowired
     private AuthAPI authAPI;
-
     @Test
     public void testBasicCRUD() throws Exception {
         var name = "test";
