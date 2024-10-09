@@ -1,0 +1,13 @@
+jwt: # ensure same with auth
+  secret: secret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf
+  expiration: 86400000
+
+server:
+  port: 9983
+
+spring:
+  application:
+    name: auth-filter
+  profiles:
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+#    active: prod, resource-nonpublic-prod, self-nonpublic-prod
