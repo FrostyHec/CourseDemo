@@ -1,9 +1,9 @@
-package org.frosty.server.services;
+package org.frosty.server.services.course;
 
 import lombok.RequiredArgsConstructor;
-import org.frosty.server.entity.po.Course;
-import org.frosty.server.mapper.CourseMapper;
 
+import org.frosty.server.entity.bo.Course;
+import org.frosty.server.mapper.course.CourseMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,22 +14,22 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
-        courseMapper.insertCourse(course.getName(),course.getDescription(),CourseStatus.CREATING.name());
+//        courseMapper.insertCourse(course.getCourseName(),course.getDescription(), CourseStatus.CREATING.name());
     }
 
     public void updateCourseStatus(Long id, String status) {
         Course course = courseMapper.getCourse(id);
         // 检查非法状态转换
-        if (course.getStatus().equals(CourseStatus.DELETED) ||
-                !status.equals(CourseStatus.CREATING.name())) {
-            throw new IllegalArgumentException("Invalid status change");
-        }
+//        if (course.getStatus().equals(CourseStatus.DELETED) ||
+//                !status.equals(CourseStatus.CREATING.name())) {
+//            throw new IllegalArgumentException("Invalid status change");
+//        }
         courseMapper.updateCourseStatus(id, status);
     }
 
     public void updateCourse(Long id, Course course) {
         // 只更新名称和描述，忽略其他字段
-        courseMapper.updateCourse(id, course.getName(), course.getDescription());
+//        courseMapper.updateCourse(id, course.getName(), course.getDescription());
     }
 
     public Course getCourse(Long id) {

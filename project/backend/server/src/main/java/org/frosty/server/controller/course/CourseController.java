@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.server.services.course.CourseService;
 import org.frosty.server.entity.bo.Course;
+import org.frosty.server.services.course.CourseService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -33,7 +32,7 @@ public class CourseController {
     @PutMapping("/{id}")
     public Response updateCourse(@PathVariable Long id, @RequestBody Course course) {
         // 确保忽略前端传递的敏感字段，如 id 和 status
-        course.setId(id);
+        course.setCourseId(id);
         course.setStatus(null);
         courseService.updateCourse(id, course);
         return Response.getSuccess("Course updated successfully");
