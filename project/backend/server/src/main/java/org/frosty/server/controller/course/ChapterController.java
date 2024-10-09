@@ -1,10 +1,10 @@
-package org.frosty.demo.controller;
+package org.frosty.server.controller.course;
 
 
 import lombok.RequiredArgsConstructor;
 
-import org.frosty.demo.config.CommonConstant;
-import org.frosty.demo.entity.dto.Chapter;
+import org.frosty.common.constant.PathConstant;
+import org.frosty.server.entity.bo.Chapter;
 import org.frosty.demo.services.ChapterService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping(CommonConstant.API_VERSION + "/course/{courseId}")
+@RequestMapping(PathConstant.API + "/course/{courseId}")
 @RequiredArgsConstructor
 public class ChapterController {
 

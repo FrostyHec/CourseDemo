@@ -9,6 +9,8 @@ import org.frosty.auth.utils.JwtHandler;
 import org.frosty.auth.utils.TokenUtils;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.controller.auth.AuthController.LoginInfo;
+import org.frosty.server.entity.bo.User;
+import org.frosty.server.test.controller.user.UserAPI;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
+import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class AuthAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final JwtHandler jwtHandler;
+    private final UserAPI userAPI;
     private final String baseUrl = PathConstant.API + "/auth";
 
     public HttpHeaders setAuthHeader(String token) throws InvalidTokenException {
@@ -59,5 +63,11 @@ public class AuthAPI {
         var token = (String) JsonUtils.toMapData(resp).get("token");
         assert token!=null;
         return token;
+    }
+
+    public String quickAddUserAndLogin(String name, User.Role role) throws Exception {
+        var password = "123456";
+        var user = userAPI.addTestUser(name,password,role);
+        return loginSuccess(new LoginInfo(user.getUserId(),password));
     }
 }

@@ -38,10 +38,6 @@ public class JsonUtils {
     private static String getJsonString(MvcResult mvcResult) throws UnsupportedEncodingException {
         return mvcResult.getResponse().getContentAsString();
     }
-
-    public static <T> T toObject(MvcResult mvcResult, Class<T> clazz) throws JsonProcessingException, UnsupportedEncodingException {
-        return objectMapper.treeToValue(toJsonData(mvcResult), clazz);
-    }
     public static JsonNode toJson(MvcResult result) throws UnsupportedEncodingException,
                                                            JsonProcessingException {
         return objectMapper.readTree(getJsonString(result));
@@ -52,7 +48,7 @@ public class JsonUtils {
         return toJson(result).get("data");
     }
 
-    public static <T> T toJsonObject(MvcResult result, Class<T> type) throws
+    public static <T> T toObject(MvcResult result, Class<T> type) throws
                                                                       UnsupportedEncodingException,
                                                                       JsonProcessingException {
         return objectMapper.treeToValue(toJsonData(result), type);

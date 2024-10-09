@@ -1,15 +1,16 @@
-package org.frosty.demo.mapper;
+package org.frosty.server.mapper;
 
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
-import org.frosty.demo.entity.dto.Chapter;
+import org.frosty.server.entity.bo.Chapter;
 
 
 import java.util.List;
 
 // 看看mybatis_plus
 @Mapper
-public interface ChapterMapper {
+public interface ChapterMapper extends BaseMapper<Chapter> {
 
     // 插入一个新章节
     @Insert("INSERT INTO chapters(course_id, chapter_title,chapter_type, content) VALUES(#{courseId}, #{chapter_title}, #{chapter_type}, #{content})")

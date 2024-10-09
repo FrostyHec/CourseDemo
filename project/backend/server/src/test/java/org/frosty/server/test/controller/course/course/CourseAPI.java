@@ -1,4 +1,4 @@
-package org.frosty.server.test.controller.course;
+package org.frosty.server.test.controller.course.course;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

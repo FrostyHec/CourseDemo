@@ -1,22 +1,18 @@
-package org.frosty.demo.services.impl;
+package org.frosty.server.services.impl;
 
 
-
-import org.frosty.demo.entity.dto.Chapter;
-import org.frosty.demo.mapper.ChapterMapper;
+import lombok.RequiredArgsConstructor;
+import org.frosty.server.entity.bo.Chapter;
 import org.frosty.demo.services.ChapterService;
+import org.frosty.server.mapper.ChapterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ChapterServiceImpl implements ChapterService {
-
-    @Autowired
-    private ChapterMapper chapterMapper;
-
-
+    private final ChapterMapper chapterMapper;
     @Override
     public void createChapter(Chapter chapter) {
         chapterMapper.insertChapter(chapter);

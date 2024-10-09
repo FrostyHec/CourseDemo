@@ -1,8 +1,7 @@
-package org.frosty.demo.services;
+package org.frosty.server.services;
 
 
-
-import org.frosty.demo.entity.dto.Chapter;
+import org.frosty.server.entity.bo.Chapter;
 
 import java.util.List;
 
