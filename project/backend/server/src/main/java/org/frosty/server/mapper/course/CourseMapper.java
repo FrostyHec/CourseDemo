@@ -9,23 +9,28 @@ import java.util.List;
 @Mapper
 public interface CourseMapper extends BaseMapper<Course> {
 
-    @Insert("INSERT INTO Courses (name, description, status) VALUES (#{name}, #{description}, #{status})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    void insertCourse(@Param("name") String name, @Param("description") String description, @Param("status") String status);
+    @Insert("INSERT INTO Courses (course_name, description, teacher_id, status) VALUES (#{courseName}, #{description}, #{teacherId}, #{status})")
+    @Options(useGeneratedKeys = true, keyProperty = "courseId")
+    void insertCourse(Course course);
 
+    @Update("UPDATE Courses SET status = #{status} WHERE course_id = #{courseId}")
+    void updateCourseStatus(@Param("courseId") Long courseId, @Param("status") String status);
 
-    @Update("UPDATE Courses SET status = #{status} WHERE id = #{id}")
-    void updateCourseStatus(@Param("id") Long id, @Param("status") String status);
+    @Update("UPDATE Courses SET course_name = #{courseName}, description = #{description} WHERE course_id = #{courseId}")
+    void updateCourse(@Param("courseId") Long courseId, @Param("courseName") String name, @Param("description") String description);
 
-    @Update("UPDATE Courses SET name = #{name}, description = #{description} WHERE id = #{id}")
-    void updateCourse(@Param("id") Long id, @Param("name") String name, @Param("description") String description);
+    @Select("SELECT * FROM Courses WHERE course_id = #{courseId}")
+    Course getCourse(@Param("courseId") Long courseId);
 
-    @Select("SELECT * FROM Courses WHERE id = #{id}")
-    Course getCourse(@Param("id") Long id);
-
-    @Delete("DELETE FROM Courses WHERE id = #{id}")
-    void deleteCourse(@Param("id") Long id);
+    @Delete("DELETE FROM Courses WHERE course_id = #{courseId}")
+    void deleteCourse(@Param("courseId") Long courseId);
 
     @Select("SELECT * FROM Courses")
     List<Course> getAllCourses();
+
+    @Select("SELECT * FROM Courses WHERE teacher_id = #{teacherId}")
+    List<Course> findCoursesByTeacherId(Long teacherId);
+
+    @Select("SELECT * FROM Courses WHERE status = 'submitted'")
+    List<Course> adminGetRequiredApprovedCourse(Long adminId);
 }

@@ -1,12 +1,9 @@
 package org.frosty.server.test.controller.course.course;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.frosty.auth.exception.InvalidTokenException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.controller.course.CourseController;
-import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
 import org.frosty.server.test.controller.auth.AuthAPI;
@@ -34,7 +31,7 @@ public class CourseAPI {
                 .setTeacherId(teacherId)
                 .setCourseName("Course Name")
                 .setDescription("Course Description")
-                .setStatus(Course.CourseStatus.approved)
+                .setStatus(Course.CourseStatus.created) // it was "approved"
                 ;
     }
 
@@ -105,7 +102,7 @@ public class CourseAPI {
 
     public ResultActions updateStatus(String teacherToken, Long cid, Course.CourseStatus status) throws Exception {
         String json = objectMapper.writeValueAsString(Map.of("status",status));
-        return mockMvc.perform(MockMvcRequestBuilders.put(courseBaseUrl+"/"+cid)
+        return mockMvc.perform(MockMvcRequestBuilders.patch(courseBaseUrl+"/"+cid+"/status") // add "/status" to the url, because it is a PATCH request
                 .headers(authAPI.setAuthHeader(teacherToken))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)

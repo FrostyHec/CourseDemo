@@ -1,4 +1,5 @@
 package org.frosty.server.entity.bo;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,11 +21,22 @@ public class Course {
     private Long teacherId;
     private String courseName;
     private String description;
+
+    public void setCourseId(Long courseId) {
+        System.out.println("Set Course ID: " + courseId);
+        this.courseId = courseId;
+    }
+
     private CourseStatus status;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
     public enum CourseStatus {
-        created,submitted,approved,rejected,archived
+        created, //
+        submitted,
+        approved,
+        rejected,
+        archived,
+        deleted
     }
 }

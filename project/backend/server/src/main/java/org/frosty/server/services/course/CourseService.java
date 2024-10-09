@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,22 +15,21 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
-//        courseMapper.insertCourse(course.getCourseName(),course.getDescription(), CourseStatus.CREATING.name());
+        courseMapper.insertCourse(course);
     }
 
     public void updateCourseStatus(Long id, String status) {
         Course course = courseMapper.getCourse(id);
-        // 检查非法状态转换
-//        if (course.getStatus().equals(CourseStatus.DELETED) ||
-//                !status.equals(CourseStatus.CREATING.name())) {
-//            throw new IllegalArgumentException("Invalid status change");
-//        }
+//         检查非法状态转换
+        if (course.getStatus().equals(Course.CourseStatus.deleted)) {
+            throw new IllegalArgumentException("Invalid status change");
+        }
         courseMapper.updateCourseStatus(id, status);
     }
 
     public void updateCourse(Long id, Course course) {
-        // 只更新名称和描述，忽略其他字段
-//        courseMapper.updateCourse(id, course.getName(), course.getDescription());
+        // only update name and description, ignore other fields
+        courseMapper.updateCourse(id, course.getCourseName(), course.getDescription());
     }
 
     public Course getCourse(Long id) {
@@ -37,7 +37,7 @@ public class CourseService {
     }
 
     public void deleteCourse(Long id) {
-        //TODO:课程状态必须为“已删除”或者没有学生的课程才能删除
+        // todo: course status must be "deleted" or course has no student to delete
         courseMapper.deleteCourse(id);
     }
 
@@ -48,5 +48,13 @@ public class CourseService {
     //TODO:模糊搜索
     public List<Course> searchCourses() {
         return List.of();
+    }
+
+    public List<Course> findCoursesByTeacherId(Long teacherId) {
+        return courseMapper.findCoursesByTeacherId(teacherId);
+    }
+
+    public List<Course> adminGetRequiredApprovedCourse(Long adminId) {
+        return courseMapper.adminGetRequiredApprovedCourse(adminId);
     }
 }
