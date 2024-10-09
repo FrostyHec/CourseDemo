@@ -1,8 +1,8 @@
-package org.frosty.server.services;
+package org.frosty.server.services.course;
 
 import lombok.RequiredArgsConstructor;
-import org.frosty.server.entity.po.Course;
-import org.frosty.server.mapper.CourseMapper;
+import org.frosty.server.entity.bo.Course;
+import org.frosty.server.mapper.course.CourseMapper;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class CourseService {
     }
 
     public void updateCourse(Long id, Course course) {
-        courseMapper.updateCourse(id, course.getName(), course.getDescription());
+        courseMapper.updateCourse(id, course.getCourseName(), course.getDescription());
     }
 
     public Course getCourse(Long id) {

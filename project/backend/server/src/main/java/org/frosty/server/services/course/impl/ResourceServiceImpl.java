@@ -1,7 +1,7 @@
 package org.frosty.server.services.course.impl;
 
 import org.frosty.server.entity.bo.Resource;
-import org.frosty.server.mapper.ResourceMapper;
+import org.frosty.server.mapper.course.ResourceMapper;
 import org.frosty.server.services.course.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

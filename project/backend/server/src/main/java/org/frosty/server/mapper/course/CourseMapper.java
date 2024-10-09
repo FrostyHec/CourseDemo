@@ -1,12 +1,13 @@
-package org.frosty.server.mapper;
+package org.frosty.server.mapper.course;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
-import org.frosty.server.entity.po.Course;
+import org.frosty.server.entity.bo.Course;
 
 import java.util.List;
 
 @Mapper
-public interface CourseMapper {
+public interface CourseMapper extends BaseMapper<Course> {
 
     @Insert("INSERT INTO Courses (name, description, status) VALUES (#{name}, #{description}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "id")

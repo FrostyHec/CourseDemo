@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
 import java.time.OffsetDateTime;
 
 @Data
@@ -16,13 +15,13 @@ import java.time.OffsetDateTime;
 public class User {
     @TableId(type = IdType.AUTO)
     private Long userId;
-    private String username;
+    private String firstName;
+    private String lastName;//can omit
     private String password;
     private Role role;
-//    @TableField(fill = FieldFill.INSERT) // TODO
     private OffsetDateTime createdAt;
-//    @TableField(fill = FieldFill.INSERT_UPDATE)
     private OffsetDateTime updatedAt;
+    private String email;
 
     public enum Role {
         admin,

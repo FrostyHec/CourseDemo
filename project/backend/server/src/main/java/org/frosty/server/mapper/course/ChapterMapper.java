@@ -1,4 +1,4 @@
-package org.frosty.server.mapper;
+package org.frosty.server.mapper.course;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

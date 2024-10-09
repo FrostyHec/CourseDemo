@@ -1,4 +1,4 @@
-package org.frosty.server.mapper;
+package org.frosty.server.mapper.course;
 
 import org.apache.ibatis.annotations.*;
 import org.frosty.server.entity.bo.Resource;

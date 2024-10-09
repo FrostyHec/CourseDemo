@@ -3,7 +3,7 @@ package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.entity.bo.Chapter;
-import org.frosty.server.mapper.ChapterMapper;
+import org.frosty.server.mapper.course.ChapterMapper;
 import org.frosty.server.services.course.ChapterService;
 import org.springframework.stereotype.Service;
 import java.util.List;

@@ -19,9 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.util.Map;
-import java.util.Random;
+import org.frosty.common.utils.Pair;
 
 @Component
 @RequiredArgsConstructor
@@ -65,9 +64,9 @@ public class AuthAPI {
         return token;
     }
 
-    public String quickAddUserAndLogin(String name, User.Role role) throws Exception {
+    public Pair<String,User> quickAddUserAndLogin(String name, User.Role role) throws Exception {
         var password = "123456";
-        var user = userAPI.addTestUser(name,password,role);
-        return loginSuccess(new LoginInfo(user.getUserId(),password));
+        var user = userAPI.addSimpleTestUser(name,password,role);
+        return new Pair<>(loginSuccess(new LoginInfo(user.getUserId(),password)),user);
     }
 }

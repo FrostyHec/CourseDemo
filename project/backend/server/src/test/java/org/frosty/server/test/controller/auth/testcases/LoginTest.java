@@ -22,7 +22,7 @@ public class LoginTest {
     public void testValidLogin() throws Exception {
         String name = "admin";
         String password = "admin";
-        var user = userAPI.addTestUser(name,password, User.Role.admin);
+        var user = userAPI.addSimpleTestUser(name,password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getUserId(),password);
         String token = authAPI.loginSuccess(loginInfo);
         assert jwtHandler.getClaimsFromToken(token)!=null;//token valid
@@ -32,7 +32,7 @@ public class LoginTest {
     public void testIncorrectPassword() throws Exception {
         String name = "admin";
         String password = "admin";
-        var user = userAPI.addTestUser(name,password, User.Role.admin);
+        var user = userAPI.addSimpleTestUser(name,password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getUserId(),"wrong-password");
         authAPI.login(loginInfo)
                 .andExpect(RespChecker.badRequest())

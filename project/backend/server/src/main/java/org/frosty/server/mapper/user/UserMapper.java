@@ -1,4 +1,4 @@
-package org.frosty.server.mapper;
+package org.frosty.server.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.frosty.server.entity.bo.User;

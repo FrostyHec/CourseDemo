@@ -7,7 +7,6 @@ import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.frosty.test_common.utils.RespChecker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.frosty.server.controller.auth.AuthController.LogoutInfo;
 import org.frosty.server.controller.auth.AuthController.LoginInfo;
 
 @IdempotentControllerTest
@@ -20,7 +19,7 @@ public class LogoutTest {
     public void testValidLogout() throws Exception {
         String name = "admin";
         String password = "admin";
-        var user = userAPI.addTestUser(name,password, User.Role.admin);
+        var user = userAPI.addSimpleTestUser(name,password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getUserId(),password);
         String token = authAPI.loginSuccess(loginInfo);
         assert user.getUserId()==1;
@@ -31,7 +30,7 @@ public class LogoutTest {
     public void testInvalidToken() throws Exception {
         String name = "admin";
         String password = "admin";
-        var user = userAPI.addTestUser(name,password, User.Role.admin);
+        var user = userAPI.addSimpleTestUser(name,password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getUserId(),password);
         String token = authAPI.loginSuccess(loginInfo);
         authAPI.logout(token,user.getUserId()+1)

@@ -1,70 +1,88 @@
 -- 初始trigger
 CREATE OR REPLACE FUNCTION auto_time()
-    RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
-    IF TG_OP = 'INSERT' THEN
+    IF
+        TG_OP = 'INSERT' THEN
         NEW.created_at = now();
-        NEW.updated_at = now();
-    ELSIF TG_OP = 'UPDATE' THEN
+        NEW.updated_at
+            = now();
+    ELSIF
+        TG_OP = 'UPDATE' THEN
         NEW.updated_at = now();
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE 'plpgsql';
+$$
+    LANGUAGE 'plpgsql';
 
 
 -- 创建用户表（Users）
 DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
-    user_id    BIGSERIAL PRIMARY KEY,                             -- 自增用户ID
-    username   VARCHAR(50) NOT NULL,                           -- 用户名
---     email      VARCHAR(100) NOT NULL UNIQUE,                   -- 邮箱，必须唯一
-    password   VARCHAR(255) NOT NULL,                          -- 密码
-    role       VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')) NOT NULL,  -- 用户角色，限定为'admin'，'teacher'或'student'
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL, -- 用户创建时间
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL  -- 用户更新时间
+    user_id    BIGSERIAL PRIMARY KEY,                                                       -- 自增用户ID
+    first_name VARCHAR(50)                                                 NOT NULL,        -- 用户名
+    last_name  VARCHAR,
+    password   VARCHAR(255)                                                NOT NULL,        -- 密码
+    role       VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')) NOT NULL,        -- 用户角色，限定为'admin'，'teacher'或'student'
+    email      VARCHAR                                                     NOT NULL UNIQUE, -- 邮箱，必须唯一
+    created_at TIMESTAMP WITH TIME ZONE                                    NOT NULL,        -- 用户创建时间
+    updated_at TIMESTAMP WITH TIME ZONE                                    NOT NULL         -- 用户更新时间
 );
-CREATE OR REPLACE TRIGGER auto_users_time
-    BEFORE INSERT OR UPDATE ON users
-    FOR EACH ROW EXECUTE PROCEDURE auto_time();
+CREATE
+    OR REPLACE TRIGGER auto_users_time
+    BEFORE INSERT OR
+        UPDATE
+    ON users
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time();
 
 
 -- 创建课程表（Courses）
 DROP TABLE IF EXISTS courses;
 CREATE TABLE courses
 (
-    course_id   BIGSERIAL PRIMARY KEY,                                                  -- 自增课程ID
-    course_name VARCHAR(100) NOT NULL,                                               -- 课程名称
-    description TEXT,                                                                -- 课程描述
-    teacher_id  BIGINT NOT NULL,                                                        -- 教师ID
+    course_id   BIGSERIAL PRIMARY KEY,                                                                               -- 自增课程ID
+    course_name VARCHAR(100)                                                                               NOT NULL, -- 课程名称
+    description TEXT,                                                                                                -- 课程描述
+    teacher_id  BIGINT                                                                                     NOT NULL, -- 教师ID
     status      VARCHAR(20) CHECK (status IN ('created', 'submitted', 'approved', 'rejected', 'archived')) NOT NULL, -- 课程状态
-    created_at  TIMESTAMP WITH TIME ZONE NOT NULL ,                               -- 课程创建时间
-    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL ,
-    visibility  VARCHAR(20) CHECK (status IN ('open', 'closed', 'semi-open')) NOT NULL  -- 课程可见性
+    created_at  TIMESTAMP WITH TIME ZONE                                                                   NOT NULL, -- 课程创建时间
+    updated_at  TIMESTAMP WITH TIME ZONE                                                                   NOT NULL
+--     visibility  VARCHAR(20) CHECK (status IN ('open', 'closed', 'semi-open'))                              NOT NULL  -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
 );
-CREATE OR REPLACE TRIGGER auto_courses_time
-    BEFORE INSERT OR UPDATE ON courses
-    FOR EACH ROW EXECUTE PROCEDURE auto_time();
+CREATE
+    OR REPLACE TRIGGER auto_courses_time
+    BEFORE INSERT OR
+        UPDATE
+    ON courses
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time();
 
 
 -- 创建章节表（Chapters）
 DROP TABLE IF EXISTS chapters;
 CREATE TABLE chapters
 (
-    chapter_id    BIGSERIAL PRIMARY KEY,                                               -- 自增章节ID
-    course_id     BIGINT NOT NULL,                                                     -- 课程ID
-    chapter_title VARCHAR(100) NOT NULL,                                            -- 章节标题
+    chapter_id    BIGSERIAL PRIMARY KEY,                                                              -- 自增章节ID
+    course_id     BIGINT                                                                    NOT NULL, -- 课程ID
+    chapter_title VARCHAR(100)                                                              NOT NULL, -- 章节标题
     chapter_type  VARCHAR(20) CHECK (chapter_type IN ('teaching', 'assignment', 'project')) NOT NULL, -- 章节类型
-    content       TEXT,                                                             -- 章节内容
-    created_at    TIMESTAMP WITH TIME ZONE NOT NULL ,                               -- 章节创建时间
-    updated_at     TIMESTAMP WITH TIME ZONE NOT NULL
+    content       TEXT,                                                                               -- 章节内容
+    created_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL, -- 章节创建时间
+    updated_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
 );
-CREATE OR REPLACE TRIGGER auto_chapters_time
-    BEFORE INSERT OR UPDATE ON chapters
-    FOR EACH ROW EXECUTE PROCEDURE auto_time();
+CREATE
+    OR REPLACE TRIGGER auto_chapters_time
+    BEFORE INSERT OR
+        UPDATE
+    ON chapters
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time();
 
 -- DROP TABLE IF EXISTS materials;
 -- DROP TABLE IF EXISTS assignments;

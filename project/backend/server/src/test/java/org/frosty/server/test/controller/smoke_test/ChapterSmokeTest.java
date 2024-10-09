@@ -21,9 +21,12 @@ public class ChapterSmokeTest {
     @Test
     public void testBasicCRUD() throws Exception {
         var name = "test";
-        var token = authAPI.quickAddUserAndLogin(name, User.Role.teacher);
-//        var courseId = courseAPI.addTestCourse(token,name); // TODO wait for hlh
-        Long courseId = 1l;
+        var res = authAPI.quickAddUserAndLogin(name, User.Role.teacher);
+        var token = res.first;
+        var uid = res.second.getUserId();
+        var courseId = courseAPI.addTestCourseAndGetId(uid);
+
+        //-----test start---
         Chapter chapter = chapterAPI.getTemplateTeachingChapter();
         String title = chapter.getChapterTitle();
         chapterAPI.createSuccess(token, courseId, chapter);

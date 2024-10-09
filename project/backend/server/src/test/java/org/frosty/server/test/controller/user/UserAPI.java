@@ -2,7 +2,7 @@ package org.frosty.server.test.controller.user;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.entity.bo.User;
-import org.frosty.server.mapper.UserMapper;
+import org.frosty.server.mapper.user.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +12,13 @@ public class UserAPI {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
-    public User addTestUser(String name, String password, User.Role role) {
+    public User addSimpleTestUser(String firstName, String password, User.Role role) {
 
         var user = new User()
-                .setUsername(name)
+                .setFirstName(firstName)
                 .setPassword(passwordEncoder.encode(password))
-                .setRole(role);
+                .setRole(role)
+                .setEmail(firstName + "@test.com");
         return addTestUser(user);
     }
 

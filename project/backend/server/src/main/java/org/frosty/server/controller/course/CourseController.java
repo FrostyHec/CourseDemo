@@ -1,10 +1,13 @@
-package org.frosty.server.controller;
+package org.frosty.server.controller.course;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.server.services.CourseService;
-import org.frosty.server.entity.po.Course;
+import org.frosty.server.services.course.CourseService;
+import org.frosty.server.entity.bo.Course;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,5 +39,12 @@ public class CourseController {
     @GetMapping("/{id}")
     public Course getCourse(@PathVariable Long id) {
         return courseService.getCourse(id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CourseList{
+        List<Course> content;
     }
 }

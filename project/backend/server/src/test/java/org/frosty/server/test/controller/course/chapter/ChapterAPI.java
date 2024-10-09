@@ -40,11 +40,9 @@ public class ChapterAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public Chapter createSuccess(String token, Long courseId, Chapter chapter) throws Exception {
-        var resp =  create(token,courseId,chapter)
-                .andExpect(RespChecker.success())
-                .andReturn();
-        return JsonUtils.toObject(resp,Chapter.class);
+    public void createSuccess(String token, Long courseId, Chapter chapter) throws Exception {
+        create(token,courseId,chapter)
+                .andExpect(RespChecker.success());
     }
 
     public ResultActions update(String token, Long chapterId, Chapter chapter) throws Exception {
