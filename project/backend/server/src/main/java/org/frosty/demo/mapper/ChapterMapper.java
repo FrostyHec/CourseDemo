@@ -7,6 +7,7 @@ import org.frosty.demo.entity.dto.Chapter;
 
 import java.util.List;
 
+// 看看mybatis_plus
 @Mapper
 public interface ChapterMapper {
 
@@ -15,6 +16,7 @@ public interface ChapterMapper {
     void insertChapter(Chapter chapter);
 
     // 根据 ID 更新章节
+    // 这里IDEA一直在"="号前面报错，但是我在ass1中使用的时候并不影响，不知道为什么
     @Update("UPDATE chapters SET course_id =#{course_id},chapter_title=#{chapter_title},chapter_type=#{chapter_type}, content=#{content} WHERE chapters.chapter_id=#{id}")
     void updateChapter(Chapter chapter);
 
