@@ -4,6 +4,7 @@ package org.frosty.server.controller.course;
 import lombok.RequiredArgsConstructor;
 
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.Chapter;
 import org.springframework.web.bind.annotation.*;
 import org.frosty.server.services.course.ChapterService;

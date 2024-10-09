@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final ApplicationEventPublisher eventPublisher;
 
-
-
-
     // TODO example for event mechanism to handle delete
     public void deleteUserById(Long userId) {
         publishDeleteUser(userId);

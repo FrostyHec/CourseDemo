@@ -13,6 +13,7 @@ public class UserAPI {
     private final UserMapper mapper;
 
     public User addTestUser(String name, String password, User.Role role) {
+
         var user = new User()
                 .setUsername(name)
                 .setPassword(passwordEncoder.encode(password))

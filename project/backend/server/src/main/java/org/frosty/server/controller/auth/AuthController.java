@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
 import org.frosty.server.services.auth.AuthService;
