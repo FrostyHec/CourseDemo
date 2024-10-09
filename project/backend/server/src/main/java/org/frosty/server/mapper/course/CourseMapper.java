@@ -11,7 +11,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     @Insert("INSERT INTO Courses (name, description, status) VALUES (#{name}, #{description}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    void insertCourse(Course course);
+    void insertCourse(@Param("name") String name, @Param("description") String description, @Param("status") String status);
+
 
     @Update("UPDATE Courses SET status = #{status} WHERE id = #{id}")
     void updateCourseStatus(@Param("id") Long id, @Param("status") String status);
