@@ -1,9 +1,6 @@
 package org.frosty.server.test.controller.course.chapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Chapter;
@@ -100,12 +97,6 @@ public class ChapterAPI {
         var resp =  getAll(token,courseId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp, GetChapterListData.class).getContent();
-    }
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class GetChapterListData {
-        private List<Chapter> content;
+        return (List<Chapter>)JsonUtils.toMapData(resp).get("content");
     }
 }
