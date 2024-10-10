@@ -23,6 +23,7 @@ public class User {
     private OffsetDateTime updatedAt;
     private String email;
 
+    // 大小写敏感
     public enum Role {
         admin,
         teacher,

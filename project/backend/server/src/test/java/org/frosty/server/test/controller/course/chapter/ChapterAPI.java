@@ -3,6 +3,7 @@ package org.frosty.server.test.controller.course.chapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.controller.course.ChapterController;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.test_common.utils.JsonUtils;
 import org.springframework.http.MediaType;
@@ -24,10 +25,13 @@ public class ChapterAPI {
     private final AuthAPI authAPI;
     private final String courseBaseUrl = PathConstant.API + "/course";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
-    public Chapter getTemplateTeachingChapter() {
+    public Chapter getTemplateTeachingChapter(Long courseId) {
         return new Chapter()
+                .setCourseId(courseId)// 添加了一行
                 .setChapterTitle("Chapter Title")
-                .setChapterType(ChapterType.teaching);
+                .setChapterType(ChapterType.teaching)
+                .setContent("Chapter Content");// 添加了一行
+
     }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
@@ -97,6 +101,7 @@ public class ChapterAPI {
         var resp =  getAll(token,courseId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return (List<Chapter>)JsonUtils.toMapData(resp).get("content");
+        return JsonUtils.toObject(resp, ChapterController.ChapterList.class).getContent();
+        // return (List<Chapter>)JsonUtils.toMapData(resp).get("content");
     }
 }

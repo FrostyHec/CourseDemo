@@ -26,7 +26,7 @@ public class ChapterSmokeTest {
         var courseId = courseAPI.addTestCourseAndGetId(uid);
 
         //-----test start---
-        Chapter chapter = chapterAPI.getTemplateTeachingChapter();
+        Chapter chapter = chapterAPI.getTemplateTeachingChapter(courseId);
         String title = chapter.getChapterTitle();
         chapterAPI.createSuccess(token, courseId, chapter);
 
@@ -38,7 +38,7 @@ public class ChapterSmokeTest {
 
         var id = rcvdChapter.getChapterId();
         rcvdChapter.setChapterTitle("new " + title);
-        chapterAPI.updateSuccess(token, id, rcvdChapter);
+        chapterAPI.updateSuccess(token,id,rcvdChapter);
 
         var rcvdChapter2 = chapterAPI.getSuccess(token, id);
         assert rcvdChapter2.getChapterTitle().equals("new " + title);
