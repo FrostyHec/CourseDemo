@@ -1,21 +1,17 @@
 import axios from 'axios'
 import { backend_base } from '@/utils/Cosntant'
-import { APIResult, type APIParam } from '@/utils/APIUtils'
+import { APIResult, type APIParam, type APIDataResult } from '@/utils/APIUtils'
 import { InternalException } from '@/utils/Exceptions'
 export async function loginCall(param:LoginParam):Promise<APIResult<LoginResult>>{
   const url = backend_base + '/auth/login';
-  await axios.post(url,param).then((response)=> {
-    return APIResult.fromAxiosResponse(response);
-  }).catch((error)=>{
-    throw error;
-  });
-  throw new InternalException('unreachable code');
+  const response = await axios.post(url,param)
+  return APIResult.fromAxiosResponse(response);
 }
 export interface LoginParam extends APIParam{
-  user_id:bigint,
+  user_id:number,
   password:string
 }
-export interface LoginResult extends APIResult{
+export interface LoginResult extends APIDataResult{
   token:string
 }
 
@@ -30,7 +26,7 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 }
 
 export interface LogoutParam extends APIParam{
-  user_id:bigint
+  user_id:number
 }
 
 
@@ -44,7 +40,7 @@ export async function createUser(param:UserEntity):Promise<APIResult<null>>{
   throw new InternalException('unreachable code');
 }
 
-export interface UserEntity{
+export interface UserEntity extends APIDataResult,APIParam{
   user_id:bigint,
   first_name:string,
   last_name:string,

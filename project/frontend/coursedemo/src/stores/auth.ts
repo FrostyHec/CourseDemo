@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import { loginCall,type LoginParam,type UserEntity, UserType } from '@/api/UserAPI'
+import { loginCall, type LoginParam, logoutCall,type LogoutParam, type UserEntity, UserType } from '@/api/UserAPI'
 import { reactive, ref } from 'vue'
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('')
@@ -14,16 +14,23 @@ export const useAuthStore = defineStore('auth', () => {
     update_at: new Date(0)
   }
   const user= reactive({ ...emptyUser })
-  function login(loginParam:LoginParam){
-    loginCall(loginParam).then((result)=>{
-      token.value = result.data.token;
-    }).catch((error)=>{
-      console.log(error);
-    });
+  
+  async function login(loginParam:LoginParam){ // TODO RMVD
+    const result = await loginCall(loginParam)
+    token.value = result.data.token;
+    console.log(result)
   }
 
-  function logout(){
+  async function logout(logoutParam:LogoutParam){
+    await logoutCall(logoutParam)
     token.value = '';
     Object.assign(user, emptyUser);
+  }
+
+  return {
+    token,
+    user,
+    login,
+    logout
   }
 })

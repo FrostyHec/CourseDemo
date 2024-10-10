@@ -3,10 +3,10 @@ import axios from 'axios'
 import { APIResult } from '@/utils/APIUtils'
 import { InternalException } from '@/utils/Exceptions'
 export interface CourseEntity{
-  course_id:bigint,
+  course_id:number,
   course_name:string,
   description:string,
-  teacher_id:bigint,
+  teacher_id:number,
   status:string,
   create_at:Date,
   update_at:Date

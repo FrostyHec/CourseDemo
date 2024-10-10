@@ -85,3 +85,5 @@ public/
 
 # frontend-ignore
 node_modules/
+
+/frontend/coursedemo/.env

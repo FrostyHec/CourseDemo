@@ -37,6 +37,5 @@ export interface APIParam {
 
 }
 
-export interface APIResult{
-
+export interface APIDataResult{
 }

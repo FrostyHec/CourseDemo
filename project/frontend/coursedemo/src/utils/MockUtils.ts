@@ -13,3 +13,21 @@ export function setMockFunc(url: string, req_type: RequestType, request: APIPara
   }
   Mock.mock(url, req_type, () => f())
 }
+export async function enableTempMock() {
+  try {
+    // 动态导入模块
+    const module = await import('../mockjs/nonpublic-TempMock');
+    console.log(module)
+    // 遍历模块的所有导出
+    Object.keys(module).forEach((key) => {
+      const fn = module[key as keyof typeof module];
+      console.log(fn)
+      if (typeof fn === 'function') {
+        // 执行函数
+        (fn as Function)();
+      }
+    });
+  } catch (error) {
+    console.error('Error executing functions:', error);
+  }
+}

@@ -1,8 +1,9 @@
-import type { LoginParam, LoginResult, LogoutParam } from '@/api/UserAPI'
+import type { LoginResult } from '@/api/UserAPI'
 import { backend_base } from '@/utils/Cosntant'
 import { setMockFunc } from '@/utils/MockUtils'
-import { RequestType } from '@/utils/APIUtils'
-export function mockUserLogin(data: LoginResult) {
+import { APIResult, RequestType } from '@/utils/APIUtils'
+
+export function mockUserLogin(data: APIResult<LoginResult>) {
   const url = backend_base + '/auth/login'
   setMockFunc(url, RequestType.POST, null, () => data)
 }
