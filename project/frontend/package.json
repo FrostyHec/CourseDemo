@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@types/mockjs": "^1.0.10"
+  }
+}
