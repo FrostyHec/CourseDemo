@@ -1,19 +1,20 @@
 import { enableTempMock } from '@/utils/MockUtils'
 import { InternalException } from '@/utils/Exceptions'
+import { setMockStatus, setBackendBase } from '@/utils/Cosntant'
 
-enum MockStatus {
-  Dev = 'dev',
-  Prod = 'prod',
+export enum MockStatus {
+  DEV = 'dev',
+  PROD = 'prod',
   E2E = 'e2e',
 }
 
 export async function handleMockStatus(mockStatus: string) {
   switch (mockStatus) {
-    case MockStatus.Dev:
+    case MockStatus.DEV:
       console.log('Using temp mock')
       await enableTempMock()
       break
-    case MockStatus.Prod:
+    case MockStatus.PROD:
       console.log('Connecting to the backend url')
       break
     case MockStatus.E2E:
@@ -22,4 +23,9 @@ export async function handleMockStatus(mockStatus: string) {
     default:
       throw new InternalException('unknown mock status: ' + mockStatus)
   }
+  setMockStatus((mockStatus as MockStatus))
+}
+
+export async function handleBackendPath(backend_url:string){
+  setBackendBase(backend_url)
 }

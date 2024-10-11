@@ -4,7 +4,6 @@ import { mockUserLogin } from '@/mockjs/MockCourseAPI'
 import { useAuthStore } from '@/stores/auth'
 import { APIResult } from '@/utils/APIUtils'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
-
 describe('Mock valid test', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -32,5 +31,6 @@ describe('Mock valid test', () => {
         password: ''
       })
     expect(token.value).toBe('456')
+
   })
 })

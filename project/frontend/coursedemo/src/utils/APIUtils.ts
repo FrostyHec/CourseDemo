@@ -1,9 +1,13 @@
-import axios, { type AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import { Ex } from '@/utils/ParamCheckUtils'
+
 
 export enum ResultCodeType {
   OK = 200,
-  BAD_REQUEST = 400
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  NO_FOUND = 404,
+  NOT_MODIFIED = 304,
 }
 
 export enum RequestType {
@@ -37,5 +41,5 @@ export interface APIParam {
 
 }
 
-export interface APIDataResult{
+export interface APIDataResult {
 }
