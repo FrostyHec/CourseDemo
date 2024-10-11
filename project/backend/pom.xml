@@ -3,19 +3,30 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.1</version>
-        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>org.frosty.demo</groupId>
     <artifactId>backend</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <!--pom-->
+        <module>web-dependency</module>
+        <module>web-template-starter</module>
+        <module>web-dependency/common-root</module>
+        <!--microservices-->
+        <module>server</module>
+        <module>auth-filter</module>
+        <module>auth</module>
+    </modules>
 
     <properties>
+
         <!--dependency version-->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -63,14 +74,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <modules>
-        <module>server</module>
-        <module>common</module>
-        <module>restful-template</module>
-    </modules>
-    <packaging>pom</packaging>
-
     <build>
         <plugins>
             <plugin>
