@@ -1,6 +1,6 @@
 import { backend_base } from '@/utils/Cosntant'
 import { APIResult, type APIParam, type APIDataResult, AxiosAPI } from '@/utils/APIUtils'
-//////////////////////////////////////////////////////
+/////////////////////   LOGIN   ///////////////////////////////
 export interface LoginParam extends APIParam{
   user_id:number,
   password:string
@@ -14,7 +14,7 @@ export async function loginCall(param:LoginParam):Promise<APIResult<LoginResult>
   return await AxiosAPI.post(url,param);
 
 }
-//////////////////////////////////////////////////////
+/////////////////////   LOGOUT   ///////////////////////////////
 export interface LogoutParam extends APIParam{
   user_id:number
 }
@@ -24,7 +24,7 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
   return await AxiosAPI.post(url,logoutParam);
 }
 
-//////////////////////////////////////////////////////
+/////////////////////   USER   ///////////////////////////////
 export interface UserEntity extends APIDataResult,APIParam{
   user_id:bigint,
   first_name:string,
