@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
   const user= reactive({ ...emptyUser })
   
-  async function login(loginParam:LoginParam){ // TODO RMVD
+  async function login(loginParam:LoginParam){
     const result = await loginCall(loginParam)
     token.value = result.data.token;
     console.log(result)
