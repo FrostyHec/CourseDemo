@@ -92,7 +92,7 @@ CREATE TABLE enrollments
 (
     student_id    INT                                               NOT NULL, -- 学生ID
     course_id     INT                                               NOT NULL,
-    status        VARCHAR CHECK ( status IN ('public', 'invited') ) NOT NULL, -- 课程ID
+    status        VARCHAR CHECK ( status IN ('publik', 'invited') ) NOT NULL, -- 课程ID
     create_at     TIMESTAMP WITH TIME ZONE                          NOT NULL,
     updated_at    TIMESTAMP WITH TIME ZONE                          NOT NULL,
     primary key (student_id,course_id)
@@ -194,8 +194,8 @@ CREATE
 EXECUTE PROCEDURE auto_time();
 
 -- 创建课程评价表（CourseEvaluation）
-DROP TABLE IF EXISTS course_evaluation;
-CREATE TABLE course_evaluation(
+DROP TABLE IF EXISTS course_evaluations;
+CREATE TABLE course_evaluations(
     course_id BIGSERIAL NOT NULL ,
     student_id BIGSERIAL NOT NULL ,
     comment TEXT NOT NULL,
