@@ -23,6 +23,7 @@
         <module>server</module>
         <module>auth-filter</module>
         <module>auth</module>
+        <module>object-storage</module>
     </modules>
 
     <properties>

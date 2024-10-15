@@ -5,5 +5,7 @@ public interface ObjectStorageService {
 
     <T> T get(String key,Class<T> type);
 
+    void delete(String key);
+
     boolean exist(String key);
 }

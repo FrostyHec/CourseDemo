@@ -1,0 +1,4 @@
+# api source config
+api:
+  storage:
+    url: http://localhost:9976
