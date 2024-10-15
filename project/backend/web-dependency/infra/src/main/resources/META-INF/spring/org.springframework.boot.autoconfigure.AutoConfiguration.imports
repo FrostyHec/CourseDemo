@@ -1,1 +1,2 @@
 org.frosty.infra.config.InfraAutoConfiguration
+org.frosty.infra.config.CommonConfigAutoConfiguration

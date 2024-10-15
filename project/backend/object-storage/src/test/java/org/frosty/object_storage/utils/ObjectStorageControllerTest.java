@@ -1,4 +1,7 @@
-package org.frosty.test_common.annotation;
+package org.frosty.object_storage.utils;
+
+import org.frosty.test_common.annotation.ClearMinio;
+import org.frosty.test_common.annotation.ControllerTest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@DatabaseIdempotency
 @ClearMinio
-public @interface ClearAllSource {
+@ControllerTest
+public @interface ObjectStorageControllerTest {
 }
