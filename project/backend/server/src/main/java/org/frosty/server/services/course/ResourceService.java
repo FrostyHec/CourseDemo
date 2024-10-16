@@ -22,6 +22,8 @@ import org.frosty.server.entity.po.ResourceWithAccessKey;
 public class ResourceService  {
     private final ResourceMapper resourceMapper;
     private final ObjectStorageService objectStorageService;
+
+    @Transactional
     public void createResource(AuthInfo tokenInfo,Resource resource, MultipartFile file) throws IOException {
         // TODO check called by teacher & course owner
         resource.setFileName(UUID.randomUUID().toString()+file.getSize()+"."+resource.getSuffix());

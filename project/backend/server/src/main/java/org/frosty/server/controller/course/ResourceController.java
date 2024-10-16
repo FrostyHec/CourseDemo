@@ -25,7 +25,7 @@ public class ResourceController {
     public void uploadResource(
             @GetToken TokenInfo tokenInfo,
             @RequestPart("data") Resource resource,
-            @RequestPart("file") MultipartFile file
+            @RequestPart("file") MultipartFile file // TODO changed it to support flow upload
     ) throws IOException {
         Ex.check(tokenInfo.getAuthStatus()== AuthStatus.PASS, Response.getUnauthorized("unauthorized"));
         resourceService.createResource(tokenInfo.getAuthInfo(),resource,file);
