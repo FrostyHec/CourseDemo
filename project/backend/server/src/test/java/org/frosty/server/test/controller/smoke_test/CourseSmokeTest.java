@@ -1,5 +1,6 @@
 package org.frosty.server.test.controller.smoke_test;
 
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@Slf4j
 @IdempotentControllerTest
 public class CourseSmokeTest {
     @Autowired
@@ -31,7 +33,6 @@ public class CourseSmokeTest {
         //---test start---
         // 1. create and fetch
         courseAPI.createSuccess(teacherToken, course);
-        System.out.println("course :" + course);
         var li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
         courseAPI.checkSingle(course, li, Course.CourseStatus.creating);
         var cid = li.get(0).getCourseId();

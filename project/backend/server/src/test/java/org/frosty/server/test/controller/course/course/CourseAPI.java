@@ -33,6 +33,7 @@ public class CourseAPI {
                 .setCourseName("Course Name")
                 .setDescription("Course Description")
                 .setStatus(Course.CourseStatus.creating) // it was "approved"
+                .setPublication(Course.PublicationType.open)
                 ;
     }
 

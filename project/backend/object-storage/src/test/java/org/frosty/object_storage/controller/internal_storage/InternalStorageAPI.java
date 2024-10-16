@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class InternalStorageAPI {
 
         ClassLoader classLoader = getClass().getClassLoader();
         String resourcePath = templateFilePath+"_" + idx + ".txt";
-        Path path = Path.of(classLoader.getResource(resourcePath).toURI());
+        Path path = Path.of(Objects.requireNonNull(classLoader.getResource(resourcePath)).toURI());
         String originalFileName = path.getFileName().toString();
         byte[] content = Files.readAllBytes(path);
         return new MockMultipartFile("file", originalFileName, MediaType.MULTIPART_FORM_DATA_VALUE, content);

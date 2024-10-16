@@ -1,52 +1,64 @@
 package org.frosty.server.controller.course;
 
 import lombok.RequiredArgsConstructor;
+import org.frosty.auth.annotation.GetToken;
+import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.response.Response;
+import org.frosty.common.utils.Ex;
+import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.services.course.ResourceService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
-@RequestMapping(PathConstant.API + "/chapter/{chapterId}/resource")
+@RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
-// 先这样写着做一个占位，具体三种chapter，以及其所有的不同resource具体内容再具体分析
 public class ResourceController {
-
     private final ResourceService resourceService;
-
-    // 上传课程资源
-    @PostMapping
-    public Map<String, String> uploadResource(@RequestBody Resource resource) {
-        resourceService.createResource(resource);
-        return Map.of("message", "Successfully uploaded resource.");
+    @PostMapping("/chapter/{chapterId}/resource")
+    public void uploadResource(
+            @GetToken TokenInfo tokenInfo,
+            @RequestPart("data") Resource resource,
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
+        resourceService.createResource(tokenInfo,resource,file);
     }
 
     // 获取资源
-    @GetMapping("/{id}")
-    public Resource getResource(@PathVariable Long id) {
-        return resourceService.findById(id);
+    @GetMapping("resource/{id}")
+    public Resource getResourceMetaData(
+            @GetToken TokenInfo tokenInfo,
+            @PathVariable Long id) {
+
+        return resourceService.findById(tokenInfo,id);
     }
 
-    // 更新课程资源
-    @PutMapping("/{id}")
-    public Map<String, String> updateResource(@PathVariable Long id, @RequestBody Resource updatedResource) {
-        resourceService.updateResource(updatedResource);
-        return Map.of("message", "Successfully updated resource.");
+    @PutMapping("resource/{id}")
+    public void updateResourceMetadata(
+            @GetToken TokenInfo tokenInfo,
+            @PathVariable Long id, @RequestBody Resource updatedResource) {
+        Ex.idCheck(id,updatedResource.getResourceId());
+        resourceService.updateResource(tokenInfo,updatedResource);
     }
 
-    // 删除资源
-    @DeleteMapping("/{id}")
-    public Map<String, String> deleteResource(@PathVariable Long id) {
-        resourceService.deleteResource(id);
-        return Map.of("message", "Successfully deleted resource.");
+    @DeleteMapping("resource/{id}")
+    public void deleteResource(
+            @GetToken TokenInfo tokenInfo,
+            @PathVariable Long id) {
+        resourceService.deleteResource(tokenInfo,id);
     }
 
-    // 获取章节下的所有资源
-    @GetMapping
-    public List<Resource> getResourcesByChapter(@PathVariable Long chapterId) {
-        return resourceService.getResourcesByChapter(chapterId);
+    @GetMapping("/chapter/{chapterId}/resource")
+    public Map<String,List<Resource>> getResourcesByChapter(
+            @GetToken TokenInfo tokenInfo,
+            @PathVariable Long chapterId) {
+        return Map.of("content",resourceService.getResourcesByChapter(tokenInfo,chapterId));
     }
 }

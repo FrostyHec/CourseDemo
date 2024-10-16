@@ -23,7 +23,7 @@ public class Course {
     private CourseStatus status;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-
+    private PublicationType publication;
     public enum CourseStatus {
         creating,
         submitted,
@@ -31,5 +31,8 @@ public class Course {
         rejected,
         archived,
         deleted
+    }
+    public enum PublicationType{
+        open,closed,semi_open
     }
 }

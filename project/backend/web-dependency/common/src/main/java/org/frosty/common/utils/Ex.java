@@ -17,4 +17,8 @@ public class Ex {
             throw e;
         }
     }
+
+    public static void idCheck(Long id, Long resourceId) {
+        Ex.check(id.equals(resourceId), Response.getBadRequest("unmatched-id"));
+    }
 }

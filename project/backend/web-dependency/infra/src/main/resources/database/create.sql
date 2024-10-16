@@ -51,7 +51,7 @@ CREATE TABLE courses
     status      VARCHAR(20) CHECK (status IN ('creating', 'submitted', 'published', 'rejected', 'archived')) NOT NULL, -- 课程状态
     created_at  TIMESTAMP WITH TIME ZONE                                                                     NOT NULL, -- 课程创建时间
     updated_at  TIMESTAMP WITH TIME ZONE                                                                     NOT NULL,
-    publication VARCHAR(20) CHECK (status IN ('open', 'closed', 'semi-open'))                                NOT NULL ,
+    publication VARCHAR(20) CHECK (publication IN ('open', 'closed', 'semi_open'))                                NOT NULL ,
     evaluation_form_type BIGSERIAL NOT NULL --如果设置为0则无教评版本
     -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
@@ -93,7 +93,7 @@ CREATE TABLE enrollments
     student_id    INT                                               NOT NULL, -- 学生ID
     course_id     INT                                               NOT NULL,
     status        VARCHAR CHECK ( status IN ('publik', 'invited') ) NOT NULL, -- 课程ID
-    create_at     TIMESTAMP WITH TIME ZONE                          NOT NULL,
+    created_at     TIMESTAMP WITH TIME ZONE                          NOT NULL,
     updated_at    TIMESTAMP WITH TIME ZONE                          NOT NULL,
     primary key (student_id,course_id)
     -- FOREIGN KEY (student_id) REFERENCES Users (user_id) ON DELETE CASCADE        -- 学生ID外键，已注释
@@ -120,7 +120,7 @@ CREATE TABLE resources
     resource_version_order INT                                         NOT NULL,
     resource_type          VARCHAR                                     NOT NULL CHECK ( resource_type IN ('description', 'courseware', 'video', 'attachment') ),
     student_can_download   BOOLEAN                                     NOT NULL, -- 是否可下载
-    create_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
+    created_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
     updated_at             TIMESTAMP WITH TIME ZONE                    NOT NULL
     -- FOREIGN KEY (chapter_id) REFERENCES Chapters (chapter_id) ON DELETE CASCADE  -- 章节ID外键，已注释
 );
@@ -128,7 +128,7 @@ CREATE
     OR REPLACE TRIGGER auto_resources_time
     BEFORE INSERT OR
         UPDATE
-    ON enrollments
+    ON resources
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 
@@ -139,7 +139,7 @@ CREATE TABLE notifications
     notification_id BIGSERIAL PRIMARY KEY,                                             -- 自增通知ID
     course_id       INT NOT NULL,                                                   -- 课程ID
     message         TEXT NOT NULL,                                                  -- 通知内容
-    create_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                            -- 创建时间
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                            -- 创建时间
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP                            -- 更新时间
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
     -- FOREIGN KEY (sender_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 发送者ID外键，已注释
@@ -149,7 +149,7 @@ CREATE
     OR REPLACE TRIGGER auto_notification_time
     BEFORE INSERT OR
         UPDATE
-    ON enrollments
+    ON notifications
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 
@@ -180,7 +180,7 @@ CREATE TABLE resource_comments
     resource_id   INT NOT NULL,                                                      -- 章节ID
     user_id      INT NOT NULL,                                                      -- 用户ID
     comment_text TEXT NOT NULL,                                                     -- 评论内容
-    create_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
+    created_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
     updated_at             TIMESTAMP WITH TIME ZONE                    NOT NULL
     -- FOREIGN KEY (chapter_id) REFERENCES Chapters (chapter_id) ON DELETE CASCADE  -- 章节ID外键，已注释
     -- FOREIGN KEY (user_id) REFERENCES Users (user_id) ON DELETE CASCADE           -- 用户ID外键，已注释
@@ -189,7 +189,7 @@ CREATE
     OR REPLACE TRIGGER auto_resource_comment_time
     BEFORE INSERT OR
         UPDATE
-    ON enrollments
+    ON resource_comments
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 
@@ -201,7 +201,7 @@ CREATE TABLE course_evaluations(
     comment TEXT NOT NULL,
     score INT, --可暂时不评分
     evaluation_form_answer json,-- 可暂时不填评教
-    create_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
+    created_at              TIMESTAMP WITH TIME ZONE                    NOT NULL,
     updated_at             TIMESTAMP WITH TIME ZONE                    NOT NULL,
     primary key (course_id,student_id)
 );
@@ -209,7 +209,7 @@ CREATE
     OR REPLACE TRIGGER auto_course_evaluation
     BEFORE INSERT OR
         UPDATE
-    ON enrollments
+    ON course_evaluations
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 

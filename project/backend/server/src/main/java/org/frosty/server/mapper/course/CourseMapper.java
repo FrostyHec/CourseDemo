@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface CourseMapper extends BaseMapper<Course> {
 
-    @Insert("INSERT INTO Courses (course_name, description, teacher_id, status) VALUES (#{courseName}, #{description}, #{teacherId}, #{status})")
+    @Insert("INSERT INTO Courses (course_name, description, teacher_id, status, publication) VALUES (#{courseName}, #{description}, #{teacherId}, #{status},#{publication} )")
     @Options(useGeneratedKeys = true, keyProperty = "courseId")
     void insertCourse(Course course);
 

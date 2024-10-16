@@ -14,7 +14,7 @@ public class MockObjectStorageServiceImpl implements ObjectStorageService {
 
     @Override
     public <T> T get(String key, Class<T> type) {
-        return (T) storage.get(key);
+        return type.cast(storage.get(key));
     }
 
     @Override
@@ -25,5 +25,9 @@ public class MockObjectStorageServiceImpl implements ObjectStorageService {
     @Override
     public boolean exist(String key) {
         return storage.containsKey(key);
+    }
+
+    public void clearAll(){
+        storage.clear();
     }
 }
