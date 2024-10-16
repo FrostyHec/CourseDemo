@@ -25,8 +25,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class InternalStorageAPI {
     private final MockMvc mockMvc;
-    private final ObjectMapper objectMapper;
     private final String baseUrl = PathConstant.INTERNAL_API + "/storage";
+
     public MockMultipartFile getTemplateMockFileTemplate() throws IOException, URISyntaxException {
         return getTemplateMockFile(1);
     }
@@ -35,7 +35,7 @@ public class InternalStorageAPI {
         final String templateFilePath = "test_template";
 
         ClassLoader classLoader = getClass().getClassLoader();
-        String resourcePath = templateFilePath+"_" + idx + ".txt";
+        String resourcePath = templateFilePath + "_" + idx + ".txt";
         Path path = Path.of(Objects.requireNonNull(classLoader.getResource(resourcePath)).toURI());
         String originalFileName = path.getFileName().toString();
         byte[] content = Files.readAllBytes(path);
@@ -75,7 +75,6 @@ public class InternalStorageAPI {
     }
 
 
-
     public ResultActions deleteFile(String key) throws Exception {
         String url = baseUrl + "/" + key;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
@@ -88,7 +87,7 @@ public class InternalStorageAPI {
     }
 
     public ResultActions checkFileExist(String key) throws Exception {
-        String url = baseUrl + "/" + key+"/exists";
+        String url = baseUrl + "/" + key + "/exists";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
                 .accept(MediaType.APPLICATION_JSON));
     }
@@ -98,5 +97,31 @@ public class InternalStorageAPI {
                 .andExpect(RespChecker.success())
                 .andReturn();
         return (Boolean) JsonUtils.toMapData(resp).get("exists");
+    }
+
+    public ResultActions getAccessKey(String key, String caseName) throws Exception {
+        String url = baseUrl + "/" + key + "/access-key";
+        return mockMvc.perform(MockMvcRequestBuilders.get(url)
+                .param("case_name", caseName)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public String getAccessKeySuccess(String key, String caseName) throws Exception {
+        var resp = getAccessKey(key, caseName)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return (String) JsonUtils.toMapData(resp).get("access_key");
+    }
+
+    public ResultActions withdrawAccessKey(String key, String caseName) throws Exception {
+        String url = baseUrl + "/" + key + "/access-key";
+        return mockMvc.perform(MockMvcRequestBuilders.delete(url)
+                .param("case_name", caseName)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public void withdrawAccessKeySuccess(String key, String caseName) throws Exception {
+        withdrawAccessKey(key, caseName)
+                .andExpect(RespChecker.success());
     }
 }

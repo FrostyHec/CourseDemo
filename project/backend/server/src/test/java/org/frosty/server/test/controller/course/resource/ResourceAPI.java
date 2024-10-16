@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Resource;
+import org.frosty.server.entity.po.ResourceWithAccessKey;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
@@ -81,11 +82,11 @@ public class ResourceAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public Resource getResourceMetaDataSuccess(String token, Long id) throws Exception {
+    public ResourceWithAccessKey getResourceMetaDataSuccess(String token, Long id) throws Exception {
         var resp = getResourceMetaData(token, id)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp, Resource.class);
+        return JsonUtils.toObject(resp, ResourceWithAccessKey.class);
     }
 
     public ResultActions updateResourceMetadata(String token, Long id, Resource updatedResource) throws Exception {
@@ -122,7 +123,7 @@ public class ResourceAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public List<Resource> getResourcesByChapterSuccess(String token, Long chapterId) throws Exception {
+    public List<ResourceWithAccessKey> getResourcesByChapterSuccess(String token, Long chapterId) throws Exception {
         var resp = getResourcesByChapter(token, chapterId)
                 .andExpect(RespChecker.success())
                 .andReturn();
@@ -132,7 +133,7 @@ public class ResourceAPI {
     @AllArgsConstructor
     @NoArgsConstructor
     private static class ResourceListResult{
-        private List<Resource> content;
+        private List<ResourceWithAccessKey> content;
     }
 
     public void checkSingle(Resource resource, List<Resource> li) {

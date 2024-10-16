@@ -2,12 +2,11 @@ package org.frosty.object_storage.service;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
-import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.frosty.common.exception.ExternalException;
+import org.frosty.common.response.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
@@ -15,27 +14,35 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 public class StorageService {
     private final MinioClient minioClient;
+    private final AccessKeyService accessKeyService;
 
     @Value("${minio.bucket.serviceName}")
     private String bucketName;
 
-    public void uploadFile(String objectName, MultipartFile file) throws Exception {
+    public void uploadFile(String objectName,InputStream inputStream,String contentType) throws Exception {
         minioClient.putObject(
             PutObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
-                .stream(file.getInputStream(), file.getSize(), -1)
-                .contentType(file.getContentType())
+                .stream(inputStream,-1, 10485760) // TODO 10MB check here
+                .contentType(contentType)
                 .build()
         );
     }
     public InputStream getFile(String objectName) throws Exception {
-        return minioClient.getObject(
-                GetObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .build()
-        );
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build()
+            );
+        }catch (ErrorResponseException e) {
+            if (e.errorResponse().code().equals("NoSuchKey")) {
+                throw new ExternalException(Response.getNotFound("no-found"));
+            }
+            throw e;
+        }
     }
 
     public void deleteFile(String objectName) throws Exception {
@@ -61,5 +68,13 @@ public class StorageService {
             }
             throw e;
         }
+    }
+
+    public void deleteAccessKey(String objectKey, String caseName) {
+        accessKeyService.withdraw(objectKey,caseName);
+    }
+
+    public String getAccessKey(String objectKey, String caseName) {
+        return accessKeyService.getOrCreate(objectKey,caseName);
     }
 }

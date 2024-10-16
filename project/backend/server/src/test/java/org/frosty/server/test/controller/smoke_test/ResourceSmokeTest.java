@@ -9,6 +9,7 @@ import org.frosty.server.test.controller.course.resource.ResourceAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -39,7 +40,9 @@ public class ResourceSmokeTest {
 
         // get resource metadata
         var li = resourceAPI.getResourcesByChapterSuccess(teacherToken,chapterId);
-        var rcvdResourceMetadata = CommonCheck.checkSingleAndGet(li);
+        var rcvdResourceMetadataEntity = CommonCheck.checkSingleAndGet(li);
+        assert StringUtils.isNotBlank(rcvdResourceMetadataEntity.getAccessKey());
+        var rcvdResourceMetadata = rcvdResourceMetadataEntity.getResource();
         resourceAPI.checkSingle(resource, rcvdResourceMetadata);
 
         // get file by generated path
@@ -51,7 +54,9 @@ public class ResourceSmokeTest {
         resource.setResourceName("new name");
         resource.setResourceId(rcvdResourceMetadata.getResourceId());
         resourceAPI.updateResourceMetadataSuccess(teacherToken, rcvdResourceMetadata.getResourceId(), resource);
-        rcvdResourceMetadata = resourceAPI.getResourceMetaDataSuccess(teacherToken, rcvdResourceMetadata.getResourceId());
+        rcvdResourceMetadataEntity = resourceAPI.getResourceMetaDataSuccess(teacherToken, rcvdResourceMetadata.getResourceId());
+        assert StringUtils.isNotBlank(rcvdResourceMetadataEntity.getAccessKey());
+        rcvdResourceMetadata = rcvdResourceMetadataEntity.getResource();
         resourceAPI.checkSingle(resource,rcvdResourceMetadata);
 
         // delete resource
