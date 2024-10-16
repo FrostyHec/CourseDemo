@@ -1,10 +1,10 @@
 package org.frosty.common_service.storage.api.impl;
 
+import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.exception.InternalException;
 import  org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
-import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -13,13 +13,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Map;
 import java.util.Objects;
 
 @Component
-@PropertySource("classpath:application.yaml")
 public class ObjectStorageServiceImpl implements ObjectStorageService {
     @Value("${api.storage.url}")
     private String path;

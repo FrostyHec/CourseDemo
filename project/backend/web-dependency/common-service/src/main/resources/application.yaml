@@ -1,5 +1,0 @@
-# api source config
-api:
-  storage:
-    type: mock # remote or mock
-    url: http://localhost:9976

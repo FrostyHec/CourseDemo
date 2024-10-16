@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
-import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.services.course.ResourceService;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(PathConstant.API)

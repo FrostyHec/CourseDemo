@@ -5,7 +5,6 @@ import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.chapter.ChapterAPI;
-import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.server.test.controller.course.resource.ResourceAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.annotation.IdempotentControllerTest;

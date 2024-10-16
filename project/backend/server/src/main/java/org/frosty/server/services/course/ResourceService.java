@@ -6,7 +6,6 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.mapper.course.ResourceMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
