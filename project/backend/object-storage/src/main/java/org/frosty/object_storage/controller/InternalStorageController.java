@@ -21,7 +21,7 @@ import java.util.Map;
 public class InternalStorageController {
     private final StorageService storageService;
     @PostMapping("/{key}")
-    public void uploadFile(@PathVariable String key, @RequestParam("file") MultipartFile file) throws Exception {
+    public void uploadFile(@PathVariable String key, @RequestPart("file") MultipartFile file) throws Exception {
         storageService.uploadFile(key, file);
     }
 

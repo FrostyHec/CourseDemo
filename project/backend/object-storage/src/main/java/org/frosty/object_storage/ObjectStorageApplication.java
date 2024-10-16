@@ -5,8 +5,8 @@ import org.springframework.boot.SpringApplication;
 
 
 @WebTemplateApplication(httpLog = true)
-public class Application {
+public class ObjectStorageApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(ObjectStorageApplication.class, args);
 	}
 }
