@@ -4,6 +4,7 @@ import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.course.chapter.ChapterAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.server.test.controller.course.resource.ResourceAPI;
 import org.frosty.server.test.tools.CommonCheck;
@@ -18,7 +19,7 @@ public class ResourceSmokeTest {
     @Autowired
     private ResourceAPI resourceAPI;
     @Autowired
-    private CourseAPI courseAPI;
+    private ChapterAPI courseAPI;
     @Autowired
     private AuthAPI authAPI;
     @Autowired
@@ -29,16 +30,16 @@ public class ResourceSmokeTest {
         var teacherToken = pair.first;
         var teacher = pair.second;
         var uid = teacher.getUserId();
-        var courseId = courseAPI.addTestCourseAndGetId(uid);
+        var chapterId = courseAPI.addTestCourseTestChapterAndGetId(uid);
         //---test start---
         // upload resource
-        var resource = resourceAPI.getTemplateResource(courseId,
+        var resource = resourceAPI.getTemplateResource(chapterId,
                 "test","pdf", Resource.ResourceType.courseware);
         var file = resourceAPI.loadTemplateFile("test.pdf");
-        resourceAPI.uploadResourceSuccess(teacherToken, courseId, resource, file);
+        resourceAPI.uploadResourceSuccess(teacherToken, chapterId, resource, file);
 
         // get resource metadata
-        var li = resourceAPI.getResourcesByChapterSuccess(teacherToken,courseId);
+        var li = resourceAPI.getResourcesByChapterSuccess(teacherToken,chapterId);
         var rcvdResourceMetadata = CommonCheck.checkSingleAndGet(li);
         resourceAPI.checkSingle(resource, rcvdResourceMetadata);
 
