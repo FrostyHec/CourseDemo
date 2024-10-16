@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,14 +39,16 @@ public class InternalStorageAPI {
         Path path = Path.of(Objects.requireNonNull(classLoader.getResource(resourcePath)).toURI());
         String originalFileName = path.getFileName().toString();
         byte[] content = Files.readAllBytes(path);
-        return new MockMultipartFile("file", originalFileName, MediaType.MULTIPART_FORM_DATA_VALUE, content);
+        return new MockMultipartFile("file", originalFileName, MediaType.APPLICATION_OCTET_STREAM_VALUE, content);
     }
 
     public ResultActions uploadFile(String key, MockMultipartFile file) throws Exception {
         String url = baseUrl + "/" + key;
-        return mockMvc.perform(MockMvcRequestBuilders.multipart(url)
-                .file(file)
-                .accept(MediaType.APPLICATION_JSON));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .content(file.getInputStream().readAllBytes()); // 读取输入流内容
+
+        return mockMvc.perform(requestBuilder.accept(MediaType.APPLICATION_JSON));
     }
 
     public void uploadFileSuccess(String key, MockMultipartFile file) throws Exception {
