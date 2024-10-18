@@ -24,8 +24,8 @@ export async function main() {
   const app = createApp(App)
   app.use(router)
   app.use(createPinia())
-  await handleMockStatus(mockStatus)
   handleBackendPath(backendUrl)
+  await handleMockStatus(mockStatus)
 // app.use(ElementPlus);
   return app
 }

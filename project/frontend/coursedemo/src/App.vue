@@ -10,13 +10,14 @@
       <el-container style="height: calc(100% - 49px);">
         <DragCol style="height: 100%; width: 100%;" :leftPercent="15" :sliderWidth="5">
           <template #left>
-            <BaseSide style="width: 100%; height: 100%;"/>
+            <BaseSide style="width: 100%; height: 100%;" />
           </template>
           <template #right>
-            <RouterView/>
+            <RouterView />
           </template>
         </DragCol>
       </el-container>
     </el-container>
   </el-config-provider>
 </template>
+

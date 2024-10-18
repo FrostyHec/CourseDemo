@@ -26,6 +26,6 @@ export async function handleMockStatus(mockStatus: string) {
   setMockStatus((mockStatus as MockStatus))
 }
 
-export async function handleBackendPath(backend_url:string){
+export function handleBackendPath(backend_url:string){
   setBackendBase(backend_url)
 }
