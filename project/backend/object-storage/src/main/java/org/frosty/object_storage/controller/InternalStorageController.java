@@ -1,13 +1,14 @@
 package org.frosty.object_storage.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.apache.ibatis.annotations.Delete;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.response.Response;
 import org.frosty.object_storage.service.StorageService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,21 +21,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InternalStorageController {
     private final StorageService storageService;
+    private static final int BUF_SIZE = 1024;
     @PostMapping("/{key}")
-    public void uploadFile(@PathVariable String key, @RequestParam("file") MultipartFile file) throws Exception {
-        storageService.uploadFile(key, file);
+    public void uploadFile(@PathVariable String key, HttpServletRequest request) throws Exception {
+        InputStream inputStream = request.getInputStream();
+        String contentType = request.getContentType();
+        storageService.uploadFile(key, inputStream,contentType);
     }
 
     @GetMapping("/{key}")
     public void getFile(@PathVariable String key, HttpServletResponse response) throws Exception {
-//        InputStream fileStream = storageService.getFile(key);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(fileStream);
         try (InputStream fileStream = storageService.getFile(key);
              OutputStream outputStream = response.getOutputStream()) {
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BUF_SIZE];
             int bytesRead;
             while ((bytesRead = fileStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
@@ -52,5 +52,16 @@ public class InternalStorageController {
     public Map<String,Object> checkFileExist(@PathVariable String key) throws Exception {
         boolean exists = storageService.checkFileExist(key);
         return Map.of("exists", exists);
+    }
+
+    @GetMapping("/{key}/access-key")
+    public Map<String,Object> getAccessKey(@PathVariable String key,@NonNull String case_name) {
+        String accessKey = storageService.getAccessKey(key,case_name);
+        return Map.of("access_key", accessKey);
+    }
+
+    @DeleteMapping("/{key}/access-key")
+    public void withdrawAccessKey(@PathVariable String key,@NonNull String case_name) {
+        storageService.deleteAccessKey(key,case_name);
     }
 }

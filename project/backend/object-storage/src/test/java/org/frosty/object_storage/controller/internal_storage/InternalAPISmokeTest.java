@@ -12,7 +12,7 @@ public class InternalAPISmokeTest {
     @Autowired
     private InternalStorageAPI api;
     @Test
-    public void testCURD() throws Exception {
+    public void testBasicCURD() throws Exception {
         //upload file
         var file = api.getTemplateMockFileTemplate();
         api.uploadFileSuccess("test1",file);
@@ -23,6 +23,16 @@ public class InternalAPISmokeTest {
         // get file
         var resByte = api.getFileSuccess("test1");
         assert Arrays.equals(resByte, file.getBytes());
+
+        // get accessKey
+        var token = api.getAccessKeySuccess("test1", "user1");
+        var token2 = api.getAccessKeySuccess("test1", "user1");
+        assert token.equals(token2);
+
+        // withdraw key
+        api.withdrawAccessKey("test1", "user1");
+        var token3 = api.getAccessKeySuccess("test1", "user1");
+        assert !token.equals(token3); // if implementation correct, pass in most case.
 
         // delete file
         api.deleteFileSuccess("test1");

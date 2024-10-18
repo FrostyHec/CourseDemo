@@ -1,7 +1,6 @@
 package org.frosty.infra.initalizer;
 
 import io.minio.ListObjectsArgs;
-import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
 import io.minio.messages.Item;

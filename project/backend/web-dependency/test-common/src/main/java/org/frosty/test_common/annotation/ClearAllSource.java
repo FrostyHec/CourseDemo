@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DatabaseIdempotency
-@ClearMinio
+@ClearOSS
 public @interface ClearAllSource {
 }

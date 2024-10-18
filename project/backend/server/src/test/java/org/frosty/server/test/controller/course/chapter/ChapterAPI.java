@@ -3,8 +3,9 @@ package org.frosty.server.test.controller.course.chapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.controller.course.ChapterController;
 import org.frosty.server.entity.bo.Chapter;
+import org.frosty.server.mapper.course.ChapterMapper;
+import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.test_common.utils.JsonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -23,15 +24,15 @@ public class ChapterAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final AuthAPI authAPI;
+    private final CourseAPI courseAPI;
+    private final ChapterMapper chapterMapper;
     private final String courseBaseUrl = PathConstant.API + "/course";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
-    public Chapter getTemplateTeachingChapter(Long courseId) {
-        return new Chapter()
-                .setCourseId(courseId)// 添加了一行
-                .setChapterTitle("Chapter Title")
-                .setChapterType(ChapterType.teaching)
-                .setContent("Chapter Content");// 添加了一行
 
+    public Chapter getTemplateTeachingChapter() {
+        return new Chapter()
+                .setChapterTitle("Chapter Title")
+                .setChapterType(ChapterType.teaching);
     }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
@@ -45,7 +46,7 @@ public class ChapterAPI {
     }
 
     public void createSuccess(String token, Long courseId, Chapter chapter) throws Exception {
-        create(token,courseId,chapter)
+        create(token, courseId, chapter)
                 .andExpect(RespChecker.success());
     }
 
@@ -60,7 +61,7 @@ public class ChapterAPI {
     }
 
     public void updateSuccess(String token, Long chapterId, Chapter chapter) throws Exception {
-        update(token,chapterId,chapter)
+        update(token, chapterId, chapter)
                 .andExpect(RespChecker.success());
     }
 
@@ -72,7 +73,7 @@ public class ChapterAPI {
     }
 
     public void deleteSuccess(String token, Long chapterId) throws Exception {
-        delete(token,chapterId)
+        delete(token, chapterId)
                 .andExpect(RespChecker.success());
     }
 
@@ -84,10 +85,10 @@ public class ChapterAPI {
     }
 
     public Chapter getSuccess(String token, Long chapterId) throws Exception {
-        var resp =  get(token,chapterId)
+        var resp = get(token, chapterId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp,Chapter.class);
+        return JsonUtils.toObject(resp, Chapter.class);
     }
 
     public ResultActions getAll(String token, Long courseId) throws Exception {
@@ -98,10 +99,17 @@ public class ChapterAPI {
     }
 
     public List<Chapter> getAllSuccess(String token, Long courseId) throws Exception {
-        var resp =  getAll(token,courseId)
+        var resp = getAll(token, courseId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp, ChapterController.ChapterList.class).getContent();
-        // return (List<Chapter>)JsonUtils.toMapData(resp).get("content");
+        return (List<Chapter>) JsonUtils.toMapData(resp).get("content");
+    }
+
+    public Long addTestCourseTestChapterAndGetId(Long uid) {
+        var coId = courseAPI.addTestCourseAndGetId(uid);
+        var e = getTemplateTeachingChapter().setCourseId(coId);
+        chapterMapper.insert(e);
+        assert e.getChapterId() != null;
+        return e.getChapterId();
     }
 }

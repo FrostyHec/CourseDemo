@@ -4,9 +4,9 @@ import org.frosty.common.annotation.WebTemplateApplication;
 import org.springframework.boot.SpringApplication;
 
 
-@WebTemplateApplication(httpLog = true)
-public class Application {
+@WebTemplateApplication(value = {"org.frosty.object_storage.mapper"},httpLog = true)
+public class ObjectStorageApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(ObjectStorageApplication.class, args);
 	}
 }

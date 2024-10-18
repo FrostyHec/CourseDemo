@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,13 +19,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
 public class InternalStorageAPI {
     private final MockMvc mockMvc;
-    private final ObjectMapper objectMapper;
     private final String baseUrl = PathConstant.INTERNAL_API + "/storage";
+
     public MockMultipartFile getTemplateMockFileTemplate() throws IOException, URISyntaxException {
         return getTemplateMockFile(1);
     }
@@ -33,18 +35,20 @@ public class InternalStorageAPI {
         final String templateFilePath = "test_template";
 
         ClassLoader classLoader = getClass().getClassLoader();
-        String resourcePath = templateFilePath+"_" + idx + ".txt";
-        Path path = Path.of(classLoader.getResource(resourcePath).toURI());
+        String resourcePath = templateFilePath + "_" + idx + ".txt";
+        Path path = Path.of(Objects.requireNonNull(classLoader.getResource(resourcePath)).toURI());
         String originalFileName = path.getFileName().toString();
         byte[] content = Files.readAllBytes(path);
-        return new MockMultipartFile("file", originalFileName, MediaType.MULTIPART_FORM_DATA_VALUE, content);
+        return new MockMultipartFile("file", originalFileName, MediaType.APPLICATION_OCTET_STREAM_VALUE, content);
     }
 
     public ResultActions uploadFile(String key, MockMultipartFile file) throws Exception {
         String url = baseUrl + "/" + key;
-        return mockMvc.perform(MockMvcRequestBuilders.multipart(url)
-                .file(file)
-                .accept(MediaType.APPLICATION_JSON));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .content(file.getInputStream().readAllBytes()); // 读取输入流内容
+
+        return mockMvc.perform(requestBuilder.accept(MediaType.APPLICATION_JSON));
     }
 
     public void uploadFileSuccess(String key, MockMultipartFile file) throws Exception {
@@ -71,7 +75,6 @@ public class InternalStorageAPI {
     }
 
 
-
     public ResultActions deleteFile(String key) throws Exception {
         String url = baseUrl + "/" + key;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
@@ -84,7 +87,7 @@ public class InternalStorageAPI {
     }
 
     public ResultActions checkFileExist(String key) throws Exception {
-        String url = baseUrl + "/" + key+"/exists";
+        String url = baseUrl + "/" + key + "/exists";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
                 .accept(MediaType.APPLICATION_JSON));
     }
@@ -94,5 +97,31 @@ public class InternalStorageAPI {
                 .andExpect(RespChecker.success())
                 .andReturn();
         return (Boolean) JsonUtils.toMapData(resp).get("exists");
+    }
+
+    public ResultActions getAccessKey(String key, String caseName) throws Exception {
+        String url = baseUrl + "/" + key + "/access-key";
+        return mockMvc.perform(MockMvcRequestBuilders.get(url)
+                .param("case_name", caseName)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public String getAccessKeySuccess(String key, String caseName) throws Exception {
+        var resp = getAccessKey(key, caseName)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return (String) JsonUtils.toMapData(resp).get("access_key");
+    }
+
+    public ResultActions withdrawAccessKey(String key, String caseName) throws Exception {
+        String url = baseUrl + "/" + key + "/access-key";
+        return mockMvc.perform(MockMvcRequestBuilders.delete(url)
+                .param("case_name", caseName)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public void withdrawAccessKeySuccess(String key, String caseName) throws Exception {
+        withdrawAccessKey(key, caseName)
+                .andExpect(RespChecker.success());
     }
 }
