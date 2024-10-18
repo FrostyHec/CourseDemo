@@ -107,4 +107,14 @@ public class CourseSmokeTest {
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
         courseAPI.checkSingle(course, li, Course.CourseStatus.rejected);
     }
+
+    @Test
+    public void testStudentJoinFromInvitation(){
+        // TODO check basic join in flow, from invited
+    }
+
+    @Test
+    public void testStudentActiveJoin(){
+        // TODO mention to check student wont seached out the non-public course.
+    }
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @IdempotentControllerTest
-public class CreateTest {
+public class ComplexChapterTest {
     @Autowired
     private CourseAPI courseAPI;
     @Autowired
@@ -18,10 +18,7 @@ public class CreateTest {
     private AuthAPI authAPI;
 
     @Test
-    public void testCreate() throws Exception {
-        var name = "test";
-        var token = authAPI.quickAddUserAndLogin(name, User.Role.teacher);
-//        var courseId = courseAPI.addTestCourse(token,name); // TODO wait for hlh
-//        chapterAPI.createSuccess(token,courseId,chapterAPI.templateTeachingChapter);
+    public void testGetCorrectness() throws Exception {
+        // TODO 对于学生不得返回invisible，入课状态为public的不得返回non-public
     }
 }
