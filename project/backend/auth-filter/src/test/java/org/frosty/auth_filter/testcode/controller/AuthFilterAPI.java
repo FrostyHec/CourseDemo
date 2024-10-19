@@ -18,7 +18,7 @@ public class AuthFilterAPI {
     public ResultActions auth(HttpMethod method, String token, String data) throws Exception {
         String baseUrl = PathConstant.INTERNAL_API + "/auth";
         return mockMvc.perform(MockMvcRequestBuilders.request(method, baseUrl)
-                        .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(data)
                 .accept(MediaType.APPLICATION_JSON));

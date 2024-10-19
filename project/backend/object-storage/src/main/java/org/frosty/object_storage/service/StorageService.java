@@ -19,16 +19,17 @@ public class StorageService {
     @Value("${minio.bucket.serviceName}")
     private String bucketName;
 
-    public void uploadFile(String objectName,InputStream inputStream,String contentType) throws Exception {
+    public void uploadFile(String objectName, InputStream inputStream, String contentType) throws Exception {
         minioClient.putObject(
-            PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .stream(inputStream,-1, 10485760) // TODO 10MB check here
-                .contentType(contentType)
-                .build()
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .stream(inputStream, -1, 10485760) // TODO 10MB check here
+                        .contentType(contentType)
+                        .build()
         );
     }
+
     public InputStream getFile(String objectName) throws Exception {
         try {
             return minioClient.getObject(
@@ -37,7 +38,7 @@ public class StorageService {
                             .object(objectName)
                             .build()
             );
-        }catch (ErrorResponseException e) {
+        } catch (ErrorResponseException e) {
             if (e.errorResponse().code().equals("NoSuchKey")) {
                 throw new ExternalException(Response.getNotFound("no-found"));
             }
@@ -53,7 +54,8 @@ public class StorageService {
                         .build()
         );
     }
-    public boolean checkFileExist(String objectName) throws Exception{
+
+    public boolean checkFileExist(String objectName) throws Exception {
         try {
             minioClient.statObject(
                     StatObjectArgs.builder()
@@ -71,10 +73,10 @@ public class StorageService {
     }
 
     public void deleteAccessKey(String objectKey, String caseName) {
-        accessKeyService.withdraw(objectKey,caseName);
+        accessKeyService.withdraw(objectKey, caseName);
     }
 
     public String getAccessKey(String objectKey, String caseName) {
-        return accessKeyService.getOrCreate(objectKey,caseName);
+        return accessKeyService.getOrCreate(objectKey, caseName);
     }
 }

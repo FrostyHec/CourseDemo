@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 
-public class MinioInitializer implements Initializer{
+public class MinioInitializer implements Initializer {
     @Autowired
     private MinioConfig minioConfig;
     @Value("${minio.bucket.serviceName}")
     private String bucketName;
+
     @Override
     public void init() throws Exception {
         var minioClient = minioConfig.minioClient();

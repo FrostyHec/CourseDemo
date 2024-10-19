@@ -5,7 +5,6 @@ import org.frosty.common.exception.InternalException;
 import java.util.Map;
 
 
-
 public enum DynamicTableNameType {
     NO,
     MESSAGE_DTO;

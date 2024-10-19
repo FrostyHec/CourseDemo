@@ -11,6 +11,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
 @Slf4j
 public class GetTokenArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -27,7 +28,7 @@ public class GetTokenArgumentResolver implements HandlerMethodArgumentResolver {
             return TokenUtils.tokenInfoFromString(token);
         } catch (Exception e) {
             log.warn("X-Forwarded-User invalid:{}", token, e);
-            throw new ExternalException(Response.getBadRequest(AuthConstant.parsedHeader+" invalid:" + token));
+            throw new ExternalException(Response.getBadRequest(AuthConstant.parsedHeader + " invalid:" + token));
         }
     }
 }

@@ -2,7 +2,6 @@ package org.frosty.site_dispatch.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
 import org.frosty.site_dispatch.entity.SingleMessageDTO;
 
 @Mapper

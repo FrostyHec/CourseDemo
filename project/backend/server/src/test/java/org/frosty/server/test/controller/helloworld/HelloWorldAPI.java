@@ -16,7 +16,7 @@ public class HelloWorldAPI {
     public ResultActions say(String say) throws Exception {
         String baseUrl = PathConstant.API + "/hello";
         return mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
-                                                     .param("say",say)
-                                                     .accept(MediaType.APPLICATION_JSON));
+                .param("say", say)
+                .accept(MediaType.APPLICATION_JSON));
     }
 }

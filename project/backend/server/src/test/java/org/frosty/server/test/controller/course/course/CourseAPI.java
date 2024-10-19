@@ -27,6 +27,7 @@ public class CourseAPI {
     private final ObjectMapper objectMapper;
     private final AuthAPI authAPI;
     private final String courseBaseUrl = PathConstant.API + "/course";
+
     public Course getTemplateCourse(Long teacherId) {
         return new Course()
                 .setTeacherId(teacherId)
@@ -37,44 +38,48 @@ public class CourseAPI {
                 ;
     }
 
-    public Long addTestCourseAndGetId(Long teacherId){
+    public Long addTestCourseAndGetId(Long teacherId) {
         return addTestCourse(teacherId).getCourseId();
     }
 
-    public Course addTestCourse(Long teacherId){
+    public Course addTestCourse(Long teacherId) {
         var entity = getTemplateCourse(teacherId);
         mapper.insert(entity);
         return entity;
     }
-    public ResultActions adminGetRequiredApprovedCourse(String adminToken,Long userId,int pageSize,int pageNum) throws Exception {
-        String url = PathConstant.API+"/admin/"+userId+"/courses/submitted";
+
+    public ResultActions adminGetRequiredApprovedCourse(String adminToken, Long userId, int pageSize, int pageNum) throws Exception {
+        String url = PathConstant.API + "/admin/" + userId + "/courses/submitted";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
                 .headers(authAPI.setAuthHeader(adminToken))
-                        .param("page_num", String.valueOf(pageNum))
-                        .param("page_size",String.valueOf(pageSize))
+                .param("page_num", String.valueOf(pageNum))
+                .param("page_size", String.valueOf(pageSize))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
     public List<Course> adminGetAllRequiredApprovedCourseSuccess(String adminToken, Long userId) throws Exception {
-        var resp = adminGetRequiredApprovedCourse(adminToken,userId,1,-1)
+        var resp = adminGetRequiredApprovedCourse(adminToken, userId, 1, -1)
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp, CourseController.CourseList.class).getContent();
     }
-    public ResultActions getAllTeachingCourse(String teacherToken,Long userId,int pageSize,int pageNum) throws Exception {
-        String url = PathConstant.API+"/teacher/"+userId+"/courses";
+
+    public ResultActions getAllTeachingCourse(String teacherToken, Long userId, int pageSize, int pageNum) throws Exception {
+        String url = PathConstant.API + "/teacher/" + userId + "/courses";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
                 .headers(authAPI.setAuthHeader(teacherToken))
                 .param("page_num", String.valueOf(pageNum))
-                .param("page_size",String.valueOf(pageSize))
+                .param("page_size", String.valueOf(pageSize))
                 .accept(MediaType.APPLICATION_JSON));
     }
+
     public List<Course> getAllTeachingCourseSuccess(String teacherToken, Long userId) throws Exception {
-        var resp = getAllTeachingCourse(teacherToken,userId,1,-1)
+        var resp = getAllTeachingCourse(teacherToken, userId, 1, -1)
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp, CourseController.CourseList.class).getContent();
     }
+
     public ResultActions create(String token, Course course) throws Exception {
         String json = objectMapper.writeValueAsString(course);
         return mockMvc.perform(MockMvcRequestBuilders.post(courseBaseUrl)
@@ -83,35 +88,37 @@ public class CourseAPI {
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
     }
+
     public void createSuccess(String teacherToken, Course course) throws Exception {
-        create(teacherToken,course)
+        create(teacherToken, course)
                 .andExpect(RespChecker.success());
     }
 
-    public ResultActions update(String token,Long cid, Course course) throws Exception {
+    public ResultActions update(String token, Long cid, Course course) throws Exception {
         String json = objectMapper.writeValueAsString(course);
-        return mockMvc.perform(MockMvcRequestBuilders.put(courseBaseUrl+"/"+cid)
+        return mockMvc.perform(MockMvcRequestBuilders.put(courseBaseUrl + "/" + cid)
                 .headers(authAPI.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public void updateSuccess(String teacherToken,Long cid,  Course course) throws Exception {
-        update(teacherToken,cid,course)
+    public void updateSuccess(String teacherToken, Long cid, Course course) throws Exception {
+        update(teacherToken, cid, course)
                 .andExpect(RespChecker.success());
     }
 
     public ResultActions updateStatus(String teacherToken, Long cid, Course.CourseStatus status) throws Exception {
-        String json = objectMapper.writeValueAsString(Map.of("status",status));
-        return mockMvc.perform(MockMvcRequestBuilders.patch(courseBaseUrl+"/"+cid+"/status") // add "/status" to the url, because it is a PATCH request
+        String json = objectMapper.writeValueAsString(Map.of("status", status));
+        return mockMvc.perform(MockMvcRequestBuilders.patch(courseBaseUrl + "/" + cid + "/status") // add "/status" to the url, because it is a PATCH request
                 .headers(authAPI.setAuthHeader(teacherToken))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
     }
+
     public void updateStatusSuccess(String teacherToken, Long courseId, Course.CourseStatus courseStatus) throws Exception {
-        updateStatus(teacherToken,courseId,courseStatus)
+        updateStatus(teacherToken, courseId, courseStatus)
                 .andExpect(RespChecker.success());
     }
 
@@ -126,7 +133,6 @@ public class CourseAPI {
         assert rcvdCourse.getTeacherId().equals(origin.getTeacherId());
         assert rcvdCourse.getStatus().equals(targetStatus);
     }
-
 
 
 }

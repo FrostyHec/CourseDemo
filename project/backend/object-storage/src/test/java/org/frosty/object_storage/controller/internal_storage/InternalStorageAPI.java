@@ -1,6 +1,5 @@
 package org.frosty.object_storage.controller.internal_storage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.test_common.utils.JsonUtils;
@@ -13,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -17,20 +17,20 @@ public class PublicAccessSmokeTest {
 
     @Test
     public void testBasicAccessFlow() throws Exception {
-        String key="test1";
-        String caseName="user1";
+        String key = "test1";
+        String caseName = "user1";
         var file = internalAPI.getTemplateMockFileTemplate();
-        internalAPI.uploadFileSuccess(key,file);
+        internalAPI.uploadFileSuccess(key, file);
 
-        api.getFileFromPublic(caseName,"",key)
+        api.getFileFromPublic(caseName, "", key)
                 .andExpect(RespChecker.unauthorized());
 
-        var token = internalAPI.getAccessKeySuccess(key,caseName);
-        var resByte = api.getFileFromPublicSuccess(caseName,token,key);
+        var token = internalAPI.getAccessKeySuccess(key, caseName);
+        var resByte = api.getFileFromPublicSuccess(caseName, token, key);
         assert Arrays.equals(resByte, file.getBytes());
 
-        internalAPI.withdrawAccessKey(key,caseName);
-        api.getFileFromPublic(caseName,token,key)
+        internalAPI.withdrawAccessKey(key, caseName);
+        api.getFileFromPublic(caseName, token, key)
                 .andExpect(RespChecker.unauthorized());
     }
 }

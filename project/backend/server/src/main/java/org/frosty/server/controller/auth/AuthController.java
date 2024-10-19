@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
 import org.frosty.server.services.auth.AuthService;
@@ -19,23 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping(PathConstant.API+"/auth")
+@RequestMapping(PathConstant.API + "/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public Map<String,String> login(@RequestBody LoginInfo loginInfo) {
+    public Map<String, String> login(@RequestBody LoginInfo loginInfo) {
         String token = authService.login(loginInfo);
-        return Map.of("token",token);
+        return Map.of("token", token);
     }
 
     @PostMapping("/logout")
-    public void logout(@GetToken TokenInfo tokenInfo,@RequestBody LogoutInfo logoutInfo) {
-        Ex.check(logoutInfo.userId==tokenInfo.getAuthInfo().getUserID(),
+    public void logout(@GetToken TokenInfo tokenInfo, @RequestBody LogoutInfo logoutInfo) {
+        Ex.check(logoutInfo.userId == tokenInfo.getAuthInfo().getUserID(),
                 Response.getBadRequest("unmatched-id"));
         authService.logout(tokenInfo);
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

@@ -1,11 +1,8 @@
 package org.frosty.sse_push.service;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.common.exception.InternalException;
 import org.frosty.common.response.Response;
 import org.frosty.sse_push.config.RunArgs;
@@ -24,12 +21,11 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-
-
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -72,8 +68,8 @@ public class SSEService {
         var dto = new MessagePacketDTO(unposeds, unackeds);
         sendMsg(emitter, new PushDTO(dto));
         var requiredAckList = unposeds.stream()
-                                      .filter(SingleMessageDTO::isRequiredAck)
-                                      .toList();
+                .filter(SingleMessageDTO::isRequiredAck)
+                .toList();
         unackedMapper.insert(requiredAckList);
         if (!unposeds.isEmpty()) {
             unposedMapper.deleteByIds(unposeds);
@@ -94,7 +90,7 @@ public class SSEService {
             return System.getenv("POD_IP");
         } else {
             try {
-                return InetAddress.getLocalHost().getHostAddress()+":"+runArgs.port;
+                return InetAddress.getLocalHost().getHostAddress() + ":" + runArgs.port;
             } catch (UnknownHostException e) {
                 throw new InternalException("unknown-internal-error", e);
             }

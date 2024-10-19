@@ -10,8 +10,6 @@ import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 @Slf4j
 @IdempotentControllerTest
 public class CourseSmokeTest {
@@ -64,6 +62,7 @@ public class CourseSmokeTest {
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
         courseAPI.checkSingle(course, li, Course.CourseStatus.published);
     }
+
     @Test
     public void testRejectFlow() throws Exception {
         var pair = authAPI.quickAddUserAndLogin("teacher", User.Role.teacher);
@@ -109,12 +108,12 @@ public class CourseSmokeTest {
     }
 
     @Test
-    public void testStudentJoinFromInvitation(){
+    public void testStudentJoinFromInvitation() {
         // TODO check basic join in flow, from invited
     }
 
     @Test
-    public void testStudentActiveJoin(){
+    public void testStudentActiveJoin() {
         // TODO mention to check student wont seached out the non-public course.
     }
 }

@@ -6,12 +6,14 @@ import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.mapper.course.ChapterMapper;
 import org.frosty.server.services.course.ChapterService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ChapterServiceImpl implements ChapterService {
     private final ChapterMapper chapterMapper;
+
     @Override
     public void createChapter(Chapter chapter) {
         chapterMapper.insertChapter(chapter);

@@ -4,18 +4,18 @@ import org.frosty.object_storage.utils.ObjectStorageControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @ObjectStorageControllerTest
 public class InternalAPISmokeTest {
     @Autowired
     private InternalStorageAPI api;
+
     @Test
     public void testBasicCURD() throws Exception {
         //upload file
         var file = api.getTemplateMockFileTemplate();
-        api.uploadFileSuccess("test1",file);
+        api.uploadFileSuccess("test1", file);
 
         // check file exist
         assert api.checkFileExistSuccess("test1");

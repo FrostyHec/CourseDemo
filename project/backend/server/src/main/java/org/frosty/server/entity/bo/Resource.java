@@ -29,6 +29,7 @@ public class Resource {
     private Boolean studentCanDownload; // 学生是否可以下载
     private OffsetDateTime createdAt; // 创建时间
     private OffsetDateTime updatedAt; // 更新时间
+
     public enum ResourceType {
         description, courseware, video, attachment
     }

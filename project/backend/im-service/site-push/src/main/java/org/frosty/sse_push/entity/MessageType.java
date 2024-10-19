@@ -2,7 +2,6 @@ package org.frosty.sse_push.entity;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.Getter;
 
 @Getter
@@ -13,6 +12,7 @@ public enum MessageType {
     @EnumValue
     @JsonValue
     private final int value;
+
     MessageType(int value) {
         this.value = value;
     }

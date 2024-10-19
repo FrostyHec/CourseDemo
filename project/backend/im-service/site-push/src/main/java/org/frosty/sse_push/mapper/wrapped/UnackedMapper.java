@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UnackedMapper {
     private final MessageRawMapper mapper;
+
     public List<SingleMessageDTO> selectByToId(long uid) {
         return mapper.selectByToId(uid);
     }
@@ -22,7 +23,7 @@ public class UnackedMapper {
         return mapper.insert(requiredAckList);
     }
 
-    public int insert(SingleMessageDTO dto){
+    public int insert(SingleMessageDTO dto) {
         return mapper.insert(dto);
     }
 

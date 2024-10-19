@@ -1,15 +1,12 @@
 package org.frosty.sse_push.mapper.wrapped;
 
-import java.util.List;
-
-
-
-
 import lombok.RequiredArgsConstructor;
 import org.frosty.sse_push.annotation.DynamicTableNameMapper;
 import org.frosty.sse_push.entity.SingleMessageDTO;
 import org.frosty.sse_push.handler.DynamicTableNameType;
 import org.frosty.sse_push.mapper.MessageRawMapper;
+
+import java.util.List;
 
 @DynamicTableNameMapper(type = DynamicTableNameType.MESSAGE_DTO, name = "unposed")
 @RequiredArgsConstructor
@@ -25,6 +22,6 @@ public class UnposedMapper {
     }
 
     public int deleteByIds(List<SingleMessageDTO> unposeds) {
-       return mapper.deleteByIds(unposeds);
+        return mapper.deleteByIds(unposeds);
     }
 }

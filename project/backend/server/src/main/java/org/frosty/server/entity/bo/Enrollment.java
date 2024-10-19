@@ -19,7 +19,8 @@ public class Enrollment {
     private EnrollmentType status;
     private OffsetDateTime createAt;
     private OffsetDateTime updatedAt;
+
     public enum EnrollmentType {
-       publik,invited
+        publik, invited
     }
 }

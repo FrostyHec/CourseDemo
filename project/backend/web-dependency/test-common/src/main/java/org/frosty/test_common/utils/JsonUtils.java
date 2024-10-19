@@ -17,54 +17,59 @@ import java.util.Map;
 @Component
 public class JsonUtils {
 
+    private static ObjectMapper objectMapper;
     @Autowired
     private ObjectMapper injectedObjectMapper;
-    private static ObjectMapper objectMapper;
 
     public static <T> T dataCast(Object map, Class<T> type) throws JsonProcessingException {
         JsonNode node = objectMapper.valueToTree(map);
         return objectMapper.treeToValue(node, type);
     }
-    @PostConstruct
-    public void init() {
-        objectMapper = injectedObjectMapper;
-    }
-    public static String toString(Object o){
+
+    public static String toString(Object o) {
         try {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
-            throw new InternalException("unable to parse object:"+o,e);
+            throw new InternalException("unable to parse object:" + o, e);
         }
     }
+
     public static Map toMapData(MvcResult mvcResult) throws JsonProcessingException, UnsupportedEncodingException {
         return objectMapper.treeToValue(toJsonData(mvcResult), Map.class);
     }
+
     private static String getJsonString(MvcResult mvcResult) throws UnsupportedEncodingException {
         return mvcResult.getResponse().getContentAsString();
     }
+
     public static JsonNode toJson(MvcResult result) throws UnsupportedEncodingException,
-                                                           JsonProcessingException {
+            JsonProcessingException {
         return objectMapper.readTree(getJsonString(result));
     }
 
     public static JsonNode toJsonData(MvcResult result) throws UnsupportedEncodingException,
-                                                               JsonProcessingException {
+            JsonProcessingException {
         return toJson(result).get("data");
     }
 
     public static <T> T toObject(MvcResult result, Class<T> type) throws
-                                                                      UnsupportedEncodingException,
-                                                                      JsonProcessingException {
+            UnsupportedEncodingException,
+            JsonProcessingException {
         return objectMapper.treeToValue(toJsonData(result), type);
     }
 
     public static <T> List<T> nodeToList(JsonNode node, Class<?> clazz) throws
-                                                                        JsonProcessingException {
+            JsonProcessingException {
         assert node.isArray();
         List<T> list = new ArrayList<>();
         for (var e : node) {
             list.add((T) objectMapper.treeToValue(e, clazz));
         }
         return list;
+    }
+
+    @PostConstruct
+    public void init() {
+        objectMapper = injectedObjectMapper;
     }
 }

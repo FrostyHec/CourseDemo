@@ -9,6 +9,7 @@ import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.services.course.CourseService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +53,9 @@ public class CourseController {
         List<Course> courses = courseService.findCoursesByTeacherId(id);
         return Response.getSuccess(new CourseList(courses));
     }
+
     @GetMapping("/admin/{id}/courses/submitted")
-   public Response adminGetRequiredApprovedCourse (@PathVariable Long id){
+    public Response adminGetRequiredApprovedCourse(@PathVariable Long id) {
         List<Course> courses = courseService.adminGetRequiredApprovedCourse(id);
         return Response.getSuccess(new CourseList(courses));
     }
@@ -61,7 +63,7 @@ public class CourseController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CourseList{
+    public static class CourseList {
         List<Course> content;
     }
 }

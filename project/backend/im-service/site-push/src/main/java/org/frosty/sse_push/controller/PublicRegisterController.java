@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class PublicRegisterController {
     private final SSEService service;
+
     @GetMapping("/user/{uid}")
     public SseEmitter register(@GetToken TokenInfo tokenInfo, @PathVariable long uid) {
         Ex.check((tokenInfo.getAuthStatus() == AuthStatus.PASS)

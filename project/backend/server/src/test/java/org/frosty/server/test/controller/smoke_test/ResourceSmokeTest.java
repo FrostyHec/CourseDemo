@@ -24,6 +24,7 @@ public class ResourceSmokeTest {
     private AuthAPI authAPI;
     @Autowired
     private ObjectStorageService oss;
+
     @Test
     public void testBasicCURD() throws Exception {
         var pair = authAPI.quickAddUserAndLogin("teacher", User.Role.teacher);
@@ -34,12 +35,12 @@ public class ResourceSmokeTest {
         //---test start---
         // upload resource
         var resource = resourceAPI.getTemplateResource(chapterId,
-                "test","pdf", Resource.ResourceType.courseware);
+                "test", "pdf", Resource.ResourceType.courseware);
         var file = resourceAPI.loadTemplateFile("test.pdf");
         resourceAPI.uploadResourceSuccess(teacherToken, chapterId, resource, file);
 
         // get resource metadata
-        var li = resourceAPI.getResourcesByChapterSuccess(teacherToken,chapterId);
+        var li = resourceAPI.getResourcesByChapterSuccess(teacherToken, chapterId);
         var rcvdResourceMetadataEntity = CommonCheck.checkSingleAndGet(li);
         assert StringUtils.isNotBlank(rcvdResourceMetadataEntity.getAccessKey());
         var rcvdResourceMetadata = rcvdResourceMetadataEntity.getResource();
@@ -47,8 +48,8 @@ public class ResourceSmokeTest {
 
         // get file by generated path
         var name = rcvdResourceMetadata.getFileName();
-        var rvcdFile = oss.get(name,byte[].class);
-        assert Arrays.equals(rvcdFile,file.getBytes());
+        var rvcdFile = oss.get(name, byte[].class);
+        assert Arrays.equals(rvcdFile, file.getBytes());
 
         // update resource metadata
         resource.setResourceName("new name");
@@ -57,7 +58,7 @@ public class ResourceSmokeTest {
         rcvdResourceMetadataEntity = resourceAPI.getResourceMetaDataSuccess(teacherToken, rcvdResourceMetadata.getResourceId());
         assert StringUtils.isNotBlank(rcvdResourceMetadataEntity.getAccessKey());
         rcvdResourceMetadata = rcvdResourceMetadataEntity.getResource();
-        resourceAPI.checkSingle(resource,rcvdResourceMetadata);
+        resourceAPI.checkSingle(resource, rcvdResourceMetadata);
 
         // delete resource
         resourceAPI.deleteResourceSuccess(teacherToken, rcvdResourceMetadata.getResourceId());

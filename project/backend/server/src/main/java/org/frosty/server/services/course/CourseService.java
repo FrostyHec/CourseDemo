@@ -1,10 +1,8 @@
 package org.frosty.server.services.course;
 
 import lombok.RequiredArgsConstructor;
-
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

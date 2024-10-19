@@ -39,13 +39,15 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
     @Autowired
     private RestTemplate restTemplate;
     private WebClient webClient;
+
     @PostConstruct
-    public void init(){
+    public void init() {
         this.webClient = WebClient.builder()
                 .baseUrl(path) // 替换为后端B的URL
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
     public String getBaseUrl(String key) {
         return path + PathConstant.INTERNAL_API + "/storage/" + key;
     }
@@ -81,12 +83,14 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(BodyInserters.fromDataBuffers(dataBufferFlux))
                 .retrieve()
-                .onStatus(status -> !status.is2xxSuccessful(), (e) -> {throw new InternalException("failure when uploading data:"+e);})
+                .onStatus(status -> !status.is2xxSuccessful(), (e) -> {
+                    throw new InternalException("failure when uploading data:" + e);
+                })
                 .bodyToMono(Response.class)
                 .doOnNext(response -> {
                     Ex.check(response.getCode() == ResponseCodeType.SUCCESS.getCode(),
                             new RuntimeException("Unexpected response:" + response));
-                    })
+                })
                 .block();
     }
 
@@ -125,6 +129,7 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         ReadableByteChannel channel = new ReadableByteChannel() {
             private final java.util.Iterator<DataBuffer> iterator = dataBufferFlux.toIterable().iterator();
             private boolean open = true;
+
             @Override
             public int read(java.nio.ByteBuffer dst) {
                 if (!iterator.hasNext()) {
@@ -174,10 +179,10 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         url = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("case_name", caseName)
                 .toUriString();
-        var resp =restTemplate.getForEntity(url, Response.class);
+        var resp = restTemplate.getForEntity(url, Response.class);
         Ex.check(Objects.requireNonNull(resp.getBody()).getCode() == 200,
                 new InternalException("get access key failed" + resp));
-        return ((Map<String,String>) resp.getBody().getData()).get("access_key");
+        return ((Map<String, String>) resp.getBody().getData()).get("access_key");
     }
 
     @Override

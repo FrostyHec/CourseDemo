@@ -8,7 +8,6 @@ import org.frosty.sse_push.annotation.DynamicTableNameMapper;
 import org.springframework.stereotype.Component;
 
 
-
 @Aspect
 @Component
 public class DynamicNameAspect {

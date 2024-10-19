@@ -12,20 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MockObjectStorageServiceImpl implements ObjectStorageService {
-    private final Map<String,Object> storage = new HashMap<>();
-    private final Map<Pair<String,String>,String> token = new HashMap<>();
+    private final Map<String, Object> storage = new HashMap<>();
+    private final Map<Pair<String, String>, String> token = new HashMap<>();
+
     @Override
     public void save(String key, Object value) {
-        storage.put(key,value);
+        storage.put(key, value);
     }
 
     @Override
     public void flowSave(String key, InputStream flow) {
         try {
             byte[] bytes = flow.readAllBytes();
-            storage.put(key,bytes);
-        }catch (Exception e){
-            throw new InternalException("Failed to read flow",e);
+            storage.put(key, bytes);
+        } catch (Exception e) {
+            throw new InternalException("Failed to read flow", e);
         }
     }
 
@@ -37,19 +38,19 @@ public class MockObjectStorageServiceImpl implements ObjectStorageService {
     @Override
     public InputStream flowGet(String key) {
         var object = storage.get(key);
-        if(object instanceof byte[] o){
+        if (object instanceof byte[] o) {
             return new ByteArrayInputStream(o);
         }
-        try(var byteArrayOutputStream = new ByteArrayOutputStream();
-            var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+        try (var byteArrayOutputStream = new ByteArrayOutputStream();
+             var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
             objectOutputStream.writeObject(object);
             objectOutputStream.flush();
             objectOutputStream.close();
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             return new ByteArrayInputStream(byteArray);
-        } catch (Exception e){
-            throw new InternalException("Failed to read object",e);
+        } catch (Exception e) {
+            throw new InternalException("Failed to read object", e);
         }
     }
 
@@ -64,17 +65,17 @@ public class MockObjectStorageServiceImpl implements ObjectStorageService {
     }
 
     @Override
-    public String getAccessKey(String key,String caseName) {
-        token.put(new Pair<>(key,caseName),caseName);
+    public String getAccessKey(String key, String caseName) {
+        token.put(new Pair<>(key, caseName), caseName);
         return caseName;
     }
 
     @Override
-    public void withdrawAccessKey(String key,String caseName) {
-        token.remove(new Pair<>(key,caseName));
+    public void withdrawAccessKey(String key, String caseName) {
+        token.remove(new Pair<>(key, caseName));
     }
 
-    public void clearAll(){
+    public void clearAll() {
         storage.clear();
     }
 }

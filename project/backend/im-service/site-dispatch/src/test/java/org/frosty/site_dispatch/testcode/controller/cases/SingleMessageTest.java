@@ -1,56 +1,51 @@
 package org.frosty.site_dispatch.testcode.controller.cases;
 
-import java.util.Random;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.frosty.common.response.Response;
-import org.frosty.test_common.annotation.IdempotentControllerTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.frosty.site_dispatch.entity.MessagePacketDTO;
 import org.frosty.site_dispatch.entity.MessageType;
 import org.frosty.site_dispatch.entity.SingleMessageDTO;
 import org.frosty.site_dispatch.mapper.UnackedMapper;
 import org.frosty.site_dispatch.mapper.UnposedMapper;
 import org.frosty.site_dispatch.testcode.controller.SiteMsgAPI;
-
-
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.frosty.test_common.annotation.IdempotentControllerTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+
+import java.util.Random;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 @IdempotentControllerTest
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@AutoConfigureMockMvc
 public class SingleMessageTest {
-// 必须要启动msg_deliver!
+    private final int timeout = 10000, smallWait = 500;
+    // 必须要启动msg_deliver!
     @Autowired
     private SiteMsgAPI siteMsgApi;
     @Autowired
     private UnackedMapper unackedMapper;
     @Autowired
     private UnposedMapper unposedMapper;
-    private final int timeout = 10000, smallWait = 500;
 
     private MessagePacketDTO receivePacket(BlockingDeque<Response> flow, int timeout) throws
-                                                                                      InterruptedException {
+            InterruptedException {
         return siteMsgApi.getRcvdPacketMessage(flow.poll(timeout, TimeUnit.MILLISECONDS));
     }
 
     private SingleMessageDTO receive(BlockingDeque<Response> flow, int timeout) throws
-                                                                                InterruptedException {
+            InterruptedException {
         return siteMsgApi.getRcvdSingleMessage(flow.poll(timeout, TimeUnit.MILLISECONDS));
     }
 
-    private Pair<BlockingDeque<Response>,Disposable> getFlow(Flux<Response> flux) {
+    private Pair<BlockingDeque<Response>, Disposable> getFlow(Flux<Response> flux) {
         BlockingDeque<Response> flow = new LinkedBlockingDeque<>();
         Disposable closing = flux.subscribe(flow::add);
-        return Pair.of(flow,closing);
+        return Pair.of(flow, closing);
     }
 
     private void checkUnposed(long mid, SingleMessageDTO msg) {
@@ -165,8 +160,8 @@ public class SingleMessageTest {
         //reopen
         flux = siteMsgApi.register(uid);
         flow = getFlow(flux).getKey();
-        rcvd = receivePacket(flow,timeout).getUnacked().get(0);
-        siteMsgApi.checkMessage(rcvd,msg,mid,null);
+        rcvd = receivePacket(flow, timeout).getUnacked().get(0);
+        siteMsgApi.checkMessage(rcvd, msg, mid, null);
         //ack
         siteMsgApi.ackSuccess(mid);
         Thread.sleep(smallWait);

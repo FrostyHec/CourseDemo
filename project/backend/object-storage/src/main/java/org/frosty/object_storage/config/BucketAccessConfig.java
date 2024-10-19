@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class BucketAccessConfig {
     @Autowired
     private MinioConfig minioConfig;
+
     @Bean
-    public MinioClient minioClient(){
+    public MinioClient minioClient() {
         return minioConfig.minioClient();
     }
 }

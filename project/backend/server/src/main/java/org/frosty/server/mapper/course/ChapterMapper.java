@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.frosty.server.entity.bo.Chapter;
 
-
 import java.util.List;
 
 // 看看mybatis_plus

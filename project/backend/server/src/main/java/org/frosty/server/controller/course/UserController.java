@@ -3,7 +3,6 @@ package org.frosty.server.controller.course;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.entity.bo.User;
 import org.frosty.server.services.user.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping(    PathConstant.API + "/user")
+@RequestMapping(PathConstant.API + "/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;

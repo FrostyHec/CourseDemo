@@ -25,7 +25,8 @@ public class Chapter {
     private String content;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-    public enum ChapterType{
-        teaching,assignment,project
+
+    public enum ChapterType {
+        teaching, assignment, project
     }
 }

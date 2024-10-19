@@ -6,8 +6,8 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.TokenUtils;
 
 public class AuthMockUtils {
-    public static String getPassTokenInfoString(Long uid){
+    public static String getPassTokenInfoString(Long uid) {
         return TokenUtils.tokenInfoToString(
-                new TokenInfo(AuthStatus.PASS,new AuthInfo(uid)));
+                new TokenInfo(AuthStatus.PASS, new AuthInfo(uid)));
     }
 }

@@ -1,16 +1,11 @@
 package org.frosty.site_dispatch.handler;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.*;
 
 public class JsonNodeTypeHandler extends BaseTypeHandler<JsonNode> {
     private static final ObjectMapper objectMapper = new ObjectMapper();

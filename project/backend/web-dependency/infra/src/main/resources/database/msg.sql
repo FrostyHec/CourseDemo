@@ -15,4 +15,7 @@ create table msg_unposed
     body         json
 );
 drop table if exists msg_unacked;
-create table msg_unacked (like msg_unposed including all);
+create table msg_unacked
+(
+    like msg_unposed including all
+);

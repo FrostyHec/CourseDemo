@@ -1,14 +1,13 @@
 package org.frosty.site_dispatch.service;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.frosty.site_dispatch.entity.SingleMessageDTO;
 import org.frosty.site_dispatch.mapper.SSEIPMapper;
 import org.frosty.site_dispatch.mapper.UnackedMapper;
 import org.frosty.site_dispatch.mapper.UnposedMapper;
-import org.springframework.stereotype.Service;
-import org.frosty.site_dispatch.entity.SingleMessageDTO;
 import org.frosty.site_dispatch.outerapi.SitePush;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -18,17 +17,18 @@ public class MessageDispatchService {
     private final UnposedMapper unposedMapper;
     private final UnackedMapper unackedMapper;
     private final SitePush sitePush;
+
     @Transactional
     public long push(SingleMessageDTO msg) {
         String ip = sseipMapper.findSSEIP(msg);
-        if(StringUtils.isBlank(ip)){
+        if (StringUtils.isBlank(ip)) {
             //没有这个sse连接
-            switch (msg.getType()){
+            switch (msg.getType()) {
                 case NEW -> {
                     msg.setMessageId(null);
                     unposedMapper.insert(msg);
                 }
-                case UPDATE ->{
+                case UPDATE -> {
                     //如果在unposed则更新,如果在unacked则删除unacked,放置入unposed
                     unposedMapper.insertOrUpdate(msg);
                     unackedMapper.deleteIfExists(msg);
@@ -40,9 +40,9 @@ public class MessageDispatchService {
                 }
             }
             return msg.getMessageId();
-        }else {
+        } else {
             switch (msg.getType()) {
-                case UPDATE ->{
+                case UPDATE -> {
                     //如果在unposed则更新,如果在unacked则删除unacked,放置入unposed
                     unackedMapper.deleteIfExists(msg);
                 }

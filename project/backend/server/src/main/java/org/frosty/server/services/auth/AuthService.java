@@ -17,9 +17,10 @@ public class AuthService {
     private final UserMapper mapper;
     private final JwtHandler jwtHandler;
     private final PasswordEncoder passwordEncoder;
+
     public String login(LoginInfo loginInfo) {
         var user = mapper.selectById(loginInfo.getUserId());
-        Ex.check(user!=null, Response.getNotFound("user-not-found"));
+        Ex.check(user != null, Response.getNotFound("user-not-found"));
         Ex.check(passwordEncoder.matches(loginInfo.getPassword(), user.getPassword()),
                 Response.getBadRequest("incorrect-password"));
         return jwtHandler.createToken(new AuthInfo(user.getUserId()));

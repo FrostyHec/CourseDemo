@@ -6,6 +6,7 @@ import org.frosty.server.event.delete_event.UserDeleteEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class UserService {
         publishDeleteUser(userId);
     }
 
-    public void publishDeleteUser(Long userId){
+    public void publishDeleteUser(Long userId) {
         eventPublisher.publishEvent(new UserDeleteEvent(this, userId));
     }
 

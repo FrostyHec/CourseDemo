@@ -8,7 +8,7 @@ jwt: # ensure same with auth-filter
 
 api:
   storage:
-     # remote or mock
+    # remote or mock
     type: mock
-#    type: remote
+    #    type: remote
     url: http://localhost:9976

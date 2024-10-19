@@ -35,7 +35,7 @@ public class ResourceAPI {
 
     public MockMultipartFile loadTemplateFile(String name) throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
-        String relUri = "./resource/"+name;// TODO
+        String relUri = "./resource/" + name;// TODO
         Path path = Path.of(Objects.requireNonNull(classLoader.getResource(relUri)).toURI());
         String originalFileName = path.getFileName().toString();
         byte[] content = Files.readAllBytes(path);
@@ -129,20 +129,22 @@ public class ResourceAPI {
                 .andReturn();
         return JsonUtils.toObject(resp, ResourceListResult.class).content;
     }
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class ResourceListResult{
-        private List<ResourceWithAccessKey> content;
-    }
 
     public void checkSingle(Resource resource, List<Resource> li) {
         var e = CommonCheck.checkSingleAndGet(li);
         checkSingle(resource, e);
     }
+
     public void checkSingle(Resource resource, Resource e) {
         assert e.getChapterId().equals(resource.getChapterId());
         assert e.getResourceName().equals(resource.getResourceName());
         assert e.getSuffix().equals(resource.getSuffix());
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class ResourceListResult {
+        private List<ResourceWithAccessKey> content;
     }
 }

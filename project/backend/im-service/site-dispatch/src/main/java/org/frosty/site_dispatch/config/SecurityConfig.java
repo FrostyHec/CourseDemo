@@ -22,11 +22,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // 禁用CSRF保护
                 .authorizeHttpRequests(authorizeRequests ->
-                                               authorizeRequests.anyRequest().permitAll() // 允许所有请求
+                        authorizeRequests.anyRequest().permitAll() // 允许所有请求
                 );
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -38,6 +39,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

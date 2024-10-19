@@ -1,7 +1,5 @@
 package org.frosty.server.config;
 
-import org.frosty.auth.utils.JwtHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,11 +22,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // 禁用CSRF保护
                 .authorizeHttpRequests(authorizeRequests ->
-                                               authorizeRequests.anyRequest().permitAll() // 允许所有请求
+                        authorizeRequests.anyRequest().permitAll() // 允许所有请求
                 );
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -40,6 +39,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

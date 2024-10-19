@@ -2,12 +2,11 @@ package org.frosty.server.controller.course;
 
 
 import lombok.RequiredArgsConstructor;
-
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.Chapter;
-import org.springframework.web.bind.annotation.*;
 import org.frosty.server.services.course.ChapterService;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,9 @@ public class ChapterController {
 
     // 创建章节
     @PostMapping("/chapter")
-    public Map<String,String> createChapter(@RequestBody Chapter chapter) {
-            chapterService.createChapter(chapter);
-            return Map.of("say","Successfully created course.");
+    public Map<String, String> createChapter(@RequestBody Chapter chapter) {
+        chapterService.createChapter(chapter);
+        return Map.of("say", "Successfully created course.");
     }
 
     // 获取章节
@@ -33,7 +32,7 @@ public class ChapterController {
         try {
             Chapter chapter = chapterService.findByID(id);
             return chapter; // Chapter not found
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -41,18 +40,17 @@ public class ChapterController {
 
     // 更新章节
     @PutMapping("/chapter/{id}")
-    public Map<String,String> updateChapter(@PathVariable Long id, @RequestBody Chapter updatedChapter) {
+    public Map<String, String> updateChapter(@PathVariable Long id, @RequestBody Chapter updatedChapter) {
         chapterService.updateChapter(updatedChapter);
-        return Map.of("say","Successfully updated course.");
+        return Map.of("say", "Successfully updated course.");
     }
-
 
 
     // 删除章节
     @DeleteMapping("/chapter/{id}")
-    public Map<String,String> deleteChapter(@PathVariable Long id) {
+    public Map<String, String> deleteChapter(@PathVariable Long id) {
         chapterService.deleteChapter(id);
-        return Map.of("say","Successfully deleted course.");
+        return Map.of("say", "Successfully deleted course.");
     }
 
     // 获取全部章节

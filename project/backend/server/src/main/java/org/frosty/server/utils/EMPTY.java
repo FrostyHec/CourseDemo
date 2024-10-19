@@ -1,5 +1,5 @@
 package org.frosty.server.utils;
 
-public class EMPTY{
+public class EMPTY {
 
 }

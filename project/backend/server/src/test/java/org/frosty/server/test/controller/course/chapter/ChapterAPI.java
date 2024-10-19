@@ -4,17 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Chapter;
+import org.frosty.server.entity.bo.Chapter.ChapterType;
 import org.frosty.server.mapper.course.ChapterMapper;
+import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.test_common.utils.JsonUtils;
+import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.frosty.server.test.controller.auth.AuthAPI;
-import org.frosty.server.entity.bo.Chapter.ChapterType;
-import org.frosty.test_common.utils.RespChecker;
 
 import java.util.List;
 

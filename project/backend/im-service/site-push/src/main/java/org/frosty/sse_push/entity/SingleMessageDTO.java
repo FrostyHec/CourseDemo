@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "msg")
-public class SingleMessageDTO{
+public class SingleMessageDTO {
     // if msg type is new, the messageId field will be ignored for creation
     @TableId(type = IdType.ASSIGN_ID)
     private Long messageId;

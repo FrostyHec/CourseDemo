@@ -26,7 +26,7 @@ public class HTTPLogFilter implements Filter {
                     getHeaders(httpRequest));
 
             // Proceed with the filter chain
-            chain.doFilter(request,response);
+            chain.doFilter(request, response);
 
             // Log response details
             log.info("Response: status: {}", httpResponse.getStatus());

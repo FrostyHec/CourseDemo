@@ -18,18 +18,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @RestController
-@RequestMapping(PathConstant.API+"/storage")
+@RequestMapping(PathConstant.API + "/storage")
 @RequiredArgsConstructor
 public class PublicAccessController {
+    private static final int BUF_SIZE = 1024;
     private final AccessKeyService accessKeyService;
     private final StorageService storageService;
-    private static final int BUF_SIZE = 1024;
+
     @GetMapping("/{objName}")
     public void getFileFromPublic(@NonNull String case_name,
                                   @NonNull String access_key,
                                   @PathVariable String objName,
                                   HttpServletResponse response) throws Exception {
-        Ex.check(accessKeyService.valid(objName,case_name,access_key), Response.getUnauthorized("unauthorized"));
+        Ex.check(accessKeyService.valid(objName, case_name, access_key), Response.getUnauthorized("unauthorized"));
         try (InputStream inputStream = storageService.getFile(objName)) {
             // 设置响应的内容类型和头信息
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);

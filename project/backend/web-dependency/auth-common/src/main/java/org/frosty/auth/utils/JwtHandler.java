@@ -9,6 +9,7 @@ import org.frosty.auth.exception.InvalidTokenException;
 
 import java.security.Key;
 import java.util.Date;
+
 public class JwtHandler {
     private final long expiration;
     private final Key key;

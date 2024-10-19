@@ -11,6 +11,7 @@ public class AuthAutoConfiguration {
     private String secret;
     @Value("${jwt.expiration}")
     private long expiration;
+
     @Bean
     public JwtHandler jwtHandler() {
         return new JwtHandler(secret, expiration);

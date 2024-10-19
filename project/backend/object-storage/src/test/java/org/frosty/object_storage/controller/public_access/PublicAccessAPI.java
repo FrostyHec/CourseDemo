@@ -2,13 +2,10 @@ package org.frosty.object_storage.controller.public_access;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.test_common.utils.JsonUtils;
-import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -21,9 +18,9 @@ public class PublicAccessAPI {
     public ResultActions getFileFromPublic(String case_name, String access_key, String objName) throws Exception {
         String url = baseUrl + "/" + objName;
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .param("case_name",case_name)
-                .param("access_key",access_key)
-                .accept(MediaType.APPLICATION_OCTET_STREAM,MediaType.APPLICATION_JSON)
+                .param("case_name", case_name)
+                .param("access_key", access_key)
+                .accept(MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON)
         );
     }
 
