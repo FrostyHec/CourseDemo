@@ -12,13 +12,13 @@ import java.util.List;
 public interface ChapterMapper extends BaseMapper<Chapter> {
 
     // 插入一个新章节
-    @Insert("INSERT INTO chapters(course_id, chapter_title,chapter_type, content) VALUES(#{courseId}, #{chapter_title}, #{chapter_type}, #{content})")
+    @Insert("INSERT INTO chapters(course_id, chapter_title,chapter_type, content) VALUES(#{courseId}, #{chapterTitle}, #{chapterType}, #{content})")
     void insertChapter(Chapter chapter);
 
     // 根据 ID 更新章节
     // ignore this error
-    @Update("UPDATE chapters SET course_id =#{course_id},chapter_title=#{chapter_title},chapter_type=#{chapter_type}, content=#{content} WHERE chapters.chapter_id=#{id}")
-    void updateChapter(Chapter chapter);
+    @Update("UPDATE chapters SET course_id=#{courseId}, chapter_title=#{chapterTitle}, chapter_type=#{chapterType}, content=#{content} WHERE chapter_id=#{id}")
+    void updateChapter(@Param("id")Long id, @Param("courseId")Long courseId, @Param("chapterTitle")String chapterTitle, @Param("chapterType")Chapter.ChapterType chapterType, @Param("content")String content);
 
     // 根据 ID 获取章节
     @Select("SELECT * FROM chapters WHERE chapters.chapter_id=#{id}")
@@ -34,4 +34,6 @@ public interface ChapterMapper extends BaseMapper<Chapter> {
 
     @Select("SELECT * FROM chapters")
     List<Chapter> getAll();
+
+
 }

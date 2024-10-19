@@ -3,16 +3,18 @@ package org.frosty.server.controller.course;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.services.user.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.frosty.common.response.Response;
+import org.frosty.server.entity.bo.User;
 
+import org.frosty.server.services.user.UserService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 
 @RestController
-@RequestMapping(PathConstant.API + "/user")
+@RequestMapping(    PathConstant.API)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -20,8 +22,8 @@ public class UserController {
     // 暂未实现密码加密（可以用passwordEncoder）
     // 暂未实现用户名与密码的正则判断
     // 暂时认为注册阶段不需要修改用户信息
-    @PostMapping
-    public Map<String, String> register(String username, String password, String confirmPassword) {
+    @PostMapping("/user")
+    public Response register(@RequestBody User user) {
 //        if (!password.equals(confirmPassword)) {
 //            return Map.of("message", "密码不一致");
 //        }
@@ -35,16 +37,40 @@ public class UserController {
         throw new RuntimeException("Not implemented");// TODO
     }
 
-//    @PostMapping("/login")
-//    public Map<String, String> login(String username, String password) {
-//        User user = userService.findByUserName(username);
-//        if (user == null) {
-//            return Map.of("message", "用户名或密码错误");
-//        }
-//        if (!user.getPassword().equals(password)) {
-//            return Map.of("message", "用户名或密码错误");
-//        } else {
-//            return Map.of("message", "成功登录");
-//        }
-//    }
+    // 修改用户全部资料
+    @PutMapping("/user/{id}")
+    public Response updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        updatedUser.setUserId(id);
+        userService.updateUser(id, updatedUser);
+        return Response.getSuccess("User updated successfully.");
+    }
+
+    // 获取用户全部资料
+    @GetMapping("/user/{id}")
+    public Response getUser(@PathVariable Long id) {
+        User user = userService.findById(id);
+        return Response.getSuccess(user);
+    }
+
+    // 删除用户
+    @DeleteMapping("/user/{id}")
+    public Response deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return Response.getSuccess("User deleted successfully.");
+    }
+
+    // 查询单个用户公开信息
+    @GetMapping("/user/public/{id}")
+    public Response getUserPublicInfo(@PathVariable Long id) {
+        User user = userService.findPublicInfoById(id);
+        return Response.getSuccess(user);
+    }
+
+    // 模糊搜索用户（基于用户实名）
+    // TODO
+    @GetMapping("/user/search")
+    public Response searchUser(@RequestParam String realName) {
+        List<User> users = userService.searchByRealName(realName);
+        return Response.getSuccess(users);
+    }
 }

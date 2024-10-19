@@ -25,8 +25,8 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
-    public void updateChapter(Chapter updatedChapter) {
-        chapterMapper.updateChapter(updatedChapter);
+    public void updateChapter(Long id, Chapter updatedChapter) {
+        chapterMapper.updateChapter(id, updatedChapter.getCourseId(), updatedChapter.getChapterTitle(), updatedChapter.getChapterType(), updatedChapter.getContent());
     }
 
     @Override
