@@ -44,11 +44,17 @@ public class Response {
     }
 
     //unauthorized
+    public static Response getUnauthorized(){
+        return new Response(ResponseCodeType.UNAUTHORIZED, "unauthorized", null);
+    }
     public static Response getUnauthorized(String msg) {
         return new Response(ResponseCodeType.UNAUTHORIZED, msg, null);
     }
 
     //not found
+    public static Response getNotFound() {
+        return new Response(ResponseCodeType.NO_FOUND, "no-found", null);
+    }
     public static Response getNotFound(String msg) {
         return new Response(ResponseCodeType.NO_FOUND, msg, null);
     }

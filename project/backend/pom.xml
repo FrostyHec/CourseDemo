@@ -24,6 +24,7 @@
         <module>auth-filter</module>
         <module>auth</module>
         <module>object-storage</module>
+        <module>im-service</module>
     </modules>
 
     <properties>

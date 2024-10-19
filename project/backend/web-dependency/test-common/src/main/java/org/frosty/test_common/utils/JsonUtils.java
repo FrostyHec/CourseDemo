@@ -21,6 +21,10 @@ public class JsonUtils {
     private ObjectMapper injectedObjectMapper;
     private static ObjectMapper objectMapper;
 
+    public static <T> T dataCast(Object map, Class<T> type) throws JsonProcessingException {
+        JsonNode node = objectMapper.valueToTree(map);
+        return objectMapper.treeToValue(node, type);
+    }
     @PostConstruct
     public void init() {
         objectMapper = injectedObjectMapper;
