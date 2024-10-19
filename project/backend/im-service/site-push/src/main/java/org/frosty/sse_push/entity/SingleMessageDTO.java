@@ -16,7 +16,6 @@ public class SingleMessageDTO {
     // if msg type is new, the messageId field will be ignored for creation
     @TableId(type = IdType.ASSIGN_ID)
     private Long messageId;
-
     private long fromId;
     private long toId;
     private MessageType type;

@@ -1,4 +1,4 @@
-package org.frosty.server.config;
+package org.frosty.email_push.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

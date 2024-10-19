@@ -6,7 +6,6 @@ import org.frosty.site_dispatch.entity.SingleMessageDTO;
 import org.frosty.site_dispatch.mapper.SSEIPMapper;
 import org.frosty.site_dispatch.mapper.UnackedMapper;
 import org.frosty.site_dispatch.mapper.UnposedMapper;
-import org.frosty.site_dispatch.outerapi.SitePush;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

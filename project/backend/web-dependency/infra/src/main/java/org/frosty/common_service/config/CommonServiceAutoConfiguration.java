@@ -1,7 +1,7 @@
 package org.frosty.common_service.config;
 
-import org.frosty.common_service.message_push.api.MessagePushService;
-import org.frosty.common_service.message_push.api.impl.MessagePushServiceImpl;
+import org.frosty.common_service.im.api.MessagePushService;
+import org.frosty.common_service.im.api.impl.MessagePushServiceImpl;
 import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.common_service.storage.api.impl.MockObjectStorageServiceImpl;
 import org.frosty.common_service.storage.api.impl.ObjectStorageServiceImpl;

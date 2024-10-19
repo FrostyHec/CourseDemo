@@ -1,4 +1,4 @@
-package org.frosty.site_dispatch.outerapi.impl;
+package org.frosty.site_dispatch.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import org.frosty.common.exception.InternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.response.ResponseCodeType;
 import org.frosty.site_dispatch.entity.SingleMessageDTO;
-import org.frosty.site_dispatch.outerapi.SitePush;
+import org.frosty.site_dispatch.service.SitePush;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

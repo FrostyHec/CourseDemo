@@ -1,4 +1,4 @@
-package org.frosty.site_dispatch.outerapi;
+package org.frosty.site_dispatch.service;
 
 import org.frosty.site_dispatch.entity.SingleMessageDTO;
 
