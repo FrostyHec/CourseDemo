@@ -1,4 +1,4 @@
-package org.frosty.server.controller.auth;
+package org.frosty.server.controller.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

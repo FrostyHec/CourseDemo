@@ -9,7 +9,7 @@ import org.frosty.auth.utils.JwtHandler;
 import org.frosty.auth.utils.TokenUtils;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.utils.Pair;
-import org.frosty.server.controller.auth.AuthController.LoginInfo;
+import org.frosty.server.controller.user.AuthController.LoginInfo;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.user.UserAPI;
 import org.frosty.test_common.utils.JsonUtils;

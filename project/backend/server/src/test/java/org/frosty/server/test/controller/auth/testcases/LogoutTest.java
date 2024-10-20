@@ -1,6 +1,6 @@
 package org.frosty.server.test.controller.auth.testcases;
 
-import org.frosty.server.controller.auth.AuthController.LoginInfo;
+import org.frosty.server.controller.user.AuthController.LoginInfo;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.user.UserAPI;

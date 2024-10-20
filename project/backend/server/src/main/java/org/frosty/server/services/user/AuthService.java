@@ -6,7 +6,7 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.JwtHandler;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
-import org.frosty.server.controller.auth.AuthController.LoginInfo;
+import org.frosty.server.controller.user.AuthController.LoginInfo;
 import org.frosty.server.mapper.user.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

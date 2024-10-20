@@ -1,4 +1,4 @@
-package org.frosty.server.controller.course;
+package org.frosty.server.controller.user;
 
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.frosty.server.services.user.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
