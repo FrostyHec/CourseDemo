@@ -1,4 +1,4 @@
-import { backend_base } from '@/utils/Cosntant'
+import { backend_base } from '@/utils/Constant'
 import { APIResult, type APIParam, type APIDataResult, AxiosAPI } from '@/utils/APIUtils'
 /////////////////////   LOGIN   ///////////////////////////////
 export interface LoginParam extends APIParam{

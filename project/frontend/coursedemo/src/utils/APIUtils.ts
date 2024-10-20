@@ -70,43 +70,43 @@ export class AxiosAPI {
     return APIResult.fromAxiosResponse<T>(response);
   }
 
-  static async get<T>(url: string, param: APIParam): Promise<APIResult<T>> {
+  static async get<T>(url: string, param: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('get', url, param);
   }
 
-  static async authGet<T>(url: string, param: APIParam): Promise<APIResult<T>> {
+  static async authGet<T>(url: string, param: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('get', url, param, true);
   }
 
-  static async post<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async post<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('post', url, data);
   }
 
-  static async authPost<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async authPost<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('post', url, data, true);
   }
 
-  static async put<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async put<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('put', url, data);
   }
 
-  static async authPut<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async authPut<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('put', url, data, true);
   }
 
-  static async delete<T>(url: string, param: APIParam): Promise<APIResult<T>> {
+  static async delete<T>(url: string, param: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('delete', url, param);
   }
 
-  static async authDelete<T>(url: string, param: APIParam): Promise<APIResult<T>> {
+  static async authDelete<T>(url: string, param: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('delete', url, param, true);
   }
 
-  static async patch<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async patch<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('patch', url, data);
   }
 
-  static async authPatch<T>(url: string, data: APIParam): Promise<APIResult<T>> {
+  static async authPatch<T>(url: string, data: APIParam={}): Promise<APIResult<T>> {
     return await this.request<T>('patch', url, data, true);
   }
 }

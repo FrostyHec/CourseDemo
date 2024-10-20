@@ -1,6 +1,6 @@
 import { enableTempMock } from '@/utils/MockUtils'
 import { InternalException } from '@/utils/Exceptions'
-import { setMockStatus, setBackendBase } from '@/utils/Cosntant'
+import { setMockStatus, setBackendBase } from '@/utils/Constant'
 
 export enum MockStatus {
   DEV = 'dev',

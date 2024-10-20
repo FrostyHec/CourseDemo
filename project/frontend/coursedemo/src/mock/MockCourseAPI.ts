@@ -1,6 +1,6 @@
 import type { ChapterEntity, CourseEntity, CourseStatusUpdateParam } from '@/api/CourseAPI'
 import type { APIResult } from '@/utils/APIUtils'
-import { backend_base } from '@/utils/Cosntant'
+import { backend_base } from '@/utils/Constant'
 import { AxiosAPI, RequestType } from '@/utils/APIUtils'
 import { setMockFunc } from '@/utils/MockUtils'
 

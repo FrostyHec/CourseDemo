@@ -1,5 +1,5 @@
 import { type APIParam, APIResult, RequestType } from '@/utils/APIUtils'
-import { mock_status} from '@/utils/Cosntant'
+import { mock_status} from '@/utils/Constant'
 import { MockStatus } from '@/utils/EnvUtils'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'

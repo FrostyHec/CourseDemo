@@ -1,4 +1,4 @@
-import { backend_base } from '@/utils/Cosntant'
+import { backend_base } from '@/utils/Constant'
 import { AxiosAPI } from '@/utils/APIUtils'
 import type { UserPublicInfoEntity } from '@/api/user/UserAPI'
 import type { CourseEntity } from '@/api/course/CourseAPI'
