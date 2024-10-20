@@ -1,4 +1,4 @@
-import { backend_base } from '@/utils/Constant'
+import { service_backend_base } from '@/utils/Constant'
 import { AxiosAPI } from '@/utils/APIUtils'
 
 /////////////////////   COURSE LIKE   ///////////////////////////////
@@ -9,7 +9,7 @@ import { AxiosAPI } from '@/utils/APIUtils'
  * @returns API调用结果
  */
 export async function createCourseLikeCall(courseId: number) {
-  const url = `${backend_base}/course/${courseId}/like`
+  const url = `${service_backend_base}/course/${courseId}/like`
   return AxiosAPI.authPost<null>(url) // 使用POST方法，并传递userId
 }
 
@@ -19,7 +19,7 @@ export async function createCourseLikeCall(courseId: number) {
  * @returns API调用结果
  */
 export async function cancelCourseLikeCall(courseId: number) {
-  const url = `${backend_base}/course/${courseId}/like`
+  const url = `${service_backend_base}/course/${courseId}/like`
   return AxiosAPI.authDelete<null>(url)
 }
 
@@ -29,6 +29,6 @@ export async function cancelCourseLikeCall(courseId: number) {
  * @returns 是否点赞的结果
  */
 export async function getCourseLikeCall(courseId: number) {
-  const url = `${backend_base}/course/${courseId}/like`
+  const url = `${service_backend_base}/course/${courseId}/like`
   return AxiosAPI.authGet<{ is_like: boolean }>(url)
 }

@@ -1,5 +1,5 @@
 // Mock Func
-import { backend_base } from '@/utils/Constant'
+import { service_backend_base } from '@/utils/Constant'
 import { setMockFunc } from '@/utils/MockUtils'
 import { APIResult, RequestType } from '@/utils/APIUtils'
 
@@ -8,7 +8,7 @@ import { APIResult, RequestType } from '@/utils/APIUtils'
  * @param data API调用结果
  */
 export function mockCreateCourseLikeCall(data: APIResult<null>) {
-  const url = `${backend_base}/course/{courseId}/like`
+  const url = `${service_backend_base}/course/{courseId}/like`
   setMockFunc(url, RequestType.POST, null, () => data)
 }
 
@@ -17,7 +17,7 @@ export function mockCreateCourseLikeCall(data: APIResult<null>) {
  * @param data API调用结果
  */
 export function mockCancelCourseLikeCall(data: APIResult<null>) {
-  const url = `${backend_base}/course/{courseId}/like`
+  const url = `${service_backend_base}/course/{courseId}/like`
   setMockFunc(url, RequestType.DELETE, null, () => data)
 }
 
@@ -26,6 +26,6 @@ export function mockCancelCourseLikeCall(data: APIResult<null>) {
  * @param data 是否点赞的结果
  */
 export function mockGetCourseLikeCall(data: APIResult<{ is_like: boolean }>) {
-  const url = `${backend_base}/course/{courseId}/like`
+  const url = `${service_backend_base}/course/{courseId}/like`
   setMockFunc(url, RequestType.GET, null, () => data)
 }

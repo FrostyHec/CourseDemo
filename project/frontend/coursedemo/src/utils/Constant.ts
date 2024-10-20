@@ -3,11 +3,23 @@ import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 
 const api_base = '/api/v1'
-export let backend_base: string = ''
-
-export function setBackendBase(backend_url: string) {
-  backend_base = backend_url + api_base
+export let service_backend_base: string = ''
+export let storage_backend_base:string = ''
+export function setAllBackendBase(backend_url: string) {
+  setServiceBackendBase(backend_url)
+  setStorageBackendBase(backend_url)
 }
+
+export function setServiceBackendBase(backend_url:string){
+  service_backend_base = backend_url + api_base
+}
+
+export function setStorageBackendBase(backend_url:string){
+  storage_backend_base = backend_url +api_base
+}
+
+
+
 export let mock_status: MockStatus | null = null
 
 export function setMockStatus(mockStatus:MockStatus){

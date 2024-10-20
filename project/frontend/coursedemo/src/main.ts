@@ -17,15 +17,12 @@ import 'uno.css'
 import 'element-plus/theme-chalk/src/message.scss'
 import { createPinia } from 'pinia'
 import { handleBackendPath, handleMockStatus } from './utils/EnvUtils'
-
-const mockStatus = import.meta.env.VITE_MOCK_STATUS
-const backendUrl = import.meta.env.VITE_BACKEND_URL
 export async function main() {
   const app = createApp(App)
   app.use(router)
   app.use(createPinia())
-  handleBackendPath(backendUrl)
-  await handleMockStatus(mockStatus)
+  handleBackendPath()
+  await handleMockStatus()
 // app.use(ElementPlus);
   return app
 }

@@ -1,4 +1,4 @@
-import { backend_base } from '@/utils/Constant';
+import { service_backend_base } from '@/utils/Constant';
 import { AxiosAPI } from '@/utils/APIUtils';
 import axios from 'axios'
 
@@ -27,7 +27,7 @@ export enum ResourceType {
 
 // 上传资源
 export async function uploadResourceCall(chapterId: number, resource: ResourceEntity, file: File) {
-  const url = `${backend_base}/chapter/${chapterId}/resource`;
+  const url = `${service_backend_base}/chapter/${chapterId}/resource`;
   const formData = new FormData();
   formData.append('data', JSON.stringify(resource));
   formData.append('file', file);
@@ -39,24 +39,24 @@ export async function uploadResourceCall(chapterId: number, resource: ResourceEn
 
 // 获取资源元数据
 export async function getResourceMetaDataCall(id: number) {
-  const url = `${backend_base}/resource/${id}`;
+  const url = `${service_backend_base}/resource/${id}`;
   return AxiosAPI.authGet<ResourceEntity>(url);
 }
 
 // 更新资源元数据
 export async function updateResourceMetadataCall(id: number, updatedResource: ResourceEntity) {
-  const url = `${backend_base}/resource/${id}`;
+  const url = `${service_backend_base}/resource/${id}`;
   return AxiosAPI.authPut<null>(url, updatedResource);
 }
 
 // 删除资源
 export async function deleteResourceCall(id: number) {
-  const url = `${backend_base}/resource/${id}`;
+  const url = `${service_backend_base}/resource/${id}`;
   return AxiosAPI.authDelete<null>(url);
 }
 
 // 获取章节下的所有资源
 export async function getResourcesByChapterCall(chapterId: number) {
-  const url = `${backend_base}/chapter/${chapterId}/resource`;
+  const url = `${service_backend_base}/chapter/${chapterId}/resource`;
   return AxiosAPI.authGet<{ content: ResourceEntity[] }>(url);
 }
