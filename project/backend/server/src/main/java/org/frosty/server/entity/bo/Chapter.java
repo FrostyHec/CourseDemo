@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.frosty.common.exception.InternalException;
 
 import java.time.OffsetDateTime;
 
@@ -20,6 +21,7 @@ public class Chapter {
     private Long courseId;
     private String chapterTitle;
     private ChapterType chapterType;
+    private Integer chapterOrder;
     private String content;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
