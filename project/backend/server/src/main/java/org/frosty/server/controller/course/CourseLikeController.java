@@ -34,10 +34,9 @@ public class CourseLikeController {
     // 检查用户是否点赞了课程
     @GetMapping("/{courseId}/like")
     public Map<String,Boolean> checkCourseLike(@PathVariable Long courseId, Long userId) {
-        throw new NotImplementedException();
+        if(true) throw new NotImplementedException();
+        return Map.of("is_like",true);
 //        return courseLikeService.checkCourseLike(courseId, userId);
         // 逻辑处理
     }
-
-
 }
