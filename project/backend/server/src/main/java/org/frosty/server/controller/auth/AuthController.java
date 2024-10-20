@@ -9,7 +9,7 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
-import org.frosty.server.services.auth.AuthService;
+import org.frosty.server.services.user.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

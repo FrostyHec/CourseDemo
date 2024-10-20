@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
@@ -58,6 +59,11 @@ public class CourseController {
     public Response adminGetRequiredApprovedCourse(@PathVariable Long id) {
         List<Course> courses = courseService.adminGetRequiredApprovedCourse(id);
         return Response.getSuccess(new CourseList(courses));
+    }
+
+    @GetMapping("/course/search")
+    public CourseList searchPublicCourse(int page_num,int page_size,String name){
+        throw new NotImplementedException();
     }
 
     @Data

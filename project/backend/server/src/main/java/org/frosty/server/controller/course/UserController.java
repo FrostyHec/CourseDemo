@@ -2,10 +2,12 @@ package org.frosty.server.controller.course;
 
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
 
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.user.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,8 +71,9 @@ public class UserController {
     // 模糊搜索用户（基于用户实名）
     // TODO
     @GetMapping("/user/search")
-    public Response searchUser(@RequestParam String realName) {
-        List<User> users = userService.searchByRealName(realName);
-        return Response.getSuccess(users);
+    public List<UserPublicInfo> searchUser(@RequestParam String realName) {
+        throw new NotImplementedException();
+//        List<User> users = userService.searchByRealName(realName);
+//        return Response.getSuccess(users);
     }
 }

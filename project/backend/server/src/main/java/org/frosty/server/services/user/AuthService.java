@@ -1,4 +1,4 @@
-package org.frosty.server.services.auth;
+package org.frosty.server.services.user;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.auth.entity.AuthInfo;

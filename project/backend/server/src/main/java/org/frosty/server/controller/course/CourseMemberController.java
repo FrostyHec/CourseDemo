@@ -1,7 +1,10 @@
 package org.frosty.server.controller.course;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
@@ -19,7 +22,6 @@ import java.util.stream.Collectors;
 @RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
 public class CourseMemberController {
-
     private final CourseService courseService;
     private final UserService userService;
 
@@ -32,9 +34,10 @@ public class CourseMemberController {
 
     // 教师添加学生入课程
     @PostMapping("/course/{id}/teacher/invite")
-    public Response inviteStudentsToCourse(@PathVariable Long id, @RequestBody long[] studentList) {
-        courseService.inviteStudents(id, Arrays.stream(studentList).boxed().collect(Collectors.toList()));
-        return Response.getSuccess("Students invited successfully");
+    public Response inviteStudentsToCourse(@PathVariable Long id, @RequestBody StudentList studentList) {
+        throw new NotImplementedException();
+//        courseService.inviteStudents(id, Arrays.stream(studentList).boxed().collect(Collectors.toList()));
+//        return Response.getSuccess("Students invited successfully");
     }
 
     // 获取课程中的学生列表
@@ -42,8 +45,9 @@ public class CourseMemberController {
     public Response getStudentList(@PathVariable Long id,
                                    @RequestParam int page_num,
                                    @RequestParam int page_size) {
-        List<Map<String, Object>> studentList = userService.getStudentListByCourse(id, page_num, page_size);
-        return Response.getSuccess(studentList);
+        throw new NotImplementedException();
+//        List<Map<String, Object>> studentList = userService.getStudentListByCourse(id, page_num, page_size);
+//        return Response.getSuccess(studentList);
     }
 
     // 获取学生加入的课程列表
@@ -51,8 +55,9 @@ public class CourseMemberController {
     public Response getStudentCourses(@PathVariable Long id,
                                       @RequestParam int page_num,
                                       @RequestParam int page_size) {
-        List<Course> courses = courseService.getCoursesByStudentId(id, page_num, page_size);
-        return Response.getSuccess(new CourseList(courses));
+        throw new NotImplementedException();
+//        List<Course> courses = courseService.getCoursesByStudentId(id, page_num, page_size);
+//        return Response.getSuccess(new CourseList(courses));
     }
 
     // 获取教师教授的课程列表
@@ -60,8 +65,9 @@ public class CourseMemberController {
     public Response getTeacherCourses(@PathVariable Long id,
                                       @RequestParam int page_num,
                                       @RequestParam int page_size) {
-        List<Course> courses = courseService.getCoursesByTeacherId(id, page_num, page_size);
-        return Response.getSuccess(new CourseList(courses));
+        throw new NotImplementedException();
+//        List<Course> courses = courseService.getCoursesByTeacherId(id, page_num, page_size);
+//        return Response.getSuccess(new CourseList(courses));
     }
 
     // 教师获取待添加的学生（半开放课程）
@@ -70,8 +76,9 @@ public class CourseMemberController {
                                        @PathVariable Long studentId,
                                        @RequestParam int page_num,
                                        @RequestParam int page_size) {
-        Map<String, Object> studentStatus = userService.getPendingStudentStatus(id, studentId, page_num, page_size);
-        return Response.getSuccess(studentStatus);
+        throw new NotImplementedException();
+//        Map<String, Object> studentStatus = userService.getPendingStudentStatus(id, studentId, page_num, page_size);
+//        return Response.getSuccess(studentStatus);
     }
 
     // 管理员获取待审核的课程列表
@@ -79,14 +86,22 @@ public class CourseMemberController {
     public Response getSubmittedCourses(@PathVariable Long id,
                                         @RequestParam int page_num,
                                         @RequestParam int page_size) {
-        List<Course> submittedCourses = courseService.getSubmittedCourses(id, page_num, page_size);
-        return Response.getSuccess(new CourseList(submittedCourses));
+        throw new NotImplementedException();
+//        List<Course> submittedCourses = courseService.getSubmittedCourses(id, page_num, page_size);
+//        return Response.getSuccess(new CourseList(submittedCourses));
     }
 
     // 内部类用于返回课程列表
     @Data
-    @RequiredArgsConstructor
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class CourseList {
-        private final List<Course> content;
+        private List<Course> content;
+    }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StudentList{
+        private List<Long> studentList;
     }
 }
