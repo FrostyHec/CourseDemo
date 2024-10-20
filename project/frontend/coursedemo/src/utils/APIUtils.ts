@@ -46,7 +46,7 @@ export interface APIDataResult {
 }
 
 export class AxiosAPI {
-  private static setAuthHeader(config: AxiosRequestConfig = {}): AxiosRequestConfig {
+  public static setAuthHeader(config: AxiosRequestConfig = {}): AxiosRequestConfig {
     const { token } = useAuthStore();
     config.headers = {
       'Authorization': 'Bearer ' + token,
@@ -67,6 +67,10 @@ export class AxiosAPI {
       config.data = dataOrParams;
     }
     const response = await axios({ method, url, ...config });
+    return this.extractResult<T>(response)
+  }
+
+  static extractResult<T>(response:AxiosResponse){
     return APIResult.fromAxiosResponse<T>(response);
   }
 
