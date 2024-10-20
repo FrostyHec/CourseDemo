@@ -87,3 +87,7 @@ public/
 node_modules/
 
 /project/frontend/coursedemo/.env
+
+/minio/
+
+*.env
