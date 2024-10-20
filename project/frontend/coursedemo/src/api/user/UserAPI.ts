@@ -25,14 +25,18 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 }
 
 /////////////////////   USER   ///////////////////////////////
-export interface UserEntity extends APIDataResult,APIParam{
+export interface UserEntity extends UserPublicInfoEntity{
+  password:string,
+  create_at:Date,
+  update_at:Date
+}
+
+export interface UserPublicInfoEntity extends APIDataResult,APIParam{
   user_id:bigint,
   first_name:string,
   last_name:string,
-  password:string,
-  user_type:UserType,
-  create_at:Date,
-  update_at:Date
+  role:UserType,
+  email:string,
 }
 
 export enum UserType{
@@ -44,4 +48,27 @@ export enum UserType{
 export async function createUserCall(param:UserEntity):Promise<APIResult<null>>{
   const url = backend_base + '/user/create';
   return await AxiosAPI.post(url,param);
+}
+
+export async function updateUserCall(userId:number,param:UserEntity):Promise<APIResult<null>>{
+  const url = backend_base + '/user/'+userId;
+  return await AxiosAPI.authPut(url,param);
+}
+export async function deleteUserCall(userId:number):Promise<APIResult<null>>{
+  const url = backend_base + '/user/'+userId;
+  return await AxiosAPI.authDelete(url,{});
+}
+
+export async function getUserAllInfoCall(userId:number){
+  const url = backend_base + '/user/'+userId;
+  return await AxiosAPI.authGet<UserEntity>(url,{});
+}
+export async function getUserPublicInfoCall(userId:number){
+  const url = backend_base + '/user/public/'+userId;
+  return await AxiosAPI.authGet<UserPublicInfoEntity>(url,{});
+}
+
+export async function searchUserCall(firstName:string,lastName:string){
+  const url = backend_base + '/user/search'
+  return await AxiosAPI.authGet<{content:UserPublicInfoEntity[]}>(url,{first_name:firstName,last_name:lastName});
 }

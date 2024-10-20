@@ -1,4 +1,4 @@
-import type { LoginResult } from '@/api/UserAPI'
+import type { LoginResult } from '@/api/user/UserAPI'
 import { backend_base } from '@/utils/Cosntant'
 import { setMockFunc } from '@/utils/MockUtils'
 import { APIResult, RequestType } from '@/utils/APIUtils'

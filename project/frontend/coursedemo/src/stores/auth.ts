@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
     first_name: '',
     last_name: '',
     password: '',
-    user_type: UserType.STUDENT,
+    role: UserType.STUDENT,
     create_at: new Date(0),
     update_at: new Date(0)
   }
