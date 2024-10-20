@@ -66,10 +66,26 @@ public class CourseController {
         throw new NotImplementedException();
     }
 
+    @DeleteMapping("/course/{id}")
+    public void deleteCourse(@PathVariable Long id,@RequestBody Course course){
+        throw new NotImplementedException();
+    }
+    @PatchMapping("/course/{id}/publication")
+    public void updateCoursePublication(@PathVariable Long id,@RequestBody Course course){
+        throw new NotImplementedException();
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CourseList {
-        List<Course> content;
+        private List<Course> content;
     }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PublicationStatus {
+        private Course.PublicationType publication;
+    }
+
 }
