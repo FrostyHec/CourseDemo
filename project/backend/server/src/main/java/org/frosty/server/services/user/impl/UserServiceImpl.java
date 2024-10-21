@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.event.delete_event.UserDeleteEvent;
+import org.frosty.server.mapper.user.UserMapper;
 import org.frosty.server.services.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -14,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl  implements UserService {
+public class UserServiceImpl implements UserService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -27,37 +28,39 @@ public class UserServiceImpl  implements UserService {
 
     }
 
-
-//    @Override
-//    public void create(String username, String password) {
-//
-//    }
+    private final UserMapper userMapper;
 
     @Override
     public void updateUser(Long id, User updatedUser) {
-
+        userMapper.updateUser(id, updatedUser);
     }
 
     @Override
     public User findById(Long id) {
-        return null;
+        User user = userMapper.findUserById(id);
+        return user;
     }
 
     @Override
     public void deleteUser(Long id) {
-
+        userMapper.deleteUserById(id);
     }
 
     @Override
     public User findPublicInfoById(Long id) {
-        return null;
+        User userPublicInfo = userMapper.findPublicInfoById(id);
+        return userPublicInfo;
     }
 
+
+    // TODO
     @Override
     public List<User> searchByRealName(String realName) {
         return List.of();
     }
 
+
+    // TODO
     @Override
     @EventListener
     public void handleUserDeleteEvent(UserDeleteEvent event) {

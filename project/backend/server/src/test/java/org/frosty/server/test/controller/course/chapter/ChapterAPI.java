@@ -31,9 +31,11 @@ public class ChapterAPI {
 
     public Chapter getTemplateTeachingChapter(Long courseId) {
         return new Chapter()
+                .setCourseId(1L)
                 .setChapterTitle("Chapter Title")
                 .setCourseId(courseId)
-                .setChapterType(ChapterType.teaching);
+                .setChapterType(ChapterType.teaching)
+                .setContent("Chapter Content");
     }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
