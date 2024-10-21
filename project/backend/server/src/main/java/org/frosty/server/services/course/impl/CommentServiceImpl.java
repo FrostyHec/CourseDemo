@@ -2,12 +2,11 @@ package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.entity.bo.ResourceComment;
-import org.frosty.server.mapper.course.ChapterMapper;
 import org.frosty.server.mapper.course.CommentMapper;
 import org.frosty.server.services.course.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -16,32 +15,33 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
-    public void addCommentToResource(Long id, ResourceComment comment) {
-
+    public void addCommentToResource(Long resourceId, ResourceComment comment) {
+        commentMapper.insertCommentToResource(resourceId, comment);
     }
 
     @Override
-    public void addReplyToComment(Long id, ResourceComment reply) {
-
+    public void addReplyToComment(Long parentCommentId, ResourceComment reply) {
+        commentMapper.insertReplyToComment(parentCommentId,reply);
     }
 
     @Override
-    public void updateComment(Long id, ResourceComment updatedComment) {
-
+    public void updateComment(Long commentId, ResourceComment updatedComment) {
+        commentMapper.updateCommentById(commentId, updatedComment);
     }
 
     @Override
-    public void deleteComment(Long id) {
-
+    public void deleteComment(Long commentId) {
+        commentMapper.deleteById(commentId);
     }
 
     @Override
-    public ResourceComment findById(Long id) {
-        return null;
+    public ResourceComment findById(Long commentId) {
+        return commentMapper.selectById(commentId);
     }
 
     @Override
-    public List<ResourceComment> findAllByResourceId(Long id) {
-        return List.of();
+    public List<ResourceComment> findAllByResourceId(Long resourceId) {
+        List<ResourceComment> comments = commentMapper.getAllByResourceId(resourceId);
+        return comments;
     }
 }

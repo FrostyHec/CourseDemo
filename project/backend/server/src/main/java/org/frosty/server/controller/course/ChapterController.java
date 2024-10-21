@@ -57,8 +57,8 @@ public class ChapterController {
 
     // 获取全部章节
     @GetMapping("/course/{id}/chapter")
-    public Response getAllChapters() {
-        List<Chapter> chapters = chapterService.getAll();
+    public Response getAllChapters(Long courseId) {
+        List<Chapter> chapters = chapterService.getAllChaptersByCourseId(courseId);
         return Response.getSuccess(new ChapterList(chapters));
     }
 
