@@ -42,23 +42,13 @@ public class CourseMemberSmokeTest {
 
         //---test start---
         // 0. teacher find the student
-//        var rcvd =courseAPI.search(
-//                studentToken,0,-1,"es");
-//        courseAPI.checkSingle(course,rcvd, Course.CourseStatus.published);
-//        var cid = CommonCheck.checkSingleAndGet(rcvd).getCourseId();
-        // 1. teacher invite student
-//        courseMemberAPI.enrollStudentToCourse(studentToken,cid);
 
+        // 1. teacher invite student
 
         // 2. student find itself joined
-//        var status =courseMemberAPI.getStudentStatusSuccess(studentToken,cid, student.getUserId());
-//        assert status == Enrollment.EnrollmentType.publik;
 
         // 3. teacher find student joined
-//        var rcvdStuList = courseMemberAPI.getStudentListSuccess(teacherToken,cid,1,-1);
-//        var rcvdStu = CommonCheck.checkSingleAndGet(rcvdStuList);
-//        assert rcvdStu.getStatus() == Enrollment.EnrollmentType.publik;
-//        userAPI.checkPublicUserEquality(student,rcvdStu.getStudent());
+
     }
 
     @Test
