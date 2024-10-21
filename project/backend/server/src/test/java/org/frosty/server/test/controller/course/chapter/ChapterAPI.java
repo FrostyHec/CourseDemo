@@ -31,7 +31,7 @@ public class ChapterAPI {
 
     public Chapter getTemplateTeachingChapter(Long courseId) {
         return new Chapter()
-                .setCourseId(1L)
+                .setCourseId(courseId)
                 .setChapterTitle("Chapter Title")
                 .setCourseId(courseId)
                 .setChapterType(ChapterType.teaching)
