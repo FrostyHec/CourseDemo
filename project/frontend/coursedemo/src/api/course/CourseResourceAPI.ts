@@ -10,6 +10,7 @@ export interface ResourceEntity {
   resource_name: string;
   suffix: string;
   file_name: string;
+  resource_order: number,
   resource_version_name: string;
   resource_version_order: number;
   resource_type: ResourceType;

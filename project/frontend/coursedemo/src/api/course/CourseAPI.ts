@@ -10,8 +10,8 @@ export interface CourseEntity {
   teacher_id: number,
   status: CourseStatus,
   publication: Publication
-  create_at: Date,
-  update_at: Date
+  created_at: Date,
+  updated_at: Date
 }
 
 export enum Publication {
