@@ -1,6 +1,6 @@
 import { describe, it, expect,beforeEach } from 'vitest'
 import type { LoginResult } from '@/api/UserAPI'
-import { mockUserLogin } from '@/mockjs/MockCourseAPI'
+import { mockLoginCall } from '@/mock/MockUserAPI'
 import { useAuthStore } from '@/stores/auth'
 import { APIResult } from '@/utils/APIUtils'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
@@ -12,7 +12,7 @@ describe('Mock valid test', () => {
     const res: LoginResult = {
       token: '123'
     }
-    mockUserLogin(new APIResult<LoginResult>(200, '', res))
+    mockLoginCall(new APIResult<LoginResult>(200, '', res))
 
     const store = useAuthStore()
     const login = store.login
@@ -25,7 +25,7 @@ describe('Mock valid test', () => {
     expect(token.value).toBe('123')
 
     res.token = '456'
-    mockUserLogin(new APIResult<LoginResult>(200, '', res))
+    mockLoginCall(new APIResult<LoginResult>(200, '', res))
     await login({
         user_id: 2,
         password: ''

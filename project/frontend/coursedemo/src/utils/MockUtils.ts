@@ -1,5 +1,5 @@
 import { type APIParam, APIResult, RequestType } from '@/utils/APIUtils'
-import { mock_status} from '@/utils/Cosntant'
+import { mock_status} from '@/utils/Constant'
 import { MockStatus } from '@/utils/EnvUtils'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
@@ -68,7 +68,7 @@ export function setMockFunc(url: string, req_type: RequestType, request: APIPara
 export async function enableTempMock() {
   try {
     // 动态导入模块
-    const module = await import('../mockjs/nonpublic-TempMock')
+    const module = await import('@/mock/nonpublic-TempMock')
     console.log(module)
     // 遍历模块的所有导出
     Object.keys(module).forEach((key) => {

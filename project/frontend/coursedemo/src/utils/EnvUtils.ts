@@ -1,14 +1,14 @@
 import { enableTempMock } from '@/utils/MockUtils'
 import { InternalException } from '@/utils/Exceptions'
-import { setMockStatus, setBackendBase } from '@/utils/Cosntant'
-
+import { setMockStatus, setAllBackendBase, setStorageBackendBase } from '@/utils/Constant'
+const mockStatus = import.meta.env.VITE_MOCK_STATUS
 export enum MockStatus {
   DEV = 'dev',
   PROD = 'prod',
   E2E = 'e2e',
 }
 
-export async function handleMockStatus(mockStatus: string) {
+export async function handleMockStatus() {
   switch (mockStatus) {
     case MockStatus.DEV:
       console.log('Using temp mock')
@@ -25,7 +25,11 @@ export async function handleMockStatus(mockStatus: string) {
   }
   setMockStatus((mockStatus as MockStatus))
 }
-
-export async function handleBackendPath(backend_url:string){
-  setBackendBase(backend_url)
+const backendUrl = import.meta.env.VITE_BACKEND_URL
+const storageBackendUrl = import.meta.env.VITE_STORAGE_BACKEND_URL
+export function handleBackendPath(){
+  setAllBackendBase(backendUrl)
+  if(storageBackendUrl){
+    setStorageBackendBase(storageBackendUrl)
+  }
 }
