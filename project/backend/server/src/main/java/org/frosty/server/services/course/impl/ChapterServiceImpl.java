@@ -35,8 +35,8 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
-    public List<Chapter> getAll() {
-        List<Chapter> chapters = chapterMapper.getAll();
+    public List<Chapter> getAllChaptersByCourseId(Long courseId) {
+        List<Chapter> chapters = chapterMapper.getAllChaptersByCourseId(courseId);
         return chapters;
     }
 }

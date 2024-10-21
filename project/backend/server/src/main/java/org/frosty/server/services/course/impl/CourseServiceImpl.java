@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
