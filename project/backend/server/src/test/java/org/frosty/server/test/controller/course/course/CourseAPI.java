@@ -3,8 +3,10 @@ package org.frosty.server.test.controller.course.course;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.utils.Pair;
 import org.frosty.server.controller.course.CourseController;
 import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.bo.User;
 import org.frosty.server.mapper.course.CourseMapper;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.tools.CommonCheck;
@@ -35,6 +37,16 @@ public class CourseAPI {
                 .setDescription("Course Description")
                 .setStatus(Course.CourseStatus.creating) // it was "approved"
                 .setPublication(Course.PublicationType.open)
+                ;
+    }
+
+    public Course getTemplatePublishedCourse(Long teacherId,String name, Course.PublicationType publicationType) {
+        return new Course()
+                .setTeacherId(teacherId)
+                .setCourseName(name)
+                .setDescription("Course Description")
+                .setStatus(Course.CourseStatus.published) // it was "approved"
+                .setPublication(publicationType)
                 ;
     }
 
@@ -122,6 +134,28 @@ public class CourseAPI {
                 .andExpect(RespChecker.success());
     }
 
+
+    public ResultActions searchPublicCourse(String token,int page_num,int page_size,String name) throws Exception {
+        String url = courseBaseUrl + "/search";
+        return mockMvc.perform(MockMvcRequestBuilders.get(url) // add "/status" to the url, because it is a PATCH request
+                .headers(authAPI.setAuthHeader(token))
+                .param("page_num", String.valueOf(page_num))
+                .param("page_size", String.valueOf(page_size))
+                .param("name", name)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public List<Course> searchPublicCourseSuccess(String token,int page_num,int page_size,String name) throws Exception {
+        var resp = searchPublicCourse(token, page_num, page_size, name)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return JsonUtils.toObject(resp, CourseController.CourseList.class).getContent();
+    }
+
+    // TODO find by Id
+    // delete
+    // update publication,
+
     public void checkSingle(Course origin, List<Course> rcvdLi, Course.CourseStatus targetStatus) {
         var rcvdCourse = CommonCheck.checkSingleAndGet(rcvdLi);
         checkSingle(origin, rcvdCourse, targetStatus);
@@ -135,4 +169,7 @@ public class CourseAPI {
     }
 
 
+    public void quickCreateCourse(Course course) {
+        mapper.insertCourse(course);
+    }
 }

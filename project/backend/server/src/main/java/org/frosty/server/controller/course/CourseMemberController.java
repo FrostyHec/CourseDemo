@@ -8,15 +8,12 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.po.StudentWithEnrollStatus;
 import org.frosty.server.services.course.CourseService;
 import org.frosty.server.services.user.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(PathConstant.API)
@@ -70,12 +67,10 @@ public class CourseMemberController {
 //        return Response.getSuccess(new CourseList(courses));
     }
 
-    // 教师获取待添加的学生（半开放课程）
+    // 获取某个学生的入课状态
     @GetMapping("/course/{id}/student/{studentId}/status")
-    public Response getPendingStudents(@PathVariable Long id,
-                                       @PathVariable Long studentId,
-                                       @RequestParam int page_num,
-                                       @RequestParam int page_size) {
+    public Response getStudentStatus(@PathVariable Long id,
+                                     @PathVariable Long studentId) {
         throw new NotImplementedException();
 //        Map<String, Object> studentStatus = userService.getPendingStudentStatus(id, studentId, page_num, page_size);
 //        return Response.getSuccess(studentStatus);
@@ -98,6 +93,13 @@ public class CourseMemberController {
     public static class CourseList {
         private List<Course> content;
     }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StudentStatusList {
+        private List<StudentWithEnrollStatus> studentList;
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
