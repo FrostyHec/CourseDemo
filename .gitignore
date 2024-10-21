@@ -87,3 +87,5 @@ public/
 node_modules/
 
 /minio/
+
+*.env
