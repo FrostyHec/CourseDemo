@@ -5,3 +5,9 @@ spring:
     password: ????
     driver-class-name: org.postgresql.Driver
 
+minio:
+  endpoint: http://localhost:9001
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucket:
+    serviceName: service

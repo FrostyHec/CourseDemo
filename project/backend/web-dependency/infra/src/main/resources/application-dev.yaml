@@ -13,6 +13,7 @@ api:
     #    type: remote
     url: http://localhost:9976
   message:
+    type: mock
     site:
       url: http://localhost:9972
     email:
