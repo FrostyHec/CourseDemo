@@ -2,6 +2,7 @@ package org.frosty.common_service.config;
 
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.common_service.im.api.impl.MessagePushServiceImpl;
+import org.frosty.common_service.im.api.impl.MockMessagePushServiceImpl;
 import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.common_service.storage.api.impl.MockObjectStorageServiceImpl;
 import org.frosty.common_service.storage.api.impl.ObjectStorageServiceImpl;
@@ -14,6 +15,10 @@ import org.springframework.web.client.RestTemplate;
 public class CommonServiceAutoConfiguration {
     @Value("${api.storage.type}")
     private String storageType;
+
+    @Value("${api.message.type}")
+    private String messageType;
+
 
     @Bean
     public RestTemplate restTemplate() {
@@ -32,6 +37,11 @@ public class CommonServiceAutoConfiguration {
 
     @Bean
     public MessagePushService messagePushService() {
-        return new MessagePushServiceImpl();
+        return switch (messageType) {
+            case "mock" -> new MockMessagePushServiceImpl();
+            case "remote" -> new MessagePushServiceImpl();
+            default -> throw new IllegalArgumentException("message type: "
+                    + messageType + " not supported");
+        };
     }
 }

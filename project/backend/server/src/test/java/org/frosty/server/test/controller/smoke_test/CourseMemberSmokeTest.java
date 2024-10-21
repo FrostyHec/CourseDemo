@@ -70,6 +70,9 @@ public class CourseMemberSmokeTest {
 
         var course = courseAPI.getTemplatePublishedCourse(
                 teacher.getUserId(),"test", Course.PublicationType.open);
+        courseAPI.quickCreateCourse(course);
+        var closedCourse = courseAPI.getTemplatePublishedCourse(
+                teacher.getUserId(),"test2", Course.PublicationType.closed);
 
         pair = authAPI.quickAddUserAndLogin("student", User.Role.student);
         var studentToken = pair.first;

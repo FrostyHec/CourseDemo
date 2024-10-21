@@ -29,9 +29,10 @@ public class ChapterAPI {
     private final String courseBaseUrl = PathConstant.API + "/course";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
 
-    public Chapter getTemplateTeachingChapter() {
+    public Chapter getTemplateTeachingChapter(Long courseId) {
         return new Chapter()
                 .setChapterTitle("Chapter Title")
+                .setCourseId(courseId)
                 .setChapterType(ChapterType.teaching);
     }
 
@@ -107,7 +108,7 @@ public class ChapterAPI {
 
     public Long addTestCourseTestChapterAndGetId(Long uid) {
         var coId = courseAPI.addTestCourseAndGetId(uid);
-        var e = getTemplateTeachingChapter().setCourseId(coId);
+        var e = getTemplateTeachingChapter(coId);
         chapterMapper.insert(e);
         assert e.getChapterId() != null;
         return e.getChapterId();
