@@ -17,4 +17,5 @@ public interface ChapterService {
     void deleteChapter(Long id);
 
     List<Chapter> getAllChaptersByCourseId(Long courseId);
+//List<Chapter> getAll();
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public interface ChapterMapper extends BaseMapper<Chapter> {
 
     // 插入一个新章节
-    @Insert("INSERT INTO chapters(course_id, chapter_title,chapter_type, content) VALUES(#{courseId}, #{chapterTitle}, #{chapterType}, #{content})")
+    @Insert("INSERT INTO chapters(course_id, chapter_title,chapter_type, content,chapter_order) VALUES(#{courseId}, #{chapterTitle}, #{chapterType}, #{content}, #{chapterOrder})")
     void insertChapter(Chapter chapter);
 
     // 根据 ID 更新章节

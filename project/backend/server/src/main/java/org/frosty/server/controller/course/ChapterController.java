@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.Chapter;
-import org.frosty.server.entity.bo.Course;
 import org.springframework.web.bind.annotation.*;
 import org.frosty.server.services.course.ChapterService;
 import java.util.List;
@@ -57,9 +55,9 @@ public class ChapterController {
 
     // 获取全部章节
     @GetMapping("/course/{id}/chapter")
-    public Response getAllChapters(Long courseId) {
-        List<Chapter> chapters = chapterService.getAllChaptersByCourseId(courseId);
-        return Response.getSuccess(new ChapterList(chapters));
+    public Map<String, List<Chapter>> getAll(@PathVariable Long id) {
+        List<Chapter> chapters = chapterService.getAllChaptersByCourseId(id);
+        return Map.of("content", chapters);
     }
 
     @Data
