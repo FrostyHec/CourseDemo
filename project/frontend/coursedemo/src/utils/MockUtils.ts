@@ -9,6 +9,7 @@ type mockReturnFunc = (req: APIParam | null) => APIResult | null;
 type mockReturnFuncNoParam = () => APIResult | null;
 const mockAdapter = new MockAdapter(axios);
 function mock(url:string,req_type:RequestType,func:(()=>any)){
+  console.log('')
   switch (req_type) {
     case RequestType.GET:
       mockAdapter.onGet(url).reply(() => {

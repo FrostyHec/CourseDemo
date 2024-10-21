@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
   <el-config-provider namespace="ep">
     <el-container style="height: 100vh;">

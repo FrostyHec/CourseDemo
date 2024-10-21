@@ -5,11 +5,6 @@ const isDark = useDark();
 const toggleDark = useToggle(isDark);
 import { ArrowRight } from '@element-plus/icons-vue'
 
-const l: {key: number, label: string, link?: string}[] = [
-  {key:0, label: 'hello', link: '/course/hello'},
-  {key:1, label: 'world'},
-]
-
 function generate_breadcrumb(s: string[] | string | undefined): {key: number, label: string, link?: string}[] {
   if(!s)
     return []
@@ -64,7 +59,6 @@ function generate_breadcrumb(s: string[] | string | undefined): {key: number, la
           </template>
           <template #default>
             <div
-              class="demo-rich-conent"
               style="display: flex; gap: 5px; flex-direction: column"
             >
               <div style="display: flex; gap: 10px; align-items: center;">
@@ -77,13 +71,9 @@ function generate_breadcrumb(s: string[] | string | undefined): {key: number, la
                   </p>
                 </div>
               </div>
-              
-              <div>
-                
-              </div>
 
               <el-button>Settings</el-button>
-              <el-button type="primary">Sign out</el-button>
+              <el-button type="primary" style="margin: 0%;">Sign out</el-button>
             </div>
           </template>
         </el-popover>

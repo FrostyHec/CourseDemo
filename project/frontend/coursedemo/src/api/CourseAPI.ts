@@ -89,3 +89,29 @@ export async function getAllChapterCall(courseId:number):Promise<APIResult<Chapt
   const url = backend_base + '/course/'+courseId+'/chapter';
   return AxiosAPI.authGet(url,{});
 }
+
+/////////////////////   Resource   ///////////////////////////////
+
+export interface ResourceEntity {
+  resource_id: number
+  chapter_id: number
+  resource_name: string
+  suffix: string
+  resource_address: string
+  resource_version_name: string
+  resource_version_order: number
+  resource_type: string 
+  student_can_download: boolean
+  create_at: Date
+  update_at: Date
+}
+
+/////////////////////   AllInOneEntity   ///////////////////////////////
+
+export interface AllInOneEntity {
+  course_info: CourseEntity,
+  chapters: {
+    chapter_info: ChapterEntity, 
+    resourses: ResourceEntity[],
+  }[],
+}
