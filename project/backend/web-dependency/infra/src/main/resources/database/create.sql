@@ -216,6 +216,47 @@ CREATE
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 
+drop table if exists assignments;
+CREATE TABLE assignments
+(
+    assignment_id          BIGSERIAL PRIMARY KEY,                                      -- 自增作业ID
+    chapter_id             INT NOT NULL,                                            -- 章节ID
+    description TEXT NOT NULL,                                           -- 作业描述
+    assignment_type VARCHAR                  NOT NULL CHECK ( assignments.assignment_type IN ('file_upload','online_form') ),
+    allow_update_submission BOOLEAN NOT NULL ,
+    latest_submission_time TIMESTAMP WITH TIME ZONE NOT NULL ,
+    maximum_score INT NOT NULL ,
+    allow_student_to_view_score BOOLEAN NOT NULL ,
+    created_at             TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at             TIMESTAMP WITH TIME ZONE NOT NULL
+--     ,FOREIGN KEY (chapter_id) REFERENCES chapters (chapter_id) ON DELETE CASCADE
+);
+CREATE
+    OR REPLACE TRIGGER auto_assignment_time
+    BEFORE INSERT OR
+        UPDATE
+    ON assignments
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time();
+
+drop table if exists file_submission;
+CREATE TABLE file_submission
+(
+    file_submission_id        BIGSERIAL PRIMARY KEY ,
+    assignment_id BIGINT NOT NULL,
+    file_name VARCHAR NOT NULL ,
+    gained_score INT,
+    created_at             TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at             TIMESTAMP WITH TIME ZONE NOT NULL
+--     ,FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE
+);
+CREATE
+    OR REPLACE TRIGGER auto_file_submission_time
+    BEFORE INSERT OR
+        UPDATE
+    ON file_submission
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time();
 
 -- DROP TABLE IF EXISTS materials;
 -- DROP TABLE IF EXISTS assignments;
