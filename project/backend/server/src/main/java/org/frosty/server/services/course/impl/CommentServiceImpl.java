@@ -16,17 +16,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void addCommentToResource(Long resourceId, ResourceComment comment) {
-        commentMapper.insertCommentToResource(resourceId, comment);
+        commentMapper.insert(comment);
     }
 
     @Override
     public void addReplyToComment(Long parentCommentId, ResourceComment reply) {
-        commentMapper.insertReplyToComment(parentCommentId,reply);
+        commentMapper.insert(reply);
     }
 
     @Override
     public void updateComment(Long commentId, ResourceComment updatedComment) {
-        commentMapper.updateCommentById(commentId, updatedComment);
+        // BaseMapper中的updateById.
+        commentMapper.updateById(updatedComment);
     }
 
     @Override
