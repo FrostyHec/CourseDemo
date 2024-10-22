@@ -19,6 +19,7 @@ public class CommentController {
     private final CommentService commentService;
 
     // 对课程发布评论
+    // TODO 2.0版本需改造以支持文件上传
     @PostMapping("/resource/{id}/comment")
     public void addCommentToResource(
             @GetToken TokenInfo tokenInfo,
@@ -29,6 +30,7 @@ public class CommentController {
     }
 
     // 对评论发布评论（回复）
+    // TODO 2.0版本需改造以支持文件上传
     @PostMapping("/resource/comment/{id}/comment")
     public void addReplyToComment(
             @GetToken TokenInfo tokenInfo,
@@ -60,6 +62,7 @@ public class CommentController {
     }
 
     // 获取全部评论
+    // TODO 将返回的 userId 改为 user 的 public 成员变量
     @GetMapping("/resource/{id}/comments")
     public Response getAllComments(@GetToken TokenInfo tokenInfo,@PathVariable Long id) {
         List<ResourceComment> comments = commentService.findAllByResourceId(id);
