@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.frosty.server.entity.bo.CourseEvaluation;
 
 @Mapper
-public interface EvaluationMapper extends BaseMapper<CourseEvaluation> {
+public interface CourseEvaluationMapper extends BaseMapper<CourseEvaluation> {
 
 }
