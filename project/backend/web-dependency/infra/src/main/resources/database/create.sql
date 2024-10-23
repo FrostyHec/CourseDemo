@@ -74,7 +74,9 @@ CREATE TABLE chapters
     chapter_title VARCHAR(100)                                                              NOT NULL, -- 章节标题
     chapter_type  VARCHAR(20) CHECK (chapter_type IN ('teaching', 'assignment', 'project')) NOT NULL, -- 章节类型
     content       TEXT,                                                                               -- 章节内容
-    chapter_order INT                                                                       NOT NULL,
+    chapter_order INT                                                                       NOT NULL, -- 章节顺序，小的前端显示在上
+    visible       BOOLEAN                                                                   NOT NULL, -- 和student有关
+    publication   BOOLEAN                                                                   NOT NULL, -- 也和student有关
     created_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL, -- 章节创建时间
     updated_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
