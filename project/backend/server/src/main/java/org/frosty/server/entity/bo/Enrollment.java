@@ -14,10 +14,10 @@ import java.time.OffsetDateTime;
 @Accessors(chain = true)
 @TableName("enrollments")
 public class Enrollment {
-    private int studentId;
-    private int courseId;
+    private Long studentId;
+    private Long courseId;
     private EnrollmentType status;
-    private OffsetDateTime createAt;
+    private OffsetDateTime createdAt; // typo
     private OffsetDateTime updatedAt;
 
     public enum EnrollmentType {

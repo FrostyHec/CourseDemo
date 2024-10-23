@@ -92,8 +92,8 @@ DROP TABLE IF EXISTS enrollments;
 CREATE TABLE enrollments
 (
     student_id INT                                               NOT NULL, -- 学生ID
-    course_id  INT                                               NOT NULL,
-    status     VARCHAR CHECK ( status IN ('publik', 'invited') ) NOT NULL, -- 课程ID
+    course_id  INT                                               NOT NULL, -- 课程ID
+    status     VARCHAR CHECK ( status IN ('publik', 'invited') ) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE                          NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE                          NOT NULL,
     primary key (student_id, course_id)

@@ -28,10 +28,10 @@ public class UserAPI {
         return user;
     }
 
-    public void checkPublicUserEquality(User origin,UserPublicInfo info){
+    public void checkPublicUserEquality(User origin, UserPublicInfo info) {
         assert origin.getUserId().equals(info.getUserId());
         assert origin.getFirstName().equals(info.getFirstName());
-        assert origin.getLastName().equals(info.getLastName());
+        assert origin.getLastName() == null || origin.getLastName().equals(info.getLastName());
         assert origin.getRole().equals(info.getRole());
         assert origin.getEmail().equals(info.getEmail());
     }

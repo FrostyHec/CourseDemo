@@ -1,5 +1,6 @@
 package org.frosty.server.entity.bo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@TableName("announcement")
+@TableName("notifications")
 public class Announcement {
+    @TableId
     private Long notificationId;
     private Long courseId;
     private List<Integer> receiverIds;
