@@ -32,5 +32,5 @@ public interface UserService {
 
     void handleUserDeleteEvent(UserDeleteEvent event);
 
-    void insertUser(User user);
+    void insertUser(User user);//
 }

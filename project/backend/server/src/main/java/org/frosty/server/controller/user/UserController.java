@@ -35,8 +35,7 @@ public class UserController {
 //        } else {
 //            return Map.of("message", "用户名被占用");
 //        }
-        userService.insertUser(user);
-
+        userService.insertUser(user);//
         throw new RuntimeException("Not implemented");// TODO
     }
 

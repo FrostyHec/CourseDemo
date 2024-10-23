@@ -19,7 +19,6 @@ public class ResourceComment {
     @TableId(type = IdType.AUTO)
     private Long commentId;
     private int resourceId;
-    private int preCommentId;
     private int userId;
     private String commentText;
     private Long commentReply;

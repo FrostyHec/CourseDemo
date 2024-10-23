@@ -22,8 +22,7 @@ public class CommentAPI {
     private final String commentBaseUrl = PathConstant.API +"/resource";
 
     public ResourceComment getResourceComment(Long resourceId)  {
-        return new ResourceComment()
-                ;
+        return new ResourceComment();
 
     }
 }
