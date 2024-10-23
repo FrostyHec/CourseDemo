@@ -24,7 +24,7 @@ public class UserController {
     // 暂未实现用户名与密码的正则判断
     // 暂时认为注册阶段不需要修改用户信息
     @PostMapping("/user")
-    public Response register(@RequestBody User user) {
+    public void register(@RequestBody User user) {
 //        if (!password.equals(confirmPassword)) {
 //            return Map.of("message", "密码不一致");
 //        }
@@ -35,6 +35,8 @@ public class UserController {
 //        } else {
 //            return Map.of("message", "用户名被占用");
 //        }
+        userService.insertUser(user);
+
         throw new RuntimeException("Not implemented");// TODO
     }
 

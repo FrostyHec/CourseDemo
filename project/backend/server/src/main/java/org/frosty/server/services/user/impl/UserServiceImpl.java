@@ -18,6 +18,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final ApplicationEventPublisher eventPublisher;
 
+
+
     @Override
     public void deleteUserById(Long userId) {
 
@@ -31,19 +33,24 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    public void insertUser(User user) {
+        userMapper.insert(user);
+    }
+
+    @Override
     public void updateUser(Long id, User updatedUser) {
-        userMapper.updateUser(id, updatedUser);
+        userMapper.updateById(updatedUser);
     }
 
     @Override
     public User findById(Long id) {
-        User user = userMapper.findUserById(id);
+        User user = userMapper.selectById(id);
         return user;
     }
 
     @Override
     public void deleteUser(Long id) {
-        userMapper.deleteUserById(id);
+        userMapper.deleteById(id);
     }
 
     @Override
@@ -66,5 +73,7 @@ public class UserServiceImpl implements UserService {
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
     }
+
+
 
 }

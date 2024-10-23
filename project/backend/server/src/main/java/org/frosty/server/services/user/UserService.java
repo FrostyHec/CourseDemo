@@ -31,4 +31,6 @@ public interface UserService {
     List<User> searchByRealName(String realName);
 
     void handleUserDeleteEvent(UserDeleteEvent event);
+
+    void insertUser(User user);
 }
