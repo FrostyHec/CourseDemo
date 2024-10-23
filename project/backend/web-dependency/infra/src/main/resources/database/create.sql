@@ -182,6 +182,7 @@ CREATE TABLE resource_comments
     resource_id  INT                      NOT NULL, -- 章节ID
     user_id      INT                      NOT NULL, -- 用户ID
     comment_text TEXT                     NOT NULL, -- 评论内容
+    comment_reply BIGINT,                           -- 回复评论ID
     created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at   TIMESTAMP WITH TIME ZONE NOT NULL
     -- FOREIGN KEY (chapter_id) REFERENCES Chapters (chapter_id) ON DELETE CASCADE  -- 章节ID外键，已注释
