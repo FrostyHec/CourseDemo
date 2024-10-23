@@ -2,10 +2,7 @@ package org.frosty.server.mapper.course;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.frosty.server.entity.bo.ResourceComment;
 
 import java.util.List;
@@ -29,4 +26,29 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
     // 获取指定资源的全部评论
     @Select("SELECT * FROM resource_comments WHERE resource_id =#{resourceId}")
     List<ResourceComment> getAllByResourceId(Long resourceId);
+
+
+    // TODO 确认一下返回的具体形式
+    @Select("""
+                SELECT 
+                    rc.comment_id,
+                    rc.resource_id,
+                    rc.comment_text,
+                    rc.comment_reply,
+                    u.user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.email,
+                    u.role
+                FROM 
+                    resource_comments rc
+                JOIN 
+                    users u 
+                ON 
+                    rc.user_id = u.user_id
+                WHERE 
+                    rc.resource_id = #{resourceId}
+            """)
+    List<CommentWithUser> getAllByResourceId(@Param("resourceId") int resourceId);
+
 }

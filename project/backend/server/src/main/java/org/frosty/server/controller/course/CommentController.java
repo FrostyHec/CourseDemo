@@ -67,5 +67,7 @@ public class CommentController {
     public Response getAllComments(@GetToken TokenInfo tokenInfo,@PathVariable Long id) {
         List<ResourceComment> comments = commentService.findAllByResourceId(id);
         return Response.getSuccess(comments);
+
+
     }
 }

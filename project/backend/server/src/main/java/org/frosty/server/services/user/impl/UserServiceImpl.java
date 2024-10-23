@@ -54,15 +54,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findPublicInfoById(Long id) {
-        User userPublicInfo = userMapper.findPublicInfoById(id);
-        return userPublicInfo;
+        return userMapper.findPublicInfoById(id);
     }
 
 
     // TODO
     @Override
     public List<User> searchByRealName(String realName) {
-        return List.of();
+        return userMapper.searchByRealName(realName);
     }
 
 

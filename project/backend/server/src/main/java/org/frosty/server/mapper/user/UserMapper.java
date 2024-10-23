@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.frosty.server.entity.bo.User;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
@@ -18,5 +20,9 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id = #{id}")
     User findPublicInfoById(Long id);
+
+    // TODO
+    @Select("")
+    List<User> searchByRealName(String realName);
 }
 
