@@ -22,6 +22,7 @@ public class ResourceComment {
     private int preCommentId;
     private int userId;
     private String commentText;
+    private Long commentReply;
     private OffsetDateTime createAt;
     private OffsetDateTime updatedAt;
 }
