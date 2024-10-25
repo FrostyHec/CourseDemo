@@ -1,14 +1,23 @@
 package org.frosty.server.controller.course;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.ResourceComment;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.course.CommentService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
@@ -65,9 +74,24 @@ public class CommentController {
     // TODO 将返回的 userId 改为 user 的 public 成员变量
     @GetMapping("/resource/{id}/comments")
     public Response getAllComments(@GetToken TokenInfo tokenInfo,@PathVariable Long id) {
-        List<ResourceComment> comments = commentService.findAllByResourceId(id);
+        List<CommentWithUser> comments = commentService.findAllByResourceId(id);
         return Response.getSuccess(comments);
+    }
 
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+//    @TableName("users")
+    public static class CommentWithUser{
+        @TableId(type = IdType.AUTO)
+        private Long commentId;
+        private int resourceId;
+        private UserPublicInfo userPublicInfo;
+        private String commentText;
+        private Long commentReply;
+        private OffsetDateTime createAt;
+        private OffsetDateTime updatedAt;
     }
 }

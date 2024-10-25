@@ -3,6 +3,7 @@ package org.frosty.server.mapper.course;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 
 import java.util.List;
@@ -30,25 +31,25 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
 
     // TODO 确认一下返回的具体形式
     @Select("""
-                SELECT 
-                    rc.comment_id,
-                    rc.resource_id,
-                    rc.comment_text,
-                    rc.comment_reply,
-                    u.user_id,
-                    u.first_name,
-                    u.last_name,
-                    u.email,
-                    u.role
-                FROM 
-                    resource_comments rc
-                JOIN 
-                    users u 
-                ON 
-                    rc.user_id = u.user_id
-                WHERE 
-                    rc.resource_id = #{resourceId}
+            SELECT 
+                rc.comment_id AS commentId,
+                rc.resource_id AS resourceId,
+                rc.comment_text AS commentText,
+                rc.comment_reply AS commentReply,
+                u.user_id AS "userPublicInfo.userId",
+                u.first_name AS "userPublicInfo.firstName",
+                u.last_name AS "userPublicInfo.lastName",
+                u.role AS "userPublicInfo.role",
+                u.email AS "userPublicInfo.email"
+            FROM 
+                resource_comments rc
+            JOIN 
+                users u 
+            ON 
+                rc.user_id = u.user_id
+            WHERE 
+                rc.resource_id = #{resourceId}
             """)
-    List<CommentWithUser> getAllByResourceId(@Param("resourceId") int resourceId);
+    List<CommentController.CommentWithUser> getAllPublicByResourceId(@Param("resourceId") long resourceId);
 
 }
