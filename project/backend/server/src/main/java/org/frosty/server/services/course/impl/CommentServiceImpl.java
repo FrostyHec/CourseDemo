@@ -1,6 +1,7 @@
 package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 import org.frosty.server.mapper.course.CommentMapper;
 import org.frosty.server.services.course.CommentService;
@@ -41,8 +42,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<ResourceComment> findAllByResourceId(Long resourceId) {
-        List<ResourceComment> comments = commentMapper.getAllByResourceId(resourceId);
-        return comments;
+    public List<CommentController.CommentWithUser> findAllByResourceId(Long resourceId) {
+        return commentMapper.getAllPublicByResourceId(resourceId);
     }
 }
