@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @Accessors(chain = true)
 @TableName("assignments")
-public class Assignment {
+public class Assignment implements ChapterContent {
     private Long assignmentId;
     private Long chapterId;
     private String description;
