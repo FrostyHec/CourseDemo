@@ -33,4 +33,25 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     @Select("SELECT * FROM Courses WHERE status = 'submitted'")
     List<Course> adminGetRequiredApprovedCourse(Long adminId);
+
+
+    @Select("<script>" +
+            "SELECT c.* " +
+            "FROM courses c " +
+            "JOIN users u ON c.teacher_id = u.user_id " +
+            "WHERE c.status = 'published' " +
+            "AND (" +
+            "c.course_name LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR c.description LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR u.first_name LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR u.last_name LIKE CONCAT('%', #{keyword}, '%')" +
+            ") " +
+            "<if test='pageSize != -1'>" +
+            "LIMIT #{pageSize} OFFSET #{pageNum} * #{pageSize}" +
+            "</if>" +
+            "</script>")
+    List<Course> searchPublicCourse(@Param("pageNum") int pageNum,
+                                    @Param("pageSize") int pageSize,
+                                    @Param("keyword") String keyword);
 }
+

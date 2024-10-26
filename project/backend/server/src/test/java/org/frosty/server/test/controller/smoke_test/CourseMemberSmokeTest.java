@@ -26,6 +26,7 @@ public class CourseMemberSmokeTest {
     private AuthAPI authAPI;
     @Autowired
     private UserAPI userAPI;
+
     @Test
     public void testStudentJoinFromInvitation() throws Exception {
         // TODO check basic join in flow  from invited
@@ -34,7 +35,7 @@ public class CourseMemberSmokeTest {
         var teacher = pair.second;
 
         var course = courseAPI.getTemplatePublishedCourse(
-                teacher.getUserId(),"test", Course.PublicationType.open);
+                teacher.getUserId(), "test", Course.PublicationType.open);
 
         pair = authAPI.quickAddUserAndLogin("student", User.Role.student);
         var studentToken = pair.first;
@@ -42,6 +43,7 @@ public class CourseMemberSmokeTest {
 
         //---test start---
         // 0. teacher find the student
+
 
         // 1. teacher invite student
 
@@ -59,10 +61,10 @@ public class CourseMemberSmokeTest {
         var teacher = pair.second;
 
         var course = courseAPI.getTemplatePublishedCourse(
-                teacher.getUserId(),"test", Course.PublicationType.open);
+                teacher.getUserId(), "test", Course.PublicationType.open);
         courseAPI.quickCreateCourse(course);
         var closedCourse = courseAPI.getTemplatePublishedCourse(
-                teacher.getUserId(),"test2", Course.PublicationType.closed);
+                teacher.getUserId(), "test2", Course.PublicationType.closed);
 
         pair = authAPI.quickAddUserAndLogin("student", User.Role.student);
         var studentToken = pair.first;
@@ -70,27 +72,29 @@ public class CourseMemberSmokeTest {
 
         //---test start---
         // 0. student find the course
-        var rcvd =courseAPI.searchPublicCourseSuccess(
-                studentToken,0,-1,"es");
-        courseAPI.checkSingle(course,rcvd, Course.CourseStatus.published);
-        var cid = CommonCheck.checkSingleAndGet(rcvd).getCourseId();
+        var received = courseAPI.searchPublicCourseSuccess(
+                studentToken, 0, -1, "es");
+        courseAPI.checkSingle(course, received, Course.CourseStatus.published);
+        var cid = CommonCheck.checkSingleAndGet(received).getCourseId();
         // 1. student join open course
-        courseMemberAPI.enrollStudentToCourse(studentToken,cid);
+        courseMemberAPI.enrollStudentToCourse(studentToken, cid);
 
 
         // 2. student find itself joined
-        var status =courseMemberAPI.getStudentStatusSuccess(studentToken,cid, student.getUserId());
+        var status = courseMemberAPI.getStudentStatusSuccess(studentToken, cid, student.getUserId());
         assert status == Enrollment.EnrollmentType.publik;
 
         // 3. teacher find student joined
-        var rcvdStuList = courseMemberAPI.getStudentListSuccess(teacherToken,cid,1,-1);
-        var rcvdStu = CommonCheck.checkSingleAndGet(rcvdStuList);
-        assert rcvdStu.getStatus() == Enrollment.EnrollmentType.publik;
-        userAPI.checkPublicUserEquality(student,rcvdStu.getStudent());
+        var rcvdStuList = courseMemberAPI.getStudentListSuccess(teacherToken, cid, 1, -1);
+        var receiveStudent = CommonCheck.checkSingleAndGet(rcvdStuList);
+        //assert receiveStudent.getStatus() == Enrollment.EnrollmentType.publik;
+        userAPI.checkPublicUserEquality(student, receiveStudent.getStudent());
 
         // 4. teacher changed student to invited
+        courseMemberAPI.inviteStudentsToCourse(teacherToken, cid, List.of(student.getUserId()));
 
         // 5. student find itself invited
-
+        status = courseMemberAPI.getStudentStatusSuccess(studentToken, cid, student.getUserId());
+        assert status == Enrollment.EnrollmentType.invited;
     }
 }

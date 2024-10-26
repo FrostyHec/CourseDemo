@@ -1,5 +1,6 @@
 package org.frosty.server.services.course;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
@@ -13,7 +14,7 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
-        courseMapper.insertCourse(course);
+        courseMapper.insert(course);
     }
 
     public void updateCourseStatus(Long id, String status) {
@@ -36,23 +37,21 @@ public class CourseService {
 
     public void deleteCourse(Long id) {
         // todo: course status must be "deleted" or course has no student to delete
-        courseMapper.deleteCourse(id);
+        courseMapper.deleteById(id);
     }
 
     public List<Course> getAllCourses() {
         return courseMapper.getAllCourses();
     }
 
-    //TODO:模糊搜索
-    public List<Course> searchCourses() {
-        return List.of();
+    public List<Course> searchPublicCourse(int pageNum, int pageSize, String keyword) {
+        return courseMapper.searchPublicCourse(pageNum, pageSize, keyword);
     }
 
-    public List<Course> findCoursesByTeacherId(Long teacherId) {
-        return courseMapper.findCoursesByTeacherId(teacherId);
-    }
 
-    public List<Course> adminGetRequiredApprovedCourse(Long adminId) {
-        return courseMapper.adminGetRequiredApprovedCourse(adminId);
+    public void updateCoursePublication(Long id, String publicationStatus) {
+        UpdateWrapper<Course> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("course_id", id).set("publication", publicationStatus);
+        courseMapper.update(updateWrapper);
     }
 }

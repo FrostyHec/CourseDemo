@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.services.course.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.Map;
 @RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
 public class CourseController {
+    @Autowired
     private final CourseService courseService;
 
     @PostMapping("/course")
@@ -49,30 +50,24 @@ public class CourseController {
         return Response.getSuccess(course);
     }
 
-    @GetMapping("teacher/{id}/courses")
-    public Response findCoursesByTeacherId(@PathVariable Long id) {
-        List<Course> courses = courseService.findCoursesByTeacherId(id);
-        return Response.getSuccess(new CourseList(courses));
-    }
-
-    @GetMapping("/admin/{id}/courses/submitted")
-    public Response adminGetRequiredApprovedCourse(@PathVariable Long id) {
-        List<Course> courses = courseService.adminGetRequiredApprovedCourse(id);
-        return Response.getSuccess(new CourseList(courses));
-    }
-
     @GetMapping("/course/search")
-    public CourseList searchPublicCourse(int page_num,int page_size,String name){
-        throw new NotImplementedException();
+    public Response searchPublicCourse(int page_num, int page_size, String name) {
+        if (page_size < -1 || page_num < 0) {
+            return Response.getBadRequest("Page parameter error");
+        }
+
+        return Response.getSuccess(new CourseList(
+                courseService.searchPublicCourse(page_num, page_size, name)));
     }
 
     @DeleteMapping("/course/{id}")
-    public void deleteCourse(@PathVariable Long id,@RequestBody Course course){
-        throw new NotImplementedException();
+    public void deleteCourse(@PathVariable Long id, @RequestBody Course course) {
+        courseService.deleteCourse(id);
     }
+
     @PatchMapping("/course/{id}/publication")
-    public void updateCoursePublication(@PathVariable Long id,@RequestBody Course course){
-        throw new NotImplementedException();
+    public void updateCoursePublication(@PathVariable Long id, @RequestBody PublicationStatus publicationStatus) {
+        courseService.updateCoursePublication(id, publicationStatus.getPublication().name());
     }
 
     @Data
@@ -81,6 +76,7 @@ public class CourseController {
     public static class CourseList {
         private List<Course> content;
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
