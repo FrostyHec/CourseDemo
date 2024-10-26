@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Accessors(chain = true)
 @TableName("resources")
-public class Resource {
+public class Resource implements ChapterContent {
     @TableId(type = IdType.AUTO)
     private Long resourceId; // 资源ID
     private Long chapterId; // 章节ID
