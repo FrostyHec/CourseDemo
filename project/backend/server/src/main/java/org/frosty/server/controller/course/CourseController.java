@@ -22,6 +22,7 @@ public class CourseController {
 
     @PostMapping("/course")
     public Response createCourse(@RequestBody Course course) {
+        course.setCourseId(null);
         courseService.createCourse(course);
         return Response.getSuccess("Course created successfully");
     }

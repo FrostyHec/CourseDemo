@@ -21,7 +21,7 @@ public class LogoutTest {
         String name = "admin";
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
-        var loginInfo = new LoginInfo(user.getUserId(), password);
+        var loginInfo = new LoginInfo(user.getEmail(), password);
         String token = authAPI.loginSuccess(loginInfo);
         assert user.getUserId() == 1;
         authAPI.logout(token, user.getUserId())
@@ -33,7 +33,7 @@ public class LogoutTest {
         String name = "admin";
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
-        var loginInfo = new LoginInfo(user.getUserId(), password);
+        var loginInfo = new LoginInfo(user.getEmail(), password);
         String token = authAPI.loginSuccess(loginInfo);
         authAPI.logout(token, user.getUserId() + 1)
                 .andExpect(RespChecker.badRequest())

@@ -47,7 +47,7 @@ public class AuthController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LoginInfo {
-        private long userId;
+        private String email;
         private String password;
     }
 }

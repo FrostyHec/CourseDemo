@@ -19,7 +19,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public String login(LoginInfo loginInfo) {
-        var user = mapper.selectById(loginInfo.getUserId());
+        var user = mapper.selectByEmail(loginInfo.getEmail());
         Ex.check(user != null, Response.getNotFound("user-not-found"));
         Ex.check(passwordEncoder.matches(loginInfo.getPassword(), user.getPassword()),
                 Response.getBadRequest("incorrect-password"));
