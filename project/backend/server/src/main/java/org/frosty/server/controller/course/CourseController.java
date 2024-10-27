@@ -8,7 +8,6 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.services.course.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

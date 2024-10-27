@@ -2,7 +2,6 @@ package org.frosty.server.services.course;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.frosty.server.entity.bo.Announcement;
 import org.frosty.server.mapper.course.AnnouncementMapper;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,8 @@ public class AnnouncementService {
     // 创建公告
     public void createAnnouncement(Long courseId, Announcement announcement) {
         announcement.setCourseId(courseId);
-        announcementMapper.insert(announcement);
+        announcementMapper.insertAnnouncement(announcement);
+
     }
 
     // 修改公告
