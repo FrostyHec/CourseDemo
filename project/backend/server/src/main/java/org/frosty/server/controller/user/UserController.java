@@ -1,11 +1,15 @@
 package org.frosty.server.controller.user;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.services.user.UserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,11 +65,16 @@ public class UserController {
         return Response.getSuccess(user);
     }
 
-    // 模糊搜索用户（基于用户实名）
-    // TODO
     @GetMapping("/user/search")
     public Response searchUser(@RequestParam String realName) {
         List<User> users = userService.searchByRealName(realName);
-        return Response.getSuccess(users);
+        return Response.getSuccess(new UserList(users));
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserList {
+        private List<User> content;
     }
 }
