@@ -95,7 +95,7 @@ public class ResourceAPI {
                 .andReturn();
         return JsonUtils.toObject(resp, ResourceWithAccessKey.class);
     }
-
+//
     public ResultActions updateResourceMetadata(String token, Long id, Resource updatedResource) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(updatedResource);
