@@ -18,7 +18,6 @@ import java.util.Map;
 @RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
 public class CourseController {
-    @Autowired
     private final CourseService courseService;
 
     @PostMapping("/course")
@@ -61,7 +60,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/course/{id}")
-    public void deleteCourse(@PathVariable Long id, @RequestBody Course course) {
+    public void deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
     }
 
