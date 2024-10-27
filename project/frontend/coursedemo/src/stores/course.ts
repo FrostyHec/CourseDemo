@@ -1,8 +1,8 @@
 import { computed, reactive, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { CourseStatus, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI'
-import { ChapterType, getAllChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI'
-import { ResourceType, type ResourceEntity } from '@/api/course/CourseResourceAPI'
+import { ChapterType, getAllChapterCall, getChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI'
+import { getResourcesByChapterCall, ResourceType, type ResourceEntity } from '@/api/course/CourseResourceAPI'
 import { useRoute } from 'vue-router'
 export interface AllInOneEntity {
   course_info: CourseEntity,
@@ -83,7 +83,15 @@ export function path_convert(path: undefined|string|string[]): string[] {
 }
 
 async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
-  return undefined
+  const course_info = (await getCourseCall(course_id)).data
+  const chapter_list = (await getAllChapterCall(course_id)).data
+  const chapter_all_list: {chapter_info: ChapterEntity, resourses: ResourceEntity[]}[] = []
+  for(const chapter of chapter_list) {
+    const chapter_info = (await getChapterCall(chapter.chapter_id)).data
+    const resoruse_all_list = (await getResourcesByChapterCall(chapter.chapter_id)).data.content
+    chapter_all_list.push({chapter_info: chapter_info, resourses: resoruse_all_list})
+  }
+  return {course_info: course_info, chapters: chapter_all_list}
 }
 
 export const useCourseStore = defineStore('course', () => {
