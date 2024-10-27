@@ -1,6 +1,5 @@
 import { service_backend_base } from '@/utils/Constant'
-import { APIResult, AxiosAPI } from '@/utils/APIUtils'
-import type { UserPublicInfoEntity } from '@/api/user/UserAPI'
+import { AxiosAPI } from '@/utils/APIUtils'
 
 /////////////////////   COURSE   ///////////////////////////////
 export interface CourseEntity {
