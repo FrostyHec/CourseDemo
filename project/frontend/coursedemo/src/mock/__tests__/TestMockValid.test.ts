@@ -1,6 +1,6 @@
 import { describe, it, expect,beforeEach } from 'vitest'
-import type { LoginResult } from '@/api/UserAPI'
-import { mockLoginCall } from '@/mock/MockUserAPI'
+import type { LoginResult } from '@/api/user/UserAPI'
+import { mockLoginCall } from '@/mock/user/MockUserAPI'
 import { useAuthStore } from '@/stores/auth'
 import { APIResult } from '@/utils/APIUtils'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'

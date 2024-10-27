@@ -19,6 +19,9 @@ declare module 'vue' {
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDialog: typeof import('element-plus/es')['ElDialog']
@@ -38,5 +41,9 @@ declare module 'vue' {
     ResourseForm: typeof import('./components/forms/ResourseForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShowCourse: typeof import('./components/CourseShowPage/ShowCourse.vue')['default']
+    Student: typeof import('./components/MainPage/student.vue')['default']
+    SvgIcon: typeof import('./components/SvgIcon/index.vue')['default']
+    Teacher: typeof import('./components/MainPage/teacher.vue')['default']
   }
 }
