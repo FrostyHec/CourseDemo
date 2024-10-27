@@ -3,6 +3,7 @@ package org.frosty.server.test.controller.course.comment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
@@ -27,17 +28,17 @@ public class CommentAPI {
     private final ResourceAPI resourceAPI;
     private final String commentBaseUrl = PathConstant.API + "/resource";
 
-    public ResourceComment getTemplateComment(int resourceId) {
+    public ResourceComment getTemplateComment(Long resourceId, Long userId) {
         return new ResourceComment()
                 .setResourceId(resourceId)
-                .setUserId(1)
+                .setUserId(userId)
                 .setCommentText("Sample comment text");
     }
 
-    public ResourceComment getTemplateReplyComment(int resourceId, Long commentReplyId) {
+    public ResourceComment getTemplateReplyComment(Long resourceId, Long commentReplyId, Long userId) {
         return new ResourceComment()
                 .setResourceId(resourceId)
-                .setUserId(1)
+                .setUserId(userId)
                 .setCommentText("Sample comment text")
                 .setCommentReply(commentReplyId);
     }
@@ -120,10 +121,10 @@ public class CommentAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public List<ResourceComment> getAllSuccess(String token, Long resourceId) throws Exception {
+    public List<CommentController.CommentWithUser> getAllSuccess(String token, Long resourceId) throws Exception {
         var resp = getAll(token, resourceId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp, List.class);
+        return JsonUtils.toObject(resp, CommentController.CommentList.class).getContent();
     }
 }
