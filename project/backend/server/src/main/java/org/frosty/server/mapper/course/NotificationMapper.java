@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Options;
 import org.frosty.server.entity.bo.Notification;
 
 @Mapper
-public interface AnnouncementMapper extends BaseMapper<Notification> {
+public interface NotificationMapper extends BaseMapper<Notification> {
     @Insert("INSERT INTO notifications (course_id, title, message) " +
             "VALUES (#{courseId}, #{title}, #{message})")
     @Options(useGeneratedKeys = true, keyProperty = "notificationId")
-    void insertAnnouncement(Notification notification);
+    void insertNotification(Notification notification);
 }

@@ -1,10 +1,11 @@
-package org.frosty.server.test.controller.course.announcement;
+package org.frosty.server.test.controller.course.notification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.controller.course.AnnouncementController;
-import org.frosty.server.entity.bo.Announcement;
+import org.frosty.server.controller.course.NotificationController;
+import org.frosty.server.entity.bo.Notification;
+import org.frosty.server.entity.po.NotificationWithReceiver;
 import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class AnnouncementAPI {
+public class NotificationAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final AuthUtil authUtil;
@@ -41,14 +42,14 @@ public class AnnouncementAPI {
         return JsonUtils.toObject(resp, responseType);
     }
 
-    public ResultActions createAnnouncement(String token, Long courseId, Announcement announcement) throws Exception {
+    public ResultActions createAnnouncement(String token, Long courseId, NotificationWithReceiver notification) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
                 post(baseUrl + "/course/" + courseId+ "/announcement");
-        return performRequest(requestBuilder, token, announcement);
+        return performRequest(requestBuilder, token, notification);
     }
 
-    public void createAnnouncementSuccess(String token, Long courseId, Announcement announcement) throws Exception {
-        createAnnouncement(token, courseId, announcement).andExpect(RespChecker.success());
+    public void createAnnouncementSuccess(String token, Long courseId, NotificationWithReceiver notification) throws Exception {
+        createAnnouncement(token, courseId, notification).andExpect(RespChecker.success());
     }
 
     public ResultActions getAnnouncementsForCourse(String token, Long courseId) throws Exception {
@@ -57,24 +58,24 @@ public class AnnouncementAPI {
         return performRequest(requestBuilder, token, null);
     }
 
-    public List<Announcement> getAnnouncementsForCourseSuccess(String token, Long courseId) throws Exception {
+    public List<Notification> getAnnouncementsForCourseSuccess(String token, Long courseId) throws Exception {
         var resultActions = getAnnouncementsForCourse(token, courseId);
-        return getSuccessResponse(resultActions, AnnouncementController.AnnouncementList.class).getContent();
+        return getSuccessResponse(resultActions, NotificationController.NotificationList.class).getContent();
     }
 
-    public ResultActions updateAnnouncement(String token, Long announcementId, Announcement announcement) throws Exception {
+    public ResultActions updateAnnouncement(String token, Long announcementId, NotificationWithReceiver notification) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
-                put(baseUrl + "/announcement"  + announcementId);
-        return performRequest(requestBuilder, token, announcement);
+                put(baseUrl + "/announcement/"  + announcementId);
+        return performRequest(requestBuilder, token, notification);
     }
 
-    public void updateAnnouncementSuccess(String token, Long announcementId, Announcement announcement) throws Exception {
-        updateAnnouncement(token, announcementId, announcement).andExpect(RespChecker.success());
+    public void updateAnnouncementSuccess(String token, Long announcementId, NotificationWithReceiver notification) throws Exception {
+        updateAnnouncement(token, announcementId, notification).andExpect(RespChecker.success());
     }
 
     public ResultActions deleteAnnouncement(String token, Long announcementId) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
-                delete(baseUrl + "/announcement" + announcementId);
+                delete(baseUrl + "/announcement/" + announcementId);
         return performRequest(requestBuilder, token, null);
     }
 
@@ -84,7 +85,7 @@ public class AnnouncementAPI {
 
     public ResultActions getAnnouncement(String token, Long announcementId) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
-                get(baseUrl + "/announcement" + announcementId);
+                get(baseUrl + "/announcement/" + announcementId);
         return performRequest(requestBuilder, token, null);
     }
 

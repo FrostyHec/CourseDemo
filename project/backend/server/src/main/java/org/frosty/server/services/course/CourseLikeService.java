@@ -29,7 +29,7 @@ public class CourseLikeService {
         queryWrapper.eq("course_id", courseId)
                 .eq("student_id", userId);  // 通过多个主键字段设置查询条件
 
-        return courseLikeMapper.selectOne(queryWrapper) == null;
+        return courseLikeMapper.selectOne(queryWrapper) != null;
     }
 
 
