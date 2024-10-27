@@ -17,8 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final ApplicationEventPublisher eventPublisher;
-
-
+    private final UserMapper userMapper;
 
     @Override
     public void deleteUserById(Long userId) {
@@ -29,8 +28,6 @@ public class UserServiceImpl implements UserService {
     public void publishDeleteUser(Long userId) {
 
     }
-
-    private final UserMapper userMapper;
 
     @Override
     public void insertUser(User user) {
@@ -71,7 +68,6 @@ public class UserServiceImpl implements UserService {
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
     }
-
 
 
 }

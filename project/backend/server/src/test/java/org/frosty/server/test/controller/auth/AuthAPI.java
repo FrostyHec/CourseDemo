@@ -2,11 +2,6 @@ package org.frosty.server.test.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.frosty.auth.config.AuthConstant;
-import org.frosty.auth.entity.TokenInfo;
-import org.frosty.auth.exception.InvalidTokenException;
-import org.frosty.auth.utils.JwtHandler;
-import org.frosty.auth.utils.TokenUtils;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.utils.Pair;
 import org.frosty.server.controller.user.AuthController.LoginInfo;
@@ -14,7 +9,6 @@ import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.user.UserAPI;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,16 +22,9 @@ import java.util.Map;
 public class AuthAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final JwtHandler jwtHandler;
     private final UserAPI userAPI;
+    private final AuthUtil authUtil;
     private final String baseUrl = PathConstant.API + "/auth";
-
-    public HttpHeaders setAuthHeader(String token) throws InvalidTokenException {
-        HttpHeaders headers = new HttpHeaders();
-        var parsedToken = TokenInfo.getWithAuthInfo(jwtHandler.getToken(jwtHandler.getClaimsFromToken(token)));
-        headers.add(AuthConstant.parsedHeader, TokenUtils.tokenInfoToString(parsedToken));
-        return headers;
-    }
 
     public ResultActions login(LoginInfo loginInfo) throws Exception {
         String url = baseUrl + "/login";
@@ -51,7 +38,7 @@ public class AuthAPI {
     public ResultActions logout(String token, long userId) throws Exception {
         String url = baseUrl + "/logout";
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
-                .headers(setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.toString(Map.of("user_id", userId)))
                 .accept(MediaType.APPLICATION_JSON));

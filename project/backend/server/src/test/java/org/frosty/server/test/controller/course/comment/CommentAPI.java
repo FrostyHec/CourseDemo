@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.ResourceComment;
-import org.frosty.server.test.controller.auth.AuthAPI;
-import org.frosty.server.test.controller.course.course.CourseAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.controller.course.resource.ResourceAPI;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -23,7 +22,7 @@ import java.util.List;
 public class CommentAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil authUtil;
     private final ResourceAPI resourceAPI;
     private final String commentBaseUrl = PathConstant.API + "/resource";
 
@@ -46,7 +45,7 @@ public class CommentAPI {
         String url = commentBaseUrl + "/" + resourceId + "/comment";
         String json = objectMapper.writeValueAsString(comment);
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -61,7 +60,7 @@ public class CommentAPI {
         String url = commentBaseUrl + "/comment" + "/" + commentId + "/comment";
         String json = objectMapper.writeValueAsString(comment);
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -76,7 +75,7 @@ public class CommentAPI {
         String url = commentBaseUrl + "/comment/" + commentId;
         String json = objectMapper.writeValueAsString(updatedComment);
         return mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -90,7 +89,7 @@ public class CommentAPI {
     public ResultActions delete(String token, Long commentId) throws Exception {
         String url = commentBaseUrl + "/comment/" + commentId;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -102,7 +101,7 @@ public class CommentAPI {
     public ResultActions get(String token, Long commentId) throws Exception {
         String url = commentBaseUrl + "/comment/" + commentId;
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -116,7 +115,7 @@ public class CommentAPI {
     public ResultActions getAll(String token, Long resourceId) throws Exception {
         String url = commentBaseUrl + "/" + resourceId + "/comments";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
