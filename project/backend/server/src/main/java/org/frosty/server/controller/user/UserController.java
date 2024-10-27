@@ -22,13 +22,7 @@ public class UserController {
     // 暂未实现用户名与密码的正则判断
     // 暂时认为注册阶段不需要修改用户信息
     @PostMapping("/user")
-    public Response register(String confirmPassword, @RequestBody User user) {
-
-        // 验证密码和确认密码是否一致
-        if (!user.getPassword().equals(confirmPassword)) {
-            return Response.getBadRequest("密码不一致");
-        }
-
+    public Response register(@RequestBody User user) {
         // 使用passwordEncoder.encode对密码进行加密
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);

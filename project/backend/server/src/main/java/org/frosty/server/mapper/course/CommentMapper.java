@@ -1,6 +1,7 @@
 package org.frosty.server.mapper.course;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.frosty.server.controller.course.CommentController;
@@ -31,7 +32,7 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
 
     // TODO 确认一下返回的具体形式
     @Select("""
-            SELECT 
+            SELECT
                 rc.comment_id AS commentId,
                 rc.resource_id AS resourceId,
                 rc.comment_text AS commentText,
@@ -41,15 +42,16 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
                 u.last_name AS "userPublicInfo.lastName",
                 u.role AS "userPublicInfo.role",
                 u.email AS "userPublicInfo.email"
-            FROM 
+            FROM
                 resource_comments rc
-            JOIN 
-                users u 
-            ON 
+            JOIN
+                users u
+            ON
                 rc.user_id = u.user_id
-            WHERE 
+            WHERE
                 rc.resource_id = #{resourceId}
             """)
+//    @Select("SELECT * FROM resource_comments WHERE resource_id = #{resourceId}")
     List<CommentController.CommentWithUser> getAllPublicByResourceId(@Param("resourceId") long resourceId);
 
 }

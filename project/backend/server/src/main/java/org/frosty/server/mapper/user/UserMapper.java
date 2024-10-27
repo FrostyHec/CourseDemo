@@ -24,5 +24,8 @@ public interface UserMapper extends BaseMapper<User> {
     // TODO
     @Select("")
     List<User> searchByRealName(String realName);
+
+    @Select("SELECT * FROM users WHERE email = #{email}")
+    User selectByEmail(String email);
 }
 

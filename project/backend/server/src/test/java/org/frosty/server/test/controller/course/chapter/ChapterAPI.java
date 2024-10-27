@@ -37,7 +37,9 @@ public class ChapterAPI {
                 .setCourseId(courseId)
                 .setChapterType(ChapterType.teaching)
                 .setContent("Chapter Content")
-                .setChapterOrder(1);
+                .setChapterOrder(1)
+                .setVisible(Boolean.TRUE)
+                .setPublication(Boolean.TRUE);
     }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {

@@ -1,5 +1,3 @@
-import { fileURLToPath, URL } from 'node:url';
-
 import path from 'path'
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -58,6 +56,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~/': `${pathSrc}/`,
+      '@': `${pathSrc}/`,
     },
   },
   css: {
@@ -67,6 +66,7 @@ export default defineConfig({
       },
     },
   },
+
   // 修改启动的
   server: {
     host: '0.0.0.0', // 这个用于启动
