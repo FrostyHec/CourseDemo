@@ -1,4 +1,4 @@
-package org.frosty.server.test.controller;
+package org.frosty.server.test.controller.helloworld;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;

@@ -1,28 +1,30 @@
 <script lang="ts" setup>
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, useToggle } from "@vueuse/core"
+import { useCourseStore, path_convert } from "@/stores/course";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 import { ArrowRight } from '@element-plus/icons-vue'
+import { useRoute } from "vue-router";
 
-const l: {key: number, label: string, link?: string}[] = [
-  {key:0, label: 'hello', link: '/course/hello'},
-  {key:1, label: 'world'},
-]
+const course_store = useCourseStore()
 
-function generate_breadcrumb(s: string[] | string | undefined): {key: number, label: string, link?: string}[] {
-  if(!s)
+function generate_breadcrumb(s: string[]): {key: number, label: string, link?: string}[] {
+  let id = useRoute().params.course_id
+  if(!id)
     return []
-  if(typeof s === "string")
-    s = [s]
-  let prefix = '/course'
+  let prefix = '/course' + '/' + id
   let res = []
+  if(s.length==0)
+    res.push({key: 0, label: course_store.course_data.course_info.course_name})
+  else
+    res.push({key: 0, label: course_store.course_data.course_info.course_name, link: prefix})
   for(let i=0;i<s.length;i++) {
     prefix += '/' + s[i]
     if(i==s.length-1) {
-      res.push({key: i, label: s[i].replace(/-/g, ' ')})
+      res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
     } else {
-      res.push({key: i, label: s[i].replace(/-/g, ' '), link: prefix})
+      res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
     }
   }
   return res
@@ -42,7 +44,7 @@ function generate_breadcrumb(s: string[] | string | undefined): {key: number, la
     <template #content>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item></el-breadcrumb-item>
-        <el-breadcrumb-item v-for="it in generate_breadcrumb($route.params.labels)" :key="it.key" :to="it.link">
+        <el-breadcrumb-item v-for="it in generate_breadcrumb(path_convert($route.params.labels))" :key="it.key" :to="it.link">
           {{ it.label }}
         </el-breadcrumb-item>
         <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
@@ -64,7 +66,6 @@ function generate_breadcrumb(s: string[] | string | undefined): {key: number, la
           </template>
           <template #default>
             <div
-              class="demo-rich-conent"
               style="display: flex; gap: 5px; flex-direction: column"
             >
               <div style="display: flex; gap: 10px; align-items: center;">
@@ -77,13 +78,9 @@ function generate_breadcrumb(s: string[] | string | undefined): {key: number, la
                   </p>
                 </div>
               </div>
-              
-              <div>
-                
-              </div>
 
               <el-button>Settings</el-button>
-              <el-button type="primary">Sign out</el-button>
+              <el-button type="primary" style="margin: 0%;">Sign out</el-button>
             </div>
           </template>
         </el-popover>
