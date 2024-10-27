@@ -1,11 +1,10 @@
 package org.frosty.server.controller.course;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
@@ -25,21 +24,10 @@ public class CourseMemberController {
     // 学生申请加入课程
     @PostMapping("/course/{id}/student/enroll")
     public Response enrollStudentsToCourse(@PathVariable Long id,
-                                           @RequestHeader("X-Forwarded-User") String tokenHeader) {
-        TokenInfo tokenInfo = parseTokenHeader(tokenHeader);
+                                           @GetToken TokenInfo tokenInfo) {
         Long userId = tokenInfo.getAuthInfo().getUserID();
         courseMemberService.enrollStudentsToCourse(id, userId);
         return Response.getSuccess("Students enrolled successfully");
-    }
-
-    // 解析 X-Forwarded-User 头的逻辑
-    private TokenInfo parseTokenHeader(String tokenHeader) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(tokenHeader, TokenInfo.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse token", e);
-        }
     }
 
     // 教师添加学生入课程
