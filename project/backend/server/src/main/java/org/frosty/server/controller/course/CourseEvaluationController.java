@@ -72,8 +72,10 @@ public class CourseEvaluationController {
     /**
      * 查看全部评价
      *
-     * @param id 课程ID
-     * @return 返回课程的所有评价
+     * @param id        课程ID
+     * @param page_num  当前的分页页码，从 1 开始。如果 pageSize 为 -1，则忽略此参数。
+     * @param page_size 每页显示的记录数。如果为 -1，则返回所有符合条件的记录，不进行分页。
+     * @return 返回课程的所有评价或分页评价
      */
     @GetMapping("/evaluations")
     public CourseEvaluationList getEvaluations(@PathVariable Long id, int page_size, int page_num) {
@@ -81,9 +83,6 @@ public class CourseEvaluationController {
             return null; // bad request
         }
         return new CourseEvaluationList(courseEvaluationService.getAllEvaluationsByCourse(id, page_size, page_num));
-
-//        List<Map<String, Object>> evaluations = evaluationService.getAllEvaluationsByCourse(courseId);
-//        return Map.of("content", evaluations);
     }
 
     @Data

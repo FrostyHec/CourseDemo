@@ -157,7 +157,7 @@ public class CourseMemberService {
      * @param teacherId 老师的唯一标识符，用于查询该老师主讲的课程。
      * @param pageNum   当前的分页页码，从 1 开始。如果 pageSize 为 -1，则忽略此参数。
      * @param pageSize  每页显示的记录数。如果为 -1，则返回所有符合条件的记录，不进行分页。
-     * @return 包含课程列表的 Map 对象，键为 "content"，值为课程的 List。
+     * @return 课程列表。
      */
     public List<Course> getTeacherCourses(Long teacherId, int pageNum, int pageSize) {
         QueryWrapper<Enrollment> queryWrapper = new QueryWrapper<>();
