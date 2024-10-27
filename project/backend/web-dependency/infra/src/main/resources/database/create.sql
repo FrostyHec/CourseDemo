@@ -74,7 +74,9 @@ CREATE TABLE chapters
     chapter_title VARCHAR(100)                                                              NOT NULL, -- 章节标题
     chapter_type  VARCHAR(20) CHECK (chapter_type IN ('teaching', 'assignment', 'project')) NOT NULL, -- 章节类型
     content       TEXT,                                                                               -- 章节内容
-    chapter_order INT                                                                       NOT NULL,
+    chapter_order INT                                                                       NOT NULL, -- 章节顺序，小的前端显示在上
+    visible       BOOLEAN                                                                   NOT NULL, -- 和student有关
+    publication   BOOLEAN                                                                   NOT NULL, -- 也和student有关
     created_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL, -- 章节创建时间
     updated_at    TIMESTAMP WITH TIME ZONE                                                  NOT NULL
     -- FOREIGN KEY (course_id) REFERENCES Courses (course_id) ON DELETE CASCADE     -- 课程ID外键，已注释
@@ -178,13 +180,13 @@ CREATE TABLE course_likes
 DROP TABLE IF EXISTS resource_comments;
 CREATE TABLE resource_comments
 (
-    comment_id   BIGSERIAL PRIMARY KEY,             -- 自增评论ID
-    resource_id  INT                      NOT NULL, -- 章节ID
-    user_id      INT                      NOT NULL, -- 用户ID
-    comment_text TEXT                     NOT NULL, -- 评论内容
-    comment_reply BIGINT,                           -- 回复评论ID
-    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at   TIMESTAMP WITH TIME ZONE NOT NULL
+    comment_id    BIGSERIAL PRIMARY KEY,             -- 自增评论ID
+    resource_id   INT                      NOT NULL, -- 章节ID
+    user_id       INT                      NOT NULL, -- 用户ID
+    comment_text  TEXT                     NOT NULL, -- 评论内容
+    comment_reply BIGINT,                            -- 回复评论ID
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at    TIMESTAMP WITH TIME ZONE NOT NULL
     -- FOREIGN KEY (chapter_id) REFERENCES Chapters (chapter_id) ON DELETE CASCADE  -- 章节ID外键，已注释
     -- FOREIGN KEY (user_id) REFERENCES Users (user_id) ON DELETE CASCADE           -- 用户ID外键，已注释
 );
@@ -220,16 +222,16 @@ EXECUTE PROCEDURE auto_time();
 drop table if exists assignments;
 CREATE TABLE assignments
 (
-    assignment_id          BIGSERIAL PRIMARY KEY,                                      -- 自增作业ID
-    chapter_id             INT NOT NULL,                                            -- 章节ID
-    description TEXT NOT NULL,                                           -- 作业描述
-    assignment_type VARCHAR                  NOT NULL CHECK ( assignments.assignment_type IN ('file_upload','online_form') ),
-    allow_update_submission BOOLEAN NOT NULL ,
-    latest_submission_time TIMESTAMP WITH TIME ZONE NOT NULL ,
-    maximum_score INT NOT NULL ,
-    allow_student_to_view_score BOOLEAN NOT NULL ,
-    created_at             TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at             TIMESTAMP WITH TIME ZONE NOT NULL
+    assignment_id               BIGSERIAL PRIMARY KEY,             -- 自增作业ID
+    chapter_id                  INT                      NOT NULL, -- 章节ID
+    description                 TEXT                     NOT NULL, -- 作业描述
+    assignment_type             VARCHAR                  NOT NULL CHECK ( assignments.assignment_type IN ('file_upload', 'online_form') ),
+    allow_update_submission     BOOLEAN                  NOT NULL,
+    latest_submission_time      TIMESTAMP WITH TIME ZONE NOT NULL,
+    maximum_score               INT                      NOT NULL,
+    allow_student_to_view_score BOOLEAN                  NOT NULL,
+    created_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                  TIMESTAMP WITH TIME ZONE NOT NULL
 --     ,FOREIGN KEY (chapter_id) REFERENCES chapters (chapter_id) ON DELETE CASCADE
 );
 CREATE
@@ -243,12 +245,12 @@ EXECUTE PROCEDURE auto_time();
 drop table if exists file_submission;
 CREATE TABLE file_submission
 (
-    file_submission_id        BIGSERIAL PRIMARY KEY ,
-    assignment_id BIGINT NOT NULL,
-    file_name VARCHAR NOT NULL ,
-    gained_score INT,
-    created_at             TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at             TIMESTAMP WITH TIME ZONE NOT NULL
+    file_submission_id BIGSERIAL PRIMARY KEY,
+    assignment_id      BIGINT                   NOT NULL,
+    file_name          VARCHAR                  NOT NULL,
+    gained_score       INT,
+    created_at         TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL
 --     ,FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE
 );
 CREATE

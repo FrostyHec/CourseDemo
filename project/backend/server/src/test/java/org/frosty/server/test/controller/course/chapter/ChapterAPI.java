@@ -3,6 +3,7 @@ package org.frosty.server.test.controller.course.chapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.controller.course.ChapterController;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.Chapter.ChapterType;
 import org.frosty.server.mapper.course.ChapterMapper;
@@ -35,7 +36,10 @@ public class ChapterAPI {
                 .setChapterTitle("Chapter Title")
                 .setCourseId(courseId)
                 .setChapterType(ChapterType.teaching)
-                .setContent("Chapter Content");
+                .setContent("Chapter Content")
+                .setChapterOrder(1)
+                .setVisible(Boolean.TRUE)
+                .setPublication(Boolean.TRUE);
     }
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
@@ -105,7 +109,9 @@ public class ChapterAPI {
         var resp = getAll(token, courseId)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return (List<Chapter>) JsonUtils.toMapData(resp).get("content");
+        // !!!!!!!!!!!!!!!
+        return JsonUtils.toObject(resp, ChapterController.ChapterList.class).getContent();// 这个非常非常重要！！！
+        // !!!!!!!!!!!!!!!
     }
 
     public Long addTestCourseTestChapterAndGetId(Long uid) {

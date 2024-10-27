@@ -1,26 +1,56 @@
 <script lang="ts" setup>
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, useToggle } from "@vueuse/core"
+import { useCourseStore, path_convert } from "@/stores/course";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 import { ArrowRight } from '@element-plus/icons-vue'
+import { useRoute } from "vue-router";
+
+const course_store = useCourseStore()
+
+function generate_breadcrumb(s: string[]): {key: number, label: string, link?: string}[] {
+  let id = useRoute().params.course_id
+  if(!id)
+    return []
+  let prefix = '/course' + '/' + id
+  let res = []
+  if(s.length==0)
+    res.push({key: 0, label: course_store.course_data.course_info.course_name})
+  else
+    res.push({key: 0, label: course_store.course_data.course_info.course_name, link: prefix})
+  for(let i=0;i<s.length;i++) {
+    prefix += '/' + s[i]
+    if(i==s.length-1) {
+      res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
+    } else {
+      res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
+    }
+  }
+  return res
+}
+
 </script>
 
 <template>
-  <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-menu-border-color);" px="5" py="1">
+  <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-border-color);" px="5" py="1">
 
     <template #title>
-      <p style="font-weight: 600; font-size: large; margin: 0%;">
+      <span style="font-weight: 600; font-size: large; margin: 0%;" @click="$router.push('/')">
         Course Demo
-      </p>
+      </span>
     </template>
 
     <template #content>
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+        <el-breadcrumb-item></el-breadcrumb-item>
+        <el-breadcrumb-item v-for="it in generate_breadcrumb(path_convert($route.params.labels))" :key="it.key" :to="it.link">
+          {{ it.label }}
+        </el-breadcrumb-item>
+        <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
         <el-breadcrumb-item>promotion management</el-breadcrumb-item>
         <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ $route.params.labels }}</el-breadcrumb-item> -->
       </el-breadcrumb>
     </template>
 
@@ -31,16 +61,15 @@ import { ArrowRight } from '@element-plus/icons-vue'
           :width="300"
         >
           <template #reference>
-            <el-avatar :size="36" style="border: solid 1px var(--ep-menu-border-color); margin-right: 10px;"
+            <el-avatar :size="36" style="border: solid 1px var(--ep-border-color); margin-right: 10px;"
             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
           </template>
           <template #default>
             <div
-              class="demo-rich-conent"
               style="display: flex; gap: 5px; flex-direction: column"
             >
               <div style="display: flex; gap: 10px; align-items: center;">
-                <el-avatar :size="64" style="border: solid 1px var(--ep-menu-border-color); margin-left: 5px;"
+                <el-avatar :size="64" style="border: solid 1px var(--ep-border-color); margin-left: 5px;"
                 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
                 <div>
                   <h2 style="margin: 0%;">Alice Bob</h2>
@@ -49,13 +78,9 @@ import { ArrowRight } from '@element-plus/icons-vue'
                   </p>
                 </div>
               </div>
-              
-              <div>
-                
-              </div>
 
               <el-button>Settings</el-button>
-              <el-button type="primary">Sign out</el-button>
+              <el-button type="primary" style="margin: 0%;">Sign out</el-button>
             </div>
           </template>
         </el-popover>

@@ -18,10 +18,10 @@ import java.time.OffsetDateTime;
 public class ResourceComment {
     @TableId(type = IdType.AUTO)
     private Long commentId;
-    private int resourceId;
-    private int userId;
+    private Long resourceId;
+    private Long userId;
     private String commentText;
     private Long commentReply;
-    private OffsetDateTime createAt;
+    private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }
