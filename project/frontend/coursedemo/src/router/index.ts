@@ -10,11 +10,11 @@ const router = createRouter({
       component: HelloWorld,
     },
     {
-      path: '/course/:labels+',
+      path: '/course/:course_id(\\d+)/:labels*',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('~/views/BaseContent.vue'),
+      component: () => import('~/components/BaseContent.vue'),
     },
     {
       path: '/manager',

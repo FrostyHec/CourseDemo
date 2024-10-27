@@ -7,7 +7,7 @@
         :allow-drop="allowDrop"
         :default-expand-all="true"
         :expand-on-click-node="false"
-        :data="[folder]"
+        :data="course_store.unify_course_data"
         :props="{
           children: 'children',
           label: 'label',
@@ -21,11 +21,11 @@
               :class="!node.data.hide ? '' : 'hide-line'"
               style="overflow: hidden; text-overflow: ellipsis; margin: 0%;"
               :style="node.level==1 ? 'font-weight: bold;' :
-                      !node.data.children ? '' : 'font-weight: bold; color: var(--ep-color-primary);'">
+                      node.level==2 ? 'font-weight: bold; color: var(--ep-color-primary);': ''">
                 {{ node.data.label }}
             </p>
             <el-popover
-              v-if="node.isCurrent"
+              v-if="node.data === course_store.current_data"
               placement="right-start"
               :width="100"
               trigger="hover"
@@ -36,11 +36,11 @@
               <template #default>
                 <div style="display: flex; gap: 5px; flex-direction: column">
                   <el-button type="" style="margin: 0;" @click="open_form(node, 'Edit')">Edit</el-button>
-                  <el-button type="" style="margin: 0;" @click="node.data.hide = !node.data.hide">
+                  <!-- <el-button type="" style="margin: 0;" @click="node.data.hide = !node.data.hide">
                     {{node.data.hide ? 'Show' : 'Hide'}}
-                  </el-button>
-                  <el-button v-if="node.data.children" type="primary" style="margin: 0;" @click="open_form(node, 'Add')">Add new</el-button>
-                  <el-button type="danger" style="margin: 0;" @click="node.remove()">Delete</el-button>
+                  </el-button> -->
+                  <el-button v-if="!('resource_name' in node.data.data)" type='primary' style="margin: 0;" @click="open_form(node, 'Add')">Add new</el-button>
+                  <el-button v-if="node.parent.parent!==null" type="danger" style="margin: 0;" @click="handleDelete(node)">Delete</el-button>
                 </div>
               </template>
               <template #reference>
@@ -52,19 +52,38 @@
       </el-tree>
     </el-scrollbar>
 
-    <base-form></base-form>
+    <CourseForm/>
+    <ChapterForm/>
+    <ResourseForm/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"
+import { useCourseStore } from "@/stores/course";
+import { type UnifyTree } from "@/stores/course";
+import { ElMessage } from 'element-plus'
 
 const form_store = useFormStore()
+const course_store = useCourseStore()
+//course_store.init()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
-  form_store.node = node
-  form_store.mode = mode
-  form_store.visibility = true
+  let data = (node.data as UnifyTree).data
+  if(mode=='Edit')
+    form_store.open_form(data, mode)
+  else {
+    if('course_name' in data) {
+      let temp = {...form_store.chapter_null}
+      temp.course_id = data.course_id
+      form_store.open_form(temp, mode)
+    }
+    if('chapter_title' in data) {
+      let temp = {...form_store.resource_null}
+      temp.chapter_id = data.chapter_id
+      form_store.open_form(temp, mode)
+    }
+  }
 }
 
 interface Tree {
@@ -73,35 +92,32 @@ interface Tree {
   hide?: boolean,
 }
 
-const folder: Tree = reactive(
-{ label: 'Object Oriented Analysis Design', hide: false, children: [
-  { label: 'Chapter1', hide: false, children: [
-    { label: 'video', hide: false }, 
-    { label: 'pdf', hide: false },
-  ]},
-  { label: 'Chapter2', hide: false, children: [
-    { label: 'video', hide: false},
-    { label: 'md', hide: false},
-    { label: 'test', hide: false},
-  ]},
-  { label: 'Chapter3', hide: false, children: [
-    { label: 'video', hide: false, children: [] }, 
-    { label: 'md', hide: false},
-    { label: 'quiz', hide: false},
-  ]},
-]}
-)
-
 const router = useRouter()
-const handleClick = (data: Tree, node: Node) => {
+const handleClick = (data: any, node: Node) => {
   let link = ''
-  while(node.parent!==null) {
+  while(node.parent.parent!==null) {
     link = '/' + node.data.label.replace(/ /g, '-') + link
     node = node.parent
   }
-  router.push('/course' + link)
+  router.push('/course' + '/' + course_store.current_course_id() + link)
 }
-
+const handleDelete = async (node: Node) => {
+  const d = node.data as UnifyTree
+  let msg
+  if('chapter_title' in d.data)
+    msg = await deleteChapterCall(d.data.chapter_id)
+  if('resource_name' in d.data)
+    msg = await deleteResourceCall(d.data.resource_id)
+  if(!msg || msg.code!=200) {
+    ElMessage({
+      message: 'Network error',
+      type: 'error',
+    })
+    return
+  }
+  handleClick(null, node.parent)
+  await course_store.load_from_route(true)
+}
 
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
@@ -111,6 +127,11 @@ import type {
 } from 'element-plus/es/components/tree/src/tree.type'
 import { reactive, ref } from "vue";
 import { useFormStore } from "@/stores/form";
+import ChapterForm from "../forms/ChapterForm.vue";
+import CoureseForm from "../forms/CoureseForm.vue";
+import ResourseForm from "../forms/ResourseForm.vue";
+import { deleteChapterCall } from "@/api/course/ChapterAPI";
+import { deleteResourceCall } from "@/api/course/CourseResourceAPI";
 
 const allowDrop = (draggingNode: Node, dropNode: Node, type: AllowDropType) => {
   return draggingNode.level==dropNode.level && (type=='prev' || type=='next')
@@ -124,7 +145,7 @@ const handleDrop = (
   dropType: NodeDropType,
   ev: DragEvents
 ) => {
-  console.log(folder)
+  //console.log(folder)
 }
 
 const currentNode = ref<Node|undefined>(undefined);
