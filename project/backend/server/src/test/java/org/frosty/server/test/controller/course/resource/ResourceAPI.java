@@ -9,6 +9,9 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.po.ResourceWithAccessKey;
 import org.frosty.server.test.controller.auth.AuthUtil;
+import org.frosty.server.mapper.course.ResourceMapper;
+import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.course.chapter.ChapterAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -32,6 +35,8 @@ public class ResourceAPI {
     private final AuthUtil authUtil;
     private final String resourceBaseUrl = PathConstant.API + "/resource";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
+    private final ChapterAPI chapterAPI;
+    private final ResourceMapper resourceMapper;
 
     public MockMultipartFile loadTemplateFile(String name) throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -52,6 +57,8 @@ public class ResourceAPI {
                 .setChapterId(chapterId)
                 .setResourceName(resourceName)
                 .setSuffix(suffix)
+                .setFileName("TEST")
+                .setResourceOrder(1)
                 .setResourceVersionName("1.0")
                 .setResourceVersionOrder(1)
                 .setResourceType(type)
@@ -88,7 +95,7 @@ public class ResourceAPI {
                 .andReturn();
         return JsonUtils.toObject(resp, ResourceWithAccessKey.class);
     }
-
+//
     public ResultActions updateResourceMetadata(String token, Long id, Resource updatedResource) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(updatedResource);
@@ -139,6 +146,14 @@ public class ResourceAPI {
         assert e.getChapterId().equals(resource.getChapterId());
         assert e.getResourceName().equals(resource.getResourceName());
         assert e.getSuffix().equals(resource.getSuffix());
+    }
+
+    public Long addTestCourseTestChapterTestResourceAndGetId(Long uid){
+        var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
+        var e = getTemplateResource(chapterId,"test","pdf",Resource.ResourceType.courseware);
+        resourceMapper.insert(e);
+        assert e.getResourceId() != null;
+        return e.getResourceId();
     }
 
     @Data
