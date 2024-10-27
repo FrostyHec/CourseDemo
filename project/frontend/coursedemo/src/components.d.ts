@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BaseComment: typeof import('./components/BaseComment.vue')['default']
     BaseContent: typeof import('./components/BaseContent.vue')['default']
+    BaseCourse: typeof import('./components/BaseCourse.vue')['default']
     BaseHeader: typeof import('./components/layouts/BaseHeader.vue')['default']
     BaseSide: typeof import('./components/layouts/BaseSide.vue')['default']
     ChapterForm: typeof import('./components/forms/ChapterForm.vue')['default']
