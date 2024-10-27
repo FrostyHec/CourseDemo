@@ -1,7 +1,7 @@
-package org.frosty.server.test.controller.testcases;
+package org.frosty.server.test.controller.helloworld.testcases;
 
 
-import org.frosty.server.test.controller.HelloWorldAPI;
+import org.frosty.server.test.controller.helloworld.HelloWorldAPI;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.frosty.test_common.utils.RespChecker;
 import org.junit.jupiter.api.Test;

@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(GetAuthArgumentResolver.class)
-public @interface GetAuth {
+@Import(GetTokenArgumentResolver.class)
+public @interface GetToken {
 }

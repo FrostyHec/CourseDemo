@@ -20,7 +20,7 @@ public class TokenUtils {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(subject, TokenInfo.class);
         } catch (Exception e) {
-            throw new InternalException("Failed to convert string to tokenInfo", e);
+            throw new InternalException("Failed to convert string to tokenInfo subject:"+subject, e);
         }
     }
 
