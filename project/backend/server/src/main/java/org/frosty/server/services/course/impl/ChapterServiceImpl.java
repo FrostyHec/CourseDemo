@@ -16,27 +16,32 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public void createChapter(Chapter chapter) {
-        chapterMapper.insertChapter(chapter);
+        chapterMapper.insert(chapter);
     }
 
     @Override
     public Chapter findByID(Long id) {
-        return chapterMapper.getChapterById(id);
+        return chapterMapper.selectById(id);
     }
 
     @Override
     public void updateChapter(Long id, Chapter updatedChapter) {
-        chapterMapper.updateChapter(id, updatedChapter.getCourseId(), updatedChapter.getChapterTitle(), updatedChapter.getChapterType(), updatedChapter.getContent());
+        chapterMapper.updateById(updatedChapter);
     }
 
     @Override
     public void deleteChapter(Long id) {
-        chapterMapper.deleteChapterById(id);
+        chapterMapper.deleteById(id);
     }
 
     @Override
     public List<Chapter> getAllChaptersByCourseId(Long courseId) {
-        List<Chapter> chapters = chapterMapper.getAllChaptersByCourseId(courseId);
-        return chapters;
+        //        List<Chapter> chapters = chapterMapper.getAll();
+        return chapterMapper.getAllChaptersByCourseId(courseId);
+    }
+
+    @Override
+    public List<Chapter> getAllChaptersForStudentByCourseId(Long id) {
+        return chapterMapper.getAllChaptersForStudentByCourseId(id);
     }
 }

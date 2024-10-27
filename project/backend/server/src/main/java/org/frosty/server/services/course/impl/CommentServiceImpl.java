@@ -1,6 +1,7 @@
 package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 import org.frosty.server.mapper.course.CommentMapper;
 import org.frosty.server.services.course.CommentService;
@@ -16,17 +17,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void addCommentToResource(Long resourceId, ResourceComment comment) {
-        commentMapper.insertCommentToResource(resourceId, comment);
+        commentMapper.insert(comment);
     }
 
     @Override
     public void addReplyToComment(Long parentCommentId, ResourceComment reply) {
-        commentMapper.insertReplyToComment(parentCommentId,reply);
+        commentMapper.insert(reply);
     }
 
     @Override
     public void updateComment(Long commentId, ResourceComment updatedComment) {
-        commentMapper.updateCommentById(commentId, updatedComment);
+        // BaseMapper中的updateById.
+        commentMapper.updateById(updatedComment);
     }
 
     @Override
@@ -40,8 +42,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<ResourceComment> findAllByResourceId(Long resourceId) {
-        List<ResourceComment> comments = commentMapper.getAllByResourceId(resourceId);
-        return comments;
+    public List<CommentController.CommentWithUser> findAllByResourceId(Long resourceId) {
+        return commentMapper.getAllPublicByResourceId(resourceId);
     }
 }

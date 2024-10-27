@@ -1,5 +1,6 @@
 package org.frosty.server.services.course;
 
+import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface CommentService {
 
     ResourceComment findById(Long id);
 
-    List<ResourceComment> findAllByResourceId(Long id);
+    List<CommentController.CommentWithUser> findAllByResourceId(Long id);
 }

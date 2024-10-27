@@ -1,5 +1,6 @@
 package org.frosty.server.test.controller.smoke_test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
@@ -30,7 +31,6 @@ public class ChapterSmokeTest {
         Chapter chapter = chapterAPI.getTemplateTeachingChapter(courseId);
         String title = chapter.getChapterTitle();
         chapterAPI.createSuccess(token, courseId, chapter);
-
         var li = chapterAPI.getAllSuccess(token, courseId);
         assert li.size() == 1;
 
