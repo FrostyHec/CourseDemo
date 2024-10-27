@@ -3,12 +3,10 @@ package org.frosty.server.test.controller.course.course;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.utils.Pair;
 import org.frosty.server.controller.course.CourseController;
 import org.frosty.server.entity.bo.Course;
-import org.frosty.server.entity.bo.User;
 import org.frosty.server.mapper.course.CourseMapper;
-import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -27,7 +25,7 @@ public class CourseAPI {
     private final MockMvc mockMvc;
     private final CourseMapper mapper;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil authUtil;
     private final String courseBaseUrl = PathConstant.API + "/course";
 
     public Course getTemplateCourse(Long teacherId) {
@@ -40,7 +38,7 @@ public class CourseAPI {
                 ;
     }
 
-    public Course getTemplatePublishedCourse(Long teacherId,String name, Course.PublicationType publicationType) {
+    public Course getTemplatePublishedCourse(Long teacherId, String name, Course.PublicationType publicationType) {
         return new Course()
                 .setTeacherId(teacherId)
                 .setCourseName(name)
@@ -63,7 +61,7 @@ public class CourseAPI {
     public ResultActions adminGetRequiredApprovedCourse(String adminToken, Long userId, int pageSize, int pageNum) throws Exception {
         String url = PathConstant.API + "/admin/" + userId + "/courses/submitted";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(adminToken))
+                .headers(authUtil.setAuthHeader(adminToken))
                 .param("page_num", String.valueOf(pageNum))
                 .param("page_size", String.valueOf(pageSize))
                 .accept(MediaType.APPLICATION_JSON));
@@ -79,7 +77,7 @@ public class CourseAPI {
     public ResultActions getAllTeachingCourse(String teacherToken, Long userId, int pageSize, int pageNum) throws Exception {
         String url = PathConstant.API + "/teacher/" + userId + "/courses";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(teacherToken))
+                .headers(authUtil.setAuthHeader(teacherToken))
                 .param("page_num", String.valueOf(pageNum))
                 .param("page_size", String.valueOf(pageSize))
                 .accept(MediaType.APPLICATION_JSON));
@@ -95,7 +93,7 @@ public class CourseAPI {
     public ResultActions create(String token, Course course) throws Exception {
         String json = objectMapper.writeValueAsString(course);
         return mockMvc.perform(MockMvcRequestBuilders.post(courseBaseUrl)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -109,7 +107,7 @@ public class CourseAPI {
     public ResultActions update(String token, Long cid, Course course) throws Exception {
         String json = objectMapper.writeValueAsString(course);
         return mockMvc.perform(MockMvcRequestBuilders.put(courseBaseUrl + "/" + cid)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -123,7 +121,7 @@ public class CourseAPI {
     public ResultActions updateStatus(String teacherToken, Long cid, Course.CourseStatus status) throws Exception {
         String json = objectMapper.writeValueAsString(Map.of("status", status));
         return mockMvc.perform(MockMvcRequestBuilders.patch(courseBaseUrl + "/" + cid + "/status") // add "/status" to the url, because it is a PATCH request
-                .headers(authAPI.setAuthHeader(teacherToken))
+                .headers(authUtil.setAuthHeader(teacherToken))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -135,17 +133,17 @@ public class CourseAPI {
     }
 
 
-    public ResultActions searchPublicCourse(String token,int page_num,int page_size,String name) throws Exception {
+    public ResultActions searchPublicCourse(String token, int page_num, int page_size, String name) throws Exception {
         String url = courseBaseUrl + "/search";
         return mockMvc.perform(MockMvcRequestBuilders.get(url) // add "/status" to the url, because it is a PATCH request
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .param("page_num", String.valueOf(page_num))
                 .param("page_size", String.valueOf(page_size))
                 .param("name", name)
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public List<Course> searchPublicCourseSuccess(String token,int page_num,int page_size,String name) throws Exception {
+    public List<Course> searchPublicCourseSuccess(String token, int page_num, int page_size, String name) throws Exception {
         var resp = searchPublicCourse(token, page_num, page_size, name)
                 .andExpect(RespChecker.success())
                 .andReturn();

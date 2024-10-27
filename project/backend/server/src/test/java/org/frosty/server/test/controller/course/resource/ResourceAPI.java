@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.po.ResourceWithAccessKey;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.mapper.course.ResourceMapper;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.chapter.ChapterAPI;
@@ -31,7 +32,7 @@ import java.util.Objects;
 public class ResourceAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil authUtil;
     private final String resourceBaseUrl = PathConstant.API + "/resource";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
     private final ChapterAPI chapterAPI;
@@ -71,7 +72,7 @@ public class ResourceAPI {
         return mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                 .file(file)
                 .file(jsonFile)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON));
     }
@@ -84,7 +85,7 @@ public class ResourceAPI {
     public ResultActions getResourceMetaData(String token, Long id) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -99,7 +100,7 @@ public class ResourceAPI {
         String url = resourceBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(updatedResource);
         return mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -113,7 +114,7 @@ public class ResourceAPI {
     public ResultActions deleteResource(String token, Long id) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -125,7 +126,7 @@ public class ResourceAPI {
     public ResultActions getResourcesByChapter(String token, Long chapterId) throws Exception {
         String url = chapterBaseUrl + "/" + chapterId + "/resource";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 

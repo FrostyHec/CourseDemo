@@ -8,6 +8,7 @@ import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.po.StudentWithEnrollStatus;
 import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
@@ -25,12 +26,12 @@ import java.util.Map;
 public class CourseMemberAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil AuthUtil;
     private final String courseBaseUrl = PathConstant.API + "/course";
 
     // 通用的performRequest方法
     private ResultActions performRequest(MockHttpServletRequestBuilder requestBuilder, String token, Object body) throws Exception {
-        requestBuilder.headers(authAPI.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
+        requestBuilder.headers(AuthUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
         if (body != null) {
             String json = objectMapper.writeValueAsString(body);
             requestBuilder.contentType(MediaType.APPLICATION_JSON).content(json);
