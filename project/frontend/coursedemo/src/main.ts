@@ -1,6 +1,6 @@
-import { createApp } from "vue"
-import router from "./router"
-import App from "./App.vue"
+import { createApp } from 'vue'
+import router from './router'
+import App from './App.vue'
 
 // import "~/styles/element/index.scss";
 
@@ -10,15 +10,25 @@ import App from "./App.vue"
 
 // or use cdn, uncomment cdn link in `index.html`
 
-import "~/styles/index.scss"
-import "uno.css"
+import '~/styles/index.scss'
+import 'uno.css'
 
 // If you want to use ElMessage, import it.
-import "element-plus/theme-chalk/src/message.scss"
-import { createPinia } from "pinia"
-
-const app = createApp(App)
-app.use(router)
-app.use(createPinia())
+import 'element-plus/theme-chalk/src/message.scss'
+import { createPinia } from 'pinia'
+import { handleBackendPath, handleMockStatus } from './utils/EnvUtils'
+export async function main() {
+  const app = createApp(App)
+  app.use(router)
+  app.use(createPinia())
+  handleBackendPath()
+  await handleMockStatus()
 // app.use(ElementPlus);
-app.mount("#app")
+  return app
+}
+
+const app = await main()
+app.mount('#app')
+
+
+
