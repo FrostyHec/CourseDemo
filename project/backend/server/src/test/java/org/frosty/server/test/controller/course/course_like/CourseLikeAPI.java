@@ -3,7 +3,6 @@ package org.frosty.server.test.controller.course.course_like;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.entity.bo.CourseLike;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;

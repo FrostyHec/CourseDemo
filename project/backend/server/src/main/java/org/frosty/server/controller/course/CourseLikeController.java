@@ -2,8 +2,6 @@ package org.frosty.server.controller.course;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.exception.ExternalException;
-import org.frosty.common.response.Response;
 import org.frosty.server.services.course.CourseLikeService;
 import org.springframework.web.bind.annotation.*;
 

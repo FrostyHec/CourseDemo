@@ -7,7 +7,6 @@ import org.frosty.server.controller.course.CourseMemberController;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.po.StudentWithEnrollStatus;
-import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;

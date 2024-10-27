@@ -1,13 +1,12 @@
 package org.frosty.server.test.controller.smoke_test;
 
 import lombok.extern.slf4j.Slf4j;
-import org.frosty.server.entity.bo.Notification;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.NotificationWithReceiver;
 import org.frosty.server.test.controller.auth.AuthAPI;
-import org.frosty.server.test.controller.course.notification.NotificationAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
+import org.frosty.server.test.controller.course.notification.NotificationAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.junit.jupiter.api.Test;
