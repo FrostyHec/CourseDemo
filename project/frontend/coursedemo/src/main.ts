@@ -1,7 +1,10 @@
 import { createApp } from "vue"
+import'./assets/main.scss'
 import router from "./router"
 import App from "./App.vue"
-
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+ 
 // import "~/styles/element/index.scss";
 
 // import ElementPlus from "element-plus";
@@ -18,6 +21,7 @@ import "element-plus/theme-chalk/src/message.scss"
 import { createPinia } from "pinia"
 
 const app = createApp(App)
+app.use(ElementPlus)
 app.use(router)
 app.use(createPinia())
 // app.use(ElementPlus);

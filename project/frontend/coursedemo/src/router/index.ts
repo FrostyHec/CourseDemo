@@ -10,12 +10,36 @@ const router = createRouter({
       component: HelloWorld,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('~/views/Content.vue'),
+      path: '/manager',
+      redirect: '/manager/NotPass'
+    },
+    {
+      path: '/manager/NotPass',
+      component: () => import('@/views/manager/ManagerCourseNotPass.vue'),
+    },
+    {
+      path: '/manager/Passed',
+      component: () => import('@/views/manager/ManagerCoursePassed.vue'),
+    },
+    {
+      path: '/MainPage/student',
+      component: () => import('@/views/MainPage/student.vue'),
+    },
+    {
+      path: '/MainPage/teacher',
+      component: () => import('@/views/MainPage/teacher.vue'),
+    },
+    {
+      path: '/MainPage/login',
+      component: () => import('@/views/MainPage/login.vue'),
+    },
+    {
+      path: '/MainPage/register',
+      component: () => import('@/views/MainPage/register.vue'),
+    },
+    {
+      path: '/courseEvaluation',
+      component: () => import('@/views/Course/CourseEvaluate.vue'),
     },
   ],
 })

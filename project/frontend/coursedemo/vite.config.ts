@@ -57,7 +57,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '~/': `${pathSrc}/`,
+      '~': `${pathSrc}/`,
+      '@': `${pathSrc}/`,
     },
   },
   css: {
