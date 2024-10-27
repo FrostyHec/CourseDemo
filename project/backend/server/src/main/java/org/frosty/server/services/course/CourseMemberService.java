@@ -106,6 +106,7 @@ public class CourseMemberService {
             userPublicInfo.setLastName(user.getLastName());
             userPublicInfo.setFirstName(user.getFirstName());
             studentWithEnrollStatus.setStudent(userPublicInfo);
+            studentWithEnrollStatus.setStatus(enrollment.getStatus());
             return studentWithEnrollStatus;
         }).toList();
     }
@@ -160,9 +161,9 @@ public class CourseMemberService {
      * @return 课程列表。
      */
     public List<Course> getTeacherCourses(Long teacherId, int pageNum, int pageSize) {
-        QueryWrapper<Enrollment> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("teacher_id", teacherId);
-        return getTargetCourse(pageNum, pageSize, queryWrapper);
+        return courseMapper.selectList(queryWrapper);
     }
 
     /**
@@ -194,9 +195,9 @@ public class CourseMemberService {
     }
 
     public List<Course> getSubmittedCourses(int page_num, int page_size) {
-        QueryWrapper<Enrollment> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status", Course.CourseStatus.submitted.name());
-        return getTargetCourse(page_num, page_size, queryWrapper);
+        return courseMapper.selectList(queryWrapper);
     }
 
     @NotNull

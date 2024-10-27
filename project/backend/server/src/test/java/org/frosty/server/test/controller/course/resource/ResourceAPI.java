@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.po.ResourceWithAccessKey;
-import org.frosty.server.mapper.course.ResourceMapper;
-import org.frosty.server.test.controller.auth.AuthAPI;
-import org.frosty.server.test.controller.course.chapter.ChapterAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -31,11 +29,9 @@ import java.util.Objects;
 public class ResourceAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil authUtil;
     private final String resourceBaseUrl = PathConstant.API + "/resource";
     private final String chapterBaseUrl = PathConstant.API + "/chapter";
-    private final ChapterAPI chapterAPI;
-    private final ResourceMapper resourceMapper;
 
     public MockMultipartFile loadTemplateFile(String name) throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -56,8 +52,6 @@ public class ResourceAPI {
                 .setChapterId(chapterId)
                 .setResourceName(resourceName)
                 .setSuffix(suffix)
-                .setFileName("TEST")
-                .setResourceOrder(1)
                 .setResourceVersionName("1.0")
                 .setResourceVersionOrder(1)
                 .setResourceType(type)
@@ -71,7 +65,7 @@ public class ResourceAPI {
         return mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                 .file(file)
                 .file(jsonFile)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON));
     }
@@ -84,7 +78,7 @@ public class ResourceAPI {
     public ResultActions getResourceMetaData(String token, Long id) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -99,7 +93,7 @@ public class ResourceAPI {
         String url = resourceBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(updatedResource);
         return mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -113,7 +107,7 @@ public class ResourceAPI {
     public ResultActions deleteResource(String token, Long id) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -125,7 +119,7 @@ public class ResourceAPI {
     public ResultActions getResourcesByChapter(String token, Long chapterId) throws Exception {
         String url = chapterBaseUrl + "/" + chapterId + "/resource";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -145,14 +139,6 @@ public class ResourceAPI {
         assert e.getChapterId().equals(resource.getChapterId());
         assert e.getResourceName().equals(resource.getResourceName());
         assert e.getSuffix().equals(resource.getSuffix());
-    }
-
-    public Long addTestCourseTestChapterTestResourceAndGetId(Long uid){
-        var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
-        var e = getTemplateResource(chapterId,"test","pdf",Resource.ResourceType.courseware);
-        resourceMapper.insert(e);
-        assert e.getResourceId() != null;
-        return e.getResourceId();
     }
 
     @Data

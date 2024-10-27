@@ -18,8 +18,8 @@ public class CourseService {
     }
 
     public void updateCourseStatus(Long id, String status) {
-        Course course = courseMapper.getCourse(id);
-//         检查非法状态转换
+        Course course = courseMapper.selectById(id);
+        //检查非法状态转换
         if (course.getStatus().equals(Course.CourseStatus.deleted)) {
             throw new IllegalArgumentException("Invalid status change");
         }
@@ -32,7 +32,7 @@ public class CourseService {
     }
 
     public Course getCourse(Long id) {
-        return courseMapper.getCourse(id);
+        return courseMapper.selectById(id);
     }
 
     public void deleteCourse(Long id) {

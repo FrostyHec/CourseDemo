@@ -7,7 +7,7 @@ import org.frosty.server.controller.course.ChapterController;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.Chapter.ChapterType;
 import org.frosty.server.mapper.course.ChapterMapper;
-import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ChapterAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final AuthAPI authAPI;
+    private final AuthUtil authUtil;
     private final CourseAPI courseAPI;
     private final ChapterMapper chapterMapper;
     private final String courseBaseUrl = PathConstant.API + "/course";
@@ -46,7 +46,7 @@ public class ChapterAPI {
         String url = courseBaseUrl + "/" + courseId + "/chapter";
         String json = objectMapper.writeValueAsString(chapter);
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -61,7 +61,7 @@ public class ChapterAPI {
         String url = chapterBaseUrl + "/" + chapterId;
         String json = objectMapper.writeValueAsString(chapter);
         return mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
@@ -75,7 +75,7 @@ public class ChapterAPI {
     public ResultActions delete(String token, Long chapterId) throws Exception {
         String url = chapterBaseUrl + "/" + chapterId;
         return mockMvc.perform(MockMvcRequestBuilders.delete(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -87,7 +87,7 @@ public class ChapterAPI {
     public ResultActions get(String token, Long chapterId) throws Exception {
         String url = chapterBaseUrl + "/" + chapterId;
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 
@@ -101,7 +101,7 @@ public class ChapterAPI {
     public ResultActions getAll(String token, Long courseId) throws Exception {
         String url = courseBaseUrl + "/" + courseId + "/chapter";
         return mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .headers(authAPI.setAuthHeader(token))
+                .headers(authUtil.setAuthHeader(token))
                 .accept(MediaType.APPLICATION_JSON));
     }
 

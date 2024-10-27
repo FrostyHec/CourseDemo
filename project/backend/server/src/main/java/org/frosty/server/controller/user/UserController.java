@@ -2,12 +2,9 @@ package org.frosty.server.controller.user;
 
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
-
-import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.user.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(    PathConstant.API)
+@RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
