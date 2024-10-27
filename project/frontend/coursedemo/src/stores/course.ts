@@ -248,7 +248,8 @@ export const useCourseStore = defineStore('course', () => {
     async (new_data) => {
       console.log(new_data)
       await load_from_route(false)
-    }
+    },
+    {immediate: true}
   )
 
   return {course_data, current_course_id, unify_course_data, current_data, load_from_route}
