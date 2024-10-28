@@ -15,7 +15,7 @@ export function mockUpdateCourseStatusCall(courseId: number, data: APIResult<nul
     setMockFunc(url, RequestType.PATCH, null, () => data)
 }
 
-export function mockUpdateCourseInfoCall(courseId: number, data: APIResult<CourseEntity[]>) {
+export function mockUpdateCourseInfoCall(courseId: number, data: APIResult<{ content: CourseEntity[] }>) {
     const url = service_backend_base + '/course/' + courseId
     setMockFunc(url, RequestType.PUT, null, () => data)
 }
