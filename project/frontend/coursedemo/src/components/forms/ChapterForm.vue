@@ -19,6 +19,14 @@
         <el-segmented v-model="form_store.chapter_form.chapter_type" :options="['teaching', 'assignment', 'project']" />
       </el-form-item>
 
+      <el-form-item label="Visibility" prop="visible">
+        <el-switch v-model="form_store.chapter_form.visible" />
+      </el-form-item>
+
+      <el-form-item label="Publication" prop="publication">
+        <el-switch v-model="form_store.chapter_form.publication" />
+      </el-form-item>
+
       <el-form-item label="Description" prop="content">
         <el-input v-model="form_store.chapter_form.content" type="textarea" placeholder="Enter the description"/>
       </el-form-item>

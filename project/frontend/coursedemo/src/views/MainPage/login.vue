@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { createUserCall } from '@/api/user/UserAPI';
 import { useFormStore } from '@/stores/form';
+import { User, Lock } from '@element-plus/icons-vue'
  
 //控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)

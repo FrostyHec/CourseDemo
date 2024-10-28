@@ -1,9 +1,7 @@
 import { createApp } from "vue"
-import'./assets/main.scss'
 import router from "./router"
 import App from "./App.vue"
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
  
 // import "~/styles/element/index.scss";
 
@@ -26,7 +24,7 @@ export async function main() {
   app.use(createPinia())
   handleBackendPath()
   await handleMockStatus()
-// app.use(ElementPlus);
+ app.use(ElementPlus);
   return app
 }
 

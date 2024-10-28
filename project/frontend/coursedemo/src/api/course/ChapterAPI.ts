@@ -12,6 +12,8 @@ export interface ChapterEntity {
   content: string
   created_at: Date
   updated_at: Date
+  visible: boolean
+  publication: boolean
 }
 
 export enum ChapterType {
