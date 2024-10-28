@@ -19,7 +19,7 @@ public class ResourceSmokeTest {
     @Autowired
     private ResourceAPI resourceAPI;
     @Autowired
-    private ChapterAPI courseAPI;
+    private ChapterAPI chapterAPI;
     @Autowired
     private AuthAPI authAPI;
     @Autowired
@@ -31,7 +31,7 @@ public class ResourceSmokeTest {
         var teacherToken = pair.first;
         var teacher = pair.second;
         var uid = teacher.getUserId();
-        var chapterId = courseAPI.addTestCourseTestChapterAndGetId(uid);
+        var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
         //---test start---
         // upload resource
         var resource = resourceAPI.getTemplateResource(chapterId,

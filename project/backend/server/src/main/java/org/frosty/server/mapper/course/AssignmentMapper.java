@@ -13,4 +13,7 @@ public interface AssignmentMapper extends BaseMapper<Assignment> {
     @Select("SELECT * FROM assignments where chapter_id=#{chapterId}")
     List<Assignment> getAllByChapterId(Long chapterId);
 
+
+    @Select("SELECT * FROM assignments where assignment_id =#{assId}")
+    Assignment selectAssById(Long assId);
 }

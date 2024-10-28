@@ -16,8 +16,6 @@ import java.util.Map;
 @RequestMapping(PathConstant.API)
 @RequiredArgsConstructor
 public class AssignmentController {
-    // TODO QZH
-
     private final AssignmentService assignmentService;
     // 教师创建作业
     @PostMapping("/chapter/{id}/assignment")

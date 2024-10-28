@@ -27,7 +27,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public Assignment getAssignment(Long id) {
-        return assignmentMapper.selectById(id);
+    public Assignment getAssignment(Long assId) {
+        return assignmentMapper.selectAssById(assId);
     }
 }
