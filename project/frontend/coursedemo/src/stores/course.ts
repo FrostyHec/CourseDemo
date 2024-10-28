@@ -84,13 +84,14 @@ export function path_convert(path: undefined|string|string[]): string[] {
 
 async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
   const course_info = (await getCourseCall(course_id)).data
-  const chapter_list = (await getAllChapterCall(course_id)).data
+  const chapter_list = (await getAllChapterCall(course_id)).data.content
   const chapter_all_list: {chapter_info: ChapterEntity, resourses: ResourceEntity[]}[] = []
   for(const chapter of chapter_list) {
     const chapter_info = (await getChapterCall(chapter.chapter_id)).data
     const resoruse_all_list = (await getResourcesByChapterCall(chapter.chapter_id)).data.content
     chapter_all_list.push({chapter_info: chapter_info, resourses: resoruse_all_list})
   }
+  console.log({course_info: course_info, chapters: chapter_all_list})
   return {course_info: course_info, chapters: chapter_all_list}
 }
 
