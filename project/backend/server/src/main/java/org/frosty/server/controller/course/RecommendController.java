@@ -23,12 +23,14 @@ public class RecommendController {
 
     @GetMapping("/courses/hot")
     public Map<String, List<CourseWithStudentCount>> getHotCourses(int page_size,int page_num) {
+        // 公开/半公开的发布状态课程中，注册学生数最多的课程
         List<CourseWithStudentCount> res =null;
         FrameworkUtils.notImplemented();
         return Map.of("content", res);
     }
     @GetMapping("/teachers/hot")
     public Map<String, List<CourseWithStudentCount>> getHotTeachers(int page_size,int page_num) {
+        // 累积学生最多的老师
         List<CourseWithStudentCount> res =null;
         FrameworkUtils.notImplemented();
         return Map.of("content", res);
