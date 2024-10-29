@@ -1,6 +1,5 @@
 import { service_backend_base } from '@/utils/Constant'
-import { APIResult, AxiosAPI } from '@/utils/APIUtils'
-import type { UserPublicInfoEntity } from '@/api/user/UserAPI'
+import { AxiosAPI } from '@/utils/APIUtils'
 
 /////////////////////   COURSE   ///////////////////////////////
 export interface CourseEntity {
@@ -11,7 +10,8 @@ export interface CourseEntity {
   status: CourseStatus,
   publication: Publication
   created_at: Date,
-  updated_at: Date
+  updated_at: Date,
+  visible:boolean,
 }
 
 export enum Publication {

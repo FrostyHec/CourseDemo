@@ -20,12 +20,12 @@ export function mockDeleteChapterCall(chapterId: number, data: APIResult<null>) 
   setMockFunc(url, RequestType.DELETE, null, () => data)
 }
 
-export function mockGetChapterCall(chapterId: number, data: APIResult<ChapterEntity>) {
+export function mockGetChapterCall(chapterId: number, data: APIResult<{content:ChapterEntity[]}>) {
   const url = service_backend_base + '/chapter/' + chapterId
   setMockFunc(url, RequestType.GET, null, () => data)
 }
 
-export function mockGetAllChapterCall(courseId: number, data: APIResult<ChapterEntity[]>) {
+export function mockGetAllChapterCall(courseId: number, data: APIResult<{content:ChapterEntity[]}>) {
   const url = service_backend_base + '/course/' + courseId + '/chapter'
   setMockFunc(url, RequestType.GET, null, () => data)
 }
