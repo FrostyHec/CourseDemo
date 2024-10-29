@@ -18,16 +18,16 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public void updateAssignment(Assignment assignment) {
-        assignmentMapper.updateById(assignment);
+        assignmentMapper.updateAssById(assignment);
     }
 
     @Override
     public void deleteAssignment(Long id) {
-        assignmentMapper.deleteById(id);
+        assignmentMapper.deleteAssById(id);
     }
 
     @Override
-    public Assignment getAssignment(Long id) {
-        return assignmentMapper.selectById(id);
+    public Assignment getAssignment(Long assId) {
+        return assignmentMapper.selectAssById(assId);
     }
 }
