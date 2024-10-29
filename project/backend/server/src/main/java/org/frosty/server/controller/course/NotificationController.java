@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Notification;
-
 import org.frosty.server.entity.po.NotificationWithReceiver;
 import org.frosty.server.services.course.NotificationService;
 import org.springframework.web.bind.annotation.*;

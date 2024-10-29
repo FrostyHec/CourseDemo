@@ -2,7 +2,6 @@ package org.frosty.common_service.im.api.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.exception.ExternalException;
 import org.frosty.common.exception.InternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
@@ -30,7 +29,7 @@ public class MessagePushServiceImpl implements MessagePushService {
 
     @Override
     public SiteMessage pushSite(SiteMessage siteMessage) {
-        String url = siteMsgPath + PathConstant.INTERNAL_API+"/msg/site";
+        String url = siteMsgPath + PathConstant.INTERNAL_API + "/msg/site";
         ResponseEntity<Response> res =
                 restTemplate.postForEntity(url, siteMessage, Response.class);
         Object body = RestTemplateUtils.checkSuccess(res,
@@ -43,16 +42,16 @@ public class MessagePushServiceImpl implements MessagePushService {
 
     @Override
     public void ackSite(Long mid) {
-        String url = siteMsgPath + PathConstant.INTERNAL_API+"/msg/site/ack/" + mid;
+        String url = siteMsgPath + PathConstant.INTERNAL_API + "/msg/site/ack/" + mid;
         Response res = restTemplate.patchForObject(url, null, Response.class);
-        Ex.check(Objects.requireNonNull(res).getCode()==Response.getSuccess().getCode(),
-                new InternalException("Exception thrown by server. Response:"+res));
+        Ex.check(Objects.requireNonNull(res).getCode() == Response.getSuccess().getCode(),
+                new InternalException("Exception thrown by server. Response:" + res));
     }
 
     @Override
     public void pushEmail(Email email) {
-        String url =emailMsgPath+PathConstant.INTERNAL_API+"/msg/email";
-        var res = restTemplate.postForEntity(url,email,Response.class);
+        String url = emailMsgPath + PathConstant.INTERNAL_API + "/msg/email";
+        var res = restTemplate.postForEntity(url, email, Response.class);
         RestTemplateUtils.checkSuccess(res, "Connect to Email Service failed",
                 "Error response from Email Service");
     }

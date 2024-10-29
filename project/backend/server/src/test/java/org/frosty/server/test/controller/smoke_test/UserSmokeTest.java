@@ -63,6 +63,7 @@ public class UserSmokeTest {
         User deletedUser = userAPI.getUserSuccess(token, createdUser.getUserId());
         assertNull(deletedUser);
     }
+
     @Test
     public void testUserPublicInfo() throws Exception {
         // Create user

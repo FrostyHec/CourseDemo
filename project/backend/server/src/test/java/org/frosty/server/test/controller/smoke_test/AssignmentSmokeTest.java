@@ -1,7 +1,6 @@
 package org.frosty.server.test.controller.smoke_test;
 
 import org.frosty.server.entity.bo.Assignment;
-import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.assignment.AssignmentAPI;
@@ -69,4 +68,3 @@ public class AssignmentSmokeTest {
         assert allAssignmentsAfterDelete == null;
     }
 }
-

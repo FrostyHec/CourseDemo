@@ -12,6 +12,7 @@ public enum MessageType {
     @EnumValue
     @JsonValue
     private final int value;
+
     MessageType(int value) {
         this.value = value;
     }

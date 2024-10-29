@@ -1,9 +1,10 @@
 package org.frosty.server.mapper.course;
 
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 

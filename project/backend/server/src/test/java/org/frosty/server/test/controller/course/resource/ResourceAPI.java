@@ -8,9 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.po.ResourceWithAccessKey;
-import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.mapper.course.ResourceMapper;
-import org.frosty.server.test.controller.auth.AuthAPI;
+import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.controller.course.chapter.ChapterAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.utils.JsonUtils;
@@ -95,7 +94,8 @@ public class ResourceAPI {
                 .andReturn();
         return JsonUtils.toObject(resp, ResourceWithAccessKey.class);
     }
-//
+
+    //
     public ResultActions updateResourceMetadata(String token, Long id, Resource updatedResource) throws Exception {
         String url = resourceBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(updatedResource);
@@ -148,9 +148,9 @@ public class ResourceAPI {
         assert e.getSuffix().equals(resource.getSuffix());
     }
 
-    public Long addTestCourseTestChapterTestResourceAndGetId(Long uid){
+    public Long addTestCourseTestChapterTestResourceAndGetId(Long uid) {
         var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
-        var e = getTemplateResource(chapterId,"test","pdf",Resource.ResourceType.courseware);
+        var e = getTemplateResource(chapterId, "test", "pdf", Resource.ResourceType.courseware);
         resourceMapper.insert(e);
         assert e.getResourceId() != null;
         return e.getResourceId();

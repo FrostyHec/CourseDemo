@@ -3,12 +3,8 @@ package org.frosty.server.services.user;
 
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.event.delete_event.UserDeleteEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 
 public interface UserService {

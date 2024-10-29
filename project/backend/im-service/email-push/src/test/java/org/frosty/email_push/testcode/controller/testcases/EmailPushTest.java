@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EmailPushTest {
     @Autowired
     private EmailPushAPI emailPushAPI;
+
     @Test
     public void checkCorrectlySend() throws Exception {
         var e = emailPushAPI.getTemplateEmail();

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Objects;
 
 @IdempotentControllerTest
 public class CourseCommentSmokeTest {
@@ -43,8 +42,8 @@ public class CourseCommentSmokeTest {
 
         //-----test start---
         // 1. Student creates a comment under the resource
-        ResourceComment resourceComment = commentAPI.getTemplateComment(resourceId,uid);
-        commentAPI.createSuccess(token,resourceId, resourceComment);
+        ResourceComment resourceComment = commentAPI.getTemplateComment(resourceId, uid);
+        commentAPI.createSuccess(token, resourceId, resourceComment);
 
         // 2. Teacher can get the comment
         ResourceComment resourceComment1 = commentAPI.getSuccess(token1, 1L);
@@ -54,15 +53,15 @@ public class CourseCommentSmokeTest {
 //        assert commentId1 == commentId;
 
         // 3. Teacher replies to the comment
-        ResourceComment resourceComment2 = commentAPI.getTemplateReplyComment(resourceId,1L,uid1);
-        commentAPI.createSuccess(token1,resourceId, resourceComment2);
+        ResourceComment resourceComment2 = commentAPI.getTemplateReplyComment(resourceId, 1L, uid1);
+        commentAPI.createSuccess(token1, resourceId, resourceComment2);
 
         System.out.println("----------------------------");
         System.out.println(resourceComment2);
         System.out.println("----------------------------");
 
         // 4. Student can get the comment (including the reply)
-        List<CommentController.CommentWithUser> comments = commentAPI.getAllSuccess(token,resourceId);
+        List<CommentController.CommentWithUser> comments = commentAPI.getAllSuccess(token, resourceId);
 
         System.out.println("----------------------------");
         System.out.println(comments);

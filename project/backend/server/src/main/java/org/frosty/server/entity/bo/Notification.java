@@ -18,7 +18,7 @@ public class Notification {
     @TableId
     private Long notificationId;
     private Long courseId;
-//    private List<Integer> receiverIds;
+    //    private List<Integer> receiverIds;
     private String title;
     private String message;
     private OffsetDateTime createdAt;

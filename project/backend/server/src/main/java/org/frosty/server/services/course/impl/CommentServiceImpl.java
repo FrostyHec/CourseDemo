@@ -7,7 +7,6 @@ import org.frosty.server.mapper.course.CommentMapper;
 import org.frosty.server.services.course.CommentService;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service

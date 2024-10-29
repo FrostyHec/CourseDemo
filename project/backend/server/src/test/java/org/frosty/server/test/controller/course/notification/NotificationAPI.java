@@ -26,6 +26,12 @@ public class NotificationAPI {
     private final AuthUtil authUtil;
     private final String baseUrl = PathConstant.API;
 
+    // Common success response handler
+    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
+        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
+        return JsonUtils.toObject(resp, responseType);
+    }
+
     // Common performRequest method
     private ResultActions performRequest(MockHttpServletRequestBuilder requestBuilder, String token, Object body) throws Exception {
         requestBuilder.headers(authUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
@@ -36,15 +42,9 @@ public class NotificationAPI {
         return mockMvc.perform(requestBuilder);
     }
 
-    // Common success response handler
-    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
-        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
-        return JsonUtils.toObject(resp, responseType);
-    }
-
     public ResultActions createAnnouncement(String token, Long courseId, NotificationWithReceiver notification) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
-                post(baseUrl + "/course/" + courseId+ "/announcement");
+                post(baseUrl + "/course/" + courseId + "/announcement");
         return performRequest(requestBuilder, token, notification);
     }
 
@@ -65,7 +65,7 @@ public class NotificationAPI {
 
     public ResultActions updateAnnouncement(String token, Long announcementId, NotificationWithReceiver notification) throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
-                put(baseUrl + "/announcement/"  + announcementId);
+                put(baseUrl + "/announcement/" + announcementId);
         return performRequest(requestBuilder, token, notification);
     }
 
