@@ -34,12 +34,12 @@ public interface UserMapper extends BaseMapper<User> {
      * @param realName 一个包含多个以空格分隔的关键词的字符串，用于在用户的姓名中查找。
      *                 例如 "Alice Smith"。
      * @return 符合搜索条件的 {@link User} 对象列表，其中每个用户的 first_name 或 last_name
-     *         字段包含所有指定的关键词。
+     * 字段包含所有指定的关键词。
      */
     @Select("""
-    SELECT * FROM users 
-    WHERE to_tsvector('simple', first_name || ' ' || last_name) @@ to_tsquery('simple', REPLACE(#{realName}, ' ', ' & '))
-    """)
+            SELECT * FROM users 
+            WHERE to_tsvector('simple', first_name || ' ' || last_name) @@ to_tsquery('simple', REPLACE(#{realName}, ' ', ' & '))
+            """)
     List<User> searchByRealName(String realName);
 
 
