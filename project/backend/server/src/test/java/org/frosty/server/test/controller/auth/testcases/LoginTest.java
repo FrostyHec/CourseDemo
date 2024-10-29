@@ -24,7 +24,7 @@ public class LoginTest {
         String name = "admin";
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
-        var loginInfo = new LoginInfo(user.getUserId(), password);
+        var loginInfo = new LoginInfo(user.getEmail(), password);
         String token = authAPI.loginSuccess(loginInfo);
         assert jwtHandler.getClaimsFromToken(token) != null;//token valid
     }
@@ -34,7 +34,7 @@ public class LoginTest {
         String name = "admin";
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
-        var loginInfo = new LoginInfo(user.getUserId(), "wrong-password");
+        var loginInfo = new LoginInfo(user.getEmail(), "wrong-password");
         authAPI.login(loginInfo)
                 .andExpect(RespChecker.badRequest())
                 .andExpect(RespChecker.message("incorrect-password"));
@@ -42,7 +42,7 @@ public class LoginTest {
 
     @Test
     public void testUserNotFound() throws Exception {
-        var loginInfo = new LoginInfo(0, "wrong-password");
+        var loginInfo = new LoginInfo("0", "wrong-password");
         authAPI.login(loginInfo)
                 .andExpect(RespChecker.noFound())
                 .andExpect(RespChecker.message("user-not-found"));

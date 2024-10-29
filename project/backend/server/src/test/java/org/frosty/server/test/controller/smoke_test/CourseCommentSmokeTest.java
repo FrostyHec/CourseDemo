@@ -70,5 +70,5 @@ public class CourseCommentSmokeTest {
 
         assert comments.size() == 2;
 
-        }
+    }
 }

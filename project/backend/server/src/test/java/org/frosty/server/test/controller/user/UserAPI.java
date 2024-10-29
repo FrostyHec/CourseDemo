@@ -2,8 +2,8 @@ package org.frosty.server.test.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.controller.user.UserController;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.mapper.user.UserMapper;
@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +37,9 @@ public class UserAPI {
     }
 
     private ResultActions performRequest(MockHttpServletRequestBuilder requestBuilder, String token, Object body) throws Exception {
-        requestBuilder.headers(authUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
+        if (token != null)
+            requestBuilder.headers(authUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
+
         if (body != null) {
             String json = objectMapper.writeValueAsString(body);
             requestBuilder.contentType(MediaType.APPLICATION_JSON).content(json);
@@ -46,7 +50,7 @@ public class UserAPI {
     public ResultActions registerUser(User user, String confirmPassword) throws Exception {
         String url = courseBaseUrl + "/user";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(url);
-        return performRequest(requestBuilder, null, Pair.of(confirmPassword, user));
+        return performRequest(requestBuilder, null, user);
     }
 
     public void registerUserSuccess(User user, String confirmPassword) throws Exception {
@@ -85,13 +89,14 @@ public class UserAPI {
 
     public ResultActions searchByRealName(String token, String realName) throws Exception {
         String url = courseBaseUrl + "/user/search";
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(url)
-                .param("real_name", realName); // realName?
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(url)
+                .param("realName", realName); // realName?
         return performRequest(requestBuilder, token, null);
     }
 
-    public User searchByRealNameSuccess(String token, String realName) throws Exception {
-        return getSuccessResponse(searchByRealName(token, realName), User.class);
+    public List<User> searchByRealNameSuccess(String token, String realName) throws Exception {
+        return getSuccessResponse(searchByRealName(token, realName), UserController.UserList.class).getContent();
     }
 
     public ResultActions getUserPublicInfo(String token, Long userId) throws Exception {
@@ -126,6 +131,5 @@ public class UserAPI {
         assert origin.getRole().equals(info.getRole());
         assert origin.getEmail().equals(info.getEmail());
     }
-
 
 }

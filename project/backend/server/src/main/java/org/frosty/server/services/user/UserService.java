@@ -28,6 +28,7 @@ public interface UserService {
 
     User findPublicInfoById(Long id);
 
+
     List<User> searchByRealName(String realName);
 
     void handleUserDeleteEvent(UserDeleteEvent event);

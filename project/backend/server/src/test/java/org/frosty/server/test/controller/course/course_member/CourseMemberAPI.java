@@ -7,7 +7,6 @@ import org.frosty.server.controller.course.CourseMemberController;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.po.StudentWithEnrollStatus;
-import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
@@ -29,6 +28,12 @@ public class CourseMemberAPI {
     private final AuthUtil AuthUtil;
     private final String courseBaseUrl = PathConstant.API + "/course";
 
+    // 提取通用的Success处理
+    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
+        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
+        return JsonUtils.toObject(resp, responseType);
+    }
+
     // 通用的performRequest方法
     private ResultActions performRequest(MockHttpServletRequestBuilder requestBuilder, String token, Object body) throws Exception {
         requestBuilder.headers(AuthUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
@@ -37,12 +42,6 @@ public class CourseMemberAPI {
             requestBuilder.contentType(MediaType.APPLICATION_JSON).content(json);
         }
         return mockMvc.perform(requestBuilder);
-    }
-
-    // 提取通用的Success处理
-    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
-        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
-        return JsonUtils.toObject(resp, responseType);
     }
 
     // 学生加入课程

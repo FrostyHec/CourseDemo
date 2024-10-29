@@ -56,6 +56,6 @@ public class AuthAPI {
     public Pair<String, User> quickAddUserAndLogin(String name, User.Role role) throws Exception {
         var password = "123456";
         var user = userAPI.addSimpleTestUser(name, password, role);
-        return new Pair<>(loginSuccess(new LoginInfo(user.getUserId(), password)), user);
+        return new Pair<>(loginSuccess(new LoginInfo(user.getEmail(), password)), user);
     }
 }
