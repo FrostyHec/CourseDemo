@@ -142,6 +142,7 @@ CREATE TABLE notifications
 (
     notification_id BIGSERIAL PRIMARY KEY,               -- 自增通知ID
     course_id       INT  NOT NULL,                       -- 课程ID
+    title           TEXT NOT NULL,                       -- 通知标题
     message         TEXT NOT NULL,                       -- 通知内容
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 创建时间
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 更新时间
