@@ -101,7 +101,7 @@ public class CommentController {
         @TableId(type = IdType.AUTO)
         private Long commentId;
         private int resourceId;
-        private UserPublicInfo userPublicInfo;
+        private UserPublicInfo user;
         private String commentText;
         private Long commentReply;
         private OffsetDateTime createAt;
