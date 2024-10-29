@@ -68,7 +68,7 @@ public class CourseAPI {
     }
 
     public List<Course> adminGetAllRequiredApprovedCourseSuccess(String adminToken, Long userId) throws Exception {
-        var resp = adminGetRequiredApprovedCourse(adminToken, userId, 1, -1)
+        var resp = adminGetRequiredApprovedCourse(adminToken, userId, -1, 1)
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp, CourseController.CourseList.class).getContent();
@@ -84,7 +84,7 @@ public class CourseAPI {
     }
 
     public List<Course> getAllTeachingCourseSuccess(String teacherToken, Long userId) throws Exception {
-        var resp = getAllTeachingCourse(teacherToken, userId, 1, -1)
+        var resp = getAllTeachingCourse(teacherToken, userId, -1, 1)
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp, CourseController.CourseList.class).getContent();
