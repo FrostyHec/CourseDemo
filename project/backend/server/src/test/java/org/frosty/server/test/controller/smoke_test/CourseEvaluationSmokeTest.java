@@ -1,5 +1,8 @@
 package org.frosty.server.test.controller.smoke_test;
 
+import org.frosty.test_common.annotation.IdempotentControllerTest;
+
+@IdempotentControllerTest
 public class CourseEvaluationSmokeTest {
     // TODO 基础测试
     // 1. 学生对某个课程发送课程评价
