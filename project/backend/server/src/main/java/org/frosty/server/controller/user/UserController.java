@@ -9,6 +9,7 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.services.user.UserService;
+import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -66,9 +67,12 @@ public class UserController {
     }
 
     @GetMapping("/user/search")
-    public Response searchUser(@RequestParam String realName) {
-        List<User> users = userService.searchByRealName(realName);
-        return Response.getSuccess(new UserList(users));
+    public UserList searchUser(@RequestParam String firstName, @RequestParam String lastName,
+                               @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        FrameworkUtils.notImplemented();
+        throw new RuntimeException();
+//        List<User> users = userService.searchByRealName(realName);
+//        return Response.getSuccess(new UserList(users));
     }
 
     @Data

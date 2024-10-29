@@ -85,6 +85,10 @@ public class UserSmokeTest {
         searchResult = userAPI.searchByRealNameSuccess(token, "Alice Smith");
         assertEquals(1, searchResult.size());
         newUser.setUserId(searchResult.get(0).getUserId());
+        // check effectiveness of chinese like name
+        searchResult = userAPI.searchByRealNameSuccess(token, "AliceSmith");
+        assertEquals(1, searchResult.size());
+        newUser.setUserId(searchResult.get(0).getUserId());
 
         // Get public user info
         UserPublicInfo publicInfo = userAPI.getUserPublicInfoSuccess(token, newUser.getUserId());
