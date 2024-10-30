@@ -58,7 +58,7 @@
 
 <script>
 import { ref, computed } from 'vue';
-import BaseHeader from '../../layouts/BaseHeader.vue';
+import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter(); // 获取 router 实例

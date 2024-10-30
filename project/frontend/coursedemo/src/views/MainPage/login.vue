@@ -64,16 +64,14 @@ const login = async () =>{
         password: loginData.value.password
     });
     console.log(result)
-
-
     if(result.code == 200){
         ElMessage.success('登录成功!')
     }else{
         ElMessage.error('服务异常');
         return
     }
-    
     form_store.open_form(form_store.course_null, 'Add')
+    router.push('/MainPage/student');
 }
 
 //定义函数，清空数据模型
@@ -119,7 +117,7 @@ const clearRegisterData = () =>{
                 </el-form-item>
             </el-form>
             <!-- 登录表单 -->
-            <el-form ref="form" size="large" autocomplete="off" v-else>
+            <el-form ref="form" size="large" autocomplete="off" v-else :model="loginData" :rules="loginRule">
                 <el-form-item>
                     <h1>登录</h1>
                 </el-form-item>
