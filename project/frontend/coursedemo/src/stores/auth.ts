@@ -1,19 +1,24 @@
 import { defineStore } from 'pinia'
-import { loginCall, type LoginParam, logoutCall, type LogoutParam, type UserEntity, UserType } from '@/api/user/UserAPI'
+import {
+  loginCall,
+  type LoginParam,
+  logoutCall,
+  type LogoutParam,
+  type
+  UserPublicInfoEntity,
+  UserType
+} from '@/api/user/UserAPI'
 import { reactive, ref } from 'vue'
 import Cookies from 'js-cookie'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('')
-  const emptyUser: UserEntity = {
-    user_id: BigInt(0),
+  const emptyUser: UserPublicInfoEntity = {
+    user_id: 0,
     first_name: '',
     last_name: '',
-    password: '',
     email: '',
     role: UserType.STUDENT,
-    create_at: new Date(0),
-    update_at: new Date(0)
   }
   const user = reactive({ ...emptyUser })
 
@@ -28,6 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(loginParam: LoginParam) {
     const result = await loginCall(loginParam)
     token.value = result.data.token
+    Object.assign(user, result.data.user)
     setLoginToken(token.value)
     console.log(result)
   }

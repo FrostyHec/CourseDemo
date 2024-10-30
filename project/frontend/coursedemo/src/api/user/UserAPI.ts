@@ -28,7 +28,7 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 /////////////////////   USER   ///////////////////////////////
 
 export interface UserPublicInfoEntity extends APIDataResult,APIParam{
-  user_id:bigint,
+  user_id:number,
   first_name:string,
   last_name:string,
   role:UserType,
