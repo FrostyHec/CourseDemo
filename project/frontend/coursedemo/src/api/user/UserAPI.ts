@@ -7,6 +7,7 @@ export interface LoginParam extends APIParam{
 }
 export interface LoginResult extends APIDataResult{
   token:string
+  user:UserPublicInfoEntity
 }
 
 export async function loginCall(param:LoginParam):Promise<APIResult<LoginResult>>{
