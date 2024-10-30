@@ -14,6 +14,10 @@ const router = createRouter({
       component: () => import('@/views/Course/BaseCourse.vue'),
     },
     {
+      path: '/course/hotCourse',
+      component: () => import('@/views/Course/hotCourse.vue'),
+    },
+    {
       path: '/manager',
       redirect: '/manager/NotPass'
     },

@@ -32,7 +32,11 @@
           <el-container>
             <el-main>
               <el-table :data="filteredTableData" style="width: 100%">
-                <el-table-column prop="CourseName" label="课程名称"></el-table-column>
+                <el-table-column prop="CourseName" label="课程名称">
+                  <template v-slot="{ row }">
+                    <router-link :to="`/course/${row.CourseName}`" class="course-link">{{ row.CourseName }}</router-link>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="teacher" label="授课老师"></el-table-column>
                 <el-table-column prop="total_students" label="已选人数"></el-table-column>
                 <el-table-column prop="action" label="操作" width="200">
@@ -233,4 +237,17 @@ export default {
   margin-top: 20px; /* 分页组件上方间距 */
   text-align: center; /* 分页组件居中 */
 }
+
+.course-link {
+  text-decoration: none; /* 去除下划线 */
+  color: #409eff; /* 设置链接颜色 */
+  font-weight: bold; /* 设置字体加粗 */
+  transition: color 0.3s; /* 平滑颜色变化 */
+}
+
+.course-link:hover {
+  color: #66b1ff; /* 鼠标悬停时的颜色 */
+  text-decoration: underline; /* 鼠标悬停时添加下划线 */
+}
+
 </style>
