@@ -32,8 +32,7 @@ public interface ChapterMapper extends BaseMapper<Chapter> {
     // 获取某个课程的全部章节
     @Select("SELECT * FROM chapters WHERE course_id=#{courseId}")
     List<Chapter> getAllChaptersByCourseId(@Param("courseId") Long courseId);
-
-//    @Select("SELECT * FROM chapters")
+    //    @Select("SELECT * FROM chapters")
 //    List<Chapter> getAll();
 
     // 获取某个课程的全部章节给学生
