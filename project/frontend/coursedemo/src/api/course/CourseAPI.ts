@@ -11,7 +11,6 @@ export interface CourseEntity {
   publication: Publication
   created_at: Date,
   updated_at: Date,
-  visible:boolean,
 }
 
 export enum Publication {

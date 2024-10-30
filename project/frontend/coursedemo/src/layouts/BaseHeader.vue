@@ -1,40 +1,54 @@
 <script lang="ts" setup>
-import { useDark, useToggle } from "@vueuse/core"
-import { useCourseStore, path_convert } from "@/stores/course";
+import { useDark, useToggle } from "@vueuse/core";
+import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { ref } from 'vue';
+import { ArrowRight } from '@element-plus/icons-vue';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
-import { ArrowRight } from '@element-plus/icons-vue'
-import { useRoute } from "vue-router";
+const router = useRouter(); // 使用 Vue Router
 
-const course_store = useCourseStore()
+const l = ref([
+  { key: 0, label: 'hello', link: '/course/hello' },
+  { key: 1, label: 'world' },
+]);
 
-function generate_breadcrumb(s: string[]): {key: number, label: string, link?: string}[] {
-  let id = useRoute().params.course_id
-  if(!id || !course_store.course_data)
-    return []
-  let prefix = '/course' + '/' + id
-  let res = []
-  if(s.length==0)
-    res.push({key: 0, label: course_store.course_data.course_info.course_name})
-  else
-    res.push({key: 0, label: course_store.course_data.course_info.course_name, link: prefix})
-  for(let i=0;i<s.length;i++) {
-    prefix += '/' + s[i]
-    if(i==s.length-1) {
-      res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
+function generate_breadcrumb(s: string[] | string | undefined): { key: number, label: string, link?: string }[] {
+  if (!s) return [];
+  if (typeof s === "string") s = [s];
+  let prefix = '/course';
+  let res = [];
+  for (let i = 0; i < s.length; i++) {
+    prefix += '/' + s[i];
+    if (i === s.length - 1) {
+      res.push({ key: i, label: s[i].replace(/-/g, ' ') });
     } else {
-      res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
+      res.push({ key: i, label: s[i].replace(/-/g, ' '), link: prefix });
     }
   }
-  return res
+  return res;
 }
 
+export interface LoginParam{
+  user_id:number,
+  password:string
+}
+// 退出登录的方法
+function logout() {
+  localStorage.removeItem('user'); // 假设用户信息存储在本地存储中
+  // 显示退出登录的消息
+  ElMessage({
+    message: '您已成功退出登录',
+    type: 'success',
+  });
+  // 跳转到登录页面
+  router.push('/MainPage/login');
+}
 </script>
 
 <template>
   <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-border-color);" px="5" py="1">
-
     <template #title>
       <span style="font-weight: 600; font-size: large; margin: 0%;" @click="$router.push('/')">
         Course Demo
@@ -43,34 +57,25 @@ function generate_breadcrumb(s: string[]): {key: number, label: string, link?: s
 
     <template #content>
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item></el-breadcrumb-item>
-        <el-breadcrumb-item v-for="it in generate_breadcrumb(path_convert($route.params.labels))" :key="it.key" :to="it.link">
+        <el-breadcrumb-item v-for="it in generate_breadcrumb($route.params.labels)" :key="it.key" :to="it.link">
           {{ it.label }}
         </el-breadcrumb-item>
-        <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ $route.params.labels }}</el-breadcrumb-item> -->
       </el-breadcrumb>
     </template>
 
     <template #extra>
       <div style="width: 100%; display: flex; place-items: center">
         
-        <el-popover
-          :width="300"
-        >
+        <el-popover :width="300">
           <template #reference>
             <el-avatar :size="36" style="border: solid 1px var(--ep-border-color); margin-right: 10px;"
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
           </template>
           <template #default>
-            <div
-              style="display: flex; gap: 5px; flex-direction: column"
-            >
+            <div class="demo-rich-conent" style="display: flex; gap: 5px; flex-direction: column">
               <div style="display: flex; gap: 10px; align-items: center;">
                 <el-avatar :size="64" style="border: solid 1px var(--ep-border-color); margin-left: 5px;"
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
                 <div>
                   <h2 style="margin: 0%;">Alice Bob</h2>
                   <p style="margin: 0%; font-size: 14px; color: var(--el-color-info)">
@@ -78,9 +83,8 @@ function generate_breadcrumb(s: string[]): {key: number, label: string, link?: s
                   </p>
                 </div>
               </div>
-
               <el-button>Settings</el-button>
-              <el-button type="primary" style="margin: 0%;">Sign out</el-button>
+              <el-button @click="logout">Sign out</el-button>
             </div>
           </template>
         </el-popover>

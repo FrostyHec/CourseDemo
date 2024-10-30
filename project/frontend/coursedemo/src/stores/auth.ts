@@ -28,14 +28,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(loginParam: LoginParam) {
     const result = await loginCall(loginParam)
     token.value = result.data.token
-    seLoginToken(token.value)
+    setLoginToken(token.value)
     console.log(result)
   }
 
   async function logout(logoutParam: LogoutParam) {
     await logoutCall(logoutParam)
     token.value = ''
-    seLoginToken('')
+    setLoginToken('')
     Object.assign(user, emptyUser)
   }
 
@@ -47,10 +47,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 })
 
-export function seLoginToken(token: string): void {
+export function setLoginToken(token: string): void {
   Cookies.set('token', token)
 }
 
 export function getLoginToken(): string {
-  return Cookies.get('token')
+  const token = Cookies.get('token')
+  if(token)
+    return token
+  return ''
 }

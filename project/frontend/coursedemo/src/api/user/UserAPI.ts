@@ -26,11 +26,6 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 }
 
 /////////////////////   USER   ///////////////////////////////
-export interface UserEntity extends UserPublicInfoEntity{
-  password:string,
-  create_at:Date,
-  update_at:Date
-}
 
 export interface UserPublicInfoEntity extends APIDataResult,APIParam{
   user_id:bigint,
@@ -38,6 +33,12 @@ export interface UserPublicInfoEntity extends APIDataResult,APIParam{
   last_name:string,
   role:UserType,
   email:string,
+}
+
+export interface UserEntity extends UserPublicInfoEntity{
+  password:string,
+  create_at:Date,
+  update_at:Date
 }
 
 export enum UserType{

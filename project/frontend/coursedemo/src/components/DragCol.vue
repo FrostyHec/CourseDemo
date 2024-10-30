@@ -1,5 +1,4 @@
 <!-- copyright vue-resizer -->
-
 <template>
   <div
     class="drager_col"

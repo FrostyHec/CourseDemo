@@ -4,7 +4,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import { CourseStatus, createCourseCall, Publication, updateCourseInfoCall, type CourseEntity } from '@/api/course/CourseAPI'
 import { ChapterType, createChapterCall, updateChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI'
 import { ResourceType, updateResourceMetadataCall, uploadResourceCall, type ResourceEntity } from '@/api/course/CourseResourceAPI'
-import { type UnifyTree } from './course'
+import { type ResourceEntityPlus, type UnifyTree } from './course'
 
 
 export const useFormStore = defineStore('form', () => {
@@ -32,8 +32,10 @@ export const useFormStore = defineStore('form', () => {
     content: '',
     created_at: undefined,
     updated_at: undefined,
+    visible: true,
+    publication: true,
   } as any
-  const resource_null: ResourceEntity = {
+  const resource_null: ResourceEntityPlus = {
     resource_id: 0,
     chapter_id: 0,
     resource_name: '',
@@ -46,17 +48,18 @@ export const useFormStore = defineStore('form', () => {
     student_can_download: true,
     created_at: undefined,
     updated_at: undefined,
+    access_key: '',
   } as any
 
   const course_form = ref<CourseEntity>(course_null)
   const chapter_form = ref<ChapterEntity>(chapter_null)
-  const resource_form = ref<ResourceEntity>(resource_null)
+  const resource_form = ref<ResourceEntityPlus>(resource_null)
 
   const node = ref<Node|undefined>(undefined)
   const mode = ref<'Add'|'Edit'>('Add')
 
-  let data_save: CourseEntity|ChapterEntity|ResourceEntity|undefined = undefined 
-  function open_form(data: CourseEntity|ChapterEntity|ResourceEntity, set_mode?: 'Add'|'Edit') {
+  let data_save: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined = undefined 
+  function open_form(data: CourseEntity|ChapterEntity|ResourceEntityPlus, set_mode?: 'Add'|'Edit') {
     if(set_mode) {
       data_save = {...data}
       mode.value = set_mode
