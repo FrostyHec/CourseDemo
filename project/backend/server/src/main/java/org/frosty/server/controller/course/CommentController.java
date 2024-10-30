@@ -104,7 +104,7 @@ public class CommentController {
         private UserPublicInfo user;
         private String commentText;
         private Long commentReply;
-        private OffsetDateTime createAt;
+        private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
     }
 }

@@ -16,6 +16,6 @@ public class NotificationWithReceiver {
     private List<Long> receiverIds;
     private String message;
     private String title;
-    private OffsetDateTime createAt;
-    private OffsetDateTime updateAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 }

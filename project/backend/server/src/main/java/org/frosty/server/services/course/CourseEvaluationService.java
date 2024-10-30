@@ -20,7 +20,10 @@ public class CourseEvaluationService {
     }
 
     public void updateEvaluation(CourseEvaluation courseEvaluation) {
-        courseEvaluationMapper.updateById(courseEvaluation);
+        QueryWrapper<CourseEvaluation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("course_id", courseEvaluation.getCourseId())
+                .eq("student_id", courseEvaluation.getStudentId());
+        courseEvaluationMapper.update(courseEvaluation, queryWrapper);
     }
 
     public void deleteEvaluation(Long courseId, Long studentId) {

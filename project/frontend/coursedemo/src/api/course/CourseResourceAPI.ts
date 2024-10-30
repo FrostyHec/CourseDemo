@@ -18,6 +18,10 @@ export interface ResourceEntity {
   created_at: Date;
   updated_at: Date;
 }
+export interface ResourceWithAccessKey{
+  resource: ResourceEntity;
+  access_key: string;
+}
 
 export enum ResourceType {
   description = 'description',
@@ -35,13 +39,13 @@ export async function uploadResourceCall(chapterId: number, resource: ResourceEn
 
   const config=AxiosAPI.setAuthHeader();
   (config.headers as any)['Content-Type'] = 'multipart/form-data' // TODO check correctness
-  return AxiosAPI.extractResult(await axios.post(url,formData,config))
+  return AxiosAPI.extractResult<null>(await axios.post(url,formData,config))
 }
 
 // 获取资源元数据
 export async function getResourceMetaDataCall(id: number) {
   const url = `${service_backend_base}/resource/${id}`;
-  return AxiosAPI.authGet<ResourceEntity>(url);
+  return AxiosAPI.authGet<ResourceWithAccessKey>(url);
 }
 
 // 更新资源元数据
@@ -59,5 +63,5 @@ export async function deleteResourceCall(id: number) {
 // 获取章节下的所有资源
 export async function getResourcesByChapterCall(chapterId: number) {
   const url = `${service_backend_base}/chapter/${chapterId}/resource`;
-  return AxiosAPI.authGet<{ content: ResourceEntity[] }>(url);
+  return AxiosAPI.authGet<{ content: ResourceWithAccessKey[] }>(url);
 }
