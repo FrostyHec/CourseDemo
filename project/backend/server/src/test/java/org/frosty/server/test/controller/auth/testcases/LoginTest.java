@@ -26,7 +26,7 @@ public class LoginTest {
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getEmail(), password);
         var res = authAPI.loginSuccess(loginInfo);
-        assert res.getUserPublicInfo().getUserId()==1;
+        assert res.getUserPublicInfo().getUserId() == 1;
         assert res.getUserPublicInfo().getFirstName().equals(name);
         assert jwtHandler.getClaimsFromToken(res.getToken()) != null;//token valid
     }
