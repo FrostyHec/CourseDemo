@@ -9,6 +9,7 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.user.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +25,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody LoginInfo loginInfo) {
-        String token = authService.login(loginInfo);
-        return Map.of("token", token);
+    public LoginSuccessInfo login(@RequestBody LoginInfo loginInfo) {
+        return authService.login(loginInfo);
     }
 
     @PostMapping("/logout")
@@ -49,5 +49,13 @@ public class AuthController {
     public static class LoginInfo {
         private String email;
         private String password;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LoginSuccessInfo {
+        private UserPublicInfo userPublicInfo;
+        private String token;
     }
 }

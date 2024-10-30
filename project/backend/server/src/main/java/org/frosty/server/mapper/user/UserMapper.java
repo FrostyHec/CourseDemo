@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 
 import java.util.List;
 

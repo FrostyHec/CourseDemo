@@ -36,7 +36,7 @@ public class UserSmokeTest {
 
         // Login to get token
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
-        var token = authAPI.loginSuccess(loginInfo);
+        var token = authAPI.loginSuccess(loginInfo).getToken();
 
         var searchResult = userAPI.searchByRealNameSuccess(token, "John");
         assertEquals(1, searchResult.size());
@@ -77,7 +77,7 @@ public class UserSmokeTest {
 
         // Login to get token
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
-        var token = authAPI.loginSuccess(loginInfo);
+        var token = authAPI.loginSuccess(loginInfo).getToken();
 
         var searchResult = userAPI.searchByRealNameSuccess(token, "Alice");
         assertEquals(1, searchResult.size());

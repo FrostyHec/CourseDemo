@@ -22,7 +22,7 @@ public class LogoutTest {
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getEmail(), password);
-        String token = authAPI.loginSuccess(loginInfo);
+        String token = authAPI.loginSuccess(loginInfo).getToken();
         assert user.getUserId() == 1;
         authAPI.logout(token, user.getUserId())
                 .andExpect(RespChecker.success());
@@ -34,7 +34,7 @@ public class LogoutTest {
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getEmail(), password);
-        String token = authAPI.loginSuccess(loginInfo);
+        String token = authAPI.loginSuccess(loginInfo).getToken();
         authAPI.logout(token, user.getUserId() + 1)
                 .andExpect(RespChecker.badRequest())
                 .andExpect(RespChecker.message("unmatched-id"));

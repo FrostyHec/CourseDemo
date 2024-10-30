@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.utils.Pair;
+import org.frosty.server.controller.user.AuthController;
 import org.frosty.server.controller.user.AuthController.LoginInfo;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.user.UserAPI;
@@ -44,18 +45,16 @@ public class AuthAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public String loginSuccess(LoginInfo loginInfo) throws Exception {
+    public AuthController.LoginSuccessInfo loginSuccess(LoginInfo loginInfo) throws Exception {
         var resp = login(loginInfo)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        var token = (String) JsonUtils.toMapData(resp).get("token");
-        assert token != null;
-        return token;
+        return JsonUtils.toObject(resp, AuthController.LoginSuccessInfo.class);
     }
 
     public Pair<String, User> quickAddUserAndLogin(String name, User.Role role) throws Exception {
         var password = "123456";
         var user = userAPI.addSimpleTestUser(name, password, role);
-        return new Pair<>(loginSuccess(new LoginInfo(user.getEmail(), password)), user);
+        return new Pair<>(loginSuccess(new LoginInfo(user.getEmail(), password)).getToken(), user);
     }
 }

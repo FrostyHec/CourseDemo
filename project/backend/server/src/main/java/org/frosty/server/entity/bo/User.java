@@ -33,8 +33,4 @@ public class User {
         teacher,
         student
     }
-
-    public static class AnnouncementWithReceiver {
-
-    }
 }
