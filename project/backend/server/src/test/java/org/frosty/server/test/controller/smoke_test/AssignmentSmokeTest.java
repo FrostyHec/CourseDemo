@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @IdempotentControllerTest
 public class AssignmentSmokeTest {
-    // TODO 现在没办法过测，查看一下为什么
     @Autowired
     private CourseAPI courseAPI;
     @Autowired
