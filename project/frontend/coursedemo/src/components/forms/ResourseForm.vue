@@ -137,7 +137,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       type: "success",
     })
     console.log('submit!')
-    form_store.course_visibility = false
+    form_store.resource_visibility = false
     await course_store.load_from_route(true)
   })
 }

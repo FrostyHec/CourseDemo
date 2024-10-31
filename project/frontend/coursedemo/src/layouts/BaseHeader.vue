@@ -30,10 +30,6 @@ function generate_breadcrumb(s: string[] | string | undefined): { key: number, l
   return res;
 }
 
-export interface LoginParam{
-  user_id:number,
-  password:string
-}
 // 退出登录的方法
 function logout() {
   localStorage.removeItem('user'); // 假设用户信息存储在本地存储中

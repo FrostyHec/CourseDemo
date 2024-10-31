@@ -45,7 +45,7 @@ function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus): UnifyTree {
     }
   }
   if('chapter_title' in data) {
-    return {
+    return {  
       label: data.chapter_title, children: [],
       order: data.chapter_order, description: data.content,
       data: data,

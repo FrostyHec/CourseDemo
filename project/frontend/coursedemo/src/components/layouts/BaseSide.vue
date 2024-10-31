@@ -115,8 +115,8 @@ const handleDelete = async (node: Node) => {
     })
     return
   }
-  handleClick(null, node.parent)
   await course_store.load_from_route(true)
+  handleClick(null, node.parent)
 }
 
 import type Node from 'element-plus/es/components/tree/src/model/node'
