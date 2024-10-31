@@ -79,6 +79,8 @@ public class UserSmokeTest {
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
         var token = authAPI.loginSuccess(loginInfo).getToken();
 
+
+        // TODO change realName to firstName and lastName
         var searchResult = userAPI.searchByRealNameSuccess(token, "Alice");
         assertEquals(1, searchResult.size());
         searchResult = userAPI.searchByRealNameSuccess(token, "Smith");

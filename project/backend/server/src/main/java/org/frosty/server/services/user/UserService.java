@@ -25,7 +25,7 @@ public interface UserService {
     User findPublicInfoById(Long id);
 
 
-    List<User> searchByRealName(String realName);
+    List<User> searchByRealName(String firstName, String lastName,int pageNum, int pageSize);
 
     void handleUserDeleteEvent(UserDeleteEvent event);
 

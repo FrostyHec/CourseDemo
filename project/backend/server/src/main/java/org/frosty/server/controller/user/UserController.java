@@ -66,12 +66,13 @@ public class UserController {
     }
 
     @GetMapping("/user/search")
-    public UserList searchUser(@RequestParam String firstName, @RequestParam String lastName,
+    public Response searchUser(@RequestParam String firstName, @RequestParam String lastName,
                                @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        FrameworkUtils.notImplemented();
-        throw new RuntimeException();
-//        List<User> users = userService.searchByRealName(realName);
-//        return Response.getSuccess(new UserList(users));
+        if (pageSize < -1 || pageNum < 0) {
+            return Response.getBadRequest("Page parameter error");
+        }
+        List<User> users = userService.searchByRealName(firstName,lastName,pageNum,pageSize);
+        return Response.getSuccess(new UserList(users));
     }
 
     @Data

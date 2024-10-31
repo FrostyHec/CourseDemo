@@ -87,6 +87,8 @@ public class UserAPI {
         deleteUser(token, userId).andExpect(RespChecker.success());
     }
 
+
+    // TODO change realName to firstName and lastName
     public ResultActions searchByRealName(String token, String realName) throws Exception {
         String url = courseBaseUrl + "/user/search";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
