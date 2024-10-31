@@ -24,6 +24,7 @@ export class APIResult<T = any> {
     code: ResultCodeType
     msg: string
     data: T
+  content: any
 
     constructor(code: ResultCodeType, msg: string, data: T) {
         this.code = code

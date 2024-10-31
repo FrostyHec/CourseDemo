@@ -60,80 +60,97 @@
   </el-config-provider>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
+import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
-export default {
-  name: 'CourseApproval',
-  components: {
-    BaseHeader
-  },
-  setup() {
-    const store = useAuthStore()
-    const tableData = ref([
-      {course_id:1,course_name:'CS303',description:'xxx',teacher_id:1}
-    ]);
-    onMounted(async () => {
-      try {
-        const response = await getAllTeachingCourseList(store.user.user_id, 1, 10);
-        const courses = response.content; 
-        tableData.value = [...tableData.value,...courses];
-      } catch (error) {
-        console.error('获取课程列表失败:', error);
-      }
-    });
-    const courseForm = ref({
-      course_id: '',
-      course_name: '',
-      description: '',
-      teacher_id: '',
-      status: '',
-      publication: '',
-      created_at: Date,
-      updated_at: Date,
-    });
 
-    const dialogVisible = ref(false);
-    const rules = ref({});
+// 定义课程接口
+interface Course {
+  course_id: number;
+  course_name: string;
+  description: string;
+  teacher_id: number;
+  status: string;
+  publication: string;
+  created_at: Date;
+  updated_at: Date;
+}
 
-    const createNewCourse = () => {
-      courseForm.value = {course_id:'',course_name:'', description:''};
-      dialogVisible.value = true;
-    };
+// 使用AuthStore
+const store = useAuthStore();
 
-    const AddCourse = (formName) => {
-      tableData.value.push({
-        course_id: '',
-        course_name: courseForm.value.course_name,
-        description: '',
-        teacher_id: 1,
-        status: '',
-        publication: '',
-        created_at: Date,
-        updated_at: Date,
-      });
-      dialogVisible.value = false;
-    };
+// 表格数据
+const tableData = ref<Course[]>([
+  { course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, status: '', publication: '', created_at: new Date(), updated_at: new Date() }
+]);
 
-    const deleteCourse = (row) => {
-      const index = tableData.value.indexOf(row);
-      if (index !== -1) {
-        tableData.value.splice(index, 1);
-      }
-    };
+// 挂载时获取课程列表
+onMounted(async () => {
+  try {
+    const response = await getAllTeachingCourseList(store.user.user_id, 1, 10);
+    const courses = response.content; 
+    tableData.value = [...tableData.value, ...courses];
+  } catch (error) {
+    console.error('获取课程列表失败:', error);
+  }
+});
 
-    return {
-      tableData,
-      courseForm,
-      dialogVisible,
-      rules,
-      createNewCourse,
-      AddCourse,
-      deleteCourse,
-    };
-  },
+// 表单数据
+const courseForm = ref<Course>({
+  course_id: 1,
+  course_name: '',
+  description: '',
+  teacher_id: 0,
+  status: '',
+  publication: '',
+  created_at: new Date(),
+  updated_at: new Date(),
+});
+
+// 对话框可见性
+const dialogVisible = ref(false);
+
+// 表单验证规则（如果需要）
+const rules = ref({});
+
+// 创建新课程
+const createNewCourse = () => {
+  courseForm.value = {
+    course_id: 1,
+    course_name: '',
+    description: '',
+    teacher_id: 0,
+    status: '',
+    publication: '',
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  dialogVisible.value = true;
+};
+
+// 添加课程
+const AddCourse = (p0: string) => {
+  tableData.value.push({
+    course_id: 0,
+    course_name: courseForm.value.course_name,
+    description: courseForm.value.description,
+    teacher_id: courseForm.value.teacher_id,
+    status: courseForm.value.status,
+    publication: courseForm.value.publication,
+    created_at: courseForm.value.created_at,
+    updated_at: courseForm.value.updated_at,
+  });
+  dialogVisible.value = false;
+};
+
+// 删除课程
+const deleteCourse = (row: Course) => {
+  const index = tableData.value.indexOf(row);
+  if (index !== -1) {
+    tableData.value.splice(index, 1);
+  }
 };
 </script>
 
