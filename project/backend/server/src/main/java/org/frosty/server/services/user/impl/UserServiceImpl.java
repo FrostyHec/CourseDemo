@@ -1,5 +1,6 @@
 package org.frosty.server.services.user.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.User;
@@ -61,6 +62,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.searchByRealName(realName);
     }
 
+    @Override
+    public List<User> searchUser(String firstName, String lastName, int pageNum, int pageSize) {
+        QueryWrapper<User> queryWrapper =new QueryWrapper<>();
+        queryWrapper.like("first_name", firstName).like("last_name", lastName);
+        if(pageSize != -1) {
+            queryWrapper.last("LIMIT " + pageSize + " OFFSET " + (pageNum - 1) * pageSize);
+        }
+        return userMapper.selectList(queryWrapper);
+    }
 
     // TODO
     @Override

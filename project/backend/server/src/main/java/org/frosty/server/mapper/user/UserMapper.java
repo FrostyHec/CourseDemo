@@ -2,7 +2,10 @@ package org.frosty.server.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.frosty.server.controller.course.RecommendController;
 import org.frosty.server.entity.bo.User;
 
 import java.util.List;
@@ -46,5 +49,29 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT * FROM users WHERE email = #{email}")
     User selectByEmail(String email);
+
+    @Select("""
+            SELECT u.*, COUNT(e.student_id) AS studentNum 
+            FROM users u 
+            JOIN courses c ON u.user_id = c.teacher_id 
+            JOIN enrollments e ON c.course_id = e.course_id 
+            WHERE u.role = 'teacher' 
+            GROUP BY u.user_id 
+            ORDER BY studentNum DESC 
+            <if test='pageSize != -1'>
+            LIMIT #{pageSize} OFFSET #{pageNum}   * #{pageSize}
+            </if>
+            """)
+    @Results({
+            @Result(property = "teacher.userId", column = "userId"),
+            @Result(property = "teacher.firstName", column = "firstName"),
+            @Result(property = "teacher.lastName", column = "lastName"),
+            @Result(property = "teacher.role", column = "role"),
+            @Result(property = "teacher.email", column = "email"),
+            @Result(property = "studentNum", column = "studentNum")
+    })
+    List<RecommendController.CourseWithStudentCount> getHotTeachers(int page_num, int page_size);
+
+
 }
 
