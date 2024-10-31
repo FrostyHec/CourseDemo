@@ -25,6 +25,9 @@ public class JsonUtils {
         JsonNode node = objectMapper.valueToTree(map);
         return objectMapper.treeToValue(node, type);
     }
+    public static String getErrorString(MvcResult mvcResult) throws UnsupportedEncodingException, JsonProcessingException {
+        return toJson(mvcResult).get("msg").asText();
+    }
 
     public static String toString(Object o) {
         try {

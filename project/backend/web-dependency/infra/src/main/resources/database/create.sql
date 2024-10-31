@@ -117,8 +117,8 @@ CREATE TABLE resources
     resource_id            BIGSERIAL PRIMARY KEY,             -- 自增课件ID
     chapter_id             INT                      NOT NULL, -- 章节ID
     resource_name          VARCHAR                  NOT NULL,
-    suffix                 VARCHAR(10)              NOT NULL,-- 文件类型，限定为'pdf'或'md'
-    file_name              VARCHAR(255)             NOT NULL, -- UUID4+RESOURCE-NAME
+    suffix                 VARCHAR              NOT NULL,-- 文件类型，限定为'pdf'或'md'
+    file_name              VARCHAR             NOT NULL, -- UUID4+RESOURCE-NAME
     resource_order         INT                      NOT NULL,
     resource_version_name  VARCHAR                  NOT NULL,
     resource_version_order INT                      NOT NULL,
@@ -248,10 +248,12 @@ CREATE TABLE file_submission
 (
     file_submission_id BIGSERIAL PRIMARY KEY,
     assignment_id      BIGINT                   NOT NULL,
+    student_id         BIGINT NOT NULL ,
     file_name          VARCHAR                  NOT NULL,
     gained_score       INT,
     created_at         TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL,
+    unique(assignment_id, student_id)
 --     ,FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE
 );
 CREATE

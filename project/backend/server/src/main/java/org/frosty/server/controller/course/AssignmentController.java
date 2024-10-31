@@ -18,7 +18,7 @@ public class AssignmentController {
     @PostMapping("/chapter/{id}/assignment")
     public void createAssignment(@PathVariable Long id, @RequestBody Assignment assignment) {
         assignment.setAssignmentId(null);
-        Ex.idCheck(id,assignment.getAssignmentId());
+        Ex.idCheck(id,assignment.getChapterId());
         assignmentService.createAssignment(assignment);
     }
 
