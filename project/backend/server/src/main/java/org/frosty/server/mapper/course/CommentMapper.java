@@ -38,6 +38,8 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
                 rc.resource_id AS resourceId,
                 rc.comment_text AS commentText,
                 rc.comment_reply AS commentReply,
+                rc.created_at AS createdAt,
+                rc.updated_at AS updatedAt,
                 u.user_id AS "userPublicInfo.userId",
                 u.first_name AS "userPublicInfo.firstName",
                 u.last_name AS "userPublicInfo.lastName",

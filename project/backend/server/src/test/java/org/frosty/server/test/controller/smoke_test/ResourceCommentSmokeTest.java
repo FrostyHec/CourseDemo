@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @IdempotentControllerTest
-public class CourseCommentSmokeTest {
+public class ResourceCommentSmokeTest {
     @Autowired
     private CourseAPI courseAPI;
     @Autowired
@@ -48,6 +48,10 @@ public class CourseCommentSmokeTest {
 
         // 2. Teacher can get the comment
         ResourceComment resourceComment1 = commentAPI.getSuccess(token1, 1L);
+        System.out.println("---------------");
+        System.out.println(resourceComment1);
+        System.out.println("---------------");
+
         assert Objects.equals(resourceComment1.getCommentText(), resourceComment.getCommentText());
         assert Objects.equals(resourceComment1.getUserId(), resourceComment.getUserId());
 
@@ -61,6 +65,10 @@ public class CourseCommentSmokeTest {
 
         // 4. Student can get the comment (including the reply)
         List<CommentController.CommentWithUser> comments = commentAPI.getAllSuccess(token, resourceId);
+        System.out.println("---------------");
+        System.out.println(comments);
+        System.out.println("---------------");
+
         assert comments.size() == 2;
 
     }
