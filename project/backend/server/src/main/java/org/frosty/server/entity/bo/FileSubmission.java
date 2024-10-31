@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 public class FileSubmission {
     private Long fileSubmissionId;
     private Long assignmentId;
+    private Long studentId;
     private String fileName;
     private Integer gainedScore;
     private OffsetDateTime createdAt;

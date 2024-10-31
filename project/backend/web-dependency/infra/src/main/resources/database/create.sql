@@ -248,10 +248,12 @@ CREATE TABLE file_submission
 (
     file_submission_id BIGSERIAL PRIMARY KEY,
     assignment_id      BIGINT                   NOT NULL,
+    student_id         BIGINT NOT NULL ,
     file_name          VARCHAR                  NOT NULL,
     gained_score       INT,
     created_at         TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL,
+    unique(assignment_id, student_id)
 --     ,FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE
 );
 CREATE
