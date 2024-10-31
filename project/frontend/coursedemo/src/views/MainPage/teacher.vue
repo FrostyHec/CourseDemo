@@ -79,7 +79,7 @@ interface Course {
 }
 
 // 使用AuthStore
-const store = useAuthStore();
+const authStore = useAuthStore();
 
 // 表格数据
 const tableData = ref<Course[]>([
@@ -89,7 +89,7 @@ const tableData = ref<Course[]>([
 // 挂载时获取课程列表
 onMounted(async () => {
   try {
-    const response = await getAllTeachingCourseList(store.user.user_id, 1, 10);
+    const response = await getAllTeachingCourseList(authStore.user.user_id, 1, 10);
     const courses = response.content; 
     tableData.value = [...tableData.value, ...courses];
   } catch (error) {
@@ -102,7 +102,7 @@ const courseForm = ref<Course>({
   course_id: 1,
   course_name: '',
   description: '',
-  teacher_id: 0,
+  teacher_id: authStore.user.user_id,
   status: '',
   publication: '',
   created_at: new Date(),
@@ -121,7 +121,7 @@ const createNewCourse = () => {
     course_id: 1,
     course_name: '',
     description: '',
-    teacher_id: 0,
+    teacher_id: authStore.user.user_id,
     status: '',
     publication: '',
     created_at: new Date(),

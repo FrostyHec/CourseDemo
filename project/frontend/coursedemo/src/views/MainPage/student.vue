@@ -65,8 +65,9 @@ import { useRouter } from 'vue-router';
 // 获取 router 实例
 const router = useRouter();
 
-import {useStore} from '@/stores/auth';
-const store = useStore();
+import {useAuthStore} from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 interface Course {
   course_id: string;
@@ -87,7 +88,7 @@ import { getAllJoinedCourseList } from '@/api/course/CourseMemberAPI';
 
 onMounted(async () => {
   try {
-    const response = await getAllJoinedCourseList(store.user.user_id, 1, 10);
+    const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 10);
     const courses = response.content; 
     tableData.value = [...tableData.value, ...courses];
   } catch (error) {

@@ -5,7 +5,9 @@ import { useFormStore } from '@/stores/form';
 import { loginCall, UserType } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' // 导入useRouter
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore()
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
@@ -59,27 +61,23 @@ const form_store = useFormStore()
 const router = useRouter() // 使用useRouter
 
 // 登录函数
-const login = async () => {
+const handleLogin = async () => {
   try {
-    let result = await loginCall({
-      email: loginData.value.email,
-      password: loginData.value.password
-    });
-    if (result.code === 200) {
+    let result = await authStore.login(loginData.value);
+    if (result.code == 200) {
       ElMessage.success('登录成功!')
       form_store.open_form(form_store.course_null, 'Add')
       router.push('/MainPage/student');
     } else {
-      ElMessage.error('登录失败：' + result.msg);
+      ElMessage.error('登录失败：' + result);
     }
   } catch (error) {
     ElMessage.error('服务异常');
   }
-  // form_store.resource_visibility = true
 }
 
 // 注册函数
-const register = async () => {
+const handleRegister = async () => {
   try {
     let result = await createUserCall({
       email: registerData.value.email,
@@ -130,7 +128,7 @@ const clearRegisterData = () => {
         </el-form-item>
         <!-- 注册按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" native-type="submit">注册</el-button>
+          <el-button class="button" type="primary" native-type="submit" @click="handleRegister">注册</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = false; clearRegisterData()">
@@ -157,7 +155,7 @@ const clearRegisterData = () => {
         </el-form-item>
         <!-- 登录按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" native-type="submit">登录</el-button>
+          <el-button class="button" type="primary" native-type="submit" @click="handleLogin">登录</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = true">

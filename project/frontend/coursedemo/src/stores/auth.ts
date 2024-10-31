@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user, result.data.user)
     setLoginToken(token.value)
     console.log(result)
+    return result
   }
 
   async function logout(logoutParam: LogoutParam) {

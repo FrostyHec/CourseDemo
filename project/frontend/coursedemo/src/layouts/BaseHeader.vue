@@ -4,10 +4,17 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { ref } from 'vue';
 import { ArrowRight } from '@element-plus/icons-vue';
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore()
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 const router = useRouter(); // 使用 Vue Router
+
+const userData = ref({
+    user_id:authStore.user.user_id
+})
+
 
 const l = ref([
   { key: 0, label: 'hello', link: '/course/hello' },
@@ -32,7 +39,7 @@ function generate_breadcrumb(s: string[] | string | undefined): { key: number, l
 
 // 退出登录的方法
 function logout() {
-  localStorage.removeItem('user'); // 假设用户信息存储在本地存储中
+  authStore.logout(userData.value)
   // 显示退出登录的消息
   ElMessage({
     message: '您已成功退出登录',
