@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.frosty.server.entity.bo.Assignment;
-import org.frosty.server.entity.bo.Resource;
 
 import java.util.List;
 

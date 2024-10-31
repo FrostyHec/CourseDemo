@@ -18,6 +18,7 @@ public class SiteMessage {
     private MessageType type;
     private boolean requiredAck;
     private JsonNode body;
+
     @Getter
     public enum MessageType {
         NEW(1),
@@ -26,6 +27,7 @@ public class SiteMessage {
         @EnumValue
         @JsonValue
         private final int value;
+
         MessageType(int value) {
             this.value = value;
         }

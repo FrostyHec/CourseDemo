@@ -36,7 +36,7 @@ public class UserSmokeTest {
 
         // Login to get token
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
-        var token = authAPI.loginSuccess(loginInfo);
+        var token = authAPI.loginSuccess(loginInfo).getToken();
 
         var searchResult = userAPI.searchByRealNameSuccess(token, "John");
         assertEquals(1, searchResult.size());
@@ -63,6 +63,7 @@ public class UserSmokeTest {
         User deletedUser = userAPI.getUserSuccess(token, createdUser.getUserId());
         assertNull(deletedUser);
     }
+
     @Test
     public void testUserPublicInfo() throws Exception {
         // Create user
@@ -76,13 +77,17 @@ public class UserSmokeTest {
 
         // Login to get token
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
-        var token = authAPI.loginSuccess(loginInfo);
+        var token = authAPI.loginSuccess(loginInfo).getToken();
 
         var searchResult = userAPI.searchByRealNameSuccess(token, "Alice");
         assertEquals(1, searchResult.size());
         searchResult = userAPI.searchByRealNameSuccess(token, "Smith");
         assertEquals(1, searchResult.size());
         searchResult = userAPI.searchByRealNameSuccess(token, "Alice Smith");
+        assertEquals(1, searchResult.size());
+        newUser.setUserId(searchResult.get(0).getUserId());
+        // check effectiveness of chinese like name
+        searchResult = userAPI.searchByRealNameSuccess(token, "AliceSmith");
         assertEquals(1, searchResult.size());
         newUser.setUserId(searchResult.get(0).getUserId());
 

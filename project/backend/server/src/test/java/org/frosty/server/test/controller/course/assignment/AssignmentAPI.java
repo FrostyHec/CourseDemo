@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Assignment;
-import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.mapper.course.AssignmentMapper;
 import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.server.test.controller.course.chapter.ChapterAPI;
@@ -97,7 +96,7 @@ public class AssignmentAPI {
         return JsonUtils.toObject(resp, Assignment.class);
     }
 
-    public Long addTestCourseTestChapterTestAssAndGetId(Long uid){
+    public Long addTestCourseTestChapterTestAssAndGetId(Long uid) {
         var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
         var e = getTemplateAssignment(chapterId);
         assignmentMapper.insert(e);

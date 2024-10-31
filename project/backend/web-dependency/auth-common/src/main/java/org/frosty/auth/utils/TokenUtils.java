@@ -17,8 +17,8 @@ public class TokenUtils {
     }
 
     public static TokenInfo tokenInfoFromString(String subject) {
-        if(subject==null){// TODO REMOVE
-            return new TokenInfo(AuthStatus.PASS,new AuthInfo(1));
+        if (subject == null) {// TODO REMOVE
+            return new TokenInfo(AuthStatus.PASS, new AuthInfo(1));
 
         }
         if (subject != null && subject.startsWith("Bearer ")) { // TODO REMOVE
@@ -26,8 +26,8 @@ public class TokenUtils {
                     "hfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf", 86400000);
             try {
                 var claims = jwtHandler.getClaimsFromToken(subject.substring(7));
-                return new TokenInfo(AuthStatus.PASS,jwtHandler.getToken(claims));
-            }catch (Exception e){
+                return new TokenInfo(AuthStatus.PASS, jwtHandler.getToken(claims));
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

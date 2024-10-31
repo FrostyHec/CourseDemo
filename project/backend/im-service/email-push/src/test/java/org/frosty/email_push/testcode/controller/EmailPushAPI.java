@@ -27,10 +27,11 @@ public class EmailPushAPI {
     @Value("${spring.mail.test.to-address}")
     private String testToEmail;
 
-    public Email getTemplateEmail(){
-        return getTemplateEmail("OOAD Test","Testing");
+    public Email getTemplateEmail() {
+        return getTemplateEmail("OOAD Test", "Testing");
     }
-    public Email getTemplateEmail(String subject,String text){
+
+    public Email getTemplateEmail(String subject, String text) {
         return new Email()
                 .setFromEmail(testFromEmail)
                 .setFromName(testFromName)

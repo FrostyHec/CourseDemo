@@ -24,7 +24,7 @@ export function mockGetAnnouncementByIdCall(data: APIResult<AnnouncementEntity>,
   setMockFunc(url, RequestType.GET, null, () => data)
 }
 
-export function mockGetAnnouncementsByCourseIdCall(data: APIResult<AnnouncementEntity[]>, courseId: number) {
+export function mockGetAnnouncementsByCourseIdCall(data: APIResult<{content:AnnouncementEntity[]}>, courseId: number) {
   const url = `${service_backend_base}/course/${courseId}/announcement`
   setMockFunc(url, RequestType.GET, null, () => data)
 }

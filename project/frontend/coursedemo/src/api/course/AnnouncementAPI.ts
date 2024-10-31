@@ -1,5 +1,5 @@
 import { service_backend_base } from '@/utils/Constant'
-import { APIResult, AxiosAPI } from '@/utils/APIUtils'
+import { AxiosAPI } from '@/utils/APIUtils'
 
 /////////////////////   ANNOUNCEMENT   ///////////////////////////////
 
@@ -12,37 +12,37 @@ export interface AnnouncementEntity {
   updated_at: Date
 }
 
-export async function createAnnouncementCall(courseId: number, param: AnnouncementEntity): Promise<APIResult<null>> {
+export async function createAnnouncementCall(courseId: number, param: AnnouncementEntity){
   const url = `${service_backend_base}/course/${courseId}/announcement`
-  return AxiosAPI.authPost(url, param)
+  return AxiosAPI.authPost<null>(url, param)
 }
 
-export async function updateAnnouncementCall(id: number, param: AnnouncementEntity): Promise<APIResult<null>> {
+export async function updateAnnouncementCall(id: number, param: AnnouncementEntity){
   const url = `${service_backend_base}/announcement/${id}`
-  return AxiosAPI.authPut(url, param)
+  return AxiosAPI.authPut<null>(url, param)
 }
 
-export async function deleteAnnouncementCall(id: number): Promise<APIResult<null>> {
+export async function deleteAnnouncementCall(id: number){
   const url = `${service_backend_base}/announcement/${id}`
-  return AxiosAPI.authDelete(url)
+  return AxiosAPI.authDelete<null>(url)
 }
 
-export async function getAnnouncementByIdCall(id: number): Promise<APIResult<AnnouncementEntity>> {
+export async function getAnnouncementByIdCall(id: number){
   const url = `${service_backend_base}/announcement/${id}`
-  return AxiosAPI.authGet(url)
+  return AxiosAPI.authGet<AnnouncementEntity>(url)
 }
 
-export async function getAnnouncementsByCourseIdCall(courseId: number): Promise<APIResult<AnnouncementEntity[]>> {
+export async function getAnnouncementsByCourseIdCall(courseId: number){
   const url = `${service_backend_base}/course/${courseId}/announcement`
-  return AxiosAPI.authGet(url)
+  return AxiosAPI.authGet<{content:AnnouncementEntity[]}>(url)
 }
 
-export async function notifyViaSiteCall(id: number): Promise<APIResult<null>> {
+export async function notifyViaSiteCall(id: number){
   const url = `${service_backend_base}/announcement/${id}/site-notify`
-  return AxiosAPI.authPost(url)
+  return AxiosAPI.authPost<null>(url)
 }
 
-export async function notifyViaEmailCall(id: number): Promise<APIResult<null>> {
+export async function notifyViaEmailCall(id: number){
   const url = `${service_backend_base}/announcement/${id}/email-notify`
-  return AxiosAPI.authPost(url)
+  return AxiosAPI.authPost<null>(url)
 }

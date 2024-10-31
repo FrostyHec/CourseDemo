@@ -5,17 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Chapter;
-import org.frosty.server.entity.bo.User;
-import org.frosty.server.services.user.UserService;
-import org.frosty.server.services.user.impl.UserServiceImpl;
-import org.springframework.web.bind.annotation.*;
 import org.frosty.server.services.course.ChapterService;
+import org.frosty.server.services.user.UserService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;

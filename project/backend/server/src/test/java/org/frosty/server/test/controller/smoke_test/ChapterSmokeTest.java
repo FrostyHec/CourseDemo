@@ -1,6 +1,5 @@
 package org.frosty.server.test.controller.smoke_test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.test.controller.auth.AuthAPI;
@@ -39,7 +38,7 @@ public class ChapterSmokeTest {
 
         var id = rcvdChapter.getChapterId();
         rcvdChapter.setChapterTitle("new " + title);
-        chapterAPI.updateSuccess(token,id,rcvdChapter);
+        chapterAPI.updateSuccess(token, id, rcvdChapter);
 
         var rcvdChapter2 = chapterAPI.getSuccess(token, id);
         assert rcvdChapter2.getChapterTitle().equals("new " + title);

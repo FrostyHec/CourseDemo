@@ -2,17 +2,13 @@ package org.frosty.server.controller.course;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.frosty.auth.annotation.GetToken;
-import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.ResourceComment;
 import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.course.CommentService;
@@ -105,7 +101,7 @@ public class CommentController {
         @TableId(type = IdType.AUTO)
         private Long commentId;
         private int resourceId;
-        private UserPublicInfo userPublicInfo;
+        private UserPublicInfo user;
         private String commentText;
         private Long commentReply;
         private OffsetDateTime createdAt;
