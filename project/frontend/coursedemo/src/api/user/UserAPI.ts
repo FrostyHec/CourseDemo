@@ -7,6 +7,7 @@ export interface LoginParam extends APIParam{
 }
 export interface LoginResult extends APIDataResult{
   token:string
+  user:UserPublicInfoEntity
 }
 
 export async function loginCall(param:LoginParam):Promise<APIResult<LoginResult>>{
@@ -27,7 +28,7 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 /////////////////////   USER   ///////////////////////////////
 
 export interface UserPublicInfoEntity extends APIDataResult,APIParam{
-  user_id:bigint,
+  user_id:number,
   first_name:string,
   last_name:string,
   role:UserType,
