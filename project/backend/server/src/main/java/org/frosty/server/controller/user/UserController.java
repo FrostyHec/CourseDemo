@@ -27,6 +27,7 @@ public class UserController {
     // 暂时认为注册阶段不需要修改用户信息
     @PostMapping("/user")
     public Response register(@RequestBody User user) {
+        user.setUserId(null);
         // 使用passwordEncoder.encode对密码进行加密
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);

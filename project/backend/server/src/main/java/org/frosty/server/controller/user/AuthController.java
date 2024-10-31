@@ -53,7 +53,7 @@ public class AuthController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LoginSuccessInfo {
-        private UserPublicInfo userPublicInfo;
+        private UserPublicInfo user;
         private String token;
     }
 }
