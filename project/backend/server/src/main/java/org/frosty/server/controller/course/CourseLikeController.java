@@ -5,6 +5,8 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.server.services.course.CourseLikeService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(PathConstant.API + "/course")
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class CourseLikeController {
 
     // 检查用户是否点赞了课程
     @GetMapping("/{courseId}/like")
-    public boolean checkCourseLike(@PathVariable Long courseId, Long userId) {
-        return courseLikeService.checkCourseLike(courseId, userId);
+    public Map<String,Boolean> checkCourseLike(@PathVariable Long courseId, Long userId) {
+        return Map.of("is_like",courseLikeService.checkCourseLike(courseId, userId));
     }
 }

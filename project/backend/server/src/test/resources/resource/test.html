@@ -63,8 +63,7 @@
           }
         })
       }
-    })
-      .then(async response => {
+    }).then(async response => {
         const data = await response.json()
         if (response.ok && data.code === 200) {
           alert('Resource uploaded successfully!')

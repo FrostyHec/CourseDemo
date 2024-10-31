@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.services.user.UserService;
@@ -27,6 +28,7 @@ public class UserController {
     // 暂时认为注册阶段不需要修改用户信息
     @PostMapping("/user")
     public Response register(@RequestBody User user) {
+        user.setUserId(null);
         // 使用passwordEncoder.encode对密码进行加密
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -66,13 +68,14 @@ public class UserController {
     }
 
     @GetMapping("/user/search")
-    public Response searchUser(@RequestParam String firstName, @RequestParam String lastName,
+    public UserList searchUser(@RequestParam String firstName, @RequestParam String lastName,
                                @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        if (pageSize < -1 || pageNum < 0) {
-            return Response.getBadRequest("Page parameter error");
+        if (pageNum < 0 || pageSize < -1) {
+            throw new RuntimeException("Invalid page number or page size.");
+            //return new UserList(List.of());
         }
-        List<User> users = userService.searchByRealName(firstName,lastName,pageNum,pageSize);
-        return Response.getSuccess(new UserList(users));
+        List<User> users = userService.searchUser(firstName, lastName, pageNum, pageSize);
+        return new UserList(users);
     }
 
     @Data

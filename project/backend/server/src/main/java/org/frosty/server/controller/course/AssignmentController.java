@@ -3,6 +3,7 @@ package org.frosty.server.controller.course;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.Assignment;
 import org.frosty.server.services.course.AssignmentService;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,8 @@ public class AssignmentController {
     // 教师创建作业
     @PostMapping("/chapter/{id}/assignment")
     public void createAssignment(@PathVariable Long id, @RequestBody Assignment assignment) {
+        assignment.setAssignmentId(null);
+        Ex.idCheck(id,assignment.getAssignmentId());
         assignmentService.createAssignment(assignment);
     }
 

@@ -87,18 +87,21 @@ public class UserAPI {
         deleteUser(token, userId).andExpect(RespChecker.success());
     }
 
-
-    // TODO change realName to firstName and lastName
-    public ResultActions searchByRealName(String token, String realName) throws Exception {
+    public ResultActions searchByName(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
         String url = courseBaseUrl + "/user/search";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(url)
-                .param("realName", realName); // realName?
+                .param("firstName", firstName)
+                .param("lastName", lastName)
+                .param("pageNum", String.valueOf(pageNum))
+                .param("pageSize", String.valueOf(pageSize));
         return performRequest(requestBuilder, token, null);
     }
 
-    public List<User> searchByRealNameSuccess(String token, String realName) throws Exception {
-        return getSuccessResponse(searchByRealName(token, realName), UserController.UserList.class).getContent();
+    public List<User> searchByNameSuccess(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
+        return getSuccessResponse(
+                searchByName(token, firstName, lastName, pageNum, pageSize),
+                UserController.UserList.class).getContent();
     }
 
     public ResultActions getUserPublicInfo(String token, Long userId) throws Exception {

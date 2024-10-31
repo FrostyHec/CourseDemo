@@ -30,4 +30,6 @@ public interface UserService {
     void handleUserDeleteEvent(UserDeleteEvent event);
 
     void insertUser(User user);//
+
+    List<User> searchUser(String firstName, String lastName, int pageNum, int pageSize);
 }
