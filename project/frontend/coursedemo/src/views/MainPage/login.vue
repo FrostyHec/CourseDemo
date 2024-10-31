@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { createUserCall } from '@/api/user/UserAPI';
 import { useFormStore } from '@/stores/form';
 import { User, Lock } from '@element-plus/icons-vue'
 import { type LoginParam } from '@/api/user/UserAPI';
@@ -17,22 +16,23 @@ const loginData = ref<LoginParam>({
 })
 
 const registerData = ref({
-    username:'',
-    password:'',
-    rePassword:''
+  userid: '',
+  password: '',
+  rePassword: ''
 })
 
-
-const checkRePassword = (rule,value,callback) => {
-    if(value == ''){
-        callback(new Error('请再次确认密码'))
-    } else if( value !== registerData.value.password){
-        callback('二次确认密码不相同请重新输入')
-    } else{
-        callback()
-    }
+// 校验二次输入密码是否相同
+const checkRePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请再次确认密码'))
+  } else if (value !== registerData.value.password) {
+    callback(new Error('二次确认密码不相同，请重新输入'))
+  } else {
+    callback()
+  }
 }
-//登录校验规则
+
+// 登录校验规则
 const loginRule = ref({
     email:[
         {required:true,massage:'请输入用户名',trigger:'blur'},
@@ -54,6 +54,18 @@ const registerRule = ref({
     rePassword:[{validator:checkRePassword,trigger:'blur'}] //校验二次输入密码是否相同
 })
 
+// 注册校验规则
+const registerRule = ref({
+  userid: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 5, max: 16, message: '请输入长度5~16非空字符', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 5, max: 16, message: '请输入长度5~16非空字符', trigger: 'blur' }
+  ],
+  rePassword: [{ validator: checkRePassword, trigger: 'blur' }]
+})
 
 const form_store = useFormStore()
  
@@ -74,18 +86,33 @@ const login = async () =>{
     // router.push('/MainPage/student');
 }
 
-//定义函数，清空数据模型
-const clearRegisterData = () =>{
-    registerData.value = {
-        username:'',
-        password:'',
-        rePassword:''
+// 注册函数
+const register = async () => {
+  try {
+    let result = await createUserCall({
+      userid: registerData.value.userid,
+      password: registerData.value.password
+    })
+    if (result.code === 200) {
+      ElMessage.success('注册成功!')
+      isRegister.value = false; // 注册成功后跳转到登录页
+    } else {
+      ElMessage.error('注册失败：' + result.message);
     }
+  } catch (error) {
+    ElMessage.error('服务异常');
+  }
+}
+
+// 定义函数，清空数据模型
+const clearRegisterData = () => {
+  registerData.value = {
+    userid: '',
+    password: '',
+    rePassword: ''
+  }
 }
 </script>
- 
-<template>
-    <course-form></course-form>
 
     <el-row class="login-page">
         <el-col :span="12" class="bg"></el-col>
@@ -146,38 +173,38 @@ const clearRegisterData = () =>{
         </el-col>
     </el-row>
 </template>
- 
+
 <style lang="scss" scoped>
 /* 样式 */
 .login-page {
-    height: 100vh;
-    background-color: #fff;
- 
-    .bg {
-        background: url('../../assets/logo2.png') no-repeat 60% center / 240px auto,
-            url('../../assets/login_bg.jpg') no-repeat center / cover;
-        border-radius: 0 20px 20px 0;
+  height: 100vh;
+  background-color: #fff;
+
+  .bg {
+    background: url('../../assets/logo2.png') no-repeat 60% center / 240px auto,
+      url('../../assets/login_bg.jpg') no-repeat center / cover;
+    border-radius: 0 20px 20px 0;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    user-select: none;
+
+    .title {
+      margin: 0 auto;
     }
- 
-    .form {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        user-select: none;
- 
-        .title {
-            margin: 0 auto;
-        }
- 
-        .button {
-            width: 100%;
-        }
- 
-        .flex {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-        }
+
+    .button {
+      width: 100%;
     }
+
+    .flex {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }
 </style>

@@ -20,8 +20,8 @@ export async function getAllJoinedCourseList(studentId:number,pageNum:number,pag
   const url = service_backend_base+'/student/'+studentId+'/courses'
   return AxiosAPI.authGet<{content:CourseEntity[]}>(url,{page_size:pageSize,page_num:pageNum,})
 }
-export async function getAllTeachingCourseList(studentId:number,pageNum:number,pageSize:number){
-  const url = service_backend_base+'/teacher/'+studentId+'/courses'
+export async function getAllTeachingCourseList(teacherId:number,pageNum:number,pageSize:number){
+  const url = service_backend_base+'/teacher/'+teacherId+'/courses'
   return AxiosAPI.authGet<{ content:CourseEntity[] }>(url,{page_size:pageSize,page_num:pageNum,})
 }
 
