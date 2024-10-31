@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 @IdempotentControllerTest
 public class CourseLikeSmokeTest {
-
+    // TODO 现在没办法过测，查看一下为什么
     @Autowired
     private AuthAPI authAPI;
 
