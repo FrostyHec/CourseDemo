@@ -24,7 +24,8 @@ public class Assignment implements ChapterContent {
     private Boolean allowStudentToViewScore;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-    public enum AssignmentType{
-        file_upload,online_form
+
+    public enum AssignmentType {
+        file_upload, online_form
     }
 }

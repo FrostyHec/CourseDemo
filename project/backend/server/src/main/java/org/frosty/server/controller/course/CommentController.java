@@ -32,6 +32,7 @@ public class CommentController {
 //            @GetToken TokenInfo tokenInfo,
             @PathVariable Long id,
             @RequestBody ResourceComment comment) {
+        comment.setCommentId(null);
         commentService.addCommentToResource(id, comment);
 //        return Response.getSuccess("Comment added to resource successfully.");
     }
@@ -43,6 +44,7 @@ public class CommentController {
 //            @GetToken TokenInfo tokenInfo,
             @PathVariable Long id,
             @RequestBody ResourceComment reply) {
+        reply.setCommentId(null);
         commentService.addReplyToComment(id, reply);
 //        return Response.getSuccess("Reply added to comment successfully.");
     }
@@ -96,12 +98,10 @@ public class CommentController {
     @NoArgsConstructor
     @AllArgsConstructor
     @Accessors(chain = true)
-//    @TableName("users")
     public static class CommentWithUser {
-        @TableId(type = IdType.AUTO)
         private Long commentId;
         private int resourceId;
-        private UserPublicInfo userPublicInfo;
+        private UserPublicInfo user;
         private String commentText;
         private Long commentReply;
         private OffsetDateTime createdAt;

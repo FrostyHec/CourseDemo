@@ -20,6 +20,12 @@ public class CourseLikeAPI {
     private final org.frosty.server.test.controller.auth.AuthUtil authUtil;
     private final String baseUrl = PathConstant.API + "/course";
 
+    // Common success response handler
+    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
+        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
+        return JsonUtils.toObject(resp, responseType);
+    }
+
     // Common performRequest method
     private ResultActions performRequest(MockHttpServletRequestBuilder requestBuilder, String token, Object body) throws Exception {
         requestBuilder.headers(authUtil.setAuthHeader(token)).accept(MediaType.APPLICATION_JSON);
@@ -28,12 +34,6 @@ public class CourseLikeAPI {
             requestBuilder.contentType(MediaType.APPLICATION_JSON).content(json);
         }
         return mockMvc.perform(requestBuilder);
-    }
-
-    // Common success response handler
-    public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
-        var resp = resultActions.andExpect(RespChecker.success()).andReturn();
-        return JsonUtils.toObject(resp, responseType);
     }
 
     // Create course like

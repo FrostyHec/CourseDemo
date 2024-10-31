@@ -25,8 +25,10 @@ public class LoginTest {
         String password = "admin";
         var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
         var loginInfo = new LoginInfo(user.getEmail(), password);
-        String token = authAPI.loginSuccess(loginInfo);
-        assert jwtHandler.getClaimsFromToken(token) != null;//token valid
+        var res = authAPI.loginSuccess(loginInfo);
+        assert res.getUser().getUserId() == 1;
+        assert res.getUser().getFirstName().equals(name);
+        assert jwtHandler.getClaimsFromToken(res.getToken()) != null;//token valid
     }
 
     @Test

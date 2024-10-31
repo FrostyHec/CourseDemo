@@ -25,7 +25,7 @@ public class NotificationService {
         notification.setMessage(notificationWithReceiver.getMessage());
         notificationMapper.insertNotification(notification);
 
-        if(notificationWithReceiver.getReceiverIds() == null || notificationWithReceiver.getReceiverIds().isEmpty()) {
+        if (notificationWithReceiver.getReceiverIds() == null || notificationWithReceiver.getReceiverIds().isEmpty()) {
             return;
         }
         List<NotificationReceiver> notificationReceivers = notificationWithReceiver.getReceiverIds().stream()
@@ -43,7 +43,7 @@ public class NotificationService {
         notificationMapper.updateById(notification);
 
         // update notification receivers
-        if(notificationWithReceiver.getReceiverIds() == null || notificationWithReceiver.getReceiverIds().isEmpty()) {
+        if (notificationWithReceiver.getReceiverIds() == null || notificationWithReceiver.getReceiverIds().isEmpty()) {
             return;
         }
         List<NotificationReceiver> notificationReceivers = notificationWithReceiver.getReceiverIds().stream()

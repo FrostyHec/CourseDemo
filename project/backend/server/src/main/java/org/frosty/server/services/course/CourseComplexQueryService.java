@@ -1,6 +1,9 @@
 package org.frosty.server.services.course;
 
-import org.frosty.server.entity.bo.*;
+import org.frosty.server.entity.bo.Assignment;
+import org.frosty.server.entity.bo.Chapter;
+import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.bo.Resource;
 
 import java.util.List;
 

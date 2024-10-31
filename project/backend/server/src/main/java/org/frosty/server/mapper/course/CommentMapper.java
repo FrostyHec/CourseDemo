@@ -1,9 +1,10 @@
 package org.frosty.server.mapper.course;
 
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 
@@ -37,6 +38,8 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
                 rc.resource_id AS resourceId,
                 rc.comment_text AS commentText,
                 rc.comment_reply AS commentReply,
+                rc.created_at AS createdAt,
+                rc.updated_at AS updatedAt,
                 u.user_id AS "userPublicInfo.userId",
                 u.first_name AS "userPublicInfo.firstName",
                 u.last_name AS "userPublicInfo.lastName",

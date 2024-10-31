@@ -13,6 +13,7 @@ import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @IdempotentControllerTest
 public class ResourceSmokeTest {
@@ -58,6 +59,7 @@ public class ResourceSmokeTest {
         rcvdResourceMetadataEntity = resourceAPI.getResourceMetaDataSuccess(teacherToken, rcvdResourceMetadata.getResourceId());
         assert StringUtils.isNotBlank(rcvdResourceMetadataEntity.getAccessKey());
         rcvdResourceMetadata = rcvdResourceMetadataEntity.getResource();
+        assert Objects.equals(rcvdResourceMetadata.getFileName(), name);
         resourceAPI.checkSingle(resource, rcvdResourceMetadata);
 
         // delete resource

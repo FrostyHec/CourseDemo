@@ -5,17 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Chapter;
-import org.frosty.server.entity.bo.User;
-import org.frosty.server.services.user.UserService;
-import org.frosty.server.services.user.impl.UserServiceImpl;
-import org.springframework.web.bind.annotation.*;
 import org.frosty.server.services.course.ChapterService;
+import org.frosty.server.services.user.UserService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,16 +32,15 @@ public class ChapterController {
     // 创建章节
     @PostMapping("/course/{courseId}/chapter")
     public void createChapter(@RequestBody Chapter chapter) {
+        chapter.setChapterId(null);
         chapterService.createChapter(chapter);
-        // return Map.of("say","Successfully created course.");
     }
 
     // 获取章节
     // ？？？理论上来说，前端是通过接受用户的点击或者其他的请求来向后端要数据吧，那么我们还有必要去判断这个chapter是否真实存在吗？毕竟能出现在前端的chapter是不是都会在数据库中？
     @GetMapping("/chapter/{id}")
-    public Response getChapter(@PathVariable Long id) {
-        Chapter chapter = chapterService.findByID(id);
-        return Response.getSuccess(chapter); // Chapter not found
+    public Chapter getChapter(@PathVariable Long id) {
+        return chapterService.findByID(id);
     }
 
     // 更新章节

@@ -1,7 +1,10 @@
 package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.frosty.server.entity.bo.*;
+import org.frosty.server.entity.bo.Assignment;
+import org.frosty.server.entity.bo.Chapter;
+import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.mapper.course.AssignmentMapper;
 import org.frosty.server.mapper.course.ChapterMapper;
 import org.frosty.server.mapper.course.CourseMapper;

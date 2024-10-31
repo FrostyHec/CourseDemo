@@ -48,6 +48,7 @@ public class ResourceController {
             @PathVariable Long id, @RequestBody Resource updatedResource) {
         Ex.idCheck(id, updatedResource.getResourceId());
         Ex.check(tokenInfo.getAuthStatus() == AuthStatus.PASS, Response.getUnauthorized("unauthorized"));
+        updatedResource.setFileName(null);// 不允许直接修改文件名
         resourceService.updateResource(tokenInfo.getAuthInfo(), updatedResource);
     }
 

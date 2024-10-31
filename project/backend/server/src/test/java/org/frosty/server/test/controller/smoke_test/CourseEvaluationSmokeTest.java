@@ -92,6 +92,7 @@ public class CourseEvaluationSmokeTest {
         CourseEvaluation deletedEvaluation = courseEvaluationAPI.getEvaluationSuccess(studentToken, course.getCourseId());
         assertNull(deletedEvaluation);
     }
+
     @Test
     public void testGetAllEvaluationsSuccessWithComplexCases() throws Exception {
         // Teacher login

@@ -21,7 +21,7 @@ public class User {
     private String firstName;
     private String lastName;//can omit
     private String password;
-//    private String confirmPassword;
+    //    private String confirmPassword;
     private Role role;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
@@ -32,9 +32,5 @@ public class User {
         admin,
         teacher,
         student
-    }
-
-    public static class AnnouncementWithReceiver {
-
     }
 }

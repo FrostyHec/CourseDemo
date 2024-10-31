@@ -16,20 +16,23 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(PathConstant.API+"/recommend")
+@RequestMapping(PathConstant.API + "/recommend")
 @RequiredArgsConstructor
 public class RecommendController {
     // TODO HLH
 
     @GetMapping("/courses/hot")
-    public Map<String, List<CourseWithStudentCount>> getHotCourses(int page_size,int page_num) {
-        List<CourseWithStudentCount> res =null;
+    public Map<String, List<CourseWithStudentCount>> getHotCourses(int page_size, int page_num) {
+        // 公开/半公开的发布状态课程中，注册学生数最多的课程
+        List<CourseWithStudentCount> res = null;
         FrameworkUtils.notImplemented();
         return Map.of("content", res);
     }
+
     @GetMapping("/teachers/hot")
-    public Map<String, List<CourseWithStudentCount>> getHotTeachers(int page_size,int page_num) {
-        List<CourseWithStudentCount> res =null;
+    public Map<String, List<CourseWithStudentCount>> getHotTeachers(int page_size, int page_num) {
+        // 累积学生最多的老师
+        List<CourseWithStudentCount> res = null;
         FrameworkUtils.notImplemented();
         return Map.of("content", res);
     }
@@ -41,6 +44,7 @@ public class RecommendController {
         private Course course;
         private Long studentNum; //已注册学生数
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
