@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useFormStore } from '@/stores/form';
-import { User, Lock } from '@element-plus/icons-vue'
 import { loginCall, UserType } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' // 导入useRouter

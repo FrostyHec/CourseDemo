@@ -65,7 +65,7 @@ import { useRouter } from 'vue-router';
 // 获取 router 实例
 const router = useRouter();
 
-import { useStore } from '';
+import {useStore} from '@/stores/auth';
 const store = useStore();
 
 interface Course {
