@@ -58,7 +58,7 @@
   </el-config-provider>
 </template>
 
-<script>
+<script  lang="ts">
 import { ref, computed } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';

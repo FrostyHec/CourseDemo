@@ -54,7 +54,7 @@
 
     <CourseForm/>
     <ChapterForm/>
-    <ResourseForm/>
+    <ResourceForm/>
   </div>
 </template>
 
@@ -129,7 +129,6 @@ import { reactive, ref } from "vue";
 import { useFormStore } from "@/stores/form";
 import ChapterForm from "../forms/ChapterForm.vue";
 import CoureseForm from "../forms/CoureseForm.vue";
-import ResourseForm from "../forms/ResourseForm.vue";
 import { deleteChapterCall } from "@/api/course/ChapterAPI";
 import { deleteResourceCall } from "@/api/course/CourseResourceAPI";
 

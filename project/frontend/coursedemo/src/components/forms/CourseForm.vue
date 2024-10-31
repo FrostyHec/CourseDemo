@@ -16,7 +16,7 @@
       </el-form-item>
 
       <el-form-item label="Publication" prop="publication">
-        <el-segmented v-model="form_store.course_form.publication" :options="['open', 'closed', 'semi_open']" />
+        <el-segmented v-model="form_store.course_form.publication" :options="['open', 'closed', 'semi open']" />
       </el-form-item>
 
       <el-form-item label="Description" prop="description">
