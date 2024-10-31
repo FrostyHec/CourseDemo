@@ -16,9 +16,11 @@
         <el-container>
           <el-main>
             <el-table :data="tableData" style="width: 100%">
-              <el-table-column prop="CourseName" label="课程名称"></el-table-column>
-              <el-table-column prop="teacher" label="授课老师"></el-table-column>
-              <el-table-column prop="total_students" label="已选人数"></el-table-column>
+              <el-table-column prop="course_name" label="课程名称">
+                <template v-slot="{ row }">
+                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
+                  </template>
+              </el-table-column>
               <el-table-column prop="action" label="操作" width="200">
                 <template v-slot="{ row }">
                   <el-button @click="deleteCourse(row)">删除课程</el-button>
@@ -44,8 +46,11 @@
         label-position="right"
         size="default"
       >
-        <el-form-item label="课程名称" prop="CourseName">
-          <el-input v-model="courseForm.CourseName"/>
+        <el-form-item label="课程名称" prop="course_name">
+          <el-input v-model="courseForm.course_name"/>
+        </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="courseForm.description"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="AddCourse('courseForm')">创建</el-button>
@@ -57,40 +62,57 @@
 
 <script>
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth'
 import BaseHeader from '@/layouts/BaseHeader.vue';
-
+import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
 export default {
   name: 'CourseApproval',
   components: {
     BaseHeader
   },
-
   setup() {
+    const store = useAuthStore()
     const tableData = ref([
-      { id: "1", teacher: 'xxx', CourseName: 'CS303 Artificial Intelligence', total_students: 100, action: '' },
-      { id: "2", teacher: 'yyy', CourseName: 'CS309 OOAD', total_students: 100, action: '' },
+      {course_id:1,course_name:'CS303',description:'xxx',teacher_id:1}
     ]);
-    const courseForm = ref({
-      CourseName: "",
-      teacher: '',
-      total_students: '',
+    onMounted(async () => {
+      try {
+        const response = await getAllTeachingCourseList(store.user.user_id, 1, 10);
+        const courses = response.content; 
+        tableData.value = [...tableData.value,...courses];
+      } catch (error) {
+        console.error('获取课程列表失败:', error);
+      }
     });
+    const courseForm = ref({
+      course_id: '',
+      course_name: '',
+      description: '',
+      teacher_id: '',
+      status: '',
+      publication: '',
+      created_at: Date,
+      updated_at: Date,
+    });
+
     const dialogVisible = ref(false);
     const rules = ref({});
 
     const createNewCourse = () => {
-      courseForm.value = { CourseName: "", teacher: '', total_students: '' };
+      courseForm.value = {course_id:'',course_name:'', description:''};
       dialogVisible.value = true;
     };
 
     const AddCourse = (formName) => {
-      // Add validation logic here
       tableData.value.push({
-        id: "",
-        teacher: courseForm.value.teacher,
-        CourseName: courseForm.value.CourseName,
-        total_students: courseForm.value.total_students,
-        action: ""
+        course_id: '',
+        course_name: courseForm.value.course_name,
+        description: '',
+        teacher_id: 1,
+        status: '',
+        publication: '',
+        created_at: Date,
+        updated_at: Date,
       });
       dialogVisible.value = false;
     };

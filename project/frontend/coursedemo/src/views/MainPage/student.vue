@@ -32,13 +32,11 @@
           <el-container>
             <el-main>
               <el-table :data="filteredTableData" style="width: 100%">
-                <el-table-column prop="CourseName" label="课程名称">
+                <el-table-column prop="course_name" label="课程名称">
                   <template v-slot="{ row }">
-                    <router-link :to="`/course/${row.CourseName}`" class="course-link">{{ row.CourseName }}</router-link>
+                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.CourseName }}</router-link>
                   </template>
                 </el-table-column>
-                <el-table-column prop="teacher" label="授课老师"></el-table-column>
-                <el-table-column prop="total_students" label="已选人数"></el-table-column>
                 <el-table-column prop="action" label="操作" width="200">
                   <template v-slot="{ row }">
                     <el-button @click="row.enrolled ? quitCourse(row) : joinCourse(row)">
@@ -64,7 +62,7 @@
 import { ref, computed } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
-
+import {getAllJoinedCourseList} from '@/api/course/CourseMemberAPI';
 const router = useRouter(); // 获取 router 实例
 
 export default {
@@ -74,12 +72,17 @@ export default {
   },
   setup() {
     const tableData = ref([
-      { id: "1", teacher: 'xxx', CourseName: 'CS303 Artificial Intelligence', total_students: 30, enrolled: true },
-      { id: "2", teacher: 'yyy', CourseName: 'CS309 OOAD', total_students: 25, enrolled: false },
-      { id: "3", teacher: 'xxx', CourseName: 'CS324 Deep Learning', total_students: 30, enrolled: true },
-      { id: "4", teacher: 'yyy', CourseName: 'CS305 Computer Network', total_students: 25, enrolled: false },
+      {course_id:'2', CourseName:'CS303'}
     ]);
-
+    onMounted(async () => {
+      try {
+        const response = await getAllJoinedCourseList(store.user.user_id, 1, 10);
+        const courses = response.content; 
+        tableData.value = [...tableData.value,...courses];
+      } catch (error) {
+        console.error('获取课程列表失败:', error);
+      }
+    });
     const searchKeyword = ref('');
     const myCourses = ref(true);
 
