@@ -17,10 +17,34 @@
       </div>
       <base-comment/>
     </div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+      <base-like
+        v-if="'course_name' in course_store.current_data.data"
+        :like="async () => {
+          const id = course_store.current_course_id()
+          if(id!==undefined)
+            return await createCourseLikeCall(id)
+          return undefined
+        }"
+        :cancel="async () => {
+          const id = course_store.current_course_id()
+          if(id!==undefined)
+            return await cancelCourseLikeCall(id)
+          return undefined
+        }"
+        :get="async () => {
+          const id = course_store.current_course_id()
+          if(id!==undefined)
+            return await getCourseLikeCall(id)
+          return undefined
+        }"
+      />
+    </div>
   </el-scrollbar>
   <div v-else style="font-size: large;">404</div>
 </template>
 <script setup lang="ts">
+import { cancelCourseLikeCall, createCourseLikeCall, getCourseLikeCall } from '@/api/course/CourseLikeAPI';
 import { useCourseStore } from '@/stores/course';
 import moment from 'moment';
 const course_store = useCourseStore()

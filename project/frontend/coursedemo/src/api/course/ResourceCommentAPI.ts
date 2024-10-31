@@ -4,12 +4,13 @@ import { AxiosAPI } from '@/utils/APIUtils';
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
 export interface ResourceCommentEntity {
-  comment_id: number;
-  resource_id: number;
-  user_id: number;
-  comment_text: string;
-  created_at: Date;
-  updated_at: Date;
+  comment_id: number
+  resource_id: number
+  user_id: number
+  comment_text: string
+  created_at: Date
+  updated_at: Date
+  comment_reply: number
 }
 
 // Add a comment to a resource
@@ -40,4 +41,10 @@ export async function deleteCommentCall(commentId: number) {
 export async function getCommentCall(commentId: number) {
   const url = `${service_backend_base}/resource/comment/${commentId}`;
   return AxiosAPI.authGet<ResourceCommentEntity>(url);
+}
+
+// Get all comments under a resource
+export async function getResourceCommentsCall(resourceId: number) {
+  const url = `${service_backend_base}/resource/${resourceId}/comments`;
+  return AxiosAPI.authGet<{ content: ResourceCommentEntity[] }>(url);
 }

@@ -110,7 +110,7 @@ const handleDelete = async (node: Node) => {
     msg = await deleteResourceCall(d.data.resource_id)
   if(!msg || msg.code!=200) {
     ElMessage({
-      message: 'Network error',
+      message: 'Delete network error',
       type: 'error',
     })
     return
