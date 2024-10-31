@@ -48,7 +48,7 @@ export enum UserType{
 }
 
 export async function createUserCall(param:UserEntity):Promise<APIResult<null>>{
-  const url = service_backend_base + '/user/create';
+  const url = service_backend_base + '/user';
   return await AxiosAPI.post(url,param);
 }
 

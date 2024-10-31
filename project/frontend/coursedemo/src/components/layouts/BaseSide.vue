@@ -54,7 +54,7 @@
 
     <CourseForm/>
     <ChapterForm/>
-    <ResourseForm/>
+    <ResourceForm/>
   </div>
 </template>
 
@@ -115,8 +115,8 @@ const handleDelete = async (node: Node) => {
     })
     return
   }
-  handleClick(null, node.parent)
   await course_store.load_from_route(true)
+  handleClick(null, node.parent)
 }
 
 import type Node from 'element-plus/es/components/tree/src/model/node'
@@ -129,7 +129,6 @@ import { reactive, ref } from "vue";
 import { useFormStore } from "@/stores/form";
 import ChapterForm from "../forms/ChapterForm.vue";
 import CoureseForm from "../forms/CoureseForm.vue";
-import ResourseForm from "../forms/ResourseForm.vue";
 import { deleteChapterCall } from "@/api/course/ChapterAPI";
 import { deleteResourceCall } from "@/api/course/CourseResourceAPI";
 

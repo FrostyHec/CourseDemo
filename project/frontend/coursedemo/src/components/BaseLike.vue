@@ -38,6 +38,7 @@ const load = async () => {
     return
   }
   liked.value = msg.data.is_like
+  console.log('!!!', liked.value)
 }
 load()
 

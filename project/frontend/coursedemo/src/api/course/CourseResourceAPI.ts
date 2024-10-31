@@ -34,7 +34,7 @@ export enum ResourceType {
 export async function uploadResourceCall(chapterId: number, resource: ResourceEntity, file: File) {
   const url = `${service_backend_base}/chapter/${chapterId}/resource`;
   const formData = new FormData();
-  formData.append('data', JSON.stringify(resource));
+  formData.append('data', new Blob([JSON.stringify(resource)], {type: 'application/json'}));
   formData.append('file', file);
 
   const config=AxiosAPI.setAuthHeader();

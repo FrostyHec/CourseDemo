@@ -115,13 +115,13 @@ Liar🤛Liar🤜Liar🤛Liar🤜Dancer🤛
   comment_reply: 2,
 }])
 let comment_map = new Map<number, ResourceCommentEntity>()
-comments.value.forEach((comment) => comment_map.set(comment.comment_id, comment))
+comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 
 async function load_comments() {
-  //!!!!!!!!!!!!!!!!!!!!
-  if(comments.value)
-    return
-  //!!!!!!!!!!!!!!!!!!!!
+  // //!!!!!!!!!!!!!!!!!!!!
+  // if(comments.value)
+  //   return
+  // //!!!!!!!!!!!!!!!!!!!!
   comments.value = []
   const msg = await getResourceCommentsCall(current_resource_id)
   if(msg.code!=200) {
@@ -133,7 +133,7 @@ async function load_comments() {
   }
   comments.value = msg.data.content
   comment_map.clear()
-  comments.value.forEach((comment) => comment_map.set(comment.comment_id, comment))
+  comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {
@@ -152,14 +152,13 @@ const watch_current_data = watch(() => course_store.current_data?.data,
 const new_comment = ref('')
 const reply_new_comment = ref('')
 async function send_comment(reply_id?: number) {
-  if(new_comment.value==='')
-    return
+  console.log(reply_id, new_comment.value)
   let msg
   if(!reply_id) {
     if(new_comment.value==='')
       return
     msg = await addCommentToResourceCall(current_resource_id, {
-      comment_id: 0, resource_id: current_resource_id, user_id: Number(auth_store.user.user_id),
+      comment_id: undefined, resource_id: current_resource_id, user_id: Number(auth_store.user.user_id),
       comment_text: new_comment.value, 
       created_at: new Date(), updated_at: new Date(),
       comment_reply: -1

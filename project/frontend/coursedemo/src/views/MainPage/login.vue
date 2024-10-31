@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useFormStore } from '@/stores/form';
 import { User, Lock } from '@element-plus/icons-vue'
-import { loginCall } from '@/api/user/UserAPI'
+import { loginCall, UserType } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' // 导入useRouter
 
@@ -12,12 +12,12 @@ const isRegister = ref(false)
 
 // 定义数据模型
 const loginData = ref({
-  userid: '',
+  email: '',
   password: ''
 })
 
 const registerData = ref({
-  userid: '',
+  email: '',
   password: '',
   rePassword: ''
 })
@@ -35,7 +35,7 @@ const checkRePassword = (rule, value, callback) => {
 
 // 登录校验规则
 const loginRule = ref({
-  userid: [
+  email: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
   ],
   password: [
@@ -45,7 +45,7 @@ const loginRule = ref({
 
 // 注册校验规则
 const registerRule = ref({
-  userid: [
+  email: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 5, max: 16, message: '请输入长度5~16非空字符', trigger: 'blur' }
   ],
@@ -63,7 +63,7 @@ const router = useRouter() // 使用useRouter
 const login = async () => {
   try {
     let result = await loginCall({
-      userid: loginData.value.userid,
+      email: loginData.value.email,
       password: loginData.value.password
     });
     if (result.code === 200) {
@@ -71,25 +71,30 @@ const login = async () => {
       form_store.open_form(form_store.course_null, 'Add')
       router.push('/MainPage/student');
     } else {
-      ElMessage.error('登录失败：' + result.message);
+      ElMessage.error('登录失败：' + result.msg);
     }
   } catch (error) {
     ElMessage.error('服务异常');
   }
+  // form_store.resource_visibility = true
 }
 
 // 注册函数
 const register = async () => {
   try {
     let result = await createUserCall({
-      userid: registerData.value.userid,
-      password: registerData.value.password
+      email: registerData.value.email,
+      password: registerData.value.password,
+      create_at: new Date(), update_at: new Date(),
+      user_id: 0,
+      first_name: 'Alice', last_name: 'Bob',
+      role: UserType.TEACHER,
     })
     if (result.code === 200) {
       ElMessage.success('注册成功!')
       isRegister.value = false; // 注册成功后跳转到登录页
     } else {
-      ElMessage.error('注册失败：' + result.message);
+      ElMessage.error('注册失败：' + result.msg);
     }
   } catch (error) {
     ElMessage.error('服务异常');
@@ -99,7 +104,7 @@ const register = async () => {
 // 定义函数，清空数据模型
 const clearRegisterData = () => {
   registerData.value = {
-    userid: '',
+    email: '',
     password: '',
     rePassword: ''
   }
@@ -115,8 +120,8 @@ const clearRegisterData = () => {
         <el-form-item>
           <h1>注册</h1>
         </el-form-item>
-        <el-form-item prop="userid">
-          <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.userid"></el-input>
+        <el-form-item prop="email">
+          <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.email"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="registerData.password"></el-input>
@@ -140,7 +145,7 @@ const clearRegisterData = () => {
           <h1>登录</h1>
         </el-form-item>
         <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.userid"></el-input>
+          <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.email"></el-input>
         </el-form-item>
         <el-form-item>
           <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="loginData.password"></el-input>

@@ -58,7 +58,7 @@
   </el-config-provider>
 </template>
 
-<script setup lang="ts">
+<script  lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 

@@ -4,7 +4,7 @@ import { AxiosAPI } from '@/utils/APIUtils';
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
 export interface ResourceCommentEntity {
-  comment_id: number
+  comment_id?: number
   resource_id: number
   user_id: number
   comment_text: string
