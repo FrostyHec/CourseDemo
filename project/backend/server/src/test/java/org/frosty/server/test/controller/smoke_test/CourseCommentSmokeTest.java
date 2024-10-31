@@ -43,31 +43,24 @@ public class CourseCommentSmokeTest {
 
         //-----test start---
         // 1. Student creates a comment under the resource
-        ResourceComment resourceComment = commentAPI.getTemplateComment(resourceId,uid);
-        commentAPI.createSuccess(token,resourceId, resourceComment);
+        ResourceComment resourceComment = commentAPI.getTemplateComment(resourceId, uid);
+        commentAPI.createSuccess(token, resourceId, resourceComment);
 
         // 2. Teacher can get the comment
         ResourceComment resourceComment1 = commentAPI.getSuccess(token1, 1L);
-        System.out.println("----------------------------");
-        System.out.println(resourceComment1);
-        System.out.println("----------------------------");
-//        assert commentId1 == commentId;
+        assert Objects.equals(resourceComment1.getCommentText(), resourceComment.getCommentText());
+        assert Objects.equals(resourceComment1.getUserId(), resourceComment.getUserId());
+
 
         // 3. Teacher replies to the comment
-        ResourceComment resourceComment2 = commentAPI.getTemplateReplyComment(resourceId,1L,uid1);
-        commentAPI.createSuccess(token1,resourceId, resourceComment2);
-
-        System.out.println("----------------------------");
-        System.out.println(resourceComment2);
-        System.out.println("----------------------------");
+        ResourceComment resourceComment2 = commentAPI.getTemplateReplyComment(resourceId, 1L, uid1);
+        commentAPI.createSuccess(token1, resourceId, resourceComment2);
+        ResourceComment resourceComment3 = commentAPI.getSuccess(token, 2L);
+        assert Objects.equals(resourceComment2.getCommentText(), resourceComment3.getCommentText());
+        assert Objects.equals(resourceComment2.getUserId(), resourceComment3.getUserId());
 
         // 4. Student can get the comment (including the reply)
-        List<CommentController.CommentWithUser> comments = commentAPI.getAllSuccess(token,resourceId);
-
-        System.out.println("----------------------------");
-        System.out.println(comments);
-        System.out.println("----------------------------");
-
+        List<CommentController.CommentWithUser> comments = commentAPI.getAllSuccess(token, resourceId);
         assert comments.size() == 2;
 
     }
