@@ -6,6 +6,7 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { loginCall, UserType } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' // 导入useRouter
+import { useAuthStore } from '@/stores/auth';
 
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
@@ -56,27 +57,25 @@ const registerRule = ref({
   rePassword: [{ validator: checkRePassword, trigger: 'blur' }]
 })
 
+const auth_store = useAuthStore()
 const form_store = useFormStore()
 const router = useRouter() // 使用useRouter
 
 // 登录函数
 const login = async () => {
   try {
-    let result = await loginCall({
-      email: loginData.value.email,
-      password: loginData.value.password
-    });
+    let result = await auth_store.login(loginData.value);
     if (result.code === 200) {
       ElMessage.success('登录成功!')
       form_store.open_form(form_store.course_null, 'Add')
-      router.push('/MainPage/student');
+      // router.push('/MainPage/student');
     } else {
       ElMessage.error('登录失败：' + result.msg);
     }
   } catch (error) {
     ElMessage.error('服务异常');
   }
-  // form_store.resource_visibility = true
+  form_store.course_visibility = true
 }
 
 // 注册函数
@@ -112,6 +111,7 @@ const clearRegisterData = () => {
 </script>
 
 <template>
+  <CourseForm></CourseForm>
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
