@@ -51,7 +51,7 @@ const loginRule = ref({
 // 注册校验规则
 const registerRule = ref({
   email: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -164,7 +164,7 @@ const clearRegisterData = () => {
           <h1>登录</h1>
         </el-form-item>
         <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.email"></el-input>
+          <el-input :prefix-icon="User" placeholder="请输入邮箱" v-model="loginData.email"></el-input>
         </el-form-item>
         <el-form-item>
           <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="loginData.password"></el-input>
