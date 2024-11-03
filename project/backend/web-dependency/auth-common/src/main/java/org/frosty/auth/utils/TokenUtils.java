@@ -17,20 +17,6 @@ public class TokenUtils {
     }
 
     public static TokenInfo tokenInfoFromString(String subject) {
-        if (subject == null) {// TODO REMOVE
-            return new TokenInfo(AuthStatus.PASS, new AuthInfo(1));
-
-        }
-        if (subject != null && subject.startsWith("Bearer ")) { // TODO REMOVE
-            JwtHandler jwtHandler = new JwtHandler("secret12740184018403rujdfcu9hv9nsdzsajsz0e" +
-                    "hfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf", 86400000);
-            try {
-                var claims = jwtHandler.getClaimsFromToken(subject.substring(7));
-                return new TokenInfo(AuthStatus.PASS, jwtHandler.getToken(claims));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(subject, TokenInfo.class);

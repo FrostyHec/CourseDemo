@@ -31,7 +31,7 @@ import java.util.Objects;
 
 @Component
 public class ObjectStorageServiceImpl implements ObjectStorageService {
-    @Value("${api.storage.url}")
+    @Value("${api.storage.object-storage.url}")
     private String path;
     @Autowired
     private RestTemplate restTemplate;

@@ -11,7 +11,10 @@ api:
 #     remote or mock
     type: mock
 #    type: remote
-    url: http://localhost:9976
+    object-storage:
+      url: http://localhost:9976
+    redis:
+      url: todo
   message:
     type: mock
 #    type: remote
@@ -19,3 +22,5 @@ api:
       url: http://localhost:9972
     email:
       url: http://localhost:9983
+
+

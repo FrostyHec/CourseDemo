@@ -32,7 +32,8 @@ RUN \
     wget https://github.com/winshining/nginx-http-flv-module/archive/v${NGINX_HTTP_FLV_VERSION}.tar.gz && \
     tar xzf v${NGINX_HTTP_FLV_VERSION}.tar.gz && \
     cd nginx-${NGINX_VERSION} && \
-    ./configure --add-module=../nginx-http-flv-module-${NGINX_HTTP_FLV_VERSION} && \
+    ./configure --add-module=../nginx-http-flv-module-${NGINX_HTTP_FLV_VERSION}  \
+                --with-http_auth_request_module && \
     make && \
     make install
 
