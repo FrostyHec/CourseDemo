@@ -65,25 +65,15 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
+import { CourseStatus, createCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 
-// 定义课程接口
-interface Course {
-  course_id: number;
-  course_name: string;
-  description: string;
-  teacher_id: number;
-  status: string;
-  publication: string;
-  created_at: Date;
-  updated_at: Date;
-}
 
 // 使用AuthStore
 const authStore = useAuthStore();
 
 // 表格数据
-const tableData = ref<Course[]>([
-  { course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, status: '', publication: '', created_at: new Date(), updated_at: new Date() }
+const tableData = ref<CourseEntity[]>([
+  { course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, status: CourseStatus.published, publication: Publication.closed , created_at: new Date(), updated_at: new Date() }
 ]);
 
 // 挂载时获取课程列表
@@ -98,13 +88,13 @@ onMounted(async () => {
 });
 
 // 表单数据
-const courseForm = ref<Course>({
+const courseForm = ref<CourseEntity>({
   course_id: 1,
   course_name: '',
   description: '',
   teacher_id: authStore.user.user_id,
-  status: '',
-  publication: '',
+  status: CourseStatus.creating,
+  publication:Publication.open,
   created_at: new Date(),
   updated_at: new Date(),
 });
@@ -118,12 +108,12 @@ const rules = ref({});
 // 创建新课程
 const createNewCourse = () => {
   courseForm.value = {
-    course_id: 1,
+    course_id: 0,
     course_name: '',
     description: '',
     teacher_id: authStore.user.user_id,
-    status: '',
-    publication: '',
+    status: CourseStatus.submitted,
+    publication: Publication.open,
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -132,21 +122,12 @@ const createNewCourse = () => {
 
 // 添加课程
 const AddCourse = (p0: string) => {
-  tableData.value.push({
-    course_id: 0,
-    course_name: courseForm.value.course_name,
-    description: courseForm.value.description,
-    teacher_id: courseForm.value.teacher_id,
-    status: courseForm.value.status,
-    publication: courseForm.value.publication,
-    created_at: courseForm.value.created_at,
-    updated_at: courseForm.value.updated_at,
-  });
+  createCourseCall(courseForm.value)
   dialogVisible.value = false;
 };
 
 // 删除课程
-const deleteCourse = (row: Course) => {
+const deleteCourse = (row: CourseEntity) => {
   const index = tableData.value.indexOf(row);
   if (index !== -1) {
     tableData.value.splice(index, 1);

@@ -48,23 +48,17 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllJoinedCourseList } from '@/api/course/CourseMemberAPI';
+import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 
 const authStore = useAuthStore();
 
-interface Course {
-  course_id: number;
-  course_name: string;
-  description: string;
-  teacher_id: number;
-  status: string;
-  publication: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
 // 表格数据
-const tableData = ref<Course[]>([
-  { course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, status: '', publication: '', created_at: new Date(), updated_at: new Date() }
+const tableData = ref<CourseEntity[]>([
+  {
+    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+    status: CourseStatus.published,
+    publication: Publication.open
+  }
 ]);
 
 onMounted(async () => {
