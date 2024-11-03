@@ -60,78 +60,76 @@
 
 <script  lang="ts">
 import { ref, computed } from 'vue';
-import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
-import {getAllJoinedCourseList} from '@/api/course/CourseMemberAPI';
-const router = useRouter(); // 获取 router 实例
 
-export default {
-  name: 'CourseApproval',
-  components: {
-    BaseHeader
-  },
-  setup() {
-    const tableData = ref([
-      {course_id:'2', CourseName:'CS303'}
-    ]);
-    onMounted(async () => {
-      try {
-        const response = await getAllJoinedCourseList(store.user.user_id, 1, 10);
-        const courses = response.content; 
-        tableData.value = [...tableData.value,...courses];
-      } catch (error) {
-        console.error('获取课程列表失败:', error);
-      }
-    });
-    const searchKeyword = ref('');
-    const myCourses = ref(true);
+// 获取 router 实例
+const router = useRouter();
 
-    const filteredTableData = computed(() => {
-      let filtered = tableData.value;
-      if (myCourses.value) {
-        filtered = filtered.filter(row => row.enrolled);
-      }
-      if (searchKeyword.value) {
-        const keyword = searchKeyword.value.toLowerCase();
-        filtered = filtered.filter(row =>
-          row.CourseName.toLowerCase().includes(keyword) ||
-          row.teacher.toLowerCase().includes(keyword)
-        );
-      }
-      return filtered;
-    });
+import {useAuthStore} from '@/stores/auth';
 
-    const quitCourse = (row) => {
-      console.log('quit course:', row);
-      // 更新row.enrolled为false
-      row.enrolled = false;
-    };
-    
-    const joinCourse = (row) => {
-      console.log('join course:', row);
-      // 更新row.enrolled为true
-      row.enrolled = true;
-    };
+const authStore = useAuthStore();
 
-    const evaluateCourse = (row) => {
-      // 将课程信息传递给课程评价页面
-      router.push({ path: '/courseEvaluation', query: { courseId: row.id } });
-    };
+interface Course {
+  course_id: string;
+  CourseName: string;
+  teacher?: string;
+  enrolled?: boolean;
+}
 
-    const toggleCourses = (type) => {
-      myCourses.value = type === 'mine';
-    };
+const tableData = ref<Course[]>([
+  { course_id: '2', CourseName: 'CS303' } // 假设初始数据
+]);
 
-    return {
-      tableData,
-      filteredTableData,
-      searchKeyword,
-      quitCourse,
-      joinCourse,
-      evaluateCourse,
-      toggleCourses
-    };
-  },
+const searchKeyword = ref('');
+const myCourses = ref(true);
+
+import { onMounted } from 'vue';
+import { getAllJoinedCourseList } from '@/api/course/CourseMemberAPI';
+
+onMounted(async () => {
+  try {
+    const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 10);
+    const courses = response.content; 
+    tableData.value = [...tableData.value, ...courses];
+  } catch (error) {
+    console.error('获取课程列表失败:', error);
+  }
+});
+
+const filteredTableData = computed(() => {
+  let filtered = tableData.value;
+  if (myCourses.value) {
+    filtered = filtered.filter(row => row.enrolled);
+  }
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase();
+    filtered = filtered.filter(row =>
+      row.CourseName.toLowerCase().includes(keyword) ||
+      row.teacher?.toLowerCase().includes(keyword)
+    );
+  }
+  return filtered;
+});
+
+const quitCourse = (row: Course) => {
+  console.log('quit course:', row);
+  // 更新row.enrolled为false
+  row.enrolled = false;
+};
+
+const joinCourse = (row: Course) => {
+  console.log('join course:', row);
+  // 更新row.enrolled为true
+  row.enrolled = true;
+};
+
+const evaluateCourse = (row: Course) => {
+  // 将课程信息传递给课程评价页面
+  router.push({ path: '/courseEvaluation', query: { courseId: row.course_id } });
+};
+
+const toggleCourses = (type: string) => {
+  myCourses.value = type === 'mine';
 };
 </script>
 
@@ -252,5 +250,4 @@ export default {
   color: #66b1ff; /* 鼠标悬停时的颜色 */
   text-decoration: underline; /* 鼠标悬停时添加下划线 */
 }
-
 </style>

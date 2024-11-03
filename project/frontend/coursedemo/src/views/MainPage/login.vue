@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useFormStore } from '@/stores/form';
-import { User, Lock } from '@element-plus/icons-vue'
-import { loginCall, UserType } from '@/api/user/UserAPI'
+import { UserType } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
-import { useRouter } from 'vue-router' // 导入useRouter
+import { useRouter } from 'vue-router' 
 import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore()
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
@@ -59,27 +59,28 @@ const registerRule = ref({
 
 const auth_store = useAuthStore()
 const form_store = useFormStore()
-const router = useRouter() // 使用useRouter
+const router = useRouter() 
 
 // 登录函数
-const login = async () => {
+const handleLogin = async () => {
   try {
-    let result = await auth_store.login(loginData.value);
-    if (result.code === 200) {
+    let result = await authStore.login(loginData.value);
+    if (result.code == 200) {
       ElMessage.success('登录成功!')
       form_store.open_form(form_store.course_null, 'Add')
-      // router.push('/MainPage/student');
+      if(authStore.user.role==UserType.STUDENT)router.push('/MainPage/student');
+      else if(authStore.user.role==UserType.TEACHER)router.push('/MainPage/teacher')
+      else router.push('/manager')
     } else {
-      ElMessage.error('登录失败：' + result.msg);
+      ElMessage.error('登录失败：' + result.code);
     }
   } catch (error) {
     ElMessage.error('服务异常');
   }
-  form_store.course_visibility = true
 }
 
 // 注册函数
-const register = async () => {
+const handleRegister = async () => {
   try {
     let result = await createUserCall({
       email: registerData.value.email,
@@ -116,7 +117,7 @@ const clearRegisterData = () => {
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
       <!-- 注册表单 -->
-      <el-form ref="registerForm" size="large" autocomplete="off" v-if="isRegister" :model="registerData" :rules="registerRule" @submit.native.prevent="register">
+      <el-form ref="registerForm" size="large" autocomplete="off" v-if="isRegister" :model="registerData" :rules="registerRule">
         <el-form-item>
           <h1>注册</h1>
         </el-form-item>
@@ -131,7 +132,7 @@ const clearRegisterData = () => {
         </el-form-item>
         <!-- 注册按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" native-type="submit">注册</el-button>
+          <el-button class="button" type="primary" native-type="submit" @click="handleRegister">注册</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = false; clearRegisterData()">
@@ -140,7 +141,7 @@ const clearRegisterData = () => {
         </el-form-item>
       </el-form>
       <!-- 登录表单 -->
-      <el-form ref="loginForm" size="large" autocomplete="off" v-else :model="loginData" :rules="loginRule" @submit.native.prevent="login">
+      <el-form ref="loginForm" size="large" autocomplete="off" v-else :model="loginData" :rules="loginRule">
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
@@ -158,7 +159,7 @@ const clearRegisterData = () => {
         </el-form-item>
         <!-- 登录按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" native-type="submit">登录</el-button>
+          <el-button class="button" type="primary" native-type="submit" @click="handleLogin">登录</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = true">
