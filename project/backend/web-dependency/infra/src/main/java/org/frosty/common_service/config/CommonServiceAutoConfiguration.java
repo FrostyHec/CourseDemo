@@ -41,7 +41,7 @@ public class CommonServiceAutoConfiguration {
     public SharedBiMapService sharedBiMapService() {
         return switch (storageType) {
             case "mock" -> new MockSharedBiMapServiceImpl();
-            case "remote" -> new SharedBiMapServiceImpl();
+            case "remote" -> new MockSharedBiMapServiceImpl();//new SharedBiMapServiceImpl();//TODO RECOVER
             default -> throw new IllegalArgumentException("storage type: "
                     + storageType + " not supported");
         };
