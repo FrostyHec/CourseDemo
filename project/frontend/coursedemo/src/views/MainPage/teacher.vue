@@ -18,7 +18,7 @@
             <el-table :data="tableData" style="width: 100%">
               <el-table-column prop="course_name" label="课程名称">
                 <template v-slot="{ row }">
-                    <router-link :to="`/course/${row.course_name}`" class="course-link">{{ row.course_name }}</router-link>
+                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="200">
@@ -39,7 +39,6 @@
       width="40%"
     >
       <el-form
-        ref="courseForm"
         :model-value="courseForm"
         :rules="rules"
         label-width="auto"
@@ -51,6 +50,13 @@
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="courseForm.description"/>
+        </el-form-item>
+        <el-form-item label="课程类型" prop="publication">
+          <el-radio-group v-model="courseForm.publication">
+            <el-radio :label="Publication.open">开放</el-radio>
+            <el-radio :label="Publication.closed">私密</el-radio>
+            <el-radio :label="Publication.semi_open">半开放</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="AddCourse('courseForm')">创建</el-button>
@@ -80,7 +86,7 @@ const tableData = ref<CourseEntity[]>([
 onMounted(async () => {
   try {
     const response = await getAllTeachingCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.content; 
+    const courses = response.data.content; 
     tableData.value = [...tableData.value, ...courses];
   } catch (error) {
     console.error('获取课程列表失败:', error);

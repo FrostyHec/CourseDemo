@@ -64,7 +64,7 @@ const tableData = ref<CourseEntity[]>([
 onMounted(async () => {
   try {
     const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.content; 
+    const courses = response.data.content; 
     if (courses) {
       tableData.value = [...tableData.value, ...courses];
     }
