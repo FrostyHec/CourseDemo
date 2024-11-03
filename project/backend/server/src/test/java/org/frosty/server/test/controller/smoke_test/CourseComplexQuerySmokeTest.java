@@ -36,21 +36,24 @@ public class CourseComplexQuerySmokeTest {
         var res = authAPI.quickAddUserAndLogin(name, User.Role.teacher);
         var token = res.first;
         var uid = res.second.getUserId();
-        var resourceId = resourceAPI.addTestCourseTestChapterTestResourceAndGetId(uid);
-        var resourceId1 = resourceAPI.addTestCourseTestChapterTestResourceAndGetId(uid);
-        var assId = assignmentAPI.addTestCourseTestChapterTestAssAndGetId(uid);
-        var assId1 = assignmentAPI.addTestCourseTestChapterTestAssAndGetId(uid);
+        complexQueryAPI.addComplex(uid);
         Long courseId = 1L; // 替换为有效的课程 ID
 
-        var chapters = chapterAPI.getAllSuccess(token,1L);
-        System.out.println("---------------------------");
-        System.out.println(chapters);
-        System.out.println("---------------------------");
+
 
         CourseComplexQueryController.StructureInfo structureInfo = complexQueryAPI.getCourseAllStructureInfoSuccess(token, courseId);
-        System.out.println("---------------------------");
-        System.out.println(structureInfo);
-        System.out.println("---------------------------");
+
+//        System.out.println("---------------------------");
+//        System.out.println(structureInfo);
+//        System.out.println("---------------------------");
+
+        assert structureInfo.getCourseInfo().getCourseId() == courseId;
+        var chapters = structureInfo.getChapters();
+        assert chapters.size() == 3;
+        assert chapters.get(0).getContent().size() == 3;
+        assert chapters.get(1).getContent().size() == 3;
+        assert chapters.get(2).getContent().size() == 6;
+
     }
 
 }
