@@ -8,7 +8,7 @@
         <el-container>
           <el-header class="app-header">
             <div class="topbar">
-              <el-row gutter={20} type="flex" justify="space-between" align="middle">
+              <el-row :gutter="20" type="flex" justify="space-between" align="middle">
                 <el-col :span="24">
                   已选课程列表
                 </el-col>
@@ -58,7 +58,7 @@
   </el-config-provider>
 </template>
 
-<script  lang="ts">
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 

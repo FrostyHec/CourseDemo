@@ -1,4 +1,5 @@
 <template>
+  <student-table/>
   <div/>
   <div v-html="renderedMarkdown" class="markdown"></div>
 </template>
@@ -7,6 +8,7 @@
 import MarkdownIt from 'markdown-it';
 import mk from 'markdown-it-katex';
 import hljs from 'highlight.js'
+import StudentTable from '@/components/StudentTable.vue';
 
 export default {
   props: {

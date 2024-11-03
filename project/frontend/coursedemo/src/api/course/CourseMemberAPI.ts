@@ -7,9 +7,9 @@ export async function studentEnrollCourseCall(courseId:number){
   const url = service_backend_base+'/course/'+courseId+'/student/enroll'
   return AxiosAPI.authPost<null>(url,{})
 }
-export async function teacherInviteStudentToCourseCall(courseId:number){
+export async function teacherInviteStudentToCourseCall(courseId:number,studentList: number[]){
   const url = service_backend_base+'/course/'+courseId+'/teacher/invite'
-  return AxiosAPI.authPost<null>(url,{})
+  return AxiosAPI.authPost<null>(url,{student_list: studentList})
 }
 
 export async function getAllStudentList(courseId:number,pageNum:number,pageSize:number){
