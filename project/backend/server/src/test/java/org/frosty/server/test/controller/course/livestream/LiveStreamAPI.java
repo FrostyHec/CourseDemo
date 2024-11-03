@@ -53,8 +53,10 @@ public class LiveStreamAPI {
 
 
     public ResultActions getPushAuth(String name) throws Exception {
-        String url = authBaseUrl + "/push/" + name;
-        return mockMvc.perform(MockMvcRequestBuilders.get(url)
+        String url = authBaseUrl + "/push";
+        String uri = "http://example.com:8080/course/"+name;
+        return mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .header("X-Original-URI", uri)
                 .accept(MediaType.APPLICATION_JSON));
     }
 
