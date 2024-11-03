@@ -10,6 +10,8 @@ import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+
 @Slf4j
 @IdempotentControllerTest
 public class CourseSmokeTest {
@@ -45,7 +47,7 @@ public class CourseSmokeTest {
 
 
         // submit course
-        courseAPI.updateStatusSuccess(teacherToken, course.getCourseId(), Course.CourseStatus.submitted);
+        courseAPI.updateStatusSuccess(teacherToken, course.getCourseId(), Map.of("status",Course.CourseStatus.submitted.name()));
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
         courseAPI.checkSingle(course, li, Course.CourseStatus.submitted);
 
@@ -53,7 +55,7 @@ public class CourseSmokeTest {
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         var pCourse = CommonCheck.checkSingleAndGet(li);
         courseAPI.checkSingle(course, pCourse, Course.CourseStatus.submitted);
-        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Course.CourseStatus.published);
+        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Map.of("status",Course.CourseStatus.published.name()));
 
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         assert li.isEmpty();
@@ -89,7 +91,7 @@ public class CourseSmokeTest {
         courseAPI.checkSingle(course, li, Course.CourseStatus.creating);
 
         // submit course
-        courseAPI.updateStatusSuccess(teacherToken, course.getCourseId(), Course.CourseStatus.submitted);
+        courseAPI.updateStatusSuccess(teacherToken, course.getCourseId(), Map.of("status",Course.CourseStatus.submitted.name()));
         li = courseAPI.getAllTeachingCourseSuccess(teacherToken, teacher.getUserId());
         courseAPI.checkSingle(course, li, Course.CourseStatus.submitted);
 
@@ -97,7 +99,7 @@ public class CourseSmokeTest {
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         var pCourse = CommonCheck.checkSingleAndGet(li);
         courseAPI.checkSingle(course, pCourse, Course.CourseStatus.submitted);
-        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Course.CourseStatus.rejected);
+        courseAPI.updateStatusSuccess(adminToken, course.getCourseId(), Map.of("status",Course.CourseStatus.rejected.name()));
 
         li = courseAPI.adminGetAllRequiredApprovedCourseSuccess(adminToken, admin.getUserId());
         assert li.isEmpty();

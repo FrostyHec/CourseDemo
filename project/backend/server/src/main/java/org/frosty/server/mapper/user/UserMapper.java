@@ -51,26 +51,28 @@ public interface UserMapper extends BaseMapper<User> {
     User selectByEmail(String email);
 
     @Select("""
-            SELECT u.*, COUNT(e.student_id) AS studentNum 
-            FROM users u 
-            JOIN courses c ON u.user_id = c.teacher_id 
-            JOIN enrollments e ON c.course_id = e.course_id 
-            WHERE u.role = 'teacher' 
-            GROUP BY u.user_id 
-            ORDER BY studentNum DESC 
-            <if test='pageSize != -1'>
-            LIMIT #{pageSize} OFFSET #{pageNum}   * #{pageSize}
+            <script>
+            SELECT u.*, COUNT(e.student_id) AS studentNum
+            FROM users u
+            JOIN courses c ON u.user_id = c.teacher_id
+            JOIN enrollments e ON c.course_id = e.course_id
+            WHERE u.role = 'teacher'
+            GROUP BY u.user_id
+            ORDER BY studentNum DESC
+            <if test='page_size != -1'>
+            LIMIT #{page_size} OFFSET #{page_num}  * #{page_size}
             </if>
+            </script>
             """)
     @Results({
-            @Result(property = "teacher.userId", column = "userId"),
-            @Result(property = "teacher.firstName", column = "firstName"),
-            @Result(property = "teacher.lastName", column = "lastName"),
+            @Result(property = "teacher.userId", column = "user_id"),
+            @Result(property = "teacher.firstName", column = "first_name"),
+            @Result(property = "teacher.lastName", column = "last_name"),
             @Result(property = "teacher.role", column = "role"),
             @Result(property = "teacher.email", column = "email"),
             @Result(property = "studentNum", column = "studentNum")
     })
-    List<RecommendController.CourseWithStudentCount> getHotTeachers(int page_num, int page_size);
+    List<RecommendController.TeacherWithStudentCount> getHotTeachers(int page_num, int page_size);
 
 
 }
