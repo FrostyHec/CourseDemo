@@ -136,7 +136,7 @@ const clearRegisterData = () => {
           <el-input :prefix-icon="User" placeholder="last name" v-model="registerData.last_name"></el-input>
         </el-form-item>
         <el-form-item prop="role">
-          <el-radio-group :prefix-icon="User" placeholder="用户类型" v-model="registerData.email">
+          <el-radio-group :prefix-icon="User" placeholder="用户类型" v-model="registerData.role">
             <el-radio :label="UserType.STUDENT">学生</el-radio>
             <el-radio :label="UserType.TEACHER">老师</el-radio>
             <el-radio :label="UserType.ADMIN">管理员</el-radio>
