@@ -38,9 +38,18 @@ public class AssignmentSmokeTest {
         var student = studentRes.second;
 
         var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(teacher.getUserId());
-
+        System.out.println("-------------------");
+        System.out.println(chapterId);
+        System.out.println("-------------------");
         // 1. 教师创建作业
         Assignment assignment = assignmentAPI.getTemplateAssignment(chapterId);
+        var chapter = chapterAPI.getSuccess(teacherToken,1L);
+
+        System.out.println("-------------------");
+        System.out.println(chapter);
+        System.out.println("-------------------");
+        System.out.println(assignment);
+        System.out.println("-------------------");
         String description = assignment.getDescription();
         assignmentAPI.createSuccess(teacherToken, chapterId, assignment);
 

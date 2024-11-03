@@ -55,12 +55,17 @@ public class UserServiceImpl implements UserService {
         return userMapper.findPublicInfoById(id);
     }
 
-
-    // TODO
     @Override
-    public List<User> searchByRealName(String realName) {
-        return userMapper.searchByRealName(realName);
+    public List<User> searchByRealName(String firstName, String lastName, int pageNum, int pageSize) {
+        return List.of();
     }
+
+
+//    // TODO
+//    @Override
+//    public List<User> searchByRealName(String realName) {
+//        return userMapper.searchByRealName(realName);
+//    }
 
     @Override
     public List<User> searchUser(String firstName, String lastName, int pageNum, int pageSize) {
@@ -78,6 +83,9 @@ public class UserServiceImpl implements UserService {
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
     }
+
+
+
 
 
 }

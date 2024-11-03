@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 @IdempotentControllerTest
 public class CourseLikeSmokeTest {
+    // TODO 现在没办法过测，查看一下为什么
+    // 这个异常通常表示在反序列化 JSON 数据时，Jackson 期望一个布尔值（Boolean），但是接收到的是一个对象（Object）。你需要检查你要反序列化的 JSON 数据格式和对应的 Java 类属性类型是否匹配。
 
     @Autowired
     private AuthAPI authAPI;

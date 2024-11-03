@@ -12,7 +12,7 @@ public interface CourseComplexQueryService {
 
     List<Chapter> findChapterByCourseId(Long id);
 
-    List<Resource> findContentByChapterId(Long chapterId);
+    List<Resource> findResourceByChapterId(Long chapterId);
 
     List<Assignment> findAssByChapterId(Long chapterId);
 }
