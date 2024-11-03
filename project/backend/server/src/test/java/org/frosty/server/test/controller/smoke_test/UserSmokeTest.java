@@ -38,7 +38,7 @@ public class UserSmokeTest {
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
         var token = authAPI.loginSuccess(loginInfo).getToken();
 
-        var searchResult = userAPI.searchByRealNameSuccess(token, "John");
+        var searchResult = userAPI.searchByNameSuccess(token, "John", "Doe", 1, 10);
         assertEquals(1, searchResult.size());
         var searchUser = searchResult.get(0);
         newUser.setUserId(searchUser.getUserId());
@@ -79,15 +79,9 @@ public class UserSmokeTest {
         var loginInfo = new AuthController.LoginInfo(newUser.getEmail(), "password123");
         var token = authAPI.loginSuccess(loginInfo).getToken();
 
-        var searchResult = userAPI.searchByRealNameSuccess(token, "Alice");
+        var searchResult = userAPI.searchByNameSuccess(token, "Alice", "Smith", 1, 10);
         assertEquals(1, searchResult.size());
-        searchResult = userAPI.searchByRealNameSuccess(token, "Smith");
-        assertEquals(1, searchResult.size());
-        searchResult = userAPI.searchByRealNameSuccess(token, "Alice Smith");
-        assertEquals(1, searchResult.size());
-        newUser.setUserId(searchResult.get(0).getUserId());
-        // check effectiveness of chinese like name
-        searchResult = userAPI.searchByRealNameSuccess(token, "AliceSmith");
+        searchResult = userAPI.searchByNameSuccess(token, "Alice", "Smith", 100, -1);
         assertEquals(1, searchResult.size());
         newUser.setUserId(searchResult.get(0).getUserId());
 

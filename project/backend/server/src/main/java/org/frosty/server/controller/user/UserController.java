@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.services.user.UserService;
@@ -69,10 +70,12 @@ public class UserController {
     @GetMapping("/user/search")
     public UserList searchUser(@RequestParam String firstName, @RequestParam String lastName,
                                @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        FrameworkUtils.notImplemented();
-        throw new RuntimeException();
-//        List<User> users = userService.searchByRealName(realName);
-//        return Response.getSuccess(new UserList(users));
+        if (pageNum < 0 || pageSize < -1) {
+            throw new RuntimeException("Invalid page number or page size.");
+            //return new UserList(List.of());
+        }
+        List<User> users = userService.searchUser(firstName, lastName, pageNum, pageSize);
+        return new UserList(users);
     }
 
     @Data
