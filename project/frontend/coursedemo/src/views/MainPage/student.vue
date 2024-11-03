@@ -34,7 +34,7 @@
               <el-table :data="filteredTableData" style="width: 100%">
                 <el-table-column prop="course_name" label="课程名称">
                   <template v-slot="{ row }">
-                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.CourseName }}</router-link>
+                    <router-link :to="`/course/${row.course_name}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
                 </el-table-column>
                 <el-table-column prop="action" label="操作" width="200">
