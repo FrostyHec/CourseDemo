@@ -19,7 +19,7 @@ public class InternalLiveStreamAuthController {
     // TODO 比较懒直接在controller里写了
     private final SharedBiMapService sharedBiMapService;
 
-    @PostMapping("/push/{name}")
+    @GetMapping("/push/{name}")
     public ResponseEntity<String> pushAuth(@PathVariable String name) {
         boolean isValid = sharedBiMapService.valueExist(name);
         if (!isValid) {
@@ -32,7 +32,7 @@ public class InternalLiveStreamAuthController {
         return ResponseEntity.status(AuthConstant.internalUnauthorizedCode).body("unauthorized");
     }
 
-    @PostMapping("/pull")
+    @GetMapping("/pull")
     public ResponseEntity<String> pullAuth(@GetToken TokenInfo tokenInfo, @RequestHeader("X-Original-URI") String uri) {
         String name = getPushName(uri);
         String cid = sharedBiMapService.getKeyByValue(name);

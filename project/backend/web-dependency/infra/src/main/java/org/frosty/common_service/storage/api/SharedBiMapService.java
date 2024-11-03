@@ -6,7 +6,7 @@ public interface SharedBiMapService {
     String get(String key);
     void delete(String key);
     boolean exist(String key);
-    String getOrDefault(String key, String defaultValue);
+    String getOrInsert(String key, String defaultValue);
     String getKeyByValue(String value);
     boolean valueExist(String name);
 }

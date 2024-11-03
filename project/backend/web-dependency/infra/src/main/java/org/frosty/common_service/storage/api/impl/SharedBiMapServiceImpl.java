@@ -30,7 +30,7 @@ public class SharedBiMapServiceImpl implements SharedBiMapService {
     }
 
     @Override
-    public String getOrDefault(String key, String defaultValue) {
+    public String getOrInsert(String key, String defaultValue) {
         return null;
     }
 

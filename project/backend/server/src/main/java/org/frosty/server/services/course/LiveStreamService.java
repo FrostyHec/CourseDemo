@@ -19,7 +19,7 @@ public class LiveStreamService {
     }
     public String getPushName(Long courseId) {
         String rndName = UUID.randomUUID().toString();
-       return sharedBiMapService.getOrDefault(String.valueOf(courseId),rndName);
+       return sharedBiMapService.getOrInsert(String.valueOf(courseId),rndName);
     }
 
     public String getPullName(Long courseId) {

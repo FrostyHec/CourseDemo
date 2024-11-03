@@ -36,8 +36,13 @@ public class MockSharedBiMapServiceImpl implements SharedBiMapService {
     }
 
     @Override
-    public String getOrDefault(String key, String defaultValue) {
-        return biMap.getOrDefault(baseKeyName+key, defaultValue);
+    public String getOrInsert(String key, String insertValue) {
+        key = baseKeyName+key;
+        if(biMap.containsKey(key)){
+            return biMap.get(key);
+        }
+        biMap.put(key,insertValue);
+        return insertValue;
     }
 
     @Override
