@@ -86,6 +86,7 @@ const handleChange: UploadProps['onChange'] = (file) => {
   console.log(file)
   file_get = file.raw as File
   form_store.resource_form.suffix = file_get.type
+  form_store.resource_form.resource_name = file_get.name
 }
 
 const handleRemove: UploadProps['onRemove'] = (file) => {

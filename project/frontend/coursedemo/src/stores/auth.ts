@@ -32,6 +32,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(loginParam: LoginParam) {
     const result = await loginCall(loginParam)
+    if(result.code!==200)
+      return result
     token.value = result.data.token
     Object.assign(user, result.data.user)
     setLoginToken(token.value)

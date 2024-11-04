@@ -15,6 +15,7 @@
         </h1>
         {{ course_store.current_data?.description }}
       </div>
+      <base-resource/>
       <base-comment/>
     </div>
     <div style="display: flex; justify-content: center; align-items: center;">

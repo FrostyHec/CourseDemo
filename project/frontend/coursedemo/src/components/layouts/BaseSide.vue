@@ -41,6 +41,7 @@
                   </el-button> -->
                   <el-button v-if="!('resource_name' in node.data.data)" type='primary' style="margin: 0;" @click="open_form(node, 'Add')">Add new</el-button>
                   <el-button v-if="node.parent.parent!==null" type="danger" style="margin: 0;" @click="handleDelete(node)">Delete</el-button>
+                  <el-button v-if="'course_name' in node.data.data" style="margin: 0;" type='primary' @click="student_table_ref.open_table()">Invite</el-button>
                 </div>
               </template>
               <template #reference>
@@ -55,6 +56,7 @@
     <CourseForm/>
     <ChapterForm/>
     <ResourceForm/>
+    <StudentTable ref="student_table_ref" :course_id="course_store.current_course_id()"/>
   </div>
 </template>
 
@@ -66,7 +68,7 @@ import { ElMessage } from 'element-plus'
 
 const form_store = useFormStore()
 const course_store = useCourseStore()
-//course_store.init()
+const student_table_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
   let data = (node.data as UnifyTree).data

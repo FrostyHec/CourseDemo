@@ -60,6 +60,7 @@ const registerRule = ref({
   rePassword: [{ validator: checkRePassword, trigger: 'blur' }]
 })
 
+const auth_store = useAuthStore()
 const form_store = useFormStore()
 const router = useRouter() 
 
@@ -118,6 +119,7 @@ const clearRegisterData = () => {
 </script>
 
 <template>
+  <CourseForm></CourseForm>
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
