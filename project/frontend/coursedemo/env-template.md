@@ -4,4 +4,5 @@
 # "e2e" is used for end-to-end testing, while using defined mock data
 VITE_MOCK_STATUS=dev
 VITE_BACKEND_URL=http://localhost:3000
+VITE_STORAGE_BACKEND_URL=http://localhost:3001
 

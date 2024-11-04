@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.user.UserService;
-import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,13 +67,13 @@ public class UserController {
     }
 
     @GetMapping("/user/search")
-    public UserList searchUser(@RequestParam String firstName, @RequestParam String lastName,
-                               @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        if (pageNum < 0 || pageSize < -1) {
+    public UserList searchUser(@RequestParam String first_name, @RequestParam String last_name,
+                               @RequestParam Integer page_num, @RequestParam Integer page_size) {
+        if (page_num < 0 || page_size < -1) {
             throw new RuntimeException("Invalid page number or page size.");
             //return new UserList(List.of());
         }
-        List<User> users = userService.searchUser(firstName, lastName, pageNum, pageSize);
+        List<UserPublicInfo> users = userService.searchUser(first_name, last_name, page_num, page_size);
         return new UserList(users);
     }
 
@@ -82,6 +81,6 @@ public class UserController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserList {
-        private List<User> content;
+        private List<UserPublicInfo> content;
     }
 }

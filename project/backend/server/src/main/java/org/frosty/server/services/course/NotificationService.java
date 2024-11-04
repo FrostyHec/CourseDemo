@@ -2,6 +2,7 @@ package org.frosty.server.services.course;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
+import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.server.entity.bo.Notification;
 import org.frosty.server.entity.bo.NotificationReceiver;
 import org.frosty.server.entity.po.NotificationWithReceiver;
@@ -16,6 +17,7 @@ import java.util.List;
 public class NotificationService {
     private final NotificationMapper notificationMapper;
     private final NotificationReceiverMapper notificationReceiverMapper;
+    private final MessagePushService messagePushService;
 
     // 创建公告
     public void createNotification(Long courseId, NotificationWithReceiver notificationWithReceiver) {

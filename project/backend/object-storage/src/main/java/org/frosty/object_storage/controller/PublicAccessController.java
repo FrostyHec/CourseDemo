@@ -34,7 +34,7 @@ public class PublicAccessController {
         try (InputStream inputStream = storageService.getFile(objName)) {
             // 设置响应的内容类型和头信息
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + objName + "\"");
+            response.setHeader("Content-Disposition", "inline; filename=\"" + objName + "\"");
             OutputStream outputStream = response.getOutputStream();
             byte[] buffer = new byte[BUF_SIZE];
             int bytesRead;
