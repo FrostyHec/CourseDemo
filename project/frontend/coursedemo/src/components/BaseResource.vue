@@ -1,8 +1,13 @@
 <template>
-  <div v-if="is_resource">
+  <div v-if="is_resource" style="margin-top: 20px;">
     <base-markdown v-if="resource_type==='md'" :markdown-content="md_file"/>
-    <embed v-if="resource_type==='pdf'" :src="link" type="application/pdf" style="margin-top: 30px; height: auto; width: 100%; height: 1000px;"/>
+    <iframe v-if="resource_type==='pdf'" :src="link" style="width:100%; height:500px;"></iframe>
+    <!-- <embed v-if="resource_type==='pdf'" :src="link" type="application/pdf" style="margin-top: 30px; height: auto; width: 100%; height: 1000px;"/> -->
     <video v-if="resource_type==='video'" controls><source :src=link :type="current_resource?.suffix"></video>
+    <div v-if="resource_type==='attachment'">
+      <p>{{ 'File: '+file_name }}</p>
+      <a :href="link" :download="file_name" class="ep-button ep-button--primary" >Download</a>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -17,14 +22,17 @@ import { useAuthStore } from '@/stores/auth';
 import { getResourceAccessLink } from '@/api/resource_access/ResourceAccessAPI';
 import { AxiosAPI } from '@/utils/APIUtils';
 import axios from 'axios'
+import { ResourceType } from '@/api/course/CourseResourceAPI';
 
 const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const is_resource = ref(false)
-const resource_type = ref<'md'|'video'|'pdf'|undefined>(undefined)
+const resource_type = ref<'md'|'video'|'pdf'|'attachment'|undefined>(undefined)
 const current_resource = ref<undefined|ResourceEntityPlus>(undefined)
 const md_file = ref('')
 const link = ref('')
+
+const file_name = ref<string>('')
 
 async function load_resource() {
   // //!!!!!!!!!!!!!!!!!!!!
@@ -35,16 +43,26 @@ async function load_resource() {
     resource_type.value = undefined
     return
   }
-  if(current_resource.value.resource_name.split('.').pop()==='md')
-    resource_type.value = 'md'
-  if(current_resource.value.suffix.split('/')[0]==='video')
-    resource_type.value = 'video'
-  if(current_resource.value.suffix.split('/').pop()==='pdf')
-    resource_type.value = 'pdf'
-  link.value = getResourceAccessLink(current_resource.value.file_name, auth_store.user.user_id, current_resource.value.access_key)
+  const type_and_name = current_resource.value.suffix.split('\\')
+  const type = type_and_name[0]
+  const name = type_and_name[1]
+  if(current_resource.value.resource_type===ResourceType.attachment) {
+    resource_type.value = 'attachment'
+    console.log('1213')
+    file_name.value = name
+  }
+  else {
+    if(name.split('.').pop()==='md')
+      resource_type.value = 'md'
+    if(type.split('/')[0]==='video')
+      resource_type.value = 'video'
+    if(type.split('/').pop()==='pdf')
+      resource_type.value = 'pdf'
+  }
+  link.value = getResourceAccessLink(current_resource.value.file_name, 1, current_resource.value.access_key)
   if(resource_type.value!=='md')
     return
-  md_file.value = await axios({method: 'get', url: link.value});
+  md_file.value = (await axios({method: 'get', url: link.value})).data;
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {
@@ -58,4 +76,6 @@ const watch_current_data = watch(() => course_store.current_data?.data,
   },
   { immediate: true }
 )
+
+
 </script>

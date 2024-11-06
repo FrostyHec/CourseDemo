@@ -1,12 +1,23 @@
 import { service_backend_base } from '@/utils/Constant';
 import { AxiosAPI } from '@/utils/APIUtils';
+import type { UserEntity, UserPublicInfoEntity } from '../user/UserAPI';
 
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
 export interface ResourceCommentEntity {
-  comment_id?: number
+  comment_id: number
   resource_id: number
   user_id: number
+  comment_text: string
+  created_at: Date
+  updated_at: Date
+  comment_reply: number
+}
+
+export interface ResourceCommentWithUserEntity {
+  comment_id: number
+  resource_id: number
+  user: UserPublicInfoEntity
   comment_text: string
   created_at: Date
   updated_at: Date
@@ -46,5 +57,5 @@ export async function getCommentCall(commentId: number) {
 // Get all comments under a resource
 export async function getResourceCommentsCall(resourceId: number) {
   const url = `${service_backend_base}/resource/${resourceId}/comments`;
-  return AxiosAPI.authGet<{ content: ResourceCommentEntity[] }>(url);
+  return AxiosAPI.authGet<{ content: ResourceCommentWithUserEntity[] }>(url);
 }

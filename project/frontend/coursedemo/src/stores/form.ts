@@ -42,7 +42,7 @@ export const useFormStore = defineStore('form', () => {
     suffix: '',
     file_name: '',
     resource_order: 0,
-    resource_version_name: '',
+    resource_version_name: 'v0.0',
     resource_version_order: 0,
     resource_type: undefined,
     student_can_download: true,
@@ -57,6 +57,8 @@ export const useFormStore = defineStore('form', () => {
 
   const node = ref<Node|undefined>(undefined)
   const mode = ref<'Add'|'Edit'>('Add')
+
+  const resource_mode = ref<'init'|'new_version'>('init')
 
   let data_save: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined = undefined 
   function open_form(data: CourseEntity|ChapterEntity|ResourceEntityPlus, set_mode?: 'Add'|'Edit') {
@@ -116,6 +118,6 @@ export const useFormStore = defineStore('form', () => {
     course_null, chapter_null, resource_null,
     modify_course, modify_chapter, modify_resource,
     open_form, reset_form,
-    node, mode, 
+    node, mode, resource_mode,
   }
 })

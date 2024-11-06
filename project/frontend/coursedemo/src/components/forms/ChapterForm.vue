@@ -3,7 +3,7 @@
     v-model="form_store.chapter_visibility" 
     :title="form_store.mode+' the chapter'" 
     width="600"
-    :before-close="(done) => { formRef?.resetFields(); done(); }">
+    :close="(done: Function) => { formRef?.resetFields(); done(); }">
     
     <el-form
       ref="formRef"

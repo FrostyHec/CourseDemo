@@ -2,7 +2,7 @@
 import { service_backend_base } from '@/utils/Constant';
 import { setMockFunc } from '@/utils/MockUtils';
 import { APIResult, RequestType } from '@/utils/APIUtils';
-import type { ResourceCommentEntity } from '@/api/course/ResourceCommentAPI';
+import type { ResourceCommentEntity, ResourceCommentWithUserEntity } from '@/api/course/ResourceCommentAPI';
 
 // Mock for adding a comment to a resource
 export function mockAddCommentToResourceCall(resourceId: number, data: APIResult<null>) {
@@ -31,5 +31,11 @@ export function mockDeleteCommentCall(commentId: number, data: APIResult<null>) 
 // Mock for getting a comment
 export function mockGetCommentCall(commentId: number, data: APIResult<ResourceCommentEntity>) {
   const url = `${service_backend_base}/resource/comment/${commentId}`;
+  setMockFunc(url, RequestType.GET, null, () => data);
+}
+
+// Get all comments under a resource
+export async function mockGetResourceCommentsCall(resourceId: number, data: APIResult<{ content: ResourceCommentWithUserEntity[] }>) {
+  const url = `${service_backend_base}/resource/${resourceId}/comments`;
   setMockFunc(url, RequestType.GET, null, () => data);
 }

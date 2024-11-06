@@ -35,12 +35,12 @@
           src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
         <div style="overflow: hidden;">
           <div style="font-weight: bold; margin-top: 5px; margin-bottom: 10px;">
-            {{ 'User-'+c.user_id }}
+            {{ c.user.first_name+' '+c.user.last_name }}
           </div>
           <div v-if="comment_map.has(c.comment_reply)" style="width: 100%; margin-bottom: 10px; font-size: small; opacity: 0.4; height: 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
             {{ (() => {
               const reply = comment_map.get(c.comment_reply)
-              return '▌Reply User-' + reply?.user_id + ': ' + reply?.comment_text
+              return '▌Reply ' + reply?.user.first_name+' '+reply?.user.last_name + ': ' + reply?.comment_text
             })() }}
           </div>
           <span style="line-height: 1.5; white-space-collapse: break-spaces;">
@@ -66,7 +66,7 @@
               </el-button>
             </el-popover>
             <div style="color: var(--ep-text-color-placeholder);">  
-              {{ c.updated_at.toLocaleString() }}
+              {{ (new Date(c.updated_at)).toLocaleString() }}
             </div>
           </div>
         </div>
@@ -82,26 +82,27 @@ import { useCourseStore } from '@/stores/course';
 import { type CourseEntity } from '@/api/course/CourseAPI'
 import { type ChapterEntity } from '@/api/course/ChapterAPI'
 import type { ResourceEntityPlus } from '@/stores/course';
-import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, type ResourceCommentEntity } from '@/api/course/ResourceCommentAPI';
+import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, type ResourceCommentEntity, type ResourceCommentWithUserEntity } from '@/api/course/ResourceCommentAPI';
 import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
+import { UserType } from '@/api/user/UserAPI';
 
 const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const is_resource = ref(false)
 let current_resource_id = -1
-const comments = ref<ResourceCommentEntity[]>([{
-  comment_id: 0, resource_id: 0, user_id: 1,
+const comments = ref<ResourceCommentWithUserEntity[]>([{
+  comment_id: 0, resource_id: 0, user: {user_id: 0, first_name: 'alice', last_name: 'bob', role: UserType.STUDENT, email: ''},
   comment_text: 'happy happy happy',
   created_at: new Date(), updated_at: new Date(),
   comment_reply: -1,
 }, {
-  comment_id: 1, resource_id: 0, user_id: 42,
+  comment_id: 1, resource_id: 0, user: {user_id: 0, first_name: 'bob', last_name: 'alice', role: UserType.STUDENT, email: ''},
   comment_text: 'tic tac toe',
   created_at: new Date(), updated_at: new Date(),
   comment_reply: -1,
 }, {
-  comment_id: 2, resource_id: 0, user_id: 23,
+  comment_id: 2, resource_id: 0, user: {user_id: 0, first_name: 'happy', last_name: 'happy', role: UserType.STUDENT, email: ''},
   comment_text: `踊れ💃踊れ💃嘘に踊れ💃
 今までを捨↑て↑て↑
 腕を振れよ🤛🤜
@@ -114,7 +115,7 @@ Liar🤛Liar🤜Liar🤛Liar🤜Dancer🤛
   created_at: new Date(), updated_at: new Date(),
   comment_reply: 2,
 }])
-let comment_map = new Map<number, ResourceCommentEntity>()
+let comment_map = new Map<number, ResourceCommentWithUserEntity>()
 comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 
 async function load_comments() {
@@ -158,7 +159,7 @@ async function send_comment(reply_id?: number) {
     if(new_comment.value==='')
       return
     msg = await addCommentToResourceCall(current_resource_id, {
-      comment_id: undefined, resource_id: current_resource_id, user_id: Number(auth_store.user.user_id),
+      comment_id: 0, resource_id: current_resource_id, user_id: auth_store.user.user_id,
       comment_text: new_comment.value, 
       created_at: new Date(), updated_at: new Date(),
       comment_reply: -1
@@ -168,7 +169,7 @@ async function send_comment(reply_id?: number) {
     if(reply_new_comment.value==='')
       return
     msg = await addReplyToCommentCall(reply_id, {
-      comment_id: 0, resource_id: current_resource_id, user_id: Number(auth_store.user.user_id),
+      comment_id: 0, resource_id: current_resource_id, user_id: auth_store.user.user_id,
       comment_text: new_comment.value, 
       created_at: new Date(), updated_at: new Date(),
       comment_reply: reply_id,

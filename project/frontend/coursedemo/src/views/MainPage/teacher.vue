@@ -18,7 +18,7 @@
             <el-table :data="tableData" style="width: 100%">
               <el-table-column prop="course_name" label="课程名称">
                 <template v-slot="{ row }">
-                    <router-link :to="`/course/${row.course_name}`" class="course-link">{{ row.course_name }}</router-link>
+                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="200">
@@ -39,7 +39,6 @@
       width="40%"
     >
       <el-form
-        ref="courseForm"
         :model-value="courseForm"
         :rules="rules"
         label-width="auto"
@@ -53,7 +52,7 @@
           <el-input v-model="courseForm.description"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="AddCourse('courseForm')">创建</el-button>
+          <el-button type="primary" @click="AddCourse()">创建</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -77,15 +76,16 @@ const tableData = ref<CourseEntity[]>([
 ]);
 
 // 挂载时获取课程列表
-onMounted(async () => {
+async function load() {
   try {
     const response = await getAllTeachingCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.content; 
+    const courses = response.data.content;
     tableData.value = [...tableData.value, ...courses];
   } catch (error) {
     console.error('获取课程列表失败:', error);
   }
-});
+}
+onMounted(load);
 
 // 表单数据
 const courseForm = ref<CourseEntity>({
@@ -121,8 +121,13 @@ const createNewCourse = () => {
 };
 
 // 添加课程
-const AddCourse = (p0: string) => {
-  createCourseCall(courseForm.value)
+const AddCourse = async () => {
+  const msg = await createCourseCall(courseForm.value)
+  if(msg.code!==200) {
+    console.error('add course error');
+    return
+  }
+  await load()
   dialogVisible.value = false;
 };
 

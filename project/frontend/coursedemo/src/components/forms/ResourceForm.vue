@@ -1,9 +1,9 @@
 <template>
   <el-dialog 
     v-model="form_store.resource_visibility" 
-    :title="form_store.mode+' the resource'" 
+    :title="form_store.mode+(form_store.resource_mode=='init' ? '' : ' a new version of ')+' the resource'" 
     width="600"
-    :before-close="(done) => { formRef?.resetFields(); done(); }">
+    :close="(done: Function) => { formRef?.resetFields(); done(); }">
     
     <el-form
       ref="formRef"
@@ -11,7 +11,7 @@
       :rules="resource_rules"
       label-width="auto"
     >
-      <el-form-item label="Name" prop="resource_name">
+      <el-form-item v-if="form_store.resource_mode=='init'" label="Name" prop="resource_name">
         <el-input v-model="form_store.resource_form.resource_name" placeholder="Enter the name"/>
       </el-form-item>
 
@@ -21,6 +21,10 @@
 
       <el-form-item label="Downloadable" prop="student_can_download">
         <el-switch v-model="form_store.resource_form.student_can_download" />
+      </el-form-item>
+
+      <el-form-item label="Version name" prop="resource_version_name">
+        <el-input v-model="form_store.resource_form.resource_version_name" placeholder="Enter a version name"/>
       </el-form-item>
 
       <el-form-item v-if="form_store.mode=='Add'" label="File" prop="file_name">
@@ -85,8 +89,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 const handleChange: UploadProps['onChange'] = (file) => {
   console.log(file)
   file_get = file.raw as File
-  form_store.resource_form.suffix = file_get.type
-  form_store.resource_form.resource_name = file_get.name
+  form_store.resource_form.suffix = file_get.type+'\\'+file_get.name
 }
 
 const handleRemove: UploadProps['onRemove'] = (file) => {
@@ -114,6 +117,9 @@ const resource_rules = reactive<FormRules<ResourceEntity>>({
       }, 
       trigger: 'blur' 
     }
+  ],
+  resource_version_name: [
+    { required: true, message: 'Please enter a version name', trigger: 'blur', },
   ]
 })
 

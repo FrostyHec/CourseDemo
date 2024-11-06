@@ -1,11 +1,13 @@
 <template>
   <div>
+    <StudentTable ref="student_table_ref"/>
     <el-scrollbar style="border-right: solid 2px var(--ep-border-color); margin-right: -1px;">
       <el-tree
         :draggable="true"
         :allow-drag="allowDrag"
         :allow-drop="allowDrop"
-        :default-expand-all="true"
+        node-key="id"
+        :default-expanded-keys="course_store.default_open"
         :expand-on-click-node="false"
         :data="course_store.unify_course_data"
         :props="{
@@ -39,7 +41,8 @@
                   <!-- <el-button type="" style="margin: 0;" @click="node.data.hide = !node.data.hide">
                     {{node.data.hide ? 'Show' : 'Hide'}}
                   </el-button> -->
-                  <el-button v-if="!('resource_name' in node.data.data)" type='primary' style="margin: 0;" @click="open_form(node, 'Add')">Add new</el-button>
+                  <el-button v-if="node.level!=4" type='primary' style="margin: 0;" @click="open_form(node, 'Add')">{{ node.level==3 ? 'New version' : 'Add new' }}</el-button>
+                  <el-button v-if="node.level==4" type='primary' style="margin: 0;" @click="to_top(node)">To top</el-button>
                   <el-button v-if="node.parent.parent!==null" type="danger" style="margin: 0;" @click="handleDelete(node)">Delete</el-button>
                   <el-button v-if="'course_name' in node.data.data" style="margin: 0;" type='primary' @click="student_table_ref.open_table()">Invite</el-button>
                 </div>
@@ -56,13 +59,12 @@
     <CourseForm/>
     <ChapterForm/>
     <ResourceForm/>
-    <StudentTable ref="student_table_ref" :course_id="course_store.current_course_id()"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router"
-import { useCourseStore } from "@/stores/course";
+import { useCourseStore, type ResourceEntityPlus } from "@/stores/course";
 import { type UnifyTree } from "@/stores/course";
 import { ElMessage } from 'element-plus'
 
@@ -71,20 +73,51 @@ const course_store = useCourseStore()
 const student_table_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
-  let data = (node.data as UnifyTree).data
+  const cnt = (node.data as UnifyTree).children.length
+  const data = (node.data as UnifyTree).data
   if(mode=='Edit')
     form_store.open_form(data, mode)
   else {
     if('course_name' in data) {
-      let temp = {...form_store.chapter_null}
+      let temp: ChapterEntity = {...form_store.chapter_null}
       temp.course_id = data.course_id
+      temp.chapter_order = cnt
       form_store.open_form(temp, mode)
     }
     if('chapter_title' in data) {
-      let temp = {...form_store.resource_null}
+      let temp: ResourceEntityPlus = {...form_store.resource_null}
       temp.chapter_id = data.chapter_id
+      temp.resource_order = cnt
+      form_store.resource_mode = 'init'
       form_store.open_form(temp, mode)
     }
+    if('resource_name' in data) {
+      let temp: ResourceEntityPlus = {...data}
+      temp.resource_version_order += 1
+      form_store.resource_mode = 'new_version'
+      form_store.open_form(temp, mode)
+    }
+  }
+}
+
+async function to_top(node: Node) {
+  const data = (node.data as UnifyTree).data
+  const parent = (node.parent.data as UnifyTree).data
+  if(!('resource_name' in data) || !('resource_name' in parent))
+    return
+  form_store.mode = 'Edit'
+  form_store.resource_form = {...data}
+  form_store.resource_form.chapter_id = parent.chapter_id
+  form_store.resource_form.resource_name = parent.resource_name
+  form_store.resource_form.resource_order = parent.resource_order
+  form_store.resource_form.resource_version_order = parent.resource_version_order
+  if(await form_store.modify_resource())
+    handleClick(null, node.parent)
+  else {
+    ElMessage({
+      message: 'To top network error',
+      type: 'error',
+    })
   }
 }
 
@@ -131,8 +164,8 @@ import { reactive, ref } from "vue";
 import { useFormStore } from "@/stores/form";
 import ChapterForm from "../forms/ChapterForm.vue";
 import CoureseForm from "../forms/CoureseForm.vue";
-import { deleteChapterCall } from "@/api/course/ChapterAPI";
-import { deleteResourceCall } from "@/api/course/CourseResourceAPI";
+import { deleteChapterCall, type ChapterEntity } from "@/api/course/ChapterAPI";
+import { deleteResourceCall, type ResourceEntity } from "@/api/course/CourseResourceAPI";
 
 const allowDrop = (draggingNode: Node, dropNode: Node, type: AllowDropType) => {
   return draggingNode.level==dropNode.level && (type=='prev' || type=='next')
