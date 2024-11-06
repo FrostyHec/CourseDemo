@@ -27,10 +27,6 @@ export enum CourseStatus {
   archived = 'archived'
 }
 
-export interface CourseStatusUpdateParam {
-  status: CourseStatus
-}
-
 export async function createCourseCall(param: CourseEntity) {
   const url = service_backend_base + '/course'
   return AxiosAPI.authPost<null>(url, param)

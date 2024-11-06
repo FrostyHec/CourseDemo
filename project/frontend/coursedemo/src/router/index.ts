@@ -14,10 +14,6 @@ const router = createRouter({
       component: () => import('@/views/Course/BaseCourse.vue'),
     },
     {
-      path: '/course/hotCourse',
-      component: () => import('@/views/Course/hotCourse.vue'),
-    },
-    {
       path: '/manager',
       redirect: '/manager/NotPass'
     },
@@ -44,6 +40,18 @@ const router = createRouter({
     {
       path: '/courseEvaluation',
       component: () => import('@/views/Course/CourseEvaluate.vue'),
+    },
+    {
+      path: '/MainPage/allCourse',
+      component: () => import('@/views/MainPage/allCourse.vue'),
+    },
+    {
+      path: '/MainPage',
+      component: () => import('@/views/MainPage/MainPage.vue'),
+    },
+    {
+      path: '/MainPage/teacher/manage',
+      component: () => import('@/views/MainPage/teacherManage.vue'),
     },
   ],
 })

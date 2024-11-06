@@ -4,6 +4,7 @@
       <el-header style="padding: 0; height: auto;">
         <base-header />
       </el-header>
+      <el-button class="return" @click="navigateToHome">返回主页</el-button>
       <el-main>
         <el-container>
           <el-header class="app-header">
@@ -15,21 +16,19 @@
               </el-row>
             </div>
           </el-header>
-    
-          <div class="button-row">
-            <el-col :span="6" class="search-col">
-              <el-input
-                v-model="searchKeyword"
-                placeholder="搜索课程名称或老师"
-                clearable
-                style="width: 200px;"
-              />
-            </el-col>
-          </div>
-    
+          <el-col :span="6" class="search-col">
+            <el-input
+              v-model="searchKeyword"
+              placeholder="搜索课程名称"
+              clearable
+              style="width: 200px;"
+            />
+            <el-button type="primary" icon="el-icon-search" class="search-button" @click="handleSearch">search</el-button>
+          </el-col>
+          
           <el-container>
             <el-main>
-              <el-table :data="filteredTableData" style="width: 100%">
+              <el-table :data="tableData" style="width: 100%">
                 <el-table-column prop="course_name" label="课程名称">
                   <template v-slot="{ row }">
                     <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
@@ -44,14 +43,15 @@
   </el-config-provider>
 </template>
 
-<script lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import BaseHeader from '@/layouts/BaseHeader.vue';
+import { useRouter } from 'vue-router'; // 导入 useRouter
 import { getAllJoinedCourseList } from '@/api/course/CourseMemberAPI';
 import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
-
 // 表格数据
 const tableData = ref<CourseEntity[]>([
   {
@@ -62,29 +62,32 @@ const tableData = ref<CourseEntity[]>([
 ]);
 
 onMounted(async () => {
-  try {
-    const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.data.content; 
-    if (courses) {
-      tableData.value = [...tableData.value, ...courses];
-    }
-  } catch (error) {
-    console.error('获取课程列表失败:', error);
-  }
+    fetchCourses();
 });
 
+const router = useRouter(); // 使用 useRouter 钩子
 const searchKeyword = ref('');
 
-const filteredTableData = computed(() => {
-  let result = tableData.value;
-  if (searchKeyword.value.trim() !== '') {
-    result = result.filter(course => 
-      course.course_name.toLowerCase().includes(searchKeyword.value.toLowerCase())
-    );
-  }
-  return result;
-});
+const navigateToHome = () => {
+  router.push('/MainPage'); // 使用 router.push 进行路由跳转
+};
+
+const handleSearch = () => {
+  tableData.value = tableData.value.filter(repo =>
+    repo.course_name.toLowerCase().includes(searchKeyword.value.toLowerCase())
+  );
+};
+
+const fetchCourses = async () => {
+try {
+    const response = await getAllJoinedCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
+    tableData.value = response.data.content;
+} catch (error) {
+    console.error('获取课程列表失败:', error);
+}
+};
 </script>
+
 
 <style scoped>
 .el-header {
@@ -109,8 +112,31 @@ const filteredTableData = computed(() => {
 .search-col {
   display: flex;
   justify-content: flex-end;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: auto;
 }
 
+.search-input {
+  margin-right: 10px; /* 搜索框和搜索按钮之间的间隔 */
+  width: 200px;
+}
+
+.search-button {
+  width: 90px; /* 调整按钮宽度 */
+  height: 36px; /* 调整按钮高度 */
+  font-size: 14px; /* 调整字体大小 */
+  padding: 15; /* 调整内部填充，如果需要可以设置为其他值 */
+  margin-left: 10px;
+  margin-right: auto;
+}
+.return {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: auto;
+  margin-top: 10px;
+}
 .button-row {
   margin-top: 10px;
   text-align: right;
