@@ -65,11 +65,11 @@ onMounted(async () => {
     fetchCourses();
 });
 
-const router = useRouter(); // 使用 useRouter 钩子
+const router = useRouter(); 
 const searchKeyword = ref('');
 
 const navigateToHome = () => {
-  router.push('/MainPage'); // 使用 router.push 进行路由跳转
+  router.push('/MainPage'); 
 };
 
 const handleSearch = () => {

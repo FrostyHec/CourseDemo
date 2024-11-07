@@ -21,9 +21,10 @@
               <el-table :data="tableData" style="width: 100%">
                 <el-table-column prop="course_name" label="课程名称"></el-table-column>
                 <el-table-column prop="status" label="状态" width="200"></el-table-column>
-                <el-table-column prop="action" label="操作" width="200">
+                <el-table-column prop="action" label="操作" width="400">
                   <template v-slot="{ row }">
-                    <el-button type="danger" @click="confirmDelete(row)">删除课程</el-button>
+                    <el-button type="primary" @click="changeCourse(row)">编辑</el-button>
+                    <el-button type="danger" @click="confirmDelete(row)">删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -35,7 +36,7 @@
               </el-pagination>
             </el-main>
           </el-container>
-          <el-button style="margin-left: 90%; margin-top: 10px" type="primary" @click="dialogVisible = true">创建课程</el-button>
+          <el-button style="margin-left: 90%; margin-top: 10px" type="primary" @click="createCourse">创建课程</el-button>
         </el-main>
   
         <!-- 删除确认对话框 -->
@@ -62,7 +63,7 @@
             label-position="right"
             size="default"
           >
-            <el-form-item label="课程名称" prop="course_name">
+            <el-form-item label="课程名称" prop="course_name" @blur="checkNameAvailability">
               <el-input v-model="courseForm.course_name"/>
             </el-form-item>
             <el-form-item label="描述" prop="description">
@@ -76,6 +77,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item>
+              <el-button type="primary" @click="saveCourse">保存</el-button>
               <el-button type="primary" @click="AddCourse">创建</el-button>
             </el-form-item>
           </el-form>
@@ -91,6 +93,7 @@ import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
 import { CourseStatus, createCourseCall, deleteCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import router from '@/router';
+import { ElMessage } from 'element-plus';
 
 const authStore = useAuthStore();
 const activeIndex = ref('2');
@@ -101,20 +104,21 @@ const tableData = ref<CourseEntity[]>([
     publication: Publication.open
 }
 ]);
+const courseId = ref(1);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const dialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const currentCourseToDelete = ref<CourseEntity | null>(null);
 const courseForm = ref<CourseEntity>({
-course_id: 0,
-course_name: '',
-description: '',
-teacher_id: authStore.user.user_id,
-status: CourseStatus.creating,
-publication: Publication.open,
-created_at: new Date(),
-updated_at: new Date(),
+  course_id: 0,
+  course_name: '',
+  description: '',
+  teacher_id: authStore.user.user_id,
+  status: CourseStatus.creating,
+  publication: Publication.open,
+  created_at: new Date(),
+  updated_at: new Date(),
 });
 
 onMounted(async () => {
@@ -124,13 +128,14 @@ onMounted(async () => {
 const navigateTo = (path: string) => {
     router.push(path); // 使用 router.push 进行路由跳转
 };
+
 const createNewCourse = () => {
 courseForm.value = {
     course_id: 0,
     course_name: '',
     description: '',
     teacher_id: authStore.user.user_id,
-    status: CourseStatus.submitted,
+    status: CourseStatus.creating,
     publication: Publication.open,
     created_at: new Date(),
     updated_at: new Date(),
@@ -138,32 +143,87 @@ courseForm.value = {
 dialogVisible.value = true;
 };
 
+const createCourse = () => {
+  courseForm.value = {
+        course_id: 0,
+        course_name: '',
+        description: '',
+        teacher_id: authStore.user.user_id,
+        status: CourseStatus.creating,
+        publication: Publication.open,
+        created_at: new Date(),
+        updated_at: new Date(),
+  };
+  dialogVisible.value = true;
+};
+
+const changeCourse = (row: CourseEntity) => {
+  if(row.status==CourseStatus.creating||row.status==CourseStatus.rejected){
+    dialogVisible.value = true;
+    courseForm.value = row
+  }
+  else{
+    ElMessage.error('此状态的课程无法编辑');
+  }
+};
+
+const isCourseNameExist = (name: string) => {
+  return tableData.value.some(course => course.course_name.toLowerCase() === name.toLowerCase());
+};
+
+const saveCourse = () => {
+    dialogVisible.value = false;
+    const index = tableData.value.findIndex(course => course.course_id === courseForm.value.course_id);
+    if (index !== -1) {
+      tableData.value.splice(index, 1);
+    }
+    tableData.value.push(courseForm.value);
+    fetchCourses(); 
+};
+
 const AddCourse = () => {
+    if (isCourseNameExist(courseForm.value.course_name)) {
+      ElMessage.error('课程名称已存在');
+      return;
+    }
+    courseForm.value.status = CourseStatus.submitted;
     createCourseCall(courseForm.value);
     dialogVisible.value = false;
     tableData.value.push(courseForm.value);
-    fetchCourses(); // Refresh the course list after adding a new course
+    fetchCourses(); 
 };
 
 const confirmDelete = (row: CourseEntity) => {
     currentCourseToDelete.value = row;
     deleteDialogVisible.value = true;
 };
-
-const handleDelete = async () => {
-    if (currentCourseToDelete.value) {
-        const index = tableData.value.indexOf(currentCourseToDelete.value);
-        const result = deleteCourseCall(index);
-        if((await result).code == 200){
-            tableData.value.splice(index, 1);
+const handleDelete = () => {
+  if (currentCourseToDelete.value) {
+    if (currentCourseToDelete.value.status === CourseStatus.creating) {
+      const index = tableData.value.indexOf(currentCourseToDelete.value);
+      if (index !== -1) {
+        tableData.value.splice(index, 1);
+      }
+      deleteDialogVisible.value = false;
+    } else {
+      const index = tableData.value.indexOf(currentCourseToDelete.value);
+      deleteCourseCall(currentCourseToDelete.value.course_id).then(async (response: { code: number; }) => {
+        if (response.code == 200) {
+          tableData.value.splice(index, 1);
+        } else {
+          ElMessage.error('删除课程失败');
         }
+      }).catch((error: any) => {
+        ElMessage.error('删除课程失败');
+        console.error('删除课程失败:', error);
+      });
     }
-    deleteDialogVisible.value = false;
+  }
 };
 
 const handlePageChange = (newPage: number) => {
-currentPage.value = newPage;
-fetchCourses();
+  currentPage.value = newPage;
+  fetchCourses();
 };
 
 const fetchCourses = async () => {

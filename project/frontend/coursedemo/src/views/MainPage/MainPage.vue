@@ -42,10 +42,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
-import { useRouter } from 'vue-router'; // 导入 useRouter
+import { useRouter } from 'vue-router';
 import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 
-const router = useRouter(); // 使用 useRouter 钩子
+const router = useRouter();
 const activeIndex = ref('1');
 const repositories = ref<CourseEntity[]>([
   {
@@ -57,14 +57,11 @@ const repositories = ref<CourseEntity[]>([
 const searchQuery = ref('');
 
 const handleSearch = () => {
-  // 过滤逻辑
-  repositories.value = repositories.value.filter(repo =>
-    repo.course_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  router.push('MainPage/searchCourse')
 };
 
 const navigateTo = (path: string) => {
-  router.push(path); // 使用 router.push 进行路由跳转
+  router.push(path); 
 };
 
 </script>

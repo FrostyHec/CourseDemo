@@ -53,6 +53,10 @@ const router = createRouter({
       path: '/MainPage/teacher/manage',
       component: () => import('@/views/MainPage/teacherManage.vue'),
     },
+    {
+      path: '/MainPage/searchCourse',
+      component: () => import('@/views/MainPage/searchCourse.vue'),
+    },
   ],
 })
 

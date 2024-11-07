@@ -21,9 +21,9 @@
             <el-table :data="courses" style="width: 100%">
               <el-table-column prop="course_name" label="课程名称"></el-table-column>
               <el-table-column prop="teacher_id" label="授课老师"></el-table-column>
-              <el-table-column prop="status" label="状态" width="180"></el-table-column>
               <el-table-column prop="action" label="操作" width="500">       
                 <template #default="scope">
+                  <el-button @click="checkCourse(scope.row)">查看申请</el-button>
                   <el-button @click="approveCourse(scope.row)">通过</el-button>
                   <el-button @click="rejectCourse(scope.row)">不通过</el-button>
                 </template>             
@@ -67,17 +67,28 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+      <el-dialog
+          title="课程信息"
+          v-model="checkVisible"
+          width="40%"
+        >
+        <div v-if="selectedCourse.course_name">
+          <p><strong>课程名称：</strong>{{ selectedCourse.course_name }}</p>
+          <p><strong>描述：</strong>{{ selectedCourse.description }}</p>
+        </div>
+      </el-dialog>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 const activeIndex = ref('1');
-import BaseHeader from '../../layouts/BaseHeader.vue';
+import BaseHeader from '@/layouts/BaseHeader.vue';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
-import { CourseEntity, CourseStatus, Publication, updateCoursePublicationCall, updateCourseStatusCall, type CourseStatusUpdateParam } from '@/api/course/CourseAPI';
+import { type CourseEntity, CourseStatus, createCourseCall, Publication, updateCourseStatusCall } from '@/api/course/CourseAPI';
+import { ElMessage } from 'element-plus';
 
 
 onMounted(async () => {
@@ -87,6 +98,7 @@ onMounted(async () => {
 const currentPage = ref(1);
 const pageSize = ref(10);
 const authStore = useAuthStore();
+
 const courses = ref<CourseEntity[]>([
 {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
@@ -94,22 +106,29 @@ const courses = ref<CourseEntity[]>([
     publication: Publication.open
 }
 ]);
-const courseForm = ref([
-{
-    course_id: 1, 
-    course_name: '', 
-    description: '', 
-    teacher_id: 1, 
-    created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.submitted,
-    publication: Publication.open
-}
-]);
+const courseForm = ref<CourseEntity>({
+  course_id: 1,
+  course_name: '',
+  description: '',
+  teacher_id: authStore.user.user_id,
+  status: CourseStatus.submitted,
+  publication: Publication.open,
+  created_at: new Date(),
+  updated_at: new Date(),
+});
+
+const checkVisible = ref(false);
 const dialogVisible = ref(false);
-const rules = ref({});
 
 const navigateTo = (path: string) => {
     router.push(path); // 使用 router.push 进行路由跳转
+};
+
+const selectedCourse = ref<CourseEntity>({} as CourseEntity); // 用于存储当前查看的课程信息
+
+const checkCourse = (row: CourseEntity) => {
+  selectedCourse.value = row; // 设置当前查看的课程信息
+  checkVisible.value = true; // 显示对话框
 };
 
 const approveCourse = async (row: CourseEntity) => {
@@ -136,20 +155,18 @@ const createNewCourse = () => {
   dialogVisible.value = true;
 };
 
-const checkDuplicate = () => {
-  const { CourseName } = courseForm.course_name;
-  const isDuplicate = courses.value.some(course => {
-    return course.course_name === CourseName;
-  });
+const checkDuplicate = (name: string) => {
+  const isDuplicate = courses.value.some(course => course.course_name.toLowerCase() === name.toLowerCase());
   return isDuplicate;
 };
 
 const AddCourse = () => {
-  const form = courseForm.value;
-  if (checkDuplicate()) {
-    alert('Duplicate value!');
+  if (checkDuplicate(courseForm.value.course_name)) {
+    ElMessage.error('课程已存在!');
+    return
   } else {
-    courses.value.push();
+    createCourseCall(courseForm.value);
+    courses.value.push(courseForm.value);
   }
   dialogVisible.value = false;
 };
