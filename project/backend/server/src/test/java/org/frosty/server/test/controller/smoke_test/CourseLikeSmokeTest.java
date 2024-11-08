@@ -45,11 +45,13 @@ public class CourseLikeSmokeTest {
         var studentToken = pair.first;
         var student = pair.second;
 
+        boolean isLiked = courseLikeAPI.checkCourseLikeSuccess(studentToken, course.getCourseId(), student.getUserId());
+        assertFalse(isLiked);
         // Student likes the course
         courseLikeAPI.createCourseLikeSuccess(studentToken, course.getCourseId(), student.getUserId());
 
         // Check if the student liked the course
-        boolean isLiked = courseLikeAPI.checkCourseLikeSuccess(studentToken, course.getCourseId(), student.getUserId());
+        isLiked = courseLikeAPI.checkCourseLikeSuccess(studentToken, course.getCourseId(), student.getUserId());
         assertTrue(isLiked);
 
         // Student unlikes the course

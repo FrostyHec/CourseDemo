@@ -86,7 +86,9 @@ public class CourseMemberService {
         List<Long> studentIds = enrollments.stream()
                 .map(Enrollment::getStudentId)
                 .collect(Collectors.toList());
-
+        if(studentIds.isEmpty()){
+            return List.of();
+        }
         List<User> users = userMapper.selectBatchIds(studentIds);  // 批量查询
 
         // 创建一个 Map 来存储 userId -> User 的映射，方便后续查找
