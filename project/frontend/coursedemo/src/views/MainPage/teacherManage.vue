@@ -227,12 +227,12 @@ const handlePageChange = (newPage: number) => {
 };
 
 const fetchCourses = async () => {
-try {
-    const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
-    tableData.value = response.data.content;
-} catch (error) {
-    console.error('获取课程列表失败:', error);
-}
+  try {
+      const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
+      tableData.value = response.data.content;
+  } catch (error) {
+      console.error('获取课程列表失败:', error);
+  }
 };
 </script>
 

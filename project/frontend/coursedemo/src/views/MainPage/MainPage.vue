@@ -33,7 +33,7 @@
             <p>Description: {{ repo.description }}</p>
             <p>Teacher: {{ repo.teacher_id }}</p>
           </div>
-          <el-button style="float: none;" type="primary">查看课程信息</el-button>
+          <el-button style="float: none;" type="primary" @click="enterCourse(repo.course_id)">查看课程信息</el-button>
         </el-card>
       </el-main>
       </el-container>
@@ -56,10 +56,13 @@ const repositories = ref<CourseEntity[]>([
 ]);
 const searchQuery = ref('');
 
-const handleSearch = () => {
-  router.push('MainPage/searchCourse')
+const enterCourse = (course_id:number) => {
+  router.push({ path: '/MainPage/courseInfo', query: { course_id: course_id } });
 };
 
+const handleSearch = () => {
+  router.push({ path: '/MainPage/searchCourse', query: { search: searchQuery.value } });
+};
 const navigateTo = (path: string) => {
   router.push(path); 
 };
@@ -100,7 +103,7 @@ const navigateTo = (path: string) => {
 .search-box {
   display: flex;
   align-items: center;
-  margin-left: 210px;
+  margin-left: 10px;
   margin-right: 200px;
   margin-top: 10px;
 }

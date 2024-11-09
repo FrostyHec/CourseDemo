@@ -23,39 +23,57 @@
               <p>Description: {{ repo.description }}</p>
               <p>Teacher: {{ repo.teacher_id }}</p>
             </div>
-            <el-button style="float: none;" type="primary">查看课程信息</el-button>
+            <el-button style="float: none;" type="primary" @click="enterCourse(repo.course_id)">查看课程信息</el-button>
           </el-card>
         </el-main>
     </div>
 </template>
+
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
-import { useRouter } from 'vue-router'; // 导入 useRouter
-import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { useRouter } from 'vue-router'; 
+import { CourseStatus, Publication, searchCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
 
-const router = useRouter(); // 使用 useRouter 钩子
-const activeIndex = ref('1');
+const router = useRouter(); 
+const searchQuery = ref<string | undefined>(undefined);
+const repositories = ref<CourseEntity[]>([]);
 
-const repositories = ref<CourseEntity[]>([
-{
-    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.published,
-    publication: Publication.open
-}
-]);
-const searchQuery = ref('');
+const pageSize = 1;
+const pageNum = 10;
+
 
 const handleSearch = () => {
-// 过滤逻辑
-repositories.value = repositories.value.filter(repo =>
-    repo.course_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-);
+  searchCourseCall(pageSize, pageNum, searchQuery.value).then(response => {
+    repositories.value = response.data.content;
+  });
+};
+
+const enterCourse = (course_id:number) => {
+  router.push({ path: '/MainPage/courseInfo', query: { course_id: course_id } });
 };
 
 const navigateTo = (path: string) => {
-router.push(path); // 使用 router.push 进行路由跳转
+  router.push(path);
 };
+
+const fetchCourses = async () => {
+  try {
+    const response = await searchCourseCall(pageSize, pageNum, searchQuery.value);
+    repositories.value = response.data.content;
+  } catch (error) {
+    console.error('获取课程列表失败:', error);
+  }
+};
+
+onMounted(async () => {
+  searchQuery.value = router.currentRoute.value.query.search ? String(router.currentRoute.value.query.search) : undefined;
+  await fetchCourses();
+});
+
+watch(searchQuery, async (newVal) => {
+  await fetchCourses();
+}, { immediate: true });
 
 </script>
 
