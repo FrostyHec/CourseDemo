@@ -2,9 +2,10 @@
 import { useDark, useToggle } from "@vueuse/core";
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { ArrowRight } from '@element-plus/icons-vue';
 import { useAuthStore } from "@/stores/auth";
+import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from "@/api/user/UserAPI";
 
 const authStore = useAuthStore()
 const isDark = useDark();
@@ -15,6 +16,26 @@ const userData = ref({
     user_id:authStore.user.user_id
 })
 
+const userInfo = ref<UserPublicInfoEntity>({
+  user_id:0,
+  first_name:'',
+  last_name:'',
+  role:UserType.STUDENT,
+  email:'',
+}); // 用于存储用户信息
+
+// 获取用户信息
+const getUserInfo = async () => {
+  try {
+    const result = await getUserPublicInfoCall(userData.value.user_id);
+    userInfo.value = result.data;
+  } catch (error) {
+    console.error('获取用户信息失败:', error);
+    ElMessage.error('获取用户信息失败');
+  }
+};
+
+onMounted(getUserInfo); // 组件挂载时获取用户信息
 
 const l = ref([
   { key: 0, label: 'hello', link: '/course/hello' },
@@ -80,9 +101,9 @@ function logout() {
                 <el-avatar :size="64" style="border: solid 1px var(--ep-border-color); margin-left: 5px;"
                   src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
                 <div>
-                  <h2 style="margin: 0%;">Alice Bob</h2>
+                  <h2 style="margin: 0%;">{{ userInfo.first_name + ' ' + userInfo.last_name }}</h2>
                   <p style="margin: 0%; font-size: 14px; color: var(--el-color-info)">
-                    alice_bob@sustech.edu.cn
+                    {{ userInfo.email }}
                   </p>
                 </div>
               </div>
@@ -91,7 +112,7 @@ function logout() {
             </div>
           </template>
         </el-popover>
-        <span class="text-large font-600 mr-3"> Alice Bob </span>
+        <span class="text-large font-600 mr-3">{{ userInfo.first_name + ' ' + userInfo.last_name }}</span>
         <el-button>
           Calendar
         </el-button>

@@ -32,7 +32,7 @@
               <el-table :data="filteredTableData" style="width: 100%">
                 <el-table-column prop="course_name" label="课程名称">
                   <template v-slot="{ row }">
-                    <router-link :to="`/course/${row.course_name}`" class="course-link">{{ row.course_name }}</router-link>
+                    <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
                 </el-table-column>
               </el-table>
@@ -65,7 +65,7 @@ onMounted(async () => {
   try {
     console.log('123')
     const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.content; 
+    const courses = response.data.content; 
     if (courses) {
       tableData.value = [...tableData.value, ...courses];
     }

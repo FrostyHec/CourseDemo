@@ -51,6 +51,13 @@
         <el-form-item label="描述" prop="description">
           <el-input v-model="courseForm.description"/>
         </el-form-item>
+        <el-form-item label="课程类型" prop="publication">
+          <el-radio-group v-model="courseForm.publication">
+            <el-radio :label="Publication.open">开放</el-radio>
+            <el-radio :label="Publication.closed">私密</el-radio>
+            <el-radio :label="Publication.semi_open">半开放</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="AddCourse()">创建</el-button>
         </el-form-item>
@@ -79,7 +86,7 @@ const tableData = ref<CourseEntity[]>([
 async function load() {
   try {
     const response = await getAllTeachingCourseList(authStore.user.user_id, 1, 10);
-    const courses = response.data.content;
+    const courses = response.data.content; 
     tableData.value = [...tableData.value, ...courses];
   } catch (error) {
     console.error('获取课程列表失败:', error);
