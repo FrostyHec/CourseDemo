@@ -173,7 +173,7 @@ const isCourseNameExist = (name: string) => {
 
 const saveCourse = () => {
     dialogVisible.value = false;
-    const index = tableData.value.findIndex(course => course.course_id === courseForm.value.course_id);
+    const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
     if (index !== -1) {
       tableData.value.splice(index, 1);
     }
