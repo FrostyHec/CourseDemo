@@ -2,6 +2,7 @@ package org.frosty.server.services.user;
 
 
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.event.delete_event.UserDeleteEvent;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface UserService {
     void publishDeleteUser(Long userId);
 
 
+
+
+
     void updateUser(Long id, User updatedUser);
 
     User findById(Long id);
@@ -25,11 +29,11 @@ public interface UserService {
     User findPublicInfoById(Long id);
 
 
-    List<User> searchByRealName(String realName);
+    List<User> searchByRealName(String firstName, String lastName,int pageNum, int pageSize);
 
     void handleUserDeleteEvent(UserDeleteEvent event);
 
     void insertUser(User user);//
 
-    List<User> searchUser(String firstName, String lastName, int pageNum, int pageSize);
+    List<UserPublicInfo> searchUser(String firstName, String lastName, int pageNum, int pageSize);
 }

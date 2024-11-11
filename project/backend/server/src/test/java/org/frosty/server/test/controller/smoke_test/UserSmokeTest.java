@@ -17,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @IdempotentControllerTest
 public class UserSmokeTest {
 
+
+
+
     @Autowired
     private UserAPI userAPI;
 

@@ -27,13 +27,13 @@ public class ResourceController {
     public void uploadResource(
             @GetToken TokenInfo tokenInfo,
             @RequestPart("data") Resource resource,
-            @RequestPart("file") MultipartFile file // TODO changed it to support flow upload
+            @RequestPart("file") MultipartFile file
     ) throws IOException {
         Ex.check(tokenInfo.getAuthStatus() == AuthStatus.PASS, Response.getUnauthorized("unauthorized"));
+        resource.setResourceId(null);
         resourceService.createResource(tokenInfo.getAuthInfo(), resource, file);
     }
 
-    // 获取资源
     @GetMapping("resource/{id}")
     public ResourceWithAccessKey getResourceMetaData(
             @GetToken TokenInfo tokenInfo,

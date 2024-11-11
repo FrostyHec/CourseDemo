@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.converter.CommonConverter;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.event.delete_event.UserDeleteEvent;
 import org.frosty.server.mapper.user.UserMapper;
 import org.frosty.server.services.user.UserService;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final ApplicationEventPublisher eventPublisher;
     private final UserMapper userMapper;
+    private final CommonConverter converter;
 
     @Override
     public void deleteUserById(Long userId) {
@@ -55,21 +58,28 @@ public class UserServiceImpl implements UserService {
         return userMapper.findPublicInfoById(id);
     }
 
-
-    // TODO
     @Override
-    public List<User> searchByRealName(String realName) {
-        return userMapper.searchByRealName(realName);
+    public List<User> searchByRealName(String firstName, String lastName, int pageNum, int pageSize) {
+        return List.of();
     }
 
+
+//    // TODO
+//    @Override
+//    public List<User> searchByRealName(String realName) {
+//        return userMapper.searchByRealName(realName);
+//    }
+
     @Override
-    public List<User> searchUser(String firstName, String lastName, int pageNum, int pageSize) {
+    public List<UserPublicInfo> searchUser(String firstName, String lastName, int pageNum, int pageSize) {
+
         QueryWrapper<User> queryWrapper =new QueryWrapper<>();
         queryWrapper.like("first_name", firstName).like("last_name", lastName);
         if(pageSize != -1) {
             queryWrapper.last("LIMIT " + pageSize + " OFFSET " + (pageNum - 1) * pageSize);
         }
-        return userMapper.selectList(queryWrapper);
+        List<User> userList = userMapper.selectList(queryWrapper);
+        return userList.stream().map(converter::toUserPublicInfo).toList();
     }
 
     // TODO
@@ -78,6 +88,9 @@ public class UserServiceImpl implements UserService {
     public void handleUserDeleteEvent(UserDeleteEvent event) {
         log.info("user_deleted");
     }
+
+
+
 
 
 }

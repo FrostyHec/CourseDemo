@@ -9,6 +9,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 public class CourseLikeAPI {

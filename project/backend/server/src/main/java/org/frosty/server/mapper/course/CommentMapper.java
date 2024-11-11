@@ -40,11 +40,11 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
                 rc.comment_reply AS commentReply,
                 rc.created_at AS createdAt,
                 rc.updated_at AS updatedAt,
-                u.user_id AS "userPublicInfo.userId",
-                u.first_name AS "userPublicInfo.firstName",
-                u.last_name AS "userPublicInfo.lastName",
-                u.role AS "userPublicInfo.role",
-                u.email AS "userPublicInfo.email"
+                u.user_id AS "user.userId",
+                u.first_name AS "user.firstName",
+                u.last_name AS "user.lastName",
+                u.role AS "user.role",
+                u.email AS "user.email"
             FROM
                 resource_comments rc
             JOIN

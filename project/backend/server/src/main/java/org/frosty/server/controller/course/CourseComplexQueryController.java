@@ -5,15 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.entity.bo.Chapter;
-import org.frosty.server.entity.bo.ChapterContent;
-import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.bo.*;
 import org.frosty.server.services.course.CourseComplexQueryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +24,7 @@ public class CourseComplexQueryController {
     private final CourseComplexQueryService courseComplexQueryService;
 
 
-    // 这样写也太丑了吧？？？
+//    // 这样写也太丑了吧？？？
 //    @GetMapping("/course/{id}/all-structure-info")
 //    public StructureInfo getCourseAllStructureInfo(@PathVariable Long id) {
 //        Course course = courseComplexQueryService.findCourseById(id);
@@ -35,7 +34,7 @@ public class CourseComplexQueryController {
 //            ChaptersWithContentInfo chaptersWithContentInfo = new ChaptersWithContentInfo();
 //            Long chapterId = chapter.getChapterId();
 //            List<Assignment> assignments = courseComplexQueryService.findAssByChapterId(chapterId);
-//            List<Resource> resources = courseComplexQueryService.findContentByChapterId(chapterId);
+//            List<Resource> resources = courseComplexQueryService.findResourceByChapterId(chapterId);
 //            List<ChapterContentInfo> chapterContentInfos = new ArrayList<>();
 //            for (Assignment assignment : assignments) {
 //                ChapterContentInfo chapterContentInfo = new ChapterContentInfo();
@@ -76,7 +75,7 @@ public class CourseComplexQueryController {
                             courseComplexQueryService.findAssByChapterId(chapterId)
                                     .stream()
                                     .map(assignment -> new ChapterContentInfo(ChapterContent.ChapterContentType.assignment, assignment)),
-                            courseComplexQueryService.findContentByChapterId(chapterId)
+                            courseComplexQueryService.findResourceByChapterId(chapterId)
                                     .stream()
                                     .map(resource -> new ChapterContentInfo(ChapterContent.ChapterContentType.resource, resource))
                     ).collect(Collectors.toList());
@@ -97,7 +96,6 @@ public class CourseComplexQueryController {
     public static class StructureInfo {
         private Course courseInfo;
         private List<ChaptersWithContentInfo> chapters;
-
     }
 
     @Data

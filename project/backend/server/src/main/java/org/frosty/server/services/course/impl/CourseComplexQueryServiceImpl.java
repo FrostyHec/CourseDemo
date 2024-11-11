@@ -35,7 +35,7 @@ public class CourseComplexQueryServiceImpl implements CourseComplexQueryService 
     }
 
     @Override
-    public List<Resource> findContentByChapterId(Long chapterId) {
+    public List<Resource> findResourceByChapterId(Long chapterId) {
         return resourceMapper.getAll(chapterId);
     }
 
