@@ -60,7 +60,11 @@ const router = createRouter({
     {
       path: '/MainPage/courseInfo',
       component: () => import('@/views/MainPage/courseInfo.vue'),
-    },    
+    },
+    {
+      path: '/course/liveStream',
+      component: () => import('@/views/Course/liveStream.vue'),
+    },       
   ],
 })
 
