@@ -26,7 +26,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    User findPublicInfoById(Long id);
+    UserPublicInfo findPublicInfoById(Long id);
 
 
     List<User> searchByRealName(String firstName, String lastName,int pageNum, int pageSize);
@@ -36,4 +36,6 @@ public interface UserService {
     void insertUser(User user);//
 
     List<UserPublicInfo> searchUser(String firstName, String lastName, int pageNum, int pageSize);
+
+    UserPublicInfo findPublicInfoByEmail(String email);
 }

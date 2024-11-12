@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findPublicInfoById(Long id) {
+    public UserPublicInfo findPublicInfoById(Long id) {
         return userMapper.findPublicInfoById(id);
     }
 
@@ -80,6 +80,11 @@ public class UserServiceImpl implements UserService {
         }
         List<User> userList = userMapper.selectList(queryWrapper);
         return userList.stream().map(converter::toUserPublicInfo).toList();
+    }
+
+    @Override
+    public UserPublicInfo findPublicInfoByEmail(String email) {
+        return userMapper.findPublicInfoByEmail(email);
     }
 
     // TODO
