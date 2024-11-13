@@ -1,4 +1,4 @@
-package org.frosty.object_storage.service;
+package org.frosty.object_storage.service.access_key;
 
 public interface AccessKeyService {
     String getOrCreate(String objectKey, String caseName);

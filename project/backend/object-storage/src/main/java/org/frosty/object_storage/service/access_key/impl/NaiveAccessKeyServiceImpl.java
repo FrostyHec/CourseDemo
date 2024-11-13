@@ -1,8 +1,8 @@
-package org.frosty.object_storage.service.impl;
+package org.frosty.object_storage.service.access_key.impl;
 
 
 import org.frosty.common.utils.Pair;
-import org.frosty.object_storage.service.AccessKeyService;
+import org.frosty.object_storage.service.access_key.AccessKeyService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

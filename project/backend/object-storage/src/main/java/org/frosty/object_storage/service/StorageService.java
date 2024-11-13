@@ -1,11 +1,11 @@
 package org.frosty.object_storage.service;
 
-import io.minio.*;
-import io.minio.errors.ErrorResponseException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.frosty.common.exception.ExternalException;
-import org.frosty.common.response.Response;
-import org.springframework.beans.factory.annotation.Value;
+import org.frosty.object_storage.config.CacheConfig;
+import org.frosty.object_storage.entity.FlowWithMetadata;
+import org.frosty.object_storage.service.access_key.AccessKeyService;
+import org.frosty.object_storage.service.cache.KVCacheChain;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -13,63 +13,29 @@ import java.io.InputStream;
 @Service
 @RequiredArgsConstructor
 public class StorageService {
-    private final MinioClient minioClient;
     private final AccessKeyService accessKeyService;
+    private final CacheConfig cacheConfig;
+    private KVCacheChain chain;
 
-    @Value("${minio.bucket.serviceName}")
-    private String bucketName;
+    @PostConstruct
+    public void init(){
+        chain = cacheConfig.storageCache();
+    }
 
     public void uploadFile(String objectName, InputStream inputStream, String contentType) throws Exception {
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .stream(inputStream, -1, 10485760) // TODO 10MB check here
-                        .contentType(contentType)
-                        .build()
-        );
+        chain.putStream(objectName,new FlowWithMetadata(inputStream,contentType));
     }
 
     public InputStream getFile(String objectName) throws Exception {
-        try {
-            return minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .build()
-            );
-        } catch (ErrorResponseException e) {
-            if (e.errorResponse().code().equals("NoSuchKey")) {
-                throw new ExternalException(Response.getNotFound("no-found"));
-            }
-            throw e;
-        }
+        return chain.getStream(objectName).getStream();
     }
 
     public void deleteFile(String objectName) throws Exception {
-        minioClient.removeObject(
-                RemoveObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .build()
-        );
+        chain.remove(objectName);
     }
 
     public boolean checkFileExist(String objectName) throws Exception {
-        try {
-            minioClient.statObject(
-                    StatObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .build()
-            );
-            return true;
-        } catch (ErrorResponseException e) {
-            if (e.errorResponse().code().equals("NoSuchKey")) {
-                return false;
-            }
-            throw e;
-        }
+        return chain.contains(objectName);
     }
 
     public void deleteAccessKey(String objectKey, String caseName) {
