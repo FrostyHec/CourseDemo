@@ -94,7 +94,7 @@ public class SSEService {
     @Transactional
     public SseEmitter register(long uid) {
         sseipMapper.insertIfNotExist(new SSEIPEntity(uid, getSelfIp()));//假连接优于丢失连接管理。先记录再创建
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(0L);
         emitter.onCompletion(() -> {
             log.info("emitter complete:" + uid);
             sseClosed(uid, emitter);
@@ -138,6 +138,7 @@ public class SSEService {
     private void sseClosed(long uid, SseEmitter emitter) {
         clients.get(uid).remove(emitter);
         if (clients.get(uid).isEmpty()) {
+            log.warn("removing uid:" + uid);
             sseipMapper.delete(uid);
         }
     }

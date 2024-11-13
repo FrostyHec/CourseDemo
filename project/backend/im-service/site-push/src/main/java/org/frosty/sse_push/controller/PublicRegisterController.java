@@ -30,4 +30,10 @@ public class PublicRegisterController {
         log.info("connection creating on uid:" + uid);
         return service.register(uid);
     }
+// TODO LET TEST SUPPORT AUTH
+//    @GetMapping("/user/{uid}")
+//    public SseEmitter register(@PathVariable long uid) {
+//        log.info("connection creating on uid:" + uid);
+//        return service.register(uid);
+//    }
 }
