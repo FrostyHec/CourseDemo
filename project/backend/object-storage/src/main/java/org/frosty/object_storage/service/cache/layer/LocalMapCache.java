@@ -5,7 +5,7 @@ import org.frosty.object_storage.service.cache.KVStorage;
 
 import java.io.InputStream;
 
-public class LocalMapCache implements KVStorage {
+public class LocalMapCache implements KVStorage<Object> {
     @Override
     public void put(String key, Object value) {
 

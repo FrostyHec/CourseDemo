@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EndOSSLayer implements KVStorage {
+public class EndOSSLayer implements KVStorage<Object> {
     private final MinioClient minioClient;
 
     @Value("${minio.bucket.serviceName}")
