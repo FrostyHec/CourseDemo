@@ -118,16 +118,17 @@ public class CourseAPI {
                 .andExpect(RespChecker.success());
     }
 
-    public ResultActions updateStatus(String teacherToken, Long cid, Course.CourseStatus status) throws Exception {
-        String json = objectMapper.writeValueAsString(Map.of("status", status));
+    public ResultActions updateStatus(String teacherToken, Long cid, Map<String, String> courseStatus) throws Exception {
+        String json = objectMapper.writeValueAsString(courseStatus);
         return mockMvc.perform(MockMvcRequestBuilders.patch(courseBaseUrl + "/" + cid + "/status") // add "/status" to the url, because it is a PATCH request
                 .headers(authUtil.setAuthHeader(teacherToken))
                 .contentType(MediaType.APPLICATION_JSON)
+//                .param("status", status)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public void updateStatusSuccess(String teacherToken, Long courseId, Course.CourseStatus courseStatus) throws Exception {
+    public void updateStatusSuccess(String teacherToken, Long courseId, Map<String, String> courseStatus) throws Exception {
         updateStatus(teacherToken, courseId, courseStatus)
                 .andExpect(RespChecker.success());
     }

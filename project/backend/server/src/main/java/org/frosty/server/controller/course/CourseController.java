@@ -21,25 +21,22 @@ public class CourseController {
 
     @PostMapping("/course")
     public Response createCourse(@RequestBody Course course) {
-        course.setCourseId(null);
         courseService.createCourse(course);
-        return Response.getSuccess("Course created successfully");
+        return Response.getSuccess(course);
     }
 
     @PatchMapping("course/{id}/status")
-    public Response updateCourseStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {
+    public void updateCourseStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {
         String status = statusMap.get("status");
         courseService.updateCourseStatus(id, status);
-        return Response.getSuccess("Course status updated successfully");
     }
 
     @PutMapping("course/{id}")
-    public Response updateCourse(@PathVariable Long id, @RequestBody Course course) {
+    public void updateCourse(@PathVariable Long id, @RequestBody Course course) {
         // 确保忽略前端传递的敏感字段，如 id 和 status
         course.setCourseId(id);
         course.setStatus(null);
         courseService.updateCourse(id, course);
-        return Response.getSuccess("Course updated successfully");
     }
 
 

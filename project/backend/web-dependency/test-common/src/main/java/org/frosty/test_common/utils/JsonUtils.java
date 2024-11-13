@@ -1,6 +1,7 @@
 package org.frosty.test_common.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,10 @@ public class JsonUtils {
             UnsupportedEncodingException,
             JsonProcessingException {
         return objectMapper.treeToValue(toJsonData(result), type);
+    }
+
+    public static <T> T toObject(MvcResult node, TypeReference<T> type) throws UnsupportedEncodingException, JsonProcessingException {
+        return objectMapper.treeToValue(toJsonData(node), type);
     }
 
     public static <T> List<T> nodeToList(JsonNode node, Class<?> clazz) throws

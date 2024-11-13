@@ -14,7 +14,7 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
-        courseMapper.insert(course);
+        courseMapper.insertCourse(course);
     }
 
     public void updateCourseStatus(Long id, String status) {
@@ -45,7 +45,7 @@ public class CourseService {
     }
 
     public List<Course> searchPublicCourse(int pageNum, int pageSize, String keyword) {
-        return courseMapper.searchPublicCourse(pageNum, pageSize, keyword);
+        return courseMapper.searchPublicCourse(pageNum -1 , pageSize, keyword); // sql里面的pageNum是从0开始的
     }
 
 
