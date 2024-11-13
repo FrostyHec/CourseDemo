@@ -34,4 +34,7 @@ public interface AssignmentMapper extends BaseMapper<Assignment> {
     @Delete("DELETE FROM assignments WHERE assignment_id = #{id}")
     void deleteAssById(Long id);
 
+
+    @Select("SELECT * FROM assignments where assignments.chapter_id =#{id}")
+    List<Assignment> selectAssignmentsByChapterId(Long id);
 }

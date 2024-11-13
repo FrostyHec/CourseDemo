@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.RecommendController;
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface UserMapper extends BaseMapper<User> {
 //    void deleteUserById(Long id);
 
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id = #{id}")
-    User findPublicInfoById(Long id);
+    UserPublicInfo findPublicInfoById(Long id);
 
     /**
      * 根据输入的关键词在用户的姓名（first_name 和 last_name）中进行搜索，
@@ -50,6 +51,8 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT * FROM users WHERE email = #{email}")
     User selectByEmail(String email);
 
+
+    // TODO 为什么这个sql有报错？
     @Select("""
             <script>
             SELECT u.*, COUNT(e.student_id) AS studentNum
@@ -74,6 +77,7 @@ public interface UserMapper extends BaseMapper<User> {
     })
     List<RecommendController.TeacherWithStudentCount> getHotTeachers(int page_num, int page_size);
 
-
+    @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE email = #{email}")
+    UserPublicInfo findPublicInfoByEmail(String email);
 }
 
