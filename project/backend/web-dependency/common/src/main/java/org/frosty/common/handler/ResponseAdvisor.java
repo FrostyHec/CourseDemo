@@ -12,6 +12,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @NonNullApi
 @ControllerAdvice
@@ -22,8 +24,8 @@ public class ResponseAdvisor implements ResponseBodyAdvice<Object> {
     public boolean supports(MethodParameter returnType,
                             Class converterType) {
         return !(returnType.getParameterType().equals(Response.class) ||
-                returnType.getParameterType().equals(ResponseEntity.class)
-
+                returnType.getParameterType().equals(ResponseEntity.class) ||
+                ResponseBodyEmitter.class.isAssignableFrom(returnType.getParameterType())
         );
     }
 

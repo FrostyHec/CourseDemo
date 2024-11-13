@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.common_service.im.entity.Email;
-import org.frosty.common_service.im.entity.SiteMessage;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Notification;
 import org.frosty.server.entity.bo.NotificationReceiver;
@@ -16,6 +15,7 @@ import org.frosty.server.mapper.course.CourseMapper;
 import org.frosty.server.mapper.course.NotificationMapper;
 import org.frosty.server.mapper.course.NotificationReceiverMapper;
 import org.frosty.server.mapper.user.UserMapper;
+import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

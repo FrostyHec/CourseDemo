@@ -3,7 +3,8 @@ package org.frosty.common_service.im.api.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.common_service.im.entity.Email;
-import org.frosty.common_service.im.entity.SiteMessage;
+import org.frosty.sse.entity.SiteMessage;
+
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -13,6 +14,7 @@ public class MockMessagePushServiceImpl implements MessagePushService {
 
     @Override
     public SiteMessage pushSite(SiteMessage siteMessage) {
+        log.info("push site message: {}", siteMessage);
         var next = messageId.incrementAndGet();
         siteMessage.setMessageId(next);
         return siteMessage;

@@ -6,7 +6,11 @@ import org.frosty.auth.config.AuthConstant;
 import org.frosty.auth.mock.AuthMockUtils;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.site_dispatch.entity.*;
+import org.frosty.sse.entity.SiteMessage;
+import org.frosty.sse.entity.SiteMessage.MessageType;
+import org.frosty.sse.entity.SiteMessagePacketDTO;
+import org.frosty.sse.entity.SitePushDTO;
+import org.frosty.sse.entity.SitePushDTO.PushType;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.HttpStatusCode;
@@ -53,7 +57,7 @@ public class SiteMsgAPI {
     }
 
 
-    public ResultActions push(SingleMessageDTO dto) throws Exception {
+    public ResultActions push(SiteMessage dto) throws Exception {
         String requestBody = objectMapper.writeValueAsString(dto);
         String baseUrl = PathConstant.INTERNAL_API + "/msg/site";
         return mockMvc.perform(MockMvcRequestBuilders.post(baseUrl)
@@ -63,7 +67,7 @@ public class SiteMsgAPI {
 
     }
 
-    public long pushSuccess(SingleMessageDTO dto) throws Exception {
+    public long pushSuccess(SiteMessage dto) throws Exception {
         var res = push(dto)
                 .andExpect(RespChecker.success())
                 .andReturn();
@@ -82,8 +86,8 @@ public class SiteMsgAPI {
                 .andExpect(RespChecker.success());
     }
 
-    public SingleMessageDTO getSimpleNewMessage(long toId, boolean requiredAck) {
-        var dto = new SingleMessageDTO();
+    public SiteMessage getSimpleNewMessage(long toId, boolean requiredAck) {
+        var dto = new SiteMessage();
         dto.setToId(toId);
         dto.setRequiredAck(requiredAck);
         dto.setType(MessageType.NEW);
@@ -92,8 +96,8 @@ public class SiteMsgAPI {
         return dto;
     }
 
-    public SingleMessageDTO getSimpleNewMessage(long toId, boolean requiredAck, String msg) {
-        var dto = new SingleMessageDTO();
+    public SiteMessage getSimpleNewMessage(long toId, boolean requiredAck, String msg) {
+        var dto = new SiteMessage();
         dto.setToId(toId);
         dto.setRequiredAck(requiredAck);
         dto.setType(MessageType.NEW);
@@ -102,7 +106,7 @@ public class SiteMsgAPI {
         return dto;
     }
 
-    public void checkMessage(SingleMessageDTO rcvd, SingleMessageDTO expected, Long mid,
+    public void checkMessage(SiteMessage rcvd, SiteMessage expected, Long mid,
                              MessageType type) {
         if (mid == null) {
             assert Objects.equals(rcvd.getMessageId(), expected.getMessageId());
@@ -120,22 +124,22 @@ public class SiteMsgAPI {
         assert Objects.equals(rcvd.getBody(), expected.getBody());
     }
 
-    public SingleMessageDTO getRcvdSingleMessage(Response resp) {
+    public SiteMessage getRcvdSingleMessage(Response resp) {
         try {
-            var dto = JsonUtils.dataCast(resp.getData(), PushDTO.class);
+            var dto = JsonUtils.dataCast(resp.getData(), SitePushDTO.class);
             assert dto.getPushType() == PushType.SINGLE;
-            return JsonUtils.dataCast(dto.getBody(), SingleMessageDTO.class);
+            return JsonUtils.dataCast(dto.getBody(), SiteMessage.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public MessagePacketDTO getRcvdPacketMessage(Response resp) {
+    public SiteMessagePacketDTO getRcvdPacketMessage(Response resp) {
         assert resp.getCode() == Response.getSuccess().getCode();
         try {
-            var dto = JsonUtils.dataCast(resp.getData(), PushDTO.class);
+            var dto = JsonUtils.dataCast(resp.getData(), SitePushDTO.class);
             assert dto.getPushType() == PushType.PACKET;
-            return JsonUtils.dataCast(dto.getBody(), MessagePacketDTO.class);
+            return JsonUtils.dataCast(dto.getBody(), SiteMessagePacketDTO.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

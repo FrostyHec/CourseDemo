@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("msg_unposed")
-public class UnposedSingleMessageDTO extends SingleMessageDTO {
+public class UnposedSiteMessage extends SiteMessage {
     @TableId(type = IdType.ASSIGN_ID)
     protected Long messageId;
 }

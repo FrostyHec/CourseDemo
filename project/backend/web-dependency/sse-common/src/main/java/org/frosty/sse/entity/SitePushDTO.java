@@ -7,18 +7,18 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PushDTO {
+public class SitePushDTO {
     PushType pushType;
     Object body;
 
-    public PushDTO(SingleMessageDTO singleMessageDTO) {
+    public SitePushDTO(SiteMessage siteMessage) {
         pushType = PushType.SINGLE;
-        body = singleMessageDTO;
+        body = siteMessage;
     }
 
-    public PushDTO(MessagePacketDTO messagePacketDTO) {
+    public SitePushDTO(SiteMessagePacketDTO siteMessagePacketDTO) {
         pushType = PushType.PACKET;
-        body = messagePacketDTO;
+        body = siteMessagePacketDTO;
     }
     public enum PushType {
         SINGLE(1),

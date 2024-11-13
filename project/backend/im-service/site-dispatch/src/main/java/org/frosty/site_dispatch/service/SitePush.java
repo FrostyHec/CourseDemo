@@ -1,7 +1,7 @@
 package org.frosty.site_dispatch.service;
 
-import org.frosty.site_dispatch.entity.SingleMessageDTO;
+import org.frosty.sse.entity.SiteMessage;
 
 public interface SitePush {
-    long pushMessage(String handlerIp, SingleMessageDTO msg);
+    void pushMessage(String handlerIp, SiteMessage msg);
 }

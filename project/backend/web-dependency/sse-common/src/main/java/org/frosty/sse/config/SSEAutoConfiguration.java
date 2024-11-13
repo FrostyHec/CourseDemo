@@ -1,15 +1,15 @@
 package org.frosty.sse.config;
 
-import org.frosty.sse.converter.MessageDTOConverter;
+import org.frosty.sse.converter.SiteMessageConverter;
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AuthAutoConfiguration {
+public class SSEAutoConfiguration {
 
     @Bean
-    public MessageDTOConverter messageDTOConverter() {
-        return Mappers.getMapper(MessageDTOConverter.class);
+    public SiteMessageConverter messageDTOConverter() {
+        return Mappers.getMapper(SiteMessageConverter.class);
     }
 }
