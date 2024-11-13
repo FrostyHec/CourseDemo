@@ -1,4 +1,5 @@
-package org.frosty.sse_push.entity;
+package org.frosty.sse.entity;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

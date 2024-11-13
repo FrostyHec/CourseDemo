@@ -1,4 +1,4 @@
-spring:
+zaispring:
   application:
     name: server
   profiles:

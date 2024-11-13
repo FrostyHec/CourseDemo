@@ -1,4 +1,4 @@
-package org.frosty.sse_push.entity;
+package org.frosty.sse.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "user_ip")
 public class SSEIPEntity {
-    @TableId(type = IdType.INPUT)
     private long uid;
     private String ip;
 }

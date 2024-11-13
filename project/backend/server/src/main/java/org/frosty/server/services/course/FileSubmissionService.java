@@ -83,6 +83,9 @@ public class FileSubmissionService {
     public FileSubmissionController.FileSubmissionWithAccessKey getStudentSubmission(long uid, Long assignmentId) {
         // TODO ONLY STUDENT CAN ACCESS
         FileSubmission fileSubmission =  mapper.selectSubmissionByAssignmentIdAndStudentId(assignmentId,uid);
+        if(fileSubmission==null){
+            throw new ExternalException(Response.getNotFound("no-submission"));
+        }
         var accessKey = objectStorageService.getAccessKey(fileSubmission.getFileName(),
                 getFileSubmissionCaseName(uid));
         return new FileSubmissionController.FileSubmissionWithAccessKey(fileSubmission, accessKey);

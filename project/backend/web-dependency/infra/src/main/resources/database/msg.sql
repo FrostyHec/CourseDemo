@@ -1,8 +1,9 @@
 drop table if exists user_ip;
 create table user_ip
 (
-    uid int8 primary key,
-    ip  varchar
+    uid bigint not null,
+    ip  varchar not null,
+    primary key (uid,ip)
 );
 drop table if exists msg_unposed;
 create table msg_unposed

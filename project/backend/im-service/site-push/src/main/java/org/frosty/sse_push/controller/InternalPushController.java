@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
-import org.frosty.sse_push.entity.SingleMessageDTO;
+import org.frosty.sse.entity.SingleMessageDTO;
 import org.frosty.sse_push.service.SSEService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
