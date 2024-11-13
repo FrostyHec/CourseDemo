@@ -36,6 +36,7 @@ public class FileSubmissionAPI {
         return new FileSubmission().setFileSubmissionId(1L)
                 .setAssignmentId(assignmentId)
                 .setStudentId(studentId)
+                .setSuffix("pdf")
                 .setFileName("fuck");
     }
     public ResultActions submitFile(String token, Long assignmentId, FileSubmission fileSubmission, MultipartFile file) throws Exception {

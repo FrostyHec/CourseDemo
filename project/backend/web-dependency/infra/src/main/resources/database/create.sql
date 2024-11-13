@@ -249,6 +249,7 @@ CREATE TABLE file_submission
     file_submission_id BIGSERIAL PRIMARY KEY,
     assignment_id      BIGINT                   NOT NULL,
     student_id         BIGINT NOT NULL ,
+    suffix             VARCHAR                  NOT NULL,
     file_name          VARCHAR                  NOT NULL,
     gained_score       INT,
     created_at         TIMESTAMP WITH TIME ZONE NOT NULL,
