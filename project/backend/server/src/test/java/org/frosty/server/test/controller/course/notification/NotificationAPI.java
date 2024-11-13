@@ -92,4 +92,25 @@ public class NotificationAPI {
     public void getAnnouncementSuccess(String token, Long announcementId) throws Exception {
         getAnnouncement(token, announcementId).andExpect(RespChecker.success());
     }
+
+    public ResultActions notifyViaSite(String token, Long notificationId) throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
+                post(baseUrl + "/announcement/" + notificationId + "/site-notify");
+        return performRequest(requestBuilder, token, null);
+    }
+
+    public void notifyViaSiteSuccess(String token, Long notificationId) throws Exception {
+        notifyViaSite(token, notificationId).andExpect(RespChecker.success());
+    }
+
+    public ResultActions notifyViaEmail(String token, Long notificationId) throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.
+                post(baseUrl + "/announcement/" + notificationId + "/email-notify");
+        return performRequest(requestBuilder, token, null);
+    }
+
+    public void notifyViaEmailSuccess(String token, Long notificationId) throws Exception {
+        notifyViaEmail(token, notificationId).andExpect(RespChecker.success());
+    }
+
 }

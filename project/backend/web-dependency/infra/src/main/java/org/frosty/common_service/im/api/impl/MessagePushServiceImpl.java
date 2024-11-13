@@ -27,6 +27,13 @@ public class MessagePushServiceImpl implements MessagePushService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 推送站内消息
+     *
+     * @param siteMessage 站内消息对象
+     * @return 更新后的站内消息对象
+     * @throws InternalException 如果连接站内消息分发器失败或服务器抛出异常
+     */
     @Override
     public SiteMessage pushSite(SiteMessage siteMessage) {
         String url = siteMsgPath + PathConstant.INTERNAL_API + "/msg/site";
@@ -40,6 +47,12 @@ public class MessagePushServiceImpl implements MessagePushService {
         return siteMessage;
     }
 
+    /**
+     * 确认站内消息
+     *
+     * @param mid 消息ID
+     * @throws InternalException 如果服务器抛出异常
+     */
     @Override
     public void ackSite(Long mid) {
         String url = siteMsgPath + PathConstant.INTERNAL_API + "/msg/site/ack/" + mid;
@@ -48,6 +61,12 @@ public class MessagePushServiceImpl implements MessagePushService {
                 new InternalException("Exception thrown by server. Response:" + res));
     }
 
+    /**
+     * 推送邮件
+     *
+     * @param email 邮件对象
+     * @throws InternalException 如果连接邮件服务失败或邮件服务返回错误响应
+     */
     @Override
     public void pushEmail(Email email) {
         String url = emailMsgPath + PathConstant.INTERNAL_API + "/msg/email";
