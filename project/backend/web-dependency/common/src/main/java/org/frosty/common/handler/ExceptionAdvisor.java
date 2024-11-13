@@ -3,11 +3,13 @@ package org.frosty.common.handler;
 import lombok.extern.log4j.Log4j2;
 import org.frosty.common.constant.AdvisorConstant;
 import org.frosty.common.exception.ExternalException;
+import org.frosty.common.exception.ExternalExceptionOnResponseEntity;
 import org.frosty.common.exception.InternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.response.ResponseCodeType;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,6 +32,12 @@ public class ExceptionAdvisor {
     @ResponseStatus(HttpStatus.OK)
     public Response exceptionHandler(ExternalException e) {
         return e.getResponse();
+    }
+
+    @ExceptionHandler(ExternalExceptionOnResponseEntity.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> exceptionHandler(ExternalExceptionOnResponseEntity e) {
+        return e.getResponseEntity();
     }
 
     @ExceptionHandler(Exception.class)
