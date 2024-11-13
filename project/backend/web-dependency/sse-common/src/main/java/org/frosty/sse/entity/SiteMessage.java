@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.frosty.sse.constant.MessageBodyType;
+
+import static org.frosty.sse.constant.MessageCommonConstant.systemMessageFromId;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +19,9 @@ public class SiteMessage {
     protected long fromId;
     protected long toId;
     protected MessageType type;
+    protected MessageBodyType bodyType;
     protected boolean requiredAck;
     protected JsonNode body;
-
     @Getter
     public enum MessageType {
         NEW(1),
@@ -31,5 +34,11 @@ public class SiteMessage {
         MessageType(int value) {
             this.value = value;
         }
+    }
+    public static SiteMessage getSimpleSystemNewMessage(long toId, MessageBodyType bodyType, JsonNode body){
+        return new SiteMessage(null,systemMessageFromId,toId,MessageType.NEW,bodyType,false,body);
+    }
+    public static SiteMessage getSimpleNewMessage(long fromId,long toId,MessageBodyType bodyType,JsonNode body){
+        return new SiteMessage(null,fromId,toId,MessageType.NEW,bodyType,false,body);
     }
 }

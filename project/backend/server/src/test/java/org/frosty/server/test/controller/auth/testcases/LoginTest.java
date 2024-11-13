@@ -50,4 +50,22 @@ public class LoginTest {
                 .andExpect(RespChecker.message("user-not-found"));
     }
 
+    @Test
+    public void testNewLoginWillAnnounceOldLogin() throws Exception {
+        String name = "admin";
+        String password = "admin";
+        var user = userAPI.addSimpleTestUser(name, password, User.Role.admin);
+        var loginInfo = new LoginInfo(user.getEmail(), password);
+        var res = authAPI.loginSuccess(loginInfo);
+        assert res.getUser().getUserId() == 1;
+        assert res.getUser().getFirstName().equals(name);
+        assert jwtHandler.getClaimsFromToken(res.getToken()) != null;//token valid
+
+        res = authAPI.loginSuccess(loginInfo);
+        assert res.getUser().getUserId() == 1;
+        assert res.getUser().getFirstName().equals(name);
+        assert jwtHandler.getClaimsFromToken(res.getToken()) != null;//token valid
+        // The checker can only check by viewing if the log contains message pushing log.
+    }
+
 }
