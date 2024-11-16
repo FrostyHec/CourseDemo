@@ -11,10 +11,11 @@ const router = createRouter({
     },
     {
       path: '/course/:course_id(\\d+)/:labels*',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('~/components/BaseContent.vue'),
+      component: () => import('@/views/Course/BaseCourse.vue'),
+    },
+    {
+      path: '/course/hotCourse',
+      component: () => import('@/views/Course/hotCourse.vue'),
     },
     {
       path: '/manager',
@@ -22,17 +23,27 @@ const router = createRouter({
     },
     {
       path: '/manager/NotPass',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../components/manager/ManagerCourseNotPass.vue'),
+      component: () => import('@/views/manager/ManagerCourseNotPass.vue'),
     },
     {
-      path: '/manager/Pass',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../components/manager/ManagerCoursePassed.vue'),
+      path: '/manager/Passed',
+      component: () => import('@/views/manager/ManagerCoursePassed.vue'),
+    },
+    {
+      path: '/MainPage/student',
+      component: () => import('@/views/MainPage/student.vue'),
+    },
+    {
+      path: '/MainPage/teacher',
+      component: () => import('@/views/MainPage/teacher.vue'),
+    },
+    {
+      path: '/MainPage/login',
+      component: () => import('@/views/MainPage/login.vue'),
+    },
+    {
+      path: '/courseEvaluation',
+      component: () => import('@/views/Course/CourseEvaluate.vue'),
     },
   ],
 })

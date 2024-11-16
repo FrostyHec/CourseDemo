@@ -1,31 +1,51 @@
 import { defineStore } from 'pinia'
-
-import { loginCall, type LoginParam, logoutCall,type LogoutParam, type UserEntity, UserType } from '@/api/user/UserAPI'
+import {
+  loginCall,
+  type LoginParam,
+  logoutCall,
+  type LogoutParam,
+  type
+  UserPublicInfoEntity,
+  UserType
+} from '@/api/user/UserAPI'
 import { reactive, ref } from 'vue'
+import Cookies from 'js-cookie'
+
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('')
-  const emptyUser: UserEntity = {
-    user_id: BigInt(0),
+  const emptyUser: UserPublicInfoEntity = {
+    user_id: 0,
     first_name: '',
     last_name: '',
-    password: '',
     email: '',
     role: UserType.STUDENT,
-    create_at: new Date(0),
-    update_at: new Date(0)
   }
-  const user= reactive({ ...emptyUser })
-  
-  async function login(loginParam:LoginParam){
+  const user = reactive({ ...emptyUser })
+
+  function init() {
+    const res = getLoginToken()
+    if (res) {
+      token.value = res
+    }
+  }
+  init()
+
+  async function login(loginParam: LoginParam) {
     const result = await loginCall(loginParam)
-    token.value = result.data.token;
+    if(result.code!==200)
+      return result
+    token.value = result.data.token
+    Object.assign(user, result.data.user)
+    setLoginToken(token.value)
     console.log(result)
+    return result
   }
 
-  async function logout(logoutParam:LogoutParam){
+  async function logout(logoutParam: LogoutParam) {
     await logoutCall(logoutParam)
-    token.value = '';
-    Object.assign(user, emptyUser);
+    token.value = ''
+    setLoginToken('')
+    Object.assign(user, emptyUser)
   }
 
   return {
@@ -35,3 +55,14 @@ export const useAuthStore = defineStore('auth', () => {
     logout
   }
 })
+
+export function setLoginToken(token: string): void {
+  Cookies.set('token', token)
+}
+
+export function getLoginToken(): string {
+  const token = Cookies.get('token')
+  if(token)
+    return token
+  return ''
+}

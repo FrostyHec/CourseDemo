@@ -2,13 +2,27 @@ import { computed, reactive, ref, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { CourseStatus, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI'
 import { ChapterType, getAllChapterCall, getChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI'
-import { getResourcesByChapterCall, ResourceType, type ResourceEntity } from '@/api/course/CourseResourceAPI'
+import { getResourcesByChapterCall, ResourceType, type ResourceEntity, type ResourceWithAccessKey } from '@/api/course/CourseResourceAPI'
 import { useRoute } from 'vue-router'
+
+export interface ResourceEntityPlus extends ResourceEntity {
+  access_key: string
+}
+export function pack_resorce(data: ResourceEntityPlus): ResourceWithAccessKey {
+  return {
+    resource: data,
+    access_key: data.access_key
+  }
+}
+export function unpack_resorce(data: ResourceWithAccessKey): ResourceEntityPlus {
+  return {...data.resource, access_key: data.access_key}
+}
+
 export interface AllInOneEntity {
   course_info: CourseEntity,
   chapters: {
     chapter_info: ChapterEntity, 
-    resourses: ResourceEntity[],
+    resources: ResourceEntityPlus[],
   }[],
 }
 
@@ -19,10 +33,10 @@ export interface UnifyTree {
   order: number,
   description: string,
 
-  data: CourseEntity|ChapterEntity|ResourceEntity,
+  data: CourseEntity|ChapterEntity|ResourceEntityPlus,
 }
 
-function unify(data: CourseEntity | ChapterEntity | ResourceEntity): UnifyTree {
+function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus): UnifyTree {
   if('course_name' in data) {
     return {
       label: data.course_name, children: [],
@@ -31,7 +45,7 @@ function unify(data: CourseEntity | ChapterEntity | ResourceEntity): UnifyTree {
     }
   }
   if('chapter_title' in data) {
-    return {
+    return {  
       label: data.chapter_title, children: [],
       order: data.chapter_order, description: data.content,
       data: data,
@@ -68,7 +82,7 @@ function build(course: AllInOneEntity): UnifyTree {
   const root = unify(course.course_info);
   course.chapters.forEach((chapter) => {
     const sub_root = unify(chapter.chapter_info)
-    chapter.resourses.forEach((resource) => sub_root.children.push(unify(resource)))
+    chapter.resources.forEach((resource) => sub_root.children.push(unify(resource)))
     root.children.push(sub_root)
   })
   return root
@@ -84,13 +98,14 @@ export function path_convert(path: undefined|string|string[]): string[] {
 
 async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
   const course_info = (await getCourseCall(course_id)).data
-  const chapter_list = (await getAllChapterCall(course_id)).data
-  const chapter_all_list: {chapter_info: ChapterEntity, resourses: ResourceEntity[]}[] = []
+  const chapter_list = (await getAllChapterCall(course_id)).data.content
+  const chapter_all_list: {chapter_info: ChapterEntity, resources: ResourceEntityPlus[]}[] = []
   for(const chapter of chapter_list) {
     const chapter_info = (await getChapterCall(chapter.chapter_id)).data
-    const resoruse_all_list = (await getResourcesByChapterCall(chapter.chapter_id)).data.content
-    chapter_all_list.push({chapter_info: chapter_info, resourses: resoruse_all_list})
+    const resoruse_all_list = (await getResourcesByChapterCall(chapter.chapter_id)).data.content.map(unpack_resorce)
+    chapter_all_list.push({chapter_info: chapter_info, resources: resoruse_all_list})
   }
+  console.log({course_info: course_info, chapters: chapter_all_list})
   return {course_info: course_info, chapters: chapter_all_list}
 }
 
@@ -116,8 +131,10 @@ export const useCourseStore = defineStore('course', () => {
         content: 'Let us start!!!',
         created_at: new Date,
         updated_at: new Date('2077-04-02'),
+        visible: true,
+        publication: true,
       },
-      resourses: [{
+      resources: [{
         resource_id: 0,
         chapter_id: 0,
         resource_name: 'slide',
@@ -130,6 +147,7 @@ export const useCourseStore = defineStore('course', () => {
         student_can_download: true,
         created_at: new Date,
         updated_at: new Date('2077-04-03'),
+        access_key: '',
       }, {
         resource_id: 1,
         chapter_id: 0,
@@ -143,6 +161,7 @@ export const useCourseStore = defineStore('course', () => {
         student_can_download: true,
         created_at: new Date,
         updated_at: new Date('2077-04-03'),
+        access_key: '',
       },],
     }, {
       chapter_info: {
@@ -154,8 +173,10 @@ export const useCourseStore = defineStore('course', () => {
         content: 'Let us continue!!!',
         created_at: new Date,
         updated_at: new Date('2077-04-11'),
+        visible: true,
+        publication: true,
       },
-      resourses: [{
+      resources: [{
         resource_id: 2,
         chapter_id: 0,
         resource_name: 'slide',
@@ -168,6 +189,7 @@ export const useCourseStore = defineStore('course', () => {
         student_can_download: true,
         created_at: new Date,
         updated_at: new Date('2077-04-23'),
+        access_key: '',
       }, {
         resource_id: 3,
         chapter_id: 0,
@@ -181,6 +203,7 @@ export const useCourseStore = defineStore('course', () => {
         student_can_download: true,
         created_at: new Date,
         updated_at: new Date('2077-04-13'),
+        access_key: '',
       },],
     },],
   }
@@ -248,7 +271,8 @@ export const useCourseStore = defineStore('course', () => {
     async (new_data) => {
       console.log(new_data)
       await load_from_route(false)
-    }
+    },
+    {immediate: true}
   )
 
   return {course_data, current_course_id, unify_course_data, current_data, load_from_route}

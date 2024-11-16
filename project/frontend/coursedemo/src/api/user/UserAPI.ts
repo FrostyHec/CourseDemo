@@ -2,11 +2,12 @@ import { service_backend_base } from '@/utils/Constant'
 import { APIResult, type APIParam, type APIDataResult, AxiosAPI } from '@/utils/APIUtils'
 /////////////////////   LOGIN   ///////////////////////////////
 export interface LoginParam extends APIParam{
-  user_id:number,
+  email:string,
   password:string
 }
 export interface LoginResult extends APIDataResult{
   token:string
+  user:UserPublicInfoEntity
 }
 
 export async function loginCall(param:LoginParam):Promise<APIResult<LoginResult>>{
@@ -25,18 +26,19 @@ export async function logoutCall(logoutParam:LogoutParam):Promise<APIResult<null
 }
 
 /////////////////////   USER   ///////////////////////////////
-export interface UserEntity extends UserPublicInfoEntity{
-  password:string,
-  create_at:Date,
-  update_at:Date
-}
 
 export interface UserPublicInfoEntity extends APIDataResult,APIParam{
-  user_id:bigint,
+  user_id:number,
   first_name:string,
   last_name:string,
   role:UserType,
   email:string,
+}
+
+export interface UserEntity extends UserPublicInfoEntity{
+  password:string,
+  create_at:Date,
+  update_at:Date
 }
 
 export enum UserType{
@@ -46,7 +48,7 @@ export enum UserType{
 }
 
 export async function createUserCall(param:UserEntity):Promise<APIResult<null>>{
-  const url = service_backend_base + '/user/create';
+  const url = service_backend_base + '/user';
   return await AxiosAPI.post(url,param);
 }
 

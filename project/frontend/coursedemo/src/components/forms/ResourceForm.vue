@@ -1,7 +1,7 @@
 <template>
   <el-dialog 
     v-model="form_store.resource_visibility" 
-    :title="form_store.mode+' the resourse'" 
+    :title="form_store.mode+' the resource'" 
     width="600"
     :before-close="(done) => { formRef?.resetFields(); done(); }">
     
@@ -83,7 +83,10 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 } 
 
 const handleChange: UploadProps['onChange'] = (file) => {
+  console.log(file)
   file_get = file.raw as File
+  form_store.resource_form.suffix = file_get.type
+  form_store.resource_form.resource_name = file_get.name
 }
 
 const handleRemove: UploadProps['onRemove'] = (file) => {
@@ -115,8 +118,6 @@ const resource_rules = reactive<FormRules<ResourceEntity>>({
 })
 
 const formRef = ref<FormInstance>()
-
-
 const submitForm = async (formIn: FormInstance | undefined) => {
   if (!formIn) return
   await formIn.validate(async (valid) => {
@@ -137,7 +138,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       type: "success",
     })
     console.log('submit!')
-    form_store.course_visibility = false
+    form_store.resource_visibility = false
     await course_store.load_from_route(true)
   })
 }

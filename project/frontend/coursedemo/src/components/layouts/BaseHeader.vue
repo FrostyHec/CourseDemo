@@ -11,7 +11,7 @@ const course_store = useCourseStore()
 
 function generate_breadcrumb(s: string[]): {key: number, label: string, link?: string}[] {
   let id = useRoute().params.course_id
-  if(!id)
+  if(!id || !course_store.course_data)
     return []
   let prefix = '/course' + '/' + id
   let res = []
