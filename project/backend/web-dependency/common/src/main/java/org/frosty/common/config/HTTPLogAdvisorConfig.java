@@ -1,5 +1,6 @@
 package org.frosty.common.config;
 
+import jakarta.servlet.Filter;
 import org.frosty.common.annotation.DefaultHTTPLogAdvisor;
 import org.frosty.common.constant.AdvisorConstant;
 import org.frosty.common.handler.HTTPLogFilter;
@@ -25,12 +26,15 @@ public class HTTPLogAdvisorConfig implements ImportAware, WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean<HTTPLogFilter> loggingFilter() {
-        FilterRegistrationBean<HTTPLogFilter> registrationBean = new FilterRegistrationBean<>();
+    public FilterRegistrationBean<Filter> loggingFilter() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
         if (onTestLog) {
             registrationBean.setFilter(new HTTPLogFilter());
             registrationBean.addUrlPatterns("/*");
             registrationBean.setOrder(AdvisorConstant.defaultServletFilterOrder);
+        } else {
+            registrationBean.setFilter((servletRequest, servletResponse, filterChain) -> {
+            });
         }
         return registrationBean;
     }

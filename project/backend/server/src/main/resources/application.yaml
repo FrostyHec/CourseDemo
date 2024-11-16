@@ -2,9 +2,15 @@ spring:
   application:
     name: server
   profiles:
-      active: dev, resource-nonpublic-dev, self-nonpublic-dev
-#      active: prod, resource-nonpublic-prod, self-nonpublic-prod
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+  #      active: prod, resource-nonpublic-prod, self-nonpublic-prod
   jackson:
     property-naming-strategy: SNAKE_CASE
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 1000MB
 
+server:
+  port: 9977
 

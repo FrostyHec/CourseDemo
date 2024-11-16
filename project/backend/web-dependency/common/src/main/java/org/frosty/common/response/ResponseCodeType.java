@@ -11,6 +11,7 @@ public enum ResponseCodeType {
     NO_FOUND(404),
     INTERNAL_ERROR(500);
     private final int code;
+
     ResponseCodeType(int value) {
         this.code = value;
     }

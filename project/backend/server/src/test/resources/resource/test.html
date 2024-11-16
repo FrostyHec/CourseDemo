@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Upload Resource</title>
+</head>
+<body>
+<h1>Upload Resource</h1>
+<form id="uploadForm">
+  <input name="chapterId" type="hidden" value="1"> <!-- Example chapterId -->
+  <label for="resourceName">Resource Name:</label>
+  <input id="resourceName" name="resourceName" required type="text"><br>
+
+  <label for="suffix">Suffix:</label>
+  <input id="suffix" name="suffix" required type="text"><br>
+
+  <label for="resourceType">Resource Type:</label>
+  <select id="resourceType" name="resourceType" required>
+    <option value="description">Description</option>
+    <option value="courseware">Courseware</option>
+    <option value="video">Video</option>
+    <option value="attachment">Attachment</option>
+  </select><br>
+
+  <label for="file">Choose File:</label>
+  <input id="file" name="file" required type="file"><br>
+
+  <button type="submit">Upload</button>
+
+</form>
+<button id="see" type="button">Display</button>
+<div id="imageContainer"></div> <!-- Container to hold the image -->
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault() // Prevent the default form submission
+
+    const formData = new FormData()
+    const chapterId = 100
+    const resource = {
+      chapter_id: chapterId,
+      resource_name: document.getElementById('resourceName').value,
+      suffix: document.getElementById('suffix').value,
+      fileName: null,
+      resource_version_name: '1',
+      resource_version_order: 1,
+      resource_type: document.getElementById('resourceType').value,
+      student_can_download: true
+    }
+
+    formData.append('data', new Blob([JSON.stringify(resource)], { type: 'application/json' }))
+    formData.append('file', document.getElementById('file').files[0])
+
+    fetch(`http://localhost:9977/api/v1/chapter/${chapterId}/resource`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Forwarded-User': JSON.stringify({
+          authStatus: 'PASS',
+          authInfo: {
+            userID: 1
+          }
+        })
+      }
+    }).then(async response => {
+        const data = await response.json()
+        if (response.ok && data.code === 200) {
+          alert('Resource uploaded successfully!')
+          fetchResources(chapterId) // Fetch resources after successful upload
+        } else {
+          alert('Failed to upload resource.')
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error)
+        alert('An error occurred.')
+      })
+  })
+
+  function fetchResources(chapterId) {
+    fetch(`http://localhost:9977/api/v1/chapter/${chapterId}/resource`, {
+      method: 'GET',
+      headers: {
+        'X-Forwarded-User': JSON.stringify({
+          authStatus: 'PASS',
+          authInfo: {
+            userID: 1
+          }
+        })
+      }
+    })
+      .then(async response => {
+        const data = await response.json()
+        if (response.ok && data.code === 200) {
+          console.log(data)
+          displayImage(data.data.content[0]) // Display the first resource's image
+        } else {
+          throw new Error('Failed to retrieve resources.')
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error)
+        alert('An error occurred while fetching resources.')
+      })
+  }
+
+  function displayImage(resourceWithAccessKey) {
+    const caseName = 'resource-1'
+    console.log(resourceWithAccessKey)
+    const objName = resourceWithAccessKey.resource.file_name
+    const key = resourceWithAccessKey.access_key
+    const imageUrl = `http://localhost:9976/api/v1/storage/${objName}?case_name=${caseName}&access_key=${key}`
+
+    const imgElement = document.createElement('img')
+    imgElement.src = imageUrl
+    imgElement.alt = resourceWithAccessKey.resource.resource_name
+    imgElement.style.maxWidth = '100%' // To ensure it fits within the container
+
+    const imageContainer = document.getElementById('imageContainer')
+    imageContainer.innerHTML = '' // Clear any existing images
+    imageContainer.appendChild(imgElement)
+  }
+
+  // Initial fetch of resources
+  document.getElementById('see').addEventListener('click', (ev) => {
+    console.log('triggered')
+    fetchResources(100)
+  })
+</script>
+</body>
+</html>

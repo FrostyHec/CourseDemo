@@ -21,7 +21,7 @@ public class ResponseAdvisor implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType,
                             Class converterType) {
-        return !(returnType.getParameterType().equals(Response.class)||
+        return !(returnType.getParameterType().equals(Response.class) ||
                 returnType.getParameterType().equals(ResponseEntity.class)
 
         );

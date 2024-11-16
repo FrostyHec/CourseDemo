@@ -5,6 +5,6 @@ public class AdvisorConstant {
 
     public static final int defaultServletFilterOrder = 1000;
 
-    private AdvisorConstant(){
+    private AdvisorConstant() {
     }
 }

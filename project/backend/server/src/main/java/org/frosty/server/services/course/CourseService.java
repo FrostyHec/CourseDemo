@@ -1,10 +1,9 @@
 package org.frosty.server.services.course;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.RequiredArgsConstructor;
-
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +18,8 @@ public class CourseService {
     }
 
     public void updateCourseStatus(Long id, String status) {
-        Course course = courseMapper.getCourse(id);
-//         检查非法状态转换
+        Course course = courseMapper.selectById(id);
+        //检查非法状态转换
         if (course.getStatus().equals(Course.CourseStatus.deleted)) {
             throw new IllegalArgumentException("Invalid status change");
         }
@@ -33,28 +32,26 @@ public class CourseService {
     }
 
     public Course getCourse(Long id) {
-        return courseMapper.getCourse(id);
+        return courseMapper.selectById(id);
     }
 
     public void deleteCourse(Long id) {
         // todo: course status must be "deleted" or course has no student to delete
-        courseMapper.deleteCourse(id);
+        courseMapper.deleteById(id);
     }
 
     public List<Course> getAllCourses() {
         return courseMapper.getAllCourses();
     }
 
-    //TODO:模糊搜索
-    public List<Course> searchCourses() {
-        return List.of();
+    public List<Course> searchPublicCourse(int pageNum, int pageSize, String keyword) {
+        return courseMapper.searchPublicCourse(pageNum -1 , pageSize, keyword); // sql里面的pageNum是从0开始的
     }
 
-    public List<Course> findCoursesByTeacherId(Long teacherId) {
-        return courseMapper.findCoursesByTeacherId(teacherId);
-    }
 
-    public List<Course> adminGetRequiredApprovedCourse(Long adminId) {
-        return courseMapper.adminGetRequiredApprovedCourse(adminId);
+    public void updateCoursePublication(Long id, String publicationStatus) {
+        UpdateWrapper<Course> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("course_id", id).set("publication", publicationStatus);
+        courseMapper.update(updateWrapper);
     }
 }

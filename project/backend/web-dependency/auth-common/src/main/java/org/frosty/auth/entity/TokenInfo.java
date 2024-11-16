@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 public class TokenInfo {
     private AuthStatus authStatus;
     private AuthInfo authInfo;
-    public static TokenInfo getWithoutAuthInfo(){
+
+    public static TokenInfo getWithoutAuthInfo() {
         return new TokenInfo(AuthStatus.EMPTY, null);
     }
-    public static TokenInfo getWithAuthInfo(AuthInfo authInfo){
+
+    public static TokenInfo getWithAuthInfo(AuthInfo authInfo) {
         return new TokenInfo(AuthStatus.PASS, authInfo);
     }
 }
