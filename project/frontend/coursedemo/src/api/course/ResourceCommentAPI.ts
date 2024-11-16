@@ -1,5 +1,6 @@
 import { service_backend_base } from '@/utils/Constant';
 import { AxiosAPI } from '@/utils/APIUtils';
+import type {UserPublicInfoEntity} from "@/api/user/UserAPI";
 
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
@@ -11,6 +12,30 @@ export interface ResourceCommentEntity {
   created_at: Date
   updated_at: Date
   comment_reply: number
+}
+
+export interface CommentResource {
+  id: number
+  commentId: number
+  resourceName: string
+  fileName: string
+  suffix: string
+}
+
+export interface CommentResourceWithAccessKey {
+  resourceEntity: CommentResource
+  accessKey: string
+}
+
+export interface CommentWithUserAndFileAndAccessKey {
+  commentId: number
+  resourceId: number
+  user: UserPublicInfoEntity
+  commentText: string
+  commentFiles: CommentResourceWithAccessKey[]
+  commentReply: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 // Add a comment to a resource
@@ -45,6 +70,17 @@ export async function getCommentCall(commentId: number) {
 
 // Get all comments under a resource
 export async function getResourceCommentsCall(resourceId: number) {
-  const url = `${service_backend_base}/resource/${resourceId}/comments`;
-  return AxiosAPI.authGet<{ content: ResourceCommentEntity[] }>(url);
+  const url = service_backend_base + '/resource/' + resourceId + '/comments'
+  return AxiosAPI.authGet<{ content: CommentWithUserAndFileAndAccessKey[] }>(url, {})
+}
+
+
+export async function uploadFilesCall(commentId: number, commentResource: CommentResource) {
+  const url = service_backend_base + '/resource/comment/' + commentId + '/file'
+  return AxiosAPI.authPost<null>(url, commentResource)
+}
+
+export async function removeFilesCall(commentId: number, fileId: number) {
+  const url = service_backend_base + `/resource/comment/${commentId}/file/${fileId}`
+  return AxiosAPI.authDelete<null>(url, {})
 }
