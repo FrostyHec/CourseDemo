@@ -9,27 +9,6 @@ import { useRoute } from "vue-router";
 
 const course_store = useCourseStore()
 
-function generate_breadcrumb(s: string[]): {key: number, label: string, link?: string}[] {
-  let id = useRoute().params.course_id
-  if(!id || !course_store.course_data)
-    return []
-  let prefix = '/course' + '/' + id
-  let res = []
-  if(s.length==0)
-    res.push({key: 0, label: course_store.course_data.course_info.course_name})
-  else
-    res.push({key: 0, label: course_store.course_data.course_info.course_name, link: prefix})
-  for(let i=0;i<s.length;i++) {
-    prefix += '/' + s[i]
-    if(i==s.length-1) {
-      res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
-    } else {
-      res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
-    }
-  }
-  return res
-}
-
 </script>
 
 <template>
@@ -44,7 +23,7 @@ function generate_breadcrumb(s: string[]): {key: number, label: string, link?: s
     <template #content>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item></el-breadcrumb-item>
-        <el-breadcrumb-item v-for="it in generate_breadcrumb(path_convert($route.params.labels))" :key="it.key" :to="it.link">
+        <el-breadcrumb-item v-for="it in course_store.breadcrumb" :key="it.key" :to="it.link">
           {{ it.label }}
         </el-breadcrumb-item>
         <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>

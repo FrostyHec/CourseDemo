@@ -59,7 +59,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="AddCourse('courseForm')">创建</el-button>
+          <el-button type="primary" @click="AddCourse()">创建</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -83,7 +83,7 @@ const tableData = ref<CourseEntity[]>([
 ]);
 
 // 挂载时获取课程列表
-onMounted(async () => {
+async function load() {
   try {
     const response = await getAllTeachingCourseList(authStore.user.user_id, 1, 10);
     const courses = response.data.content; 
@@ -91,7 +91,8 @@ onMounted(async () => {
   } catch (error) {
     console.error('获取课程列表失败:', error);
   }
-});
+}
+onMounted(load);
 
 // 表单数据
 const courseForm = ref<CourseEntity>({
@@ -127,8 +128,13 @@ const createNewCourse = () => {
 };
 
 // 添加课程
-const AddCourse = (p0: string) => {
-  createCourseCall(courseForm.value)
+const AddCourse = async () => {
+  const msg = await createCourseCall(courseForm.value)
+  if(msg.code!==200) {
+    console.error('add course error');
+    return
+  }
+  await load()
   dialogVisible.value = false;
 };
 

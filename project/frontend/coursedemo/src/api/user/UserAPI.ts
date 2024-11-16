@@ -70,7 +70,7 @@ export async function getUserPublicInfoCall(userId:number){
   return await AxiosAPI.authGet<UserPublicInfoEntity>(url,{});
 }
 
-export async function searchUserCall(firstName:string,lastName:string){
+export async function searchUserCall(firstName:string,lastName:string,pageNum:number,pageSize:number){
   const url = service_backend_base + '/user/search'
-  return await AxiosAPI.authGet<{content:UserPublicInfoEntity[]}>(url,{first_name:firstName,last_name:lastName});
+  return await AxiosAPI.authGet<{content:UserPublicInfoEntity[]}>(url,{first_name:firstName,last_name:lastName,page_size:pageSize,page_num:pageNum,});
 }

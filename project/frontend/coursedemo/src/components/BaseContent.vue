@@ -15,31 +15,34 @@
         </h1>
         {{ course_store.current_data?.description }}
       </div>
+      <div v-if="'course_name' in course_store.current_data.data" style="display: flex; justify-content: center; align-items: center;">
+        <div style="font-size: large; color: var(--ep-color-primary); margin-right: 10px;">~</div>
+        <base-like
+          :like="async () => {
+            const id = course_store.current_course_id()
+            if(id!==undefined)
+              return await createCourseLikeCall(id)
+            return undefined
+          }"
+          :cancel="async () => {
+            const id = course_store.current_course_id()
+            if(id!==undefined)
+              return await cancelCourseLikeCall(id)
+            return undefined
+          }"
+          :get="async () => {
+            const id = course_store.current_course_id()
+            if(id!==undefined)
+              return await getCourseLikeCall(id)
+            return undefined
+          }"
+        />
+        <div style="font-size: large; color: var(--ep-color-primary); margin-left: 10px;">Give your like ~</div>
+      </div>
       <base-resource/>
+      <base-announcement/>
       <base-comment/>
-    </div>
-    <div style="display: flex; justify-content: center; align-items: center;">
-      <base-like
-        v-if="'course_name' in course_store.current_data.data"
-        :like="async () => {
-          const id = course_store.current_course_id()
-          if(id!==undefined)
-            return await createCourseLikeCall(id)
-          return undefined
-        }"
-        :cancel="async () => {
-          const id = course_store.current_course_id()
-          if(id!==undefined)
-            return await cancelCourseLikeCall(id)
-          return undefined
-        }"
-        :get="async () => {
-          const id = course_store.current_course_id()
-          if(id!==undefined)
-            return await getCourseLikeCall(id)
-          return undefined
-        }"
-      />
+      <base-assignment/>
     </div>
   </el-scrollbar>
   <div v-else style="font-size: large;">404</div>

@@ -24,8 +24,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   function init() {
     const res = getLoginToken()
+    const res_ = getLoginUser()
     if (res) {
       token.value = res
+    }
+    if(res_) {
+      Object.assign(user, res_)
     }
   }
   init()
@@ -36,15 +40,15 @@ export const useAuthStore = defineStore('auth', () => {
       return result
     token.value = result.data.token
     Object.assign(user, result.data.user)
-    setLoginToken(token.value)
-    console.log(result)
+    setLoginTokenUser(token.value, user)
+    console.log(result, user)
     return result
   }
 
   async function logout(logoutParam: LogoutParam) {
     await logoutCall(logoutParam)
     token.value = ''
-    setLoginToken('')
+    setLoginTokenUser('', emptyUser)
     Object.assign(user, emptyUser)
   }
 
@@ -56,8 +60,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 })
 
-export function setLoginToken(token: string): void {
+export function setLoginTokenUser(token: string, user: UserPublicInfoEntity): void {
   Cookies.set('token', token)
+  Cookies.set('user', JSON.stringify(user))
 }
 
 export function getLoginToken(): string {
@@ -65,4 +70,11 @@ export function getLoginToken(): string {
   if(token)
     return token
   return ''
+}
+
+export function getLoginUser(): UserPublicInfoEntity|undefined {
+  const user = Cookies.get('user')
+  if(user)
+    return JSON.parse(user)
+  return undefined
 }

@@ -22,13 +22,17 @@ export interface AllInOneEntity {
   course_info: CourseEntity,
   chapters: {
     chapter_info: ChapterEntity, 
-    resources: ResourceEntityPlus[],
+    resources: {
+      top: ResourceEntityPlus,
+      vers: ResourceEntityPlus[],
+    }[],
   }[],
 }
 
 export interface UnifyTree {
   label: string,
   children: UnifyTree[],
+  id: number,
 
   order: number,
   description: string,
@@ -36,25 +40,25 @@ export interface UnifyTree {
   data: CourseEntity|ChapterEntity|ResourceEntityPlus,
 }
 
-function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus): UnifyTree {
+function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus, key: number, is_top: boolean = true): UnifyTree {
   if('course_name' in data) {
     return {
-      label: data.course_name, children: [],
+      label: data.course_name, children: [], id: key,
       order: 0, description: data.description,
       data: data,
     }
   }
   if('chapter_title' in data) {
     return {  
-      label: data.chapter_title, children: [],
+      label: data.chapter_title, children: [], id: key,
       order: data.chapter_order, description: data.content,
       data: data,
     }
   }
   if('resource_name' in data) {
     return {
-      label: data.resource_name, children: [],
-      order: data.resource_order, description: '',
+      label: is_top ? data.resource_name : data.resource_version_name, children: [], id: key,
+      order: is_top ? data.resource_order : data.resource_version_order, description: '',
       data: data,
     }
   }
@@ -78,15 +82,6 @@ function unify_update(node: UnifyTree): boolean {
   return true
 }
 
-function build(course: AllInOneEntity): UnifyTree {
-  const root = unify(course.course_info);
-  course.chapters.forEach((chapter) => {
-    const sub_root = unify(chapter.chapter_info)
-    chapter.resources.forEach((resource) => sub_root.children.push(unify(resource)))
-    root.children.push(sub_root)
-  })
-  return root
-}
 
 export function path_convert(path: undefined|string|string[]): string[] {
   if(!path)
@@ -98,11 +93,40 @@ export function path_convert(path: undefined|string|string[]): string[] {
 
 async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
   const course_info = (await getCourseCall(course_id)).data
-  const chapter_list = (await getAllChapterCall(course_id)).data.content
-  const chapter_all_list: {chapter_info: ChapterEntity, resources: ResourceEntityPlus[]}[] = []
-  for(const chapter of chapter_list) {
-    const chapter_info = (await getChapterCall(chapter.chapter_id)).data
-    const resoruse_all_list = (await getResourcesByChapterCall(chapter.chapter_id)).data.content.map(unpack_resorce)
+  const chapter_list = (await getAllChapterCall(course_id)).data.content.sort((a, b) => a.chapter_order - b.chapter_order)
+  const chapter_all_list: {
+    chapter_info: ChapterEntity, 
+    resources: {
+      top: ResourceEntityPlus,
+      vers: ResourceEntityPlus[],
+    }[]
+  }[] = []
+  for(const chapter_info of chapter_list) {
+    const resoruse_list = (await getResourcesByChapterCall(chapter_info.chapter_id))
+      .data.content
+      .map(unpack_resorce)
+      .sort((a, b) => {
+        if(a.resource_order===b.resource_order)
+          return b.resource_version_order - a.resource_version_order
+        return b.resource_order - a.resource_order
+      })
+    const resoruse_all_list: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]}[] = []
+    let current: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]} | undefined = undefined
+    for(const resoruse of resoruse_list) {
+      if(current===undefined) {
+        current = {top: resoruse, vers: []}
+      }
+      else {
+        if(current.top.resource_order==resoruse.resource_order)
+          current.vers.push(resoruse)
+        else {
+          resoruse_all_list.push(current)
+          current = current = {top: resoruse, vers: []}
+        }
+      }
+    }
+    if(current!==undefined)
+      resoruse_all_list.push(current)
     chapter_all_list.push({chapter_info: chapter_info, resources: resoruse_all_list})
   }
   console.log({course_info: course_info, chapters: chapter_all_list})
@@ -110,109 +134,39 @@ async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
 }
 
 export const useCourseStore = defineStore('course', () => {
-  let course_data: AllInOneEntity|undefined = {
-    course_info: {
-      course_id: 0,
-      course_name: 'OOAD (Fall2024)', 
-      description: 'Welcome to this course!!!',
-      teacher_id: 0,
-      status: CourseStatus.archived,
-      publication: Publication.open,
-      created_at: new Date,
-      updated_at: new Date('2077-04-01'),
-    },
-    chapters: [{
-      chapter_info: {
-        chapter_id: 0,
-        course_id: 0,
-        chapter_order: 0,
-        chapter_title: 'Chapter 1',
-        chapter_type: ChapterType.assignment,
-        content: 'Let us start!!!',
-        created_at: new Date,
-        updated_at: new Date('2077-04-02'),
-        visible: true,
-        publication: true,
-      },
-      resources: [{
-        resource_id: 0,
-        chapter_id: 0,
-        resource_name: 'slide',
-        suffix: 'md',
-        file_name: 'abc',
-        resource_order: 0,
-        resource_version_name: 'init',
-        resource_version_order: 0,
-        resource_type: ResourceType.courseware,
-        student_can_download: true,
-        created_at: new Date,
-        updated_at: new Date('2077-04-03'),
-        access_key: '',
-      }, {
-        resource_id: 1,
-        chapter_id: 0,
-        resource_name: 'tag',
-        suffix: 'zip',
-        file_name: 'funny',
-        resource_order: 0,
-        resource_version_name: 'init',
-        resource_version_order: 0,
-        resource_type: ResourceType.attachment,
-        student_can_download: true,
-        created_at: new Date,
-        updated_at: new Date('2077-04-03'),
-        access_key: '',
-      },],
-    }, {
-      chapter_info: {
-        chapter_id: 0,
-        course_id: 0,
-        chapter_order: 0,
-        chapter_title: 'Chapter 2',
-        chapter_type: ChapterType.assignment,
-        content: 'Let us continue!!!',
-        created_at: new Date,
-        updated_at: new Date('2077-04-11'),
-        visible: true,
-        publication: true,
-      },
-      resources: [{
-        resource_id: 2,
-        chapter_id: 0,
-        resource_name: 'slide',
-        suffix: 'md',
-        file_name: 'abc',
-        resource_order: 0,
-        resource_version_name: 'init',
-        resource_version_order: 0,
-        resource_type: ResourceType.courseware,
-        student_can_download: true,
-        created_at: new Date,
-        updated_at: new Date('2077-04-23'),
-        access_key: '',
-      }, {
-        resource_id: 3,
-        chapter_id: 0,
-        resource_name: 'tag',
-        suffix: 'zip',
-        file_name: 'funny',
-        resource_order: 0,
-        resource_version_name: 'init',
-        resource_version_order: 0,
-        resource_type: ResourceType.attachment,
-        student_can_download: true,
-        created_at: new Date,
-        updated_at: new Date('2077-04-13'),
-        access_key: '',
-      },],
-    },],
-  }
+  let course_data: AllInOneEntity|undefined = undefined
   const unify_course_data = ref<Array<UnifyTree>>([])
   const current_data: Ref<UnifyTree|undefined> = ref(undefined)
+  const default_open = ref([0])
   
   function current_course_id(): number|undefined {
     return course_data?.course_info.course_id
   }
+
+  function current_course_teacher(): number|undefined {
+    return course_data?.course_info.teacher_id
+  }
+
+  function build(course: AllInOneEntity): UnifyTree {
+    let cnt = 0
+    default_open.value = [0]
+    return course.chapters.reduce<UnifyTree>((root, chapter) => {
+      default_open.value.push(cnt)
+      root.children.push(
+        chapter.resources.reduce<UnifyTree>((sub_root, resource) => {
+          sub_root.children.push(
+            resource.vers.reduce<UnifyTree>((subsub_root, ver_resource) => {
+              subsub_root.children.push(unify(ver_resource, cnt++, false))
+              return subsub_root
+            }, unify(resource.top, cnt++))
+          )
+          return sub_root
+        }, unify(chapter.chapter_info, cnt++))
+      )
+      return root
+    }, unify(course.course_info, cnt++))
+  }
+
   async function load(course_id: number, l: string[], reload: boolean) {
     if(reload || current_course_id()!==course_id)
       course_data = await get_all(course_id)
@@ -228,29 +182,49 @@ export const useCourseStore = defineStore('course', () => {
     if(labels.length==0)
       return
 
-    let flag = false 
-    for(const i of current_data.value.children)
-      if(i.label==labels[0]) {
-        flag = true
-        current_data.value = i
+    let father_id = 0
+    for(const label of labels) {
+      let flag = false
+      if(!current_data.value)
+        return
+      for(const sub of current_data.value.children)
+        if(sub.label==label) {
+          flag = true
+          father_id = current_data.value.id
+          current_data.value = sub
+          break
+        }
+      if(!flag) {
+        if('resource_name' in current_data.value.data && 
+           current_data.value.data.resource_version_name==label)
+           return
+        current_data.value = undefined
+        return
       }
-    if(!flag) {
-      current_data.value = undefined
-      return
     }
-    if(labels.length==1)
-      return
+    if(current_data.value)
+      default_open.value.push(father_id)
+  }
 
-    flag = false
-    for(const i of current_data.value.children)
-      if(i.label==labels[1]) {
-        flag = true
-        current_data.value = i
+  const breadcrumb = ref<{key: number, label: string, link?: string}[]>([])
+  function generate_breadcrumb(id: string|string[], s: string[]) {
+    if(id===undefined || !course_data)
+      return []
+    let prefix = '/course' + '/' + id
+    const res = []
+    if(s.length==0)
+      res.push({key: 0, label: course_data.course_info.course_name})
+    else
+      res.push({key: 0, label: course_data.course_info.course_name, link: prefix})
+    for(let i=0;i<s.length;i++) {
+      prefix += '/' + s[i]
+      if(i==s.length-1) {
+        res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
+      } else {
+        res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
       }
-    if(!flag) {
-      current_data.value = undefined
-      return
     }
+    breadcrumb.value = res
   }
   async function load_from_route(reload: boolean) {
     const id = route.params.course_id
@@ -264,6 +238,7 @@ export const useCourseStore = defineStore('course', () => {
       await load(Number(id), [], reload)
     else
       await load(Number(id), path_convert(labels), reload)
+    generate_breadcrumb(id, path_convert(labels))
   }
 
   const route = useRoute()
@@ -275,5 +250,5 @@ export const useCourseStore = defineStore('course', () => {
     {immediate: true}
   )
 
-  return {course_data, current_course_id, unify_course_data, current_data, load_from_route}
+  return {current_course_id, current_course_teacher, unify_course_data, current_data, load_from_route, default_open, breadcrumb}
 })

@@ -13,7 +13,7 @@ function mock(url: string, req_type: RequestType, func: (() => any)) {
     if (mockAdapter == null) {
         mockAdapter = new MockAdapter(axios);
     }
-    console.log('')
+    console.log('mock!', url)
     switch (req_type) {
         case RequestType.GET:
             mockAdapter.onGet(url).reply(() => {
@@ -77,7 +77,7 @@ export function setMockFunc(url: string, req_type: RequestType, request: APIPara
 export async function enableTempMock() {
     try {
         // 动态导入模块
-        const module = await import('@/mock/__tests__/TestMockValid.test')
+        const module = await import('@/mockjs/nonpublic-TempMock')
         console.log(module)
         // 遍历模块的所有导出
         Object.keys(module).forEach((key) => {

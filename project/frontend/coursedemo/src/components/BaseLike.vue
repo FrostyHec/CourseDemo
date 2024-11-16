@@ -45,6 +45,7 @@ load()
 async function flip() {
   if(liked.value===undefined)
     return
+  console.log('flip')
   let msg: APIResult<boolean>|undefined
   if(liked.value)
     msg = await props.cancel()

@@ -6,6 +6,7 @@ import { UserType, type UserEntity } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' 
 import { useAuthStore } from '@/stores/auth';
+import { User, Lock } from '@element-plus/icons-vue'
 
 const authStore = useAuthStore()
 // 控制注册与登录表单的显示， 默认显示注册
@@ -61,16 +62,15 @@ const registerRule = ref({
 })
 
 const auth_store = useAuthStore()
-const form_store = useFormStore()
 const router = useRouter() 
 
 // 登录函数
 const handleLogin = async () => {
   try {
     let result = await authStore.login(loginData.value);
+    console.log('happy')
     if (result.code == 200) {
       ElMessage.success('登录成功!')
-      form_store.open_form(form_store.course_null, 'Add')
       if(authStore.user.role==UserType.STUDENT)router.push('/MainPage/student');
       else if(authStore.user.role==UserType.TEACHER)router.push('/MainPage/teacher')
       else router.push('/manager')
@@ -119,7 +119,6 @@ const clearRegisterData = () => {
 </script>
 
 <template>
-  <CourseForm></CourseForm>
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
@@ -179,7 +178,7 @@ const clearRegisterData = () => {
         </el-form-item>
         <!-- 登录按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" native-type="submit" @click="handleLogin">登录</el-button>
+          <el-button class="button" type="primary" @click="handleLogin">登录</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = true">

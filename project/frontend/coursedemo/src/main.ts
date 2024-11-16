@@ -25,7 +25,7 @@ export async function main() {
   app.use(createPinia())
   handleBackendPath()
   await handleMockStatus()
- app.use(ElementPlus);
+  app.use(ElementPlus);
   return app
 }
 

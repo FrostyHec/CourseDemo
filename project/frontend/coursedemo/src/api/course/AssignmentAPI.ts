@@ -40,3 +40,8 @@ export async function getAssignmentCall(assignmentId: number) {
   const url = service_backend_base + '/assignment/' + assignmentId
   return AxiosAPI.authGet<AssignmentEntity>(url, {})
 }
+
+export async function getAssignmentsByChapterIdCall(chapterId: number){
+  const url = `${service_backend_base}/chapter/${chapterId}/assignment`
+  return AxiosAPI.authGet<{content:AssignmentEntity[]}>(url)
+}

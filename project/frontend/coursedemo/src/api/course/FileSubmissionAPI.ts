@@ -8,6 +8,7 @@ export interface FileSubmissionEntity {
   file_submission_id: number
   assignment_id: number
   student_id: number
+  suffix: string
   file_name: string
   gained_score: number
   created_at: Date
