@@ -40,7 +40,7 @@ export interface UnifyTree {
   data: CourseEntity|ChapterEntity|ResourceEntityPlus,
 }
 
-function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus, key: number): UnifyTree {
+function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus, key: number, is_top: boolean = true): UnifyTree {
   if('course_name' in data) {
     return {
       label: data.course_name, children: [], id: key,
@@ -57,8 +57,8 @@ function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus, key: number)
   }
   if('resource_name' in data) {
     return {
-      label: data.resource_name, children: [], id: key,
-      order: data.resource_order, description: '',
+      label: is_top ? data.resource_name : data.resource_version_name, children: [], id: key,
+      order: is_top ? data.resource_order : data.resource_version_order, description: '',
       data: data,
     }
   }
@@ -108,7 +108,7 @@ async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
       .sort((a, b) => {
         if(a.resource_order===b.resource_order)
           return b.resource_version_order - a.resource_version_order
-        return a.resource_order - b.resource_order
+        return b.resource_order - a.resource_order
       })
     const resoruse_all_list: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]}[] = []
     let current: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]} | undefined = undefined
@@ -143,6 +143,10 @@ export const useCourseStore = defineStore('course', () => {
     return course_data?.course_info.course_id
   }
 
+  function current_course_teacher(): number|undefined {
+    return course_data?.course_info.teacher_id
+  }
+
   function build(course: AllInOneEntity): UnifyTree {
     let cnt = 0
     default_open.value = [0]
@@ -152,9 +156,7 @@ export const useCourseStore = defineStore('course', () => {
         chapter.resources.reduce<UnifyTree>((sub_root, resource) => {
           sub_root.children.push(
             resource.vers.reduce<UnifyTree>((subsub_root, ver_resource) => {
-              const temp = unify(ver_resource, cnt++)
-              temp.label = ver_resource.resource_version_name
-              subsub_root.children.push(temp)
+              subsub_root.children.push(unify(ver_resource, cnt++, false))
               return subsub_root
             }, unify(resource.top, cnt++))
           )
@@ -203,6 +205,27 @@ export const useCourseStore = defineStore('course', () => {
     if(current_data.value)
       default_open.value.push(father_id)
   }
+
+  const breadcrumb = ref<{key: number, label: string, link?: string}[]>([])
+  function generate_breadcrumb(id: string|string[], s: string[]) {
+    if(id===undefined || !course_data)
+      return []
+    let prefix = '/course' + '/' + id
+    const res = []
+    if(s.length==0)
+      res.push({key: 0, label: course_data.course_info.course_name})
+    else
+      res.push({key: 0, label: course_data.course_info.course_name, link: prefix})
+    for(let i=0;i<s.length;i++) {
+      prefix += '/' + s[i]
+      if(i==s.length-1) {
+        res.push({key: i+1, label: s[i].replace(/-/g, ' ')})
+      } else {
+        res.push({key: i+1, label: s[i].replace(/-/g, ' '), link: prefix})
+      }
+    }
+    breadcrumb.value = res
+  }
   async function load_from_route(reload: boolean) {
     const id = route.params.course_id
     const labels = route.params.labels
@@ -215,6 +238,7 @@ export const useCourseStore = defineStore('course', () => {
       await load(Number(id), [], reload)
     else
       await load(Number(id), path_convert(labels), reload)
+    generate_breadcrumb(id, path_convert(labels))
   }
 
   const route = useRoute()
@@ -226,5 +250,5 @@ export const useCourseStore = defineStore('course', () => {
     {immediate: true}
   )
 
-  return {course_data, current_course_id, unify_course_data, current_data, load_from_route, default_open}
+  return {current_course_id, current_course_teacher, unify_course_data, current_data, load_from_route, default_open, breadcrumb}
 })

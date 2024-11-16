@@ -5,36 +5,37 @@
   width="600">
 
   <el-row :gutter="20" style="margin-bottom: 10px;">
-    <el-col :span="11"> 
+    <el-col :span="9"> 
       <el-input v-model="first_name_input" placeholder="First Name" clearable></el-input>
     </el-col>
-    <el-col :span="11">
+    <el-col :span="9">
       <el-input v-model="last_name_input" placeholder="Last Name" clearable/>
+    </el-col>
+    <el-col :span="6">
+      <el-button type="primary" style="margin-bottom: 10px; width: 0;" @click="load_list">Search</el-button>
     </el-col>
   </el-row>
   
-  <el-button type="primary" style="margin-bottom: 10px;" @click="load_list">Search</el-button>
 
   <el-table :data="list" height="400">
     <el-table-column label="Name">
-      <template #default="scope: {row: StudentInfoWithEnrollStatus}">
+      <template #default="scope: {row: UserPublicInfoEntity}">
         {{ scope.row.first_name+' '+scope.row.last_name }}
       </template>
     </el-table-column>
     <el-table-column label="Email">
-      <template #default="scope: {row: StudentInfoWithEnrollStatus}">
+      <template #default="scope: {row: UserPublicInfoEntity}">
         {{ scope.row.email }}
       </template>
     </el-table-column>
     <el-table-column label="Invite">
-      <template #default="scope: {row: StudentInfoWithEnrollStatus}">
+      <template #default="scope: {row: UserPublicInfoEntity}">
         <el-button 
-          :type="scope.row.status===StudentEnrollType.invited ? '' : 'primary'" 
-          :disabled="scope.row.status===StudentEnrollType.invited"
+          type="primary"
           @click="invite(scope.row)"
           style="width: 0;" 
         >
-          {{ scope.row.status===StudentEnrollType.invited ? 'Invited' : 'Invite' }}
+          Invite
         </el-button>
       </template>
     </el-table-column>
@@ -54,17 +55,7 @@ import { searchUserCall } from '@/api/user/UserAPI';
 
 const course_store = useCourseStore()
 const table_visibility = ref(false)
-const list = ref<UserPublicInfoEntity[]>([{
-  user_id: 0, first_name: '123', last_name: 'happy',
-  role: UserType.STUDENT, email: '123',
-}, {
-  user_id: 0, first_name: '123', last_name: 'happy',
-  role: UserType.STUDENT, email: '123'
-}, {
-  user_id: 0, first_name: '123', last_name: 'happy',
-  role: UserType.STUDENT, email: '123'
-},
-])
+const list = ref<UserPublicInfoEntity[]>([])
 
 const first_name_input = ref('')
 const last_name_input = ref('')
@@ -89,7 +80,7 @@ async function open_table() {
   table_visibility.value = true
 }
 
-async function invite(row: StudentInfoWithEnrollStatus) {
+async function invite(row: UserPublicInfoEntity) {
   const id = course_store.current_course_id()
   if(!id)
     return
@@ -100,7 +91,6 @@ async function invite(row: StudentInfoWithEnrollStatus) {
       type: 'error',
     })
   }
-  row.status = StudentEnrollType.invited
   return
 }
 

@@ -1,6 +1,7 @@
 <template>
   <div>
     <StudentTable ref="student_table_ref"/>
+    <StudentEnroll ref="student_enroll_ref"/>
     <el-scrollbar style="border-right: solid 2px var(--ep-border-color); margin-right: -1px;">
       <el-tree
         :draggable="true"
@@ -27,7 +28,8 @@
                 {{ node.data.label }}
             </p>
             <el-popover
-              v-if="node.data === course_store.current_data"
+              v-if="node.data===course_store.current_data && 
+                    course_store.current_course_teacher()===auth_store.user.user_id"
               placement="right-start"
               :width="100"
               trigger="hover"
@@ -45,6 +47,7 @@
                   <el-button v-if="node.level==4" type='primary' style="margin: 0;" @click="to_top(node)">To top</el-button>
                   <el-button v-if="node.parent.parent!==null" type="danger" style="margin: 0;" @click="handleDelete(node)">Delete</el-button>
                   <el-button v-if="'course_name' in node.data.data" style="margin: 0;" type='primary' @click="student_table_ref.open_table()">Invite</el-button>
+                  <el-button v-if="'course_name' in node.data.data" style="margin: 0;" type='primary' @click="student_enroll_ref.open_enroll()">Enroll</el-button>
                 </div>
               </template>
               <template #reference>
@@ -68,9 +71,11 @@ import { useCourseStore, type ResourceEntityPlus } from "@/stores/course";
 import { type UnifyTree } from "@/stores/course";
 import { ElMessage } from 'element-plus'
 
+const auth_store = useAuthStore()
 const form_store = useFormStore()
 const course_store = useCourseStore()
 const student_table_ref = ref()
+const student_enroll_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
   const cnt = (node.data as UnifyTree).children.length
@@ -93,7 +98,7 @@ const open_form = (node: Node, mode: 'Add'|'Edit') => {
     }
     if('resource_name' in data) {
       let temp: ResourceEntityPlus = {...data}
-      temp.resource_version_order += 1
+      temp.resource_version_order -= 1
       form_store.resource_mode = 'new_version'
       form_store.open_form(temp, mode)
     }
@@ -110,7 +115,7 @@ async function to_top(node: Node) {
   form_store.resource_form.chapter_id = parent.chapter_id
   form_store.resource_form.resource_name = parent.resource_name
   form_store.resource_form.resource_order = parent.resource_order
-  form_store.resource_form.resource_version_order = parent.resource_version_order
+  form_store.resource_form.resource_version_order = parent.resource_version_order - 1
   if(await form_store.modify_resource())
     handleClick(null, node.parent)
   else {
@@ -143,7 +148,7 @@ const handleDelete = async (node: Node) => {
     msg = await deleteChapterCall(d.data.chapter_id)
   if('resource_name' in d.data)
     msg = await deleteResourceCall(d.data.resource_id)
-  if(!msg || msg.code!=200) {
+  if(msg && msg.code!=200) {
     ElMessage({
       message: 'Delete network error',
       type: 'error',
@@ -164,8 +169,9 @@ import { reactive, ref } from "vue";
 import { useFormStore } from "@/stores/form";
 import ChapterForm from "../forms/ChapterForm.vue";
 import CoureseForm from "../forms/CoureseForm.vue";
-import { deleteChapterCall, type ChapterEntity } from "@/api/course/ChapterAPI";
-import { deleteResourceCall, type ResourceEntity } from "@/api/course/CourseResourceAPI";
+import { deleteChapterCall, updateChapterCall, type ChapterEntity } from "@/api/course/ChapterAPI";
+import { deleteResourceCall, updateResourceMetadataCall, type ResourceEntity } from "@/api/course/CourseResourceAPI";
+import { useAuthStore } from "@/stores/auth";
 
 const allowDrop = (draggingNode: Node, dropNode: Node, type: AllowDropType) => {
   return draggingNode.level==dropNode.level && (type=='prev' || type=='next')
@@ -173,13 +179,51 @@ const allowDrop = (draggingNode: Node, dropNode: Node, type: AllowDropType) => {
 const allowDrag = (draggingNode: Node) => {
   return draggingNode.level > 1
 }
-const handleDrop = (
+const handleDrop = async (
   draggingNode: Node,
-  dropNode: Node,
-  dropType: NodeDropType,
-  ev: DragEvents
 ) => {
-  //console.log(folder)
+  const parent = draggingNode.parent.data as UnifyTree
+  let min = (draggingNode.level==4 && ('resource_name' in parent.data)) 
+            ? parent.data.resource_version_order : -1
+  for(const sub of parent.children) {
+    if(sub.order<=min) {
+      min += 1
+      let msg
+      if('chapter_title' in sub.data) {
+        sub.data.chapter_order = min
+        msg = await updateChapterCall(sub.data.chapter_id, sub.data)
+      }
+      if('resource_name' in sub.data) {
+        if(draggingNode.level!=4) {
+          sub.data.resource_order = min
+          for(const subsub of sub.children)
+            if('resource_name' in subsub.data) {
+              subsub.data.resource_order = min
+              msg = await updateResourceMetadataCall(subsub.data.resource_id, subsub.data)
+              if(msg && msg.code!=200) {
+                ElMessage({
+                  message: 'To top network error',
+                  type: 'error',
+                })
+                return
+              }
+            }
+        } else
+          sub.data.resource_version_order = min
+        msg = await updateResourceMetadataCall(sub.data.resource_id, sub.data)
+      }
+      if(msg && msg.code!=200) {
+        ElMessage({
+          message: 'To top network error',
+          type: 'error',
+        })
+        return
+      }
+    }
+    else
+      min = sub.order + 1
+  }
+  await course_store.load_from_route(true)
 }
 
 const currentNode = ref<Node|undefined>(undefined);

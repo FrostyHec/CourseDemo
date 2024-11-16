@@ -14,6 +14,10 @@ const router = createRouter({
       component: () => import('@/views/Course/BaseCourse.vue'),
     },
     {
+      path: '/assignment/:assignment_id(\\d+)',
+      component: () => import('@/views/Assignment/SubmissionList.vue')
+    },
+    {
       path: '/course/hotCourse',
       component: () => import('@/views/Course/hotCourse.vue'),
     },

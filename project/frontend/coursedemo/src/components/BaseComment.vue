@@ -29,49 +29,55 @@
       </div>
     </div>
 
-    <div v-for="c in comments" :key="c.comment_id" style="width: 100%;">
-      <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; display: flex; overflow: hidden;">
-        <el-avatar :size="40" style="border: solid 1px var(--ep-border-color); margin-right: 10px; flex-shrink: 0;"
-          src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
-        <div style="overflow: hidden;">
-          <div style="font-weight: bold; margin-top: 5px; margin-bottom: 10px;">
+    <div v-for="c in comments" :key="c.comment_id" style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; display: flex; overflow: hidden;">
+      
+      <el-avatar :size="40" style="border: solid 1px var(--ep-border-color); margin-right: 10px; flex-shrink: 0;"
+        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+      <div style="overflow: hidden;">
+        <div style="display: flex; gap: 5px; flex-direction: row; align-items: baseline; margin-bottom: 8px;">
+          <div style="font-weight: bold; margin-top: 5px;">
             {{ c.user.first_name+' '+c.user.last_name }}
           </div>
-          <div v-if="comment_map.has(c.comment_reply)" style="width: 100%; margin-bottom: 10px; font-size: small; opacity: 0.4; height: 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
-            {{ (() => {
-              const reply = comment_map.get(c.comment_reply)
-              return '▌Reply ' + reply?.user.first_name+' '+reply?.user.last_name + ': ' + reply?.comment_text
-            })() }}
+          <div style="margin-top: 2px; font-size: small; color: var(--ep-color-primary-light-3);">
+            {{ c.user.email }}
           </div>
-          <span style="line-height: 1.5; white-space-collapse: break-spaces;">
-            {{ c.comment_text }}
-          </span>
-          <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
-            <el-popover placement="bottom-start" :width="400" trigger="click" :hide-after="0" transition="None">
-              <template #reference>
-                <el-link type="primary" :underline="false" style="font-size: small;">Reply</el-link>
-              </template>
-              <el-input
-                v-model="reply_new_comment"
-                :autosize="{ minRows: 4 }"
-                type="textarea"
-                placeholder="Please leave your replies ..."
-              />
-              <div style="margin: 10px;"></div>
-              <el-button type="primary" @click="send_comment(c.comment_id)">
-                Send
-              </el-button>
-              <el-button @click="reply_new_comment = ''">
-                Reset
-              </el-button>
-            </el-popover>
-            <div style="color: var(--ep-text-color-placeholder);">  
-              {{ (new Date(c.updated_at)).toLocaleString() }}
-            </div>
+        </div>
+        <div v-if="comment_map.has(c.comment_reply)" style="width: 100%; margin-bottom: 10px; font-size: small; opacity: 0.4; height: 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+          {{ (() => {
+            const reply = comment_map.get(c.comment_reply)
+            return '▌Reply ' + reply?.user.first_name+' '+reply?.user.last_name + ': ' + reply?.comment_text
+          })() }}
+        </div>
+        <span style="line-height: 1.5; white-space-collapse: break-spaces;">
+          {{ c.comment_text }}
+        </span>
+        <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
+          <el-popover placement="bottom-start" :width="400" trigger="click" :hide-after="0" transition="None">
+            <template #reference>
+              <el-link type="primary" :underline="false" style="font-size: small;">Reply</el-link>
+            </template>
+            <el-input
+              v-model="reply_new_comment"
+              :autosize="{ minRows: 4 }"
+              type="textarea"
+              placeholder="Please leave your replies ..."
+            />
+            <div style="margin: 10px;"></div>
+            <el-button type="primary" @click="send_comment(c.comment_id)">
+              Send
+            </el-button>
+            <el-button @click="reply_new_comment = ''">
+              Reset
+            </el-button>
+          </el-popover>
+          <div style="color: var(--ep-text-color-placeholder);">  
+            {{ (new Date(c.updated_at)).toLocaleString() }}
           </div>
         </div>
       </div>
+      
     </div>
+    <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
   
   </div>
 </template>

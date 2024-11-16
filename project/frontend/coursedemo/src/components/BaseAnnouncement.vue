@@ -1,65 +1,65 @@
 <template>
   <div v-if="is_course">
     <div style="display: flex; align-items: baseline;">
-      <h1 style="font-size: large;">
+      <h1 style="font-size: large; margin-bottom: 0;">
         Announcements
       </h1>
-      <p style="font-size: medium; margin-left: 8px; color: var(--ep-color-primary);">
+      <p style="font-size: medium; margin-left: 8px; color: var(--ep-color-primary); margin-bottom: 0;">
         {{ announcements.length }}
       </p>
     </div>
 
-    <div>
-      <div style="width: 100%;">
-        <el-input
-          v-model="new_announcement"
-          :autosize="{ minRows: 4 }"
-          type="textarea"
-          placeholder="Add an announcement ..."
-        />
-        <div style="margin: 10px;"></div>
-        <el-button type="primary" @click="send_announcement">
-          Send
-        </el-button>
-        <el-button @click="new_announcement = ''">
-          Reset
-        </el-button>
-        <el-button @click="dialog_visibility = true">
-          Select students
-        </el-button>
-      </div>
+    <div v-if="course_store.current_course_teacher()===auth_store.user.user_id" style="width: 100%; margin-top: 18px;">
+      <el-input
+        v-model="new_announcement"
+        :autosize="{ minRows: 4 }"
+        type="textarea"
+        placeholder="Add an announcement ..."
+      />
+      <div style="margin: 10px;"></div>
+      <el-button type="primary" @click="send_announcement">
+        Send
+      </el-button>
+      <el-button @click="new_announcement = ''">
+        Reset
+      </el-button>
+      <el-button @click="dialog_visibility = true">
+        Select students
+      </el-button>
     </div>
 
-    <div v-for="c in announcements" :key="c.notification_id" style="width: 100%;">
-      <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; overflow: hidden;">
+    <div v-for="c in announcements" :key="c.notification_id" style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; overflow: hidden;">
+
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px;">
           <div i="ep-bell"/>
           <span style="line-height: 1.5; white-space-collapse: break-spaces; font-weight: 600;">
             {{ c.message }}
           </span>
         </div>
+
         <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
           <div style="color: var(--ep-text-color-placeholder); width: 130px;">  
             {{ (new Date(c.updated_at)).toLocaleString() }}
           </div>
-
-          <el-popover placement="bottom-start" trigger="click" :hide-after="0" transition="None">
-              <template #reference>
-                <el-link type="primary" :underline="false" style="font-size: small;">Notify</el-link>
-              </template>
-              <div style="display: flex; gap: 5px; flex-direction: column">
-                <el-button @click="do_something(c.notification_id, notifyViaSiteCall)">
-                  Via site
-                </el-button>
-                <el-button style="margin: 0;" @click="do_something(c.notification_id, notifyViaEmailCall)">
-                  Via Email
-                </el-button>
-              </div>
-            </el-popover>
-          <el-link type="danger" :underline="false" style="font-size: small;" @click="do_something(c.notification_id, deleteAnnouncementCall)">Delete</el-link>
+          <el-popover v-if="course_store.current_course_teacher()===auth_store.user.user_id" placement="bottom-start" trigger="click" :hide-after="0" transition="None">
+            <template #reference>
+              <el-link type="primary" :underline="false" style="font-size: small;">Notify</el-link>
+            </template>
+            <div style="display: flex; gap: 5px; flex-direction: column">
+              <el-button @click="do_something(c.notification_id, notifyViaSiteCall)">
+                Via site
+              </el-button>
+              <el-button style="margin: 0;" @click="do_something(c.notification_id, notifyViaEmailCall)">
+                Via Email
+              </el-button>
+            </div>
+          </el-popover>
+          <el-link v-if="course_store.current_course_teacher()===auth_store.user.user_id" type="danger" :underline="false" style="font-size: small;" @click="do_something(c.notification_id, deleteAnnouncementCall)">Delete</el-link>
         </div>
-      </div>
+        
     </div>
+    <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
+
 
     <el-dialog 
       v-model="dialog_visibility" 
@@ -198,7 +198,7 @@ function all_set_true() {
 
 const dialog_visibility = ref(false)
 
-async function do_something(id: number, func: (id: number)=>Promise<APIResult<null>>, reload?: boolean = false) {
+async function do_something(id: number, func: (id: number)=>Promise<APIResult<null>>, reload: boolean = false) {
   const msg = await func(id)
   if(msg.code==200) {
     ElMessage({

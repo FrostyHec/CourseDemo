@@ -1,26 +1,39 @@
 <template>
   <el-dialog 
-    v-model="form_store.course_visibility" 
-    :title="form_store.mode+' the course'" 
+    v-model="form_store.assignment_visibility" 
+    :title="form_store.mode+' the assignment'" 
     width="600"
     @closed="() => { formRef?.resetFields(); }">
     
     <el-form
       ref="formRef"
-      :model="form_store.course_form"
-      :rules="course_rules"
+      :model="form_store.assignment_form"
+      :rules="assignment_rules"
       label-width="auto"
     >
-      <el-form-item label="Name" prop="course_name">
-        <el-input v-model="form_store.course_form.course_name" placeholder="Enter the name"/>
-      </el-form-item>
-
-      <el-form-item label="Publication" prop="publication">
-        <el-segmented v-model="form_store.course_form.publication" :options="['open', 'closed', 'semi open']" />
-      </el-form-item>
-
       <el-form-item label="Description" prop="description">
-        <el-input v-model="form_store.course_form.description" type="textarea" placeholder="Enter the description"/>
+        <el-input v-model="form_store.assignment_form.description" type="textarea" placeholder="Enter the description"/>
+      </el-form-item>
+
+      <el-form-item label="View score allow" prop="allow_student_to_view_score">
+        <el-switch v-model="form_store.assignment_form.allow_student_to_view_score" />
+      </el-form-item>
+
+      <el-form-item label="Resubmit allow" prop="allow_update_submission">
+        <el-switch v-model="form_store.assignment_form.allow_update_submission" />
+      </el-form-item>
+
+      <el-form-item label="Deadline" prop="latest_submission_time">
+        <el-date-picker
+          v-model="form_store.assignment_form.latest_submission_time"
+          type="datetime"
+          placeholder="Select date and time"
+          :default-time="new Date()"
+        />
+      </el-form-item>
+
+      <el-form-item label="Score" prop="maximum_score">
+        <el-input-number v-model="form_store.assignment_form.maximum_score" :min="0"/>
       </el-form-item>
 
     </el-form>
@@ -48,18 +61,18 @@ import { ResourceType, type ResourceEntity } from '@/api/course/CourseResourceAP
 import { type FormInstance, type FormRules, ElMessage} from 'element-plus'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import type { AssignmentEntity } from '@/api/course/AssignmentAPI';
 
 
 const form_store = useFormStore()
-const course_store = useCourseStore()
 
-const course_rules = reactive<FormRules<CourseEntity>>({
-  course_name: [
-    { required: true, message: 'Please enter the name', trigger: 'blur', },
+const assignment_rules = reactive<FormRules<AssignmentEntity>>({
+  description: [
+    { required: true, message: 'Please enter the description', trigger: 'blur', },
   ],
-  publication: [
-    { required: true, message: 'Please select a public type' , trigger: 'blur', },
-  ],
+  maximum_score: [
+    { required: true, message: 'Please select a maximum score', trigger: 'blur', }
+  ]
 })
 
 const formRef = ref<FormInstance>()
@@ -71,7 +84,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       console.log('error submit!')
       return
     }
-    if(!await form_store.modify_course()) {
+    if(!await form_store.modify_assignment()) {
       ElMessage({
         message: 'Network error',
         type: 'error',
@@ -84,8 +97,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       type: "success",
     })
     console.log('submit!')
-    form_store.course_visibility = false
-    await course_store.load_from_route(true)
+    form_store.assignment_visibility = false
   })
 }
 
