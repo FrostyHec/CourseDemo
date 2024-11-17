@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
+import org.frosty.server.controller.course.progress.CourseProgressController;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.bo.progress.ChapterCompleteRecord;
@@ -18,6 +19,9 @@ import org.frosty.server.mapper.course.progress.CourseCompleteMapper;
 import org.frosty.server.mapper.course.progress.ResourceCompleteMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,16 +66,19 @@ public class CourseProgressService {
     public void completeChapter(Long cid, AuthInfo auth) {
         // check if all video resource complete and add complete
         var uid = auth.getUserID();
-        var resources = resourceMapper.getAll(cid);
-        var videoResource = resources.stream()
-                .filter(r -> r.getResourceType() == Resource.ResourceType.video)
-                .toList();
+        var videoResource = getVideoResources(cid);
         for(var r:videoResource){
             Ex.check(resourceCompleteMapper.contains(r.getResourceId(),uid),
                     Response.getBadRequest("resource-not-complete"));
         }
         // add complete
         chapterCompleteMapper.insert(new ChapterCompleteRecord(cid, uid));
+    }
+    private List<Resource> getVideoResources(Long cid){
+        var resources = resourceMapper.getAll(cid);
+        return resources.stream()
+                .filter(r -> r.getResourceType() == Resource.ResourceType.video)
+                .toList();
     }
 
     public void completeCourse(Long csid, AuthInfo auth) {
@@ -88,6 +95,43 @@ public class CourseProgressService {
 
 
     public void clearAllStudentCourseProgress(Long csid, AuthInfo auth) {
+        // only delete course complete record, no effect on chapter and resource
+        // TODO AUTH CHECK ONLY TEACHER CAN DO THIS
+        courseCompleteMapper.deleteAllByCourseId(csid);
+    }
 
+    public void clearAllStudentChapterProgress(Long cid, AuthInfo auth) {
+        // no effect on resource and course
+        // TODO AUTH CHECK ONLY TEACHER CAN DO THIS
+        chapterCompleteMapper.deleteAllByChapterId(cid);
+    }
+
+    public void clearAllStudentResourceProgress(Long rid, AuthInfo auth) {
+        // no effect on chapter and course
+        // TODO AUTH CHECK ONLY TEACHER CAN DO THIS
+        resourceCompleteMapper.deleteAllByResourceId(rid);
+    }
+    @Transactional
+    public CourseProgressController.CourseProgress queryCourseProgress(Long csid, AuthInfo auth) {
+        var uid = auth.getUserID();
+        // for each chapter for each v rs
+        var chapters = chapterMapper.getAllChaptersByCourseId(csid);
+        List<CourseProgressController.ChapterProgress> chapterProgresses = new ArrayList<>(chapters.size());
+        for(var c:chapters){
+            var cid = c.getCourseId();
+            var videoResources = getVideoResources(cid);
+            List<CourseProgressController.ResourceProgress> resourceProgresses = new ArrayList<>(chapters.size());
+            for(var r:videoResources){
+                var rid = r.getResourceId();
+                var complete = resourceCompleteMapper.contains(rid,uid);
+                resourceProgresses.add(new CourseProgressController.ResourceProgress(rid,complete));
+            }
+            var complete = chapterCompleteMapper.contains(cid,uid);
+            chapterProgresses.add(
+                    new CourseProgressController.ChapterProgress(
+                            cid,resourceProgresses,complete));
+        }
+        var complete = courseCompleteMapper.contains(csid,uid);
+        return new CourseProgressController.CourseProgress(csid,chapterProgresses,complete);
     }
 }

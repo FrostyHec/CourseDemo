@@ -40,10 +40,10 @@ public class CourseProgressController {
         courseProgressService.completeCourse(csid,auth);
     }
 
-    @GetMapping("/course/{id}/study")
-    public ChapterProgress checkCourseProgress(@GetToken TokenInfo tokenInfo, @PathVariable String id) {
-        FrameworkUtils.notImplemented();
-        return null;
+    @GetMapping("/course/{csid}/study")
+    public CourseProgress checkCourseProgress(@GetToken TokenInfo tokenInfo, @PathVariable Long csid) {
+        AuthInfo auth = AuthEx.checkPass(tokenInfo);
+        return courseProgressService.queryCourseProgress(csid,auth);
     }
     @PutMapping("/course/{csid}/study/all-clear")
     public void clearAllStudentCourseProgress(@GetToken TokenInfo tokenInfo, @PathVariable  Long csid) {
@@ -53,12 +53,14 @@ public class CourseProgressController {
 
     @PutMapping("/chapter/{cid}/study/all-clear")
     public void clearAllStudentChapterProgress(@GetToken TokenInfo tokenInfo, @PathVariable Long cid) {
-        FrameworkUtils.notImplemented();
+        var auth = AuthEx.checkPass(tokenInfo);
+        courseProgressService.clearAllStudentChapterProgress(cid,auth);
     }
 
     @PutMapping("/resource/{rid}/study/all-clear")
     public void clearAllStudentResourceProgress(@GetToken TokenInfo tokenInfo, @PathVariable Long rid) {
-        FrameworkUtils.notImplemented();
+        var auth = AuthEx.checkPass(tokenInfo);
+        courseProgressService.clearAllStudentResourceProgress(rid,auth);
     }
     @Data
     @AllArgsConstructor
