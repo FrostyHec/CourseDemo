@@ -4,7 +4,7 @@ import { AxiosAPI } from '@/utils/APIUtils'
 /////////////////////   COURSE PROGRESS   ///////////////////////////////
 
 export interface CourseProgress {
-    chapters: string
+    courseId: number
     chapterProgress: ChapterProgress[]
     isCompleted: boolean
 }
