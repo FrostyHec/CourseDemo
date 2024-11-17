@@ -14,7 +14,8 @@ export interface CourseEntity {
   updated_at: Date,
 }
 export enum EvaluationType{
-  practice,theory
+  practice='practice',
+  theory='theory'
 }
 
 export enum Publication {
