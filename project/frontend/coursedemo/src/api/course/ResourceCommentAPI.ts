@@ -1,6 +1,7 @@
 import { service_backend_base } from '@/utils/Constant';
 import { AxiosAPI } from '@/utils/APIUtils';
 import type {UserPublicInfoEntity} from "@/api/user/UserAPI";
+import axios from "axios";
 
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
@@ -75,9 +76,16 @@ export async function getResourceCommentsCall(resourceId: number) {
 }
 
 
-export async function uploadFilesCall(commentId: number, commentResource: CommentResource) {
+export async function uploadFilesCall(commentId: number, commentResource: CommentResource,file:File) {
   const url = service_backend_base + '/resource/comment/' + commentId + '/file'
-  return AxiosAPI.authPost<null>(url, commentResource)
+
+  const formData = new FormData();
+  formData.append('data', new Blob([JSON.stringify(commentResource)], {type: 'application/json'}));
+  formData.append('file', file);
+
+  const config=AxiosAPI.setAuthHeader();
+  (config.headers as any)['Content-Type'] = 'multipart/form-data'
+  return AxiosAPI.extractResult<null>(await axios.post(url,formData,config))
 }
 
 export async function removeFilesCall(commentId: number, fileId: number) {
