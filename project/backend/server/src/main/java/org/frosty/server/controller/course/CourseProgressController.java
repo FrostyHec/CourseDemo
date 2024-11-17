@@ -56,7 +56,7 @@ public class CourseProgressController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CourseProgress{
-        public String chapters;
+        public Long courseId;
         public List<ChapterProgress> chapterProgress;
         public Boolean isCompleted;
     }

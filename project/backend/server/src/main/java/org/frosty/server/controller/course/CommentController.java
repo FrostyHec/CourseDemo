@@ -7,14 +7,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.frosty.auth.annotation.GetToken;
+import org.frosty.auth.entity.AuthStatus;
+import org.frosty.auth.entity.TokenInfo;
+import org.frosty.auth.utils.AuthEx;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.response.Response;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.CommentResource;
 import org.frosty.server.entity.bo.ResourceComment;
 import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.course.CommentService;
 import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +98,21 @@ public class CommentController {
 
     @PostMapping("/resource/comment/{cid}/file")
     public void uploadFiles(
-//            @GetToken TokenInfo tokenInfo,
-            @PathVariable Long cid,CommentResource commentResource) {
-        FrameworkUtils.notImplemented();// TODO
+            @GetToken TokenInfo tokenInfo,
+            @PathVariable Long cid,
+            @RequestPart("data") CommentResource commentResource,
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
+        AuthEx.checkPass(tokenInfo);
+        commentResource.setId(null);
+        commentResource.setCommentId(cid);
+        commentService.uploadFileForComment(commentResource,file);
     }
 
-    @PostMapping("/resource/comment/{cid}/file/{fid{")
+    @PostMapping("/resource/comment/{cid}/file/{fid}")
     public void removeFiles(
-//            @GetToken TokenInfo tokenInfo,
-            @PathVariable Long cid) {
-        FrameworkUtils.notImplemented();// TODO
+            @PathVariable Long cid, @PathVariable String fid) {
+        commentService.removeFiles(cid, fid);
     }
 
     @Data
