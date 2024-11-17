@@ -294,4 +294,28 @@ CREATE TABLE video_watch_records
     primary key (video_id, student_id)
 --     ,foreign key (video_id) references resources(resource_id) on delete cascade
 --     ,foreign key (student_id) references users(user_id) on delete cascade
-)
+);
+
+DROP TABLE IF EXISTS course_complete_records;
+CREATE TABLE course_complete_records
+(
+    course_id BIGINT NOT NULL ,
+    student_id BIGINT NOT NULL,
+    primary key (course_id,student_id)
+);
+
+DROP TABLE IF EXISTS chapter_complete_records;
+CREATE TABLE chapter_complete_records
+(
+    chapter_id BIGINT NOT NULL ,
+    student_id BIGINT NOT NULL,
+    primary key (chapter_id,student_id)
+);
+
+DROP TABLE IF EXISTS resource_complete_records;
+CREATE TABLE resource_complete_records
+(
+    resource_id BIGINT NOT NULL ,
+    student_id BIGINT NOT NULL,
+    primary key (resource_id,student_id)
+);
