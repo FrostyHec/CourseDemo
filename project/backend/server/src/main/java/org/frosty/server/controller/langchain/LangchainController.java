@@ -39,12 +39,7 @@ public class LangchainController {
 
     @PostMapping("/chat/flow")
     public void sendChatAndGetFlow(@RequestBody ChatContext context, HttpServletResponse response) {
-        FrameworkUtils.notImplemented();
-         // 依据输入的上下文返回chat的回复。流式返回
-    }
-
-    @PostMapping("/stream/chat")
-    public void streamChat(@RequestBody ChatContext context, @GetToken TokenInfo tokenInfo, HttpServletResponse response) {
+        // 依据输入的上下文返回chat的回复。流式返回
         try {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -129,8 +124,12 @@ public class LangchainController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SingleChatMessage {
-        String role;
+        Role role;
         String content;
+        public enum Role {
+            USER,
+            ASSISTANT
+        }
     }
 
     @Data
@@ -139,4 +138,6 @@ public class LangchainController {
     public static class ChatContext {
         private List<SingleChatMessage> messages;
     }
+
+
 }
