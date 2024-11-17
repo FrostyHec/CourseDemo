@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.checkerframework.checker.units.qual.C;
 import org.frosty.auth.annotation.GetToken;
+import org.frosty.auth.entity.AuthInfo;
 import org.frosty.auth.entity.AuthStatus;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.AuthEx;
@@ -85,15 +87,14 @@ public class CommentController {
     }
 
     // 获取全部评论
-    // TODO 将返回的 userId 改为 user 的 public 成员变量
+
     @GetMapping("/resource/{id}/comments")
-    public Map<String, List<CommentWithUserAndFileAndAccessKey>> getAllComments(
-//            @GetToken TokenInfo tokenInfo,
+    public CommentList getAllComments(
+            @GetToken TokenInfo tokenInfo,
             @PathVariable Long id) {
-        FrameworkUtils.notImplemented();
-        return null;// TODO
-//        List<CommentWithUser> comments = commentService.findAllByResourceId(id);
-//        return Map.of("content", comments);
+        AuthInfo auth = AuthEx.checkPass(tokenInfo);
+        List<CommentWithUserAndFileAndAccessKey> comments = commentService.findAllByResourceId(auth,id);
+        return new CommentList(comments);
     }
 
     @PostMapping("/resource/comment/{cid}/file")
@@ -109,9 +110,9 @@ public class CommentController {
         commentService.uploadFileForComment(commentResource,file);
     }
 
-    @PostMapping("/resource/comment/{cid}/file/{fid}")
+    @DeleteMapping("/resource/comment/{cid}/file/{fid}")
     public void removeFiles(
-            @PathVariable Long cid, @PathVariable String fid) {
+            @PathVariable Long cid, @PathVariable Long fid) {
         commentService.removeFiles(cid, fid);
     }
 
@@ -128,6 +129,17 @@ public class CommentController {
         private Long commentReply;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
+
+        public CommentWithUserAndFileAndAccessKey(CommentWithUser comment, List<CommentResourceWithAccessKey> resourceWithAccessKeys) {
+            this.commentId = comment.getCommentId();
+            this.resourceId = comment.getResourceId();
+            this.user = comment.getUser();
+            this.commentText = comment.getCommentText();
+            this.commentReply = comment.getCommentReply();
+            this.createdAt = comment.getCreatedAt();
+            this.updatedAt = comment.getUpdatedAt();
+            this.commentFiles = resourceWithAccessKeys;
+        }
     }
     @Data
     @AllArgsConstructor
@@ -141,7 +153,7 @@ public class CommentController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CommentList {
-        List<CommentWithUser> content;
+        List<CommentWithUserAndFileAndAccessKey> content;
     }
 
     @Data
@@ -150,7 +162,7 @@ public class CommentController {
     @Accessors(chain = true)
     public static class CommentWithUser {
         private Long commentId;
-        private int resourceId;
+        private Long resourceId;
         private UserPublicInfo user;
         private String commentText;
         private Long commentReply;

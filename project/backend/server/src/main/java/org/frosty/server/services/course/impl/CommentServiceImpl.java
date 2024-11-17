@@ -1,6 +1,7 @@
 package org.frosty.server.services.course.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.CommentResource;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,8 +52,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentController.CommentWithUser> findAllByResourceId(Long resourceId) {
-        return commentMapper.getAllPublicByResourceId(resourceId);
+    public List<CommentController.CommentWithUserAndFileAndAccessKey> findAllByResourceId(AuthInfo auth,Long resourceId) {
+        long uid = auth.getUserID();
+        var comments = commentMapper.getAllPublicByResourceId(resourceId);
+        List<CommentController.CommentWithUserAndFileAndAccessKey> result = new ArrayList<>(comments.size());
+        for(var comment : comments) {
+            var cid = comment.getCommentId();
+            List<CommentResource> resources = commentResourceMapper.getAllByCommentId(cid);
+            List<CommentController.CommentResourceWithAccessKey> resourceWithAccessKeys = new ArrayList<>(resources.size());
+            for(var resource : resources) {
+                var accessKey = objectStorageService.getAccessKey(getCommentFileCaseName(uid),resource.getFileName());
+                resourceWithAccessKeys.add(new CommentController.CommentResourceWithAccessKey(resource, accessKey));
+            }
+            result.add(new CommentController.CommentWithUserAndFileAndAccessKey(comment, resourceWithAccessKeys));
+        }
+        return result;
     }
 
     @Override
@@ -64,11 +79,16 @@ public class CommentServiceImpl implements CommentService {
         objectStorageService.save(commentResource.getFileName(), file.getBytes());
     }
 
+    private String getCommentFileCaseName(long cid) {
+        return "comment-resource-" + cid;
+    }
+
     @Override
     @Transactional
-    public void removeFiles(Long cid, String fid) {
+    public void removeFiles(Long cid, Long fid) {
         // may check sth
+        CommentResource commentResource = commentResourceMapper.selectById(fid);
         commentResourceMapper.deleteById(fid);
-        objectStorageService.delete(fid);
+        objectStorageService.delete(commentResource.getFileName());
     }
 }
