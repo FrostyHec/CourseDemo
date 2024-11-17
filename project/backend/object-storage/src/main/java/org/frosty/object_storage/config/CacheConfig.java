@@ -10,8 +10,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CacheConfig {
     private final EndOSSLayer ossLayer;
-    public KVCacheChain storageCache(){
-        return new KVCacheChain(
+    public KVCacheChain<Object> storageCache(){
+        return new KVCacheChain<>(
                 List.of(),
                 ossLayer
         );

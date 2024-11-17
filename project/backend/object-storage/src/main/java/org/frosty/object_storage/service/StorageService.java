@@ -15,7 +15,7 @@ import java.io.InputStream;
 public class StorageService {
     private final AccessKeyService accessKeyService;
     private final CacheConfig cacheConfig;
-    private KVCacheChain chain;
+    private KVCacheChain<Object> chain;
 
     @PostConstruct
     public void init(){

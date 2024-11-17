@@ -2,7 +2,6 @@ package org.frosty.object_storage.service.cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.frosty.common.exception.InternalException;
@@ -10,27 +9,26 @@ import org.frosty.common.utils.Ex;
 import org.frosty.object_storage.entity.FlowWithMetadata;
 import org.frosty.object_storage.service.cache.writer.WriteType;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.function.BiFunction;
 
 @Slf4j
 @AllArgsConstructor
 @Data
-public class KVCacheChain implements KVStorage {
-    private List<KVStorage> cachesLayer;
-    private KVStorage end;
+public class KVCacheChain<T> implements KVStorage<T> {
+    private List<KVStorage<T>> cachesLayer;
+    private KVStorage<T> end;
     private WriteType writeType = WriteType.WRITE_THROUGH_IGNORE_CACHE_FAILURE;
 //    private boolean containsCheckFlushCache = true;
     private boolean containsCheckFlushCache = false;
-    public KVCacheChain(List<KVStorage> cachesLayer, KVStorage end) {
+    public KVCacheChain(List<KVStorage<T>> cachesLayer, KVStorage<T> end) {
         this.cachesLayer = cachesLayer;
         this.end = end;
     }
 
 
     @Override
-    public void put(String key, Object value) {
+    public void put(String key, T value) {
         Ex.check(value != null, new InternalException("kvstorage value cannot be null! key:" + key));
         writeType.write(this, key, value);
     }
@@ -41,7 +39,7 @@ public class KVCacheChain implements KVStorage {
     }
 
     @Override
-    public Object get(String key){
+    public T get(String key){
         return retrieveFromCache(key, KVStorage::get, KVStorage::put);
     }
 
@@ -51,14 +49,14 @@ public class KVCacheChain implements KVStorage {
         return retrieveFromCache(key, KVStorage::getStream, KVStorage::putStream);
     }
 
-    private <T> T retrieveFromCache(String key,
-                                    BiFunction<KVStorage, String, T> getter,
-                                    TriConsumer<KVStorage, String, T> setter) {
-        T result = null;
+    private <V> V retrieveFromCache(String key,
+                                    BiFunction<KVStorage<T>, String, V> getter,
+                                    TriConsumer<KVStorage<T>, String, V> setter) {
+        V result = null;
         int idx = 0;
         // 查找缓存层
         for (; idx < cachesLayer.size(); idx++) {
-            KVStorage currentLayer = cachesLayer.get(idx);
+            KVStorage<T> currentLayer = cachesLayer.get(idx);
             result = getter.apply(currentLayer, key);
             if (result != null) {
                 break;
@@ -73,7 +71,7 @@ public class KVCacheChain implements KVStorage {
         // 回溯更新缓存
         if (result != null) {
             for (idx -= 1; idx >= 0; idx--) {
-                KVStorage currentLayer = cachesLayer.get(idx);
+                KVStorage<T> currentLayer = cachesLayer.get(idx);
                 if (!currentLayer.contains(key)) {
                     setter.accept(currentLayer,key,result);
                 } else {
@@ -163,7 +161,7 @@ public class KVCacheChain implements KVStorage {
 
     @Override
     public void remove(String key) {
-        for (KVStorage storage : cachesLayer) {
+        for (var storage : cachesLayer) {
             storage.remove(key);
         }
         end.remove(key);
@@ -172,7 +170,7 @@ public class KVCacheChain implements KVStorage {
     @Override
     public boolean contains(String key) {
         if(containsCheckFlushCache) return get(key)!=null;
-        for (KVStorage storage : cachesLayer) {
+        for (var storage : cachesLayer) {
             if(storage.contains(key)){
                 return true;
             }

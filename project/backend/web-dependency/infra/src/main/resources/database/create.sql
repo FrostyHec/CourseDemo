@@ -117,8 +117,8 @@ CREATE TABLE resources
     resource_id            BIGSERIAL PRIMARY KEY,             -- 自增课件ID
     chapter_id             INT                      NOT NULL, -- 章节ID
     resource_name          VARCHAR                  NOT NULL,
-    suffix                 VARCHAR              NOT NULL,-- 文件类型，限定为'pdf'或'md'
-    file_name              VARCHAR             NOT NULL, -- UUID4+RESOURCE-NAME
+    suffix                 VARCHAR                  NOT NULL,-- 文件类型，限定为'pdf'或'md'
+    file_name              VARCHAR                  NOT NULL, -- UUID4+RESOURCE-NAME
     resource_order         INT                      NOT NULL,
     resource_version_name  VARCHAR                  NOT NULL,
     resource_version_order INT                      NOT NULL,
@@ -198,6 +198,17 @@ CREATE
     ON resource_comments
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
+--课程评论的文件资源
+DROP TABLE IF EXISTS comment_resources;
+CREATE TABLE comment_resources
+(
+    id            BIGSERIAL PRIMARY KEY,
+    comment_id    BIGINT  NOT NULL, -- 自增评论ID
+    resource_name VARCHAR NOT NULL,
+    file_name     VARCHAR NOT NULL, -- UUID4+RESOURCE-NAME
+    suffix        VARCHAR NOT NULL-- 文件类型，限定为'pdf'或'md'
+    -- FOREIGN KEY (comment_id) REFERENCES resource_comments (comment_id) ON DELETE CASCADE  -- 章节ID外键，已注释
+);
 
 -- 创建课程评价表（CourseEvaluation）
 DROP TABLE IF EXISTS course_evaluations;
@@ -248,13 +259,13 @@ CREATE TABLE file_submission
 (
     file_submission_id BIGSERIAL PRIMARY KEY,
     assignment_id      BIGINT                   NOT NULL,
-    student_id         BIGINT NOT NULL ,
+    student_id         BIGINT                   NOT NULL,
     suffix             VARCHAR                  NOT NULL,
     file_name          VARCHAR                  NOT NULL,
     gained_score       INT,
     created_at         TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at         TIMESTAMP WITH TIME ZONE NOT NULL,
-    unique(assignment_id, student_id)
+    unique (assignment_id, student_id)
 --     ,FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id) ON DELETE CASCADE
 );
 CREATE
@@ -265,37 +276,22 @@ CREATE
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time();
 
--- DROP TABLE IF EXISTS materials;
--- DROP TABLE IF EXISTS assignments;
--- DROP TABLE IF EXISTS submissions;
+DROP TABLE IF EXISTS video_required_seconds;
+CREATE TABLE video_required_seconds
+(
+    video_id BIGINT NOT NULL ,
+    required_seconds INT NOT NULL
+--     foreign key (video_id) references resources(resource_id) on delete cascade
+);
 
--- DROP TABLE IF EXISTS course_likes;
--- DROP TABLE IF EXISTS notifications;
--- DROP TABLE IF EXISTS comments;
--- --------------------hzd:后面的我还没管
--- -- 创建作业表（Assignments）
--- CREATE TABLE assignments
--- (
---     assignment_id          BIGSERIAL PRIMARY KEY,                                      -- 自增作业ID
---     chapter_id             INT NOT NULL,                                            -- 章节ID
---     assignment_description TEXT NOT NULL,                                           -- 作业描述
---     due_date               DATE NOT NULL                                            -- 作业截止日期
---     -- FOREIGN KEY (chapter_id) REFERENCES Chapters (chapter_id) ON DELETE CASCADE  -- 章节ID外键，已注释
--- );
---
--- -- 创建提交作业表（Submissions）
--- CREATE TABLE submissions
--- (
---     submission_id   BIGSERIAL PRIMARY KEY,                                             -- 自增提交ID
---     assignment_id   INT NOT NULL,                                                   -- 作业ID
---     student_id      INT NOT NULL,                                                   -- 学生ID
---     file_path       VARCHAR(255) NOT NULL,                                          -- 提交文件路径
---     submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                            -- 提交时间
---     grade           DECIMAL(3, 2),                                                  -- 成绩
---     feedback        TEXT                                                            -- 反馈
---     -- FOREIGN KEY (assignment_id) REFERENCES Assignments (assignment_id) ON DELETE CASCADE  -- 作业ID外键，已注释
---     -- FOREIGN KEY (student_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 学生ID外键，已注释
--- );
---
-
---
+DROP TABLE IF EXISTS video_watch_records;
+CREATE TABLE video_watch_records
+(
+    video_id      BIGINT                   NOT NULL,
+    student_id    BIGINT                   NOT NULL,
+    remain_required_seconds INT NOT NULL,
+    last_watched_seconds INT NOT NULL, -- 这个指的是上次视频停在了哪里，而不是总共看了多少秒
+    primary key (video_id, student_id)
+--     ,foreign key (video_id) references resources(resource_id) on delete cascade
+--     ,foreign key (student_id) references users(user_id) on delete cascade
+)
