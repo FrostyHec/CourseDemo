@@ -65,6 +65,18 @@ const router = createRouter({
       path: '/course/liveStream',
       component: () => import('@/views/Course/liveStream.vue'),
     },       
+    {
+      path: '/course/practiceSurvey',
+      component: () => import('@/views/Course/PracticeSurvey.vue'),
+    },
+    {
+      path: '/course/theorySurvey',
+      component: () => import('@/views/Course/TheorySurvey.vue'),
+    },           
+    {
+      path: '/course/llm',
+      component: () => import('@/views/Course/llm.vue'),
+    },   
   ],
 })
 
