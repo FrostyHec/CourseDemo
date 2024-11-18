@@ -3,7 +3,7 @@ package org.frosty.server.services.user;
 
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.UserPublicInfo;
-import org.frosty.server.event.delete_event.UserDeleteEvent;
+import org.frosty.server.event.delete.UserDeleteEvent;
 
 import java.util.List;
 

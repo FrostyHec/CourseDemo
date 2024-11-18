@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.converter.CommonConverter;
 import org.frosty.server.entity.po.UserPublicInfo;
-import org.frosty.server.event.delete_event.UserDeleteEvent;
+import org.frosty.server.event.delete.UserDeleteEvent;
 import org.frosty.server.mapper.user.UserMapper;
 import org.frosty.server.services.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;

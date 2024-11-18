@@ -10,6 +10,7 @@ import org.frosty.server.entity.bo.Resource;
 import org.frosty.server.entity.bo.progress.ChapterCompleteRecord;
 import org.frosty.server.entity.bo.progress.CourseCompleteRecord;
 import org.frosty.server.entity.bo.progress.ResourceCompleteRecord;
+import org.frosty.server.event.update.CompleteCourseEvent;
 import org.frosty.server.mapper.course.ChapterMapper;
 import org.frosty.server.mapper.course.ResourceMapper;
 import org.frosty.server.mapper.course.cheat_check.VideoRequiredSecondsMapper;
@@ -17,6 +18,7 @@ import org.frosty.server.mapper.course.cheat_check.VideoWatchedRecordMapper;
 import org.frosty.server.mapper.course.progress.ChapterCompleteMapper;
 import org.frosty.server.mapper.course.progress.CourseCompleteMapper;
 import org.frosty.server.mapper.course.progress.ResourceCompleteMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,8 @@ public class CourseProgressService {
     private final ChapterMapper chapterMapper;
     private final VideoRequiredSecondsMapper videoRequiredSecondsMapper;
     private final VideoWatchedRecordMapper videoWatchedRecordMapper;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void completeResource(Long rid, AuthInfo auth) {
@@ -91,6 +95,7 @@ public class CourseProgressService {
         }
         // add complete
         courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
+        applicationEventPublisher.publishEvent(new CompleteCourseEvent(this,csid,uid));
     }
 
 
