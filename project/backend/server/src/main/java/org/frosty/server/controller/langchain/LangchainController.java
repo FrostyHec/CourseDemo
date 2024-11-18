@@ -26,14 +26,16 @@ public class LangchainController {
 
     private final ChatService chatService;
 
+
+    // String 改成 ChantContext
     @PostMapping("/chat")
-    public String sendChat(@RequestBody ChatContext context, @GetToken TokenInfo tokenInfo) {
+    public ChatContext sendChat(@RequestBody ChatContext context, @GetToken TokenInfo tokenInfo) {
         try {
             // 调用服务层进行处理
             return chatService.chatWithModel(context);
         } catch (IOException e) {
             e.printStackTrace();
-            return "{\"error\":\"Failed to connect to the AI service.\"}";
+            return null;
         }
     }
 
@@ -127,8 +129,8 @@ public class LangchainController {
         Role role;
         String content;
         public enum Role {
-            USER,
-            ASSISTANT
+            user,
+            assistant
         }
     }
 

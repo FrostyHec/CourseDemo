@@ -21,7 +21,7 @@ public class ChatService {
     private static final String SECRET_KEY = "00XhKtdc4hxWAO3pkPQiONh3NetC43yL";
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().build();
 
-    public String chatWithModel(LangchainController.ChatContext chatContext) throws IOException {
+    public LangchainController.ChatContext chatWithModel(LangchainController.ChatContext chatContext) throws IOException {
         String accessToken = getAccessToken();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, new JSONObject(chatContext).toString());
@@ -32,7 +32,24 @@ public class ChatService {
                 .build();
 
         Response response = HTTP_CLIENT.newCall(request).execute();
-        return response.body().string();
+
+        if (!response.isSuccessful()) {
+            throw new IOException("Unexpected code: " + response);
+        }
+
+        // 解析响应体
+        String responseBody = response.body().string();
+        JSONObject responseJson = new JSONObject(responseBody);
+        String result = responseJson.optString("result", ""); // 提取 result 字段
+
+        // 将 result 封装到新的消息对象
+        LangchainController.SingleChatMessage replyMessage =
+                new LangchainController.SingleChatMessage(LangchainController.SingleChatMessage.Role.assistant,result);
+
+        // 添加到 chatContext 的消息列表中
+        chatContext.getMessages().add(replyMessage);
+
+        return chatContext;
     }
 
     public void streamChatWithModel(LangchainController.ChatContext chatContext, OutputStream outputStream) throws IOException {
