@@ -5,14 +5,15 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.market.BadgeByController;
+import org.frosty.server.entity.bo.market.BadgeInfo;
 
 @Mapper
-public interface BadgeByMapper{
+public interface BadgeByMapper extends BaseMapper<BadgeInfo>{
     @Select("")
     BadgeByController.BadgeList selectMyBadge();
 
     @Insert("")
-    void insertBadge(BadgeByController.BadgeInfo badgeInfo);
+    void insertBadge(BadgeInfo badgeInfo);
 
     @Select("")
     BadgeByController.BadgeList selectMyCanByBadge();

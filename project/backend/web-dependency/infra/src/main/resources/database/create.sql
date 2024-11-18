@@ -350,3 +350,21 @@ CREATE
     ON consume_record
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time_only_created();
+
+drop table if exists badge_record;
+CREATE TABLE badge_record
+(
+    user_id BIGINT NOT NULL ,
+    badge_id BIGINT NOT NULL ,
+    badge_name VARCHAR NOT NULL ,
+    market_score INT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    primary key (user_id,badge_id)
+);
+CREATE
+    OR REPLACE TRIGGER auto_badge_record_time
+    BEFORE INSERT OR
+        UPDATE
+    ON badge_record
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time_only_created();
