@@ -4,17 +4,17 @@ import { AxiosAPI } from '@/utils/APIUtils'
 /////////////////////   CHEAT CHECK   ///////////////////////////////
 
 export interface SetMinRequiredTimeEntity {
-    requiredSeconds: number;
+    required_seconds: number;
 }
 
 export interface LastWatchedEntity {
-    remainRequiredSeconds: number;
-    lastWatchedSeconds: number;
+    remain_required_seconds: number;
+    last_watched_seconds: number;
 }
 
 export interface WatchedInfoEntity {
-    watchedSeconds: number;
-    watchedUntil: number;
+    watched_seconds: number;
+    watched_until: number;
 }
 
 // 设置最少观看时间

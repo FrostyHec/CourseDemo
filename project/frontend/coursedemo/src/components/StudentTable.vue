@@ -15,7 +15,6 @@
       <el-button type="primary" style="margin-bottom: 10px; width: 0;" @click="load_list">Search</el-button>
     </el-col>
   </el-row>
-  
 
   <el-table :data="list" height="400">
     <el-table-column label="Name">

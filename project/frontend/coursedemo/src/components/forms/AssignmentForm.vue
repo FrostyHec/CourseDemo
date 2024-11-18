@@ -77,6 +77,10 @@ const assignment_rules = reactive<FormRules<AssignmentEntity>>({
 
 const formRef = ref<FormInstance>()
 
+const emit = defineEmits({
+  afterSubmit: () => true
+})
+
 const submitForm = async (formIn: FormInstance | undefined) => {
   if (!formIn) return
   await formIn.validate(async (valid) => {
@@ -97,6 +101,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       type: "success",
     })
     console.log('submit!')
+    emit('afterSubmit')
     form_store.assignment_visibility = false
   })
 }

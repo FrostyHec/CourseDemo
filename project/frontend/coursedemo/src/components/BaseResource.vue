@@ -1,6 +1,6 @@
 <template>
   <div v-if="is_resource" style="margin-top: 20px;">
-    <file-display ref="display"
+    <file-display
       :suffix="current_resource?.suffix"
       :file_name="current_resource?.file_name"
       :access_key="current_resource?.access_key"
@@ -20,8 +20,6 @@ import type FileDisplay from './FileDisplay.vue';
 const course_store = useCourseStore()
 const is_resource = ref(false)
 const current_resource = ref<undefined|ResourceEntityPlus>(undefined)
-
-const display = ref<InstanceType<typeof FileDisplay>>()
 
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {

@@ -1,7 +1,7 @@
 <template>
-<div style="margin: 40px;">
+<div v-if="course_data?.teacher_id===auth_store.user.user_id" style="margin: 40px;">
 
-  <AssignmentForm/>
+  <AssignmentForm @after-submit="load"/>
   <div style="width: 100%; margin-top: 20px; overflow: hidden;">
 
     <div style="float: left;">
@@ -25,7 +25,7 @@
       <div style="overflow: hidden; display: flex; align-items: center; gap: 8px; margin-top: 6pt;">
         <div i="ep-histogram"/>
         <span style="white-space-collapse: break-spaces;;">
-          {{ 'Score:' }}
+          {{ 'Total score:' }}
         </span>
         <span style="white-space-collapse: break-spaces; color: var(--ep-color-primary); font-weight: bold;">
           {{ assignment_data?.maximum_score }}
@@ -49,6 +49,12 @@
       </div>
     </div>
 
+    <el-button
+      style="float: right; margin-right: 20px;"
+      @click="back">
+      <span style="margin-left: -12px; margin-right: 5px;" i="ep-arrow-left"/>Back to chapter
+    </el-button>
+
   </div>
 
   <div v-for="c in list_with_student" :key="c.submission.file_submission_id" style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; display: flex; overflow: hidden;">
@@ -71,6 +77,7 @@
           :value-on-clear="'min'"
           controls-position="right"
           style="margin-left: 5px;"
+          @change="update_score(c.submission)"
         />
         <div style="margin-left: 8px;">/</div>
         <div style="font-weight: bold; color: var(--ep-color-primary);">{{ assignment_data?.maximum_score }}</div>
@@ -79,22 +86,28 @@
         {{ (new Date(c.submission.updated_at)).toLocaleString() }}
       </div>
     </div>
+    <el-button 
+      style="float: right; margin-right: 20px;"
+      @click="router.push('/assignment/submission/' + c.submission.file_submission_id)">
+      View this submission <span style="margin-left: 5px; margin-right: -12px;" i="ep-arrow-right"/>
+    </el-button>
   </div>
   <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
 </div>
+<div v-else>You are not the teacher of this assignment</div>
 </template>
 <script setup lang="ts">
 import { deleteAssignmentCall, getAssignmentCall, type AssignmentEntity } from '@/api/course/AssignmentAPI';
 import { getChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI';
 import { getCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
-import { getAllSubmissionCall, type FileSubmissionEntity } from '@/api/course/FileSubmissionAPI';
+import { getAllSubmissionCall, updateScoreCall, type FileSubmissionEntity } from '@/api/course/FileSubmissionAPI';
 import { getUserPublicInfoCall, type UserEntity, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 import { useAuthStore } from '@/stores/auth';
 import { useCourseStore } from '@/stores/course';
 import { useFormStore } from '@/stores/form';
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const auth_store = useAuthStore()
 const form_store = useFormStore()
@@ -120,6 +133,17 @@ async function load() {
 }
 load()
 
+async function update_score(data: FileSubmissionEntity) {
+  const msg = await updateScoreCall(data.file_submission_id, {gained_score: data.gained_score})
+  if(msg.code!=200) {
+    ElMessage({
+      message: 'update score network error',
+      type: 'error',
+    })
+    return
+  }
+}
+
 const open_form = (data: AssignmentEntity|undefined, mode: 'Add'|'Edit') => {
   if(mode=='Edit') {
     if(data!==undefined)
@@ -134,16 +158,22 @@ const open_form = (data: AssignmentEntity|undefined, mode: 'Add'|'Edit') => {
   }
 }
 
+const router = useRouter()
 async function del(data: AssignmentEntity|undefined) {
   if(!data) return
   const msg = await deleteAssignmentCall(data.assignment_id)
-  if(msg && msg.code!=200) {
+  if(msg.code!=200) {
     ElMessage({
       message: 'delete assignment network error',
       type: 'error',
     })
     return
   }
+  back()
+}
+
+function back() {
+  router.push('/course' + '/' + course_data.value?.course_id + '/' + chapter_data.value?.chapter_title.replace(/ /g, '-'))
 }
 
 </script>

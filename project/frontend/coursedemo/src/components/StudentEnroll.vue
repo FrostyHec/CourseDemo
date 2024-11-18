@@ -15,7 +15,7 @@
         {{ scope.row.email }}
       </template>
     </el-table-column>
-    <el-table-column label="Status" width="350">
+    <el-table-column label="Status" width="250">
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
         <el-radio-group v-model="scope.row.status" style="padding: 0;" @change="update_status(scope.row)">
           <el-radio-button :label="StudentEnrollType.invited" :value="StudentEnrollType.invited"/>
@@ -25,7 +25,7 @@
     </el-table-column>
     <el-table-column label="Remove">
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
-        <el-button type="danger" style="width: 0;" @click="remove_student(scope.row)">Remove</el-button>
+        <el-button type="danger" @click="remove_student(scope.row)">Remove</el-button>
       </template>
     </el-table-column>
   </el-table>

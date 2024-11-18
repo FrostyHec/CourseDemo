@@ -6,7 +6,7 @@ import axios from "axios";
 /////////////////////   RESOURCE COMMENT   ///////////////////////////////
 
 export interface ResourceCommentEntity {
-  comment_id?: number
+  comment_id: number
   resource_id: number
   user_id: number
   comment_text: string
@@ -17,26 +17,26 @@ export interface ResourceCommentEntity {
 
 export interface CommentResource {
   id: number
-  commentId: number
-  resourceName: string
-  fileName: string
+  comment_id: number
+  resource_name: string
+  file_name: string
   suffix: string
 }
 
 export interface CommentResourceWithAccessKey {
-  resourceEntity: CommentResource
-  accessKey: string
+  resource_entity: CommentResource
+  access_key: string
 }
 
 export interface CommentWithUserAndFileAndAccessKey {
-  commentId: number
-  resourceId: number
+  comment_id: number
+  resource_id: number
   user: UserPublicInfoEntity
-  commentText: string
-  commentFiles: CommentResourceWithAccessKey[]
-  commentReply: number
-  createdAt: Date
-  updatedAt: Date
+  comment_text: string
+  comment_files: CommentResourceWithAccessKey[]
+  comment_reply: number
+  created_at: Date
+  updated_at: Date
 }
 
 // Add a comment to a resource

@@ -5,12 +5,12 @@ import {AxiosAPI} from "@/utils/APIUtils";
 
 export interface CourseWithStudentCount {
     course: CourseEntity;
-    studentNum: number; // 已注册学生数
+    student_num: number; // 已注册学生数
 }
 
 export interface TeacherWithStudentCount {
     teacher: UserPublicInfoEntity;
-    studentNum: number; // 已注册学生数
+    student_num: number; // 已注册学生数
 }
 
 /////////////////////   RECOMMEND   ///////////////////////////////
