@@ -1,0 +1,17 @@
+package org.frosty.server.entity.bo.progress;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
+@TableName("course_complete_records")
+public class CourseCompleteRecord {
+    private Long courseId;
+    private Long studentId;
+}

@@ -6,9 +6,12 @@ import org.frosty.common_service.storage.api.ObjectStorageService;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.CommentResource;
 import org.frosty.server.entity.bo.ResourceComment;
+import org.frosty.server.event.update.CompleteCourseEvent;
+import org.frosty.server.event.update.CreateCommentEvent;
 import org.frosty.server.mapper.course.CommentMapper;
 import org.frosty.server.mapper.course.CommentResourceMapper;
 import org.frosty.server.services.course.CommentService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,14 +28,18 @@ public class CommentServiceImpl implements CommentService {
     private final CommentResourceMapper commentResourceMapper;
     private final ObjectStorageService objectStorageService;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     @Override
     public void addCommentToResource(Long resourceId, ResourceComment comment) {
         commentMapper.insert(comment);
+        applicationEventPublisher.publishEvent(new CreateCommentEvent(this,comment.getCommentId()));
     }
 
     @Override
     public void addReplyToComment(Long parentCommentId, ResourceComment reply) {
         commentMapper.insert(reply);
+        applicationEventPublisher.publishEvent(new CreateCommentEvent(this,reply.getCommentId()));
     }
 
     @Override
