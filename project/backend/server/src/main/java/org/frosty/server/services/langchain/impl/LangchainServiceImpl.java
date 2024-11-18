@@ -16,7 +16,7 @@ public class LangchainServiceImpl implements LangchainService {
 
     @Override
     public void saveChatHistory(LangchainController.ChatContext context, Long id) {
-        langchainMapper.updateByChatId(id);
+        langchainMapper.updateByChatId(id,context);
     }
 
     @Override
