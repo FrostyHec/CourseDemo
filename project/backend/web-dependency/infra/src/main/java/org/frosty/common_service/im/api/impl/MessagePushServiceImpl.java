@@ -8,12 +8,11 @@ import org.frosty.common.utils.Ex;
 import org.frosty.common.utils.RestTemplateUtils;
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.common_service.im.entity.Email;
-import org.frosty.common_service.im.entity.SiteMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
+import org.frosty.sse.entity.SiteMessage;
 import java.util.Map;
 import java.util.Objects;
 

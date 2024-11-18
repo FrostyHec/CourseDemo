@@ -98,7 +98,7 @@ public class UserAPI {
         return performRequest(requestBuilder, token, null);
     }
 
-    public List<User> searchByNameSuccess(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
+    public List<UserPublicInfo> searchByNameSuccess(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
         return getSuccessResponse(
                 searchByName(token, firstName, lastName, pageNum, pageSize),
                 UserController.UserList.class).getContent();

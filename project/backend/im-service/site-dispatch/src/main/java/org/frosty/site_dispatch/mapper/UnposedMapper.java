@@ -1,7 +1,7 @@
 package org.frosty.site_dispatch.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.frosty.site_dispatch.entity.SingleMessageDTO;
+import org.frosty.sse.entity.UnposedSiteMessage;
 
-public interface UnposedMapper extends BaseMapper<SingleMessageDTO> {
+public interface UnposedMapper extends BaseMapper<UnposedSiteMessage> {
 }

@@ -25,6 +25,11 @@ public class Course {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private PublicationType publication;
+    private CourseEvaluationType evaluationType;
+
+    public enum CourseEvaluationType{
+        practice,theory
+    }
 
     public enum CourseStatus {
         creating,

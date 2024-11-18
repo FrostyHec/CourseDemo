@@ -62,7 +62,7 @@ public class UserController {
     // 查询单个用户公开信息
     @GetMapping("/user/public/{id}")
     public Response getUserPublicInfo(@PathVariable Long id) {
-        User user = userService.findPublicInfoById(id);
+        UserPublicInfo user = userService.findPublicInfoById(id);
         return Response.getSuccess(user);
     }
 
@@ -75,6 +75,13 @@ public class UserController {
         }
         List<UserPublicInfo> users = userService.searchUser(first_name, last_name, page_num, page_size);
         return new UserList(users);
+    }
+
+    // 精确搜索用户（基于用户邮箱）
+    @GetMapping("/user/search/{email}")
+    public Response getUserByEmail(@PathVariable String email) {
+        UserPublicInfo user = userService.findPublicInfoByEmail(email);
+        return Response.getSuccess(user);
     }
 
     @Data
