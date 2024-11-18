@@ -5,13 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
+import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.AuthEx;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.common.response.Response;
 import org.frosty.server.services.course.progress.CourseProgressService;
-import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +22,7 @@ public class CourseProgressController {
     private final CourseProgressService courseProgressService;
 
     @PutMapping("/resource/{rid}/study/complete")
-    public void completeResource(@GetToken TokenInfo tokenInfo, @PathVariable Long rid) {
-        AuthInfo auth = AuthEx.checkPass(tokenInfo);
+    public void completeResource(@GetPassedToken AuthInfo auth, @PathVariable Long rid) {
         courseProgressService.completeResource(rid,auth);
     }
 
