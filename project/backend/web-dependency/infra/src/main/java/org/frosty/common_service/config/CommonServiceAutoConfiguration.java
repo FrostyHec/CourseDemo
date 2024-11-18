@@ -10,8 +10,10 @@ import org.frosty.common_service.storage.api.impl.MockSharedBiMapServiceImpl;
 import org.frosty.common_service.storage.api.impl.ObjectStorageServiceImpl;
 import org.frosty.common_service.storage.api.impl.SharedBiMapServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -38,6 +40,7 @@ public class CommonServiceAutoConfiguration {
         };
     }
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SharedBiMapService sharedBiMapService() {
         return switch (storageType) {
             case "mock" -> new MockSharedBiMapServiceImpl();

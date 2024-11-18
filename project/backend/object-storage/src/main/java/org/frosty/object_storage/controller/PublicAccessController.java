@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
-import org.frosty.object_storage.service.AccessKeyService;
+import org.frosty.object_storage.service.access_key.AccessKeyService;
 import org.frosty.object_storage.service.StorageService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

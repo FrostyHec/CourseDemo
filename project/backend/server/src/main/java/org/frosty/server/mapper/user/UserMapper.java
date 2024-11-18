@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.RecommendController;
 import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface UserMapper extends BaseMapper<User> {
 //    void deleteUserById(Long id);
 
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id = #{id}")
-    User findPublicInfoById(Long id);
+    UserPublicInfo findPublicInfoById(Long id);
 
     /**
      * 根据输入的关键词在用户的姓名（first_name 和 last_name）中进行搜索，
@@ -50,28 +51,33 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT * FROM users WHERE email = #{email}")
     User selectByEmail(String email);
 
+
+    // TODO 为什么这个sql有报错？
     @Select("""
-            SELECT u.*, COUNT(e.student_id) AS studentNum 
-            FROM users u 
-            JOIN courses c ON u.user_id = c.teacher_id 
-            JOIN enrollments e ON c.course_id = e.course_id 
-            WHERE u.role = 'teacher' 
-            GROUP BY u.user_id 
-            ORDER BY studentNum DESC 
-            <if test='pageSize != -1'>
-            LIMIT #{pageSize} OFFSET #{pageNum}   * #{pageSize}
+            <script>
+            SELECT u.*, COUNT(e.student_id) AS studentNum
+            FROM users u
+            JOIN courses c ON u.user_id = c.teacher_id
+            JOIN enrollments e ON c.course_id = e.course_id
+            WHERE u.role = 'teacher'
+            GROUP BY u.user_id
+            ORDER BY studentNum DESC
+            <if test='page_size != -1'>
+            LIMIT #{page_size} OFFSET #{page_num}  * #{page_size}
             </if>
+            </script>
             """)
     @Results({
-            @Result(property = "teacher.userId", column = "userId"),
-            @Result(property = "teacher.firstName", column = "firstName"),
-            @Result(property = "teacher.lastName", column = "lastName"),
+            @Result(property = "teacher.userId", column = "user_id"),
+            @Result(property = "teacher.firstName", column = "first_name"),
+            @Result(property = "teacher.lastName", column = "last_name"),
             @Result(property = "teacher.role", column = "role"),
             @Result(property = "teacher.email", column = "email"),
             @Result(property = "studentNum", column = "studentNum")
     })
-    List<RecommendController.CourseWithStudentCount> getHotTeachers(int page_num, int page_size);
+    List<RecommendController.TeacherWithStudentCount> getHotTeachers(int page_num, int page_size);
 
-
+    @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE email = #{email}")
+    UserPublicInfo findPublicInfoByEmail(String email);
 }
 

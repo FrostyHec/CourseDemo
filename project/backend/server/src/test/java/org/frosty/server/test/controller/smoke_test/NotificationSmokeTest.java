@@ -6,6 +6,7 @@ import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.NotificationWithReceiver;
 import org.frosty.server.test.controller.auth.AuthAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
+import org.frosty.server.test.controller.course.course_member.CourseMemberAPI;
 import org.frosty.server.test.controller.course.notification.NotificationAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
@@ -29,6 +30,8 @@ public class NotificationSmokeTest {
 
     @Autowired
     private NotificationAPI notificationAPI;
+    @Autowired
+    private CourseMemberAPI courseMemberAPI;
 
     @Test
     public void testAnnouncementCRUD() throws Exception {
@@ -77,5 +80,42 @@ public class NotificationSmokeTest {
         // Student can't find the Notification
         Notifications = notificationAPI.getAnnouncementsForCourseSuccess(studentToken, course.getCourseId());
         assertTrue(Notifications.isEmpty());
+    }
+
+    @Test
+    public void testNotificationSend() throws Exception {
+        // Teacher login
+        var pair = authAPI.quickAddUserAndLogin("teacher", User.Role.teacher);
+        var teacherToken = pair.first;
+        var teacher = pair.second;
+
+        // Create a course
+        var course = courseAPI.getTemplatePublishedCourse(teacher.getUserId(), "testCourse", Course.PublicationType.open);
+        courseAPI.quickCreateCourse(course);
+
+        // Student login
+        pair = authAPI.quickAddUserAndLogin("student", User.Role.student);
+        var studentToken = pair.first;
+        var student = pair.second;
+
+        courseMemberAPI.inviteStudentsToCourseSuccess(teacherToken, course.getCourseId(), List.of(student.getUserId()));
+
+        // Teacher creates a Notification
+        var notification = new NotificationWithReceiver();
+        notification.setMessage("This is a test Notification.");
+        notification.setTitle("Test Notification");
+        notification.setCourseId(course.getCourseId());
+        notification.setReceiverIds(List.of(student.getUserId()));
+        notificationAPI.createAnnouncementSuccess(teacherToken, course.getCourseId(), notification);
+
+        // Get the created notification
+        var notifications = notificationAPI.getAnnouncementsForCourseSuccess(teacherToken, course.getCourseId());
+        var createdNotification = CommonCheck.checkSingleAndGet(notifications);
+
+        // Notify via site
+        notificationAPI.notifyViaSiteSuccess(teacherToken, createdNotification.getNotificationId());
+
+        // Notify via email
+        notificationAPI.notifyViaEmailSuccess(teacherToken, createdNotification.getNotificationId());
     }
 }

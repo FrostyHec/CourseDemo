@@ -2,6 +2,7 @@ package org.frosty.server.mapper.course;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+import org.frosty.server.controller.course.RecommendController;
 import org.frosty.server.entity.bo.Course;
 
 import java.util.List;
@@ -41,5 +42,34 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<Course> searchPublicCourse(@Param("pageNum") int pageNum,
                                     @Param("pageSize") int pageSize,
                                     @Param("keyword") String keyword);
+
+    @Select("""
+            <script>
+            SELECT c.course_id AS courseId, c.course_name AS courseName, c.description AS description, 
+                   c.teacher_id AS teacherId, c.status AS status, c.publication AS publication, 
+                   COUNT(e.student_id) AS studentNum
+            FROM courses c
+            LEFT JOIN enrollments e ON c.course_id = e.course_id
+            WHERE c.status = 'published'
+              AND (c.publication = 'open' OR c.publication = 'semi_open')
+            GROUP BY c.course_id
+            ORDER BY studentNum DESC
+            <if test='pageSize != -1'>
+            LIMIT #{pageSize} OFFSET #{pageNum} * #{pageSize}
+            </if>
+            </script>
+            """)
+    @Results({
+            @Result(property = "course.courseId", column = "courseId"),
+            @Result(property = "course.courseName", column = "courseName"),
+            @Result(property = "course.description", column = "description"),
+            @Result(property = "course.teacherId", column = "teacherId"),
+            @Result(property = "course.status", column = "status"),
+            @Result(property = "course.publication", column = "publication"),
+            @Result(property = "studentNum", column = "studentNum")
+    })
+    List<RecommendController.CourseWithStudentCount> getHotCourses(@Param("pageNum") int pageNum,
+                                                                   @Param("pageSize") int pageSize);
+
 }
 

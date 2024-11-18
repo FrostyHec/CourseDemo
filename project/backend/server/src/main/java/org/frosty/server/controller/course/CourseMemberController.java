@@ -9,8 +9,10 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
+import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.po.StudentWithEnrollStatus;
 import org.frosty.server.services.course.CourseMemberService;
+import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -95,6 +97,18 @@ public class CourseMemberController {
         return Response.getSuccess(new CourseList(
                 courseMemberService.getSubmittedCourses(page_num, page_size)));
     }
+    @PutMapping("/course/{id}/student/{studentId}/status")
+    public void updateStudentEnrollStatus(@PathVariable String id,
+                                          @PathVariable String studentId,
+                                          @RequestBody StudentStatusDTO studentStatusDTO) {
+        FrameworkUtils.notImplemented();// TODO
+    }
+
+    @DeleteMapping("/course/{id}/student/{studentId}")
+    public void removeStudentFromCourse(@PathVariable Long id,
+                                        @PathVariable Long studentId) {
+        FrameworkUtils.notImplemented();// TODO
+    }
 
 
     @Data
@@ -116,5 +130,12 @@ public class CourseMemberController {
     @NoArgsConstructor
     public static class StudentList {
         private List<Long> studentList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StudentStatusDTO {
+        private Enrollment.EnrollmentType status;
     }
 }
