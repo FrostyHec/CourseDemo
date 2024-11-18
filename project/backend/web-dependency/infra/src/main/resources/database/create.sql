@@ -236,6 +236,7 @@ CREATE TABLE assignments
 (
     assignment_id               BIGSERIAL PRIMARY KEY,             -- 自增作业ID
     chapter_id                  INT                      NOT NULL, -- 章节ID
+    assignment_name             VARCHAR                  NOT NULL,
     description                 TEXT                     NOT NULL, -- 作业描述
     assignment_type             VARCHAR                  NOT NULL CHECK ( assignments.assignment_type IN ('file_upload', 'online_form') ),
     allow_update_submission     BOOLEAN                  NOT NULL,

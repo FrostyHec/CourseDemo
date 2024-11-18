@@ -19,6 +19,7 @@ public class Assignment implements ChapterContent {
     @TableId(type = IdType.AUTO)
     private Long assignmentId;
     private Long chapterId;
+    private String assignmentName;
     private String description;
     private AssignmentType assignmentType;
     private Boolean allowUpdateSubmission;
