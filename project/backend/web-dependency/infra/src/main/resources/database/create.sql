@@ -368,3 +368,11 @@ CREATE
     ON badge_record
     FOR EACH ROW
 EXECUTE PROCEDURE auto_time_only_created();
+
+drop table if exists makret_score_record;
+CREATE TABLE market_score_record
+(
+    user_id BIGINT NOT NULL ,
+    market_score INT NOT NULL ,
+    primary key (user_id,market_score)
+);

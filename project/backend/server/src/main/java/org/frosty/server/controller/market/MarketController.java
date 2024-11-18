@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.entity.bo.market.MyMarketScore;
 import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +26,4 @@ public class MarketController {
         FrameworkUtils.notImplemented();// TODO
         return null;
     }
-
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class MyMarketScore{
-        private Integer marketScore;
-    }
-
-
 }
