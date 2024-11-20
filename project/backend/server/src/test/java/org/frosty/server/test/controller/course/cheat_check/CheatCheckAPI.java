@@ -7,10 +7,12 @@ import org.frosty.common.utils.ReflectionUtils;
 import org.frosty.server.controller.course.cheat_check.CheatCheckController;
 import org.frosty.server.entity.bo.cheat_check.VideoRequiredSeconds;
 import org.frosty.server.entity.bo.cheat_check.VideoWatchRecord;
+import org.frosty.server.mapper.course.cheat_check.VideoWatchedRecordMapper;
 import org.frosty.server.services.course.cheat_check.CheatCheckService;
 import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Component
 @RequiredArgsConstructor
 public class CheatCheckAPI {
+    private final VideoWatchedRecordMapper videoWatchedRecordMapper;
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final AuthUtil authUtil;
@@ -116,5 +119,9 @@ public class CheatCheckAPI {
     public void stopWatchAliveSuccess(String token, Long id, CheatCheckController.WatchedInfoEntity watchedInfoEntity) throws Exception {
         stopWatchAlive(token, id, watchedInfoEntity)
                 .andExpect(RespChecker.success());
+    }
+
+    public void addComplete(Long videoId,Long uid){
+        videoWatchedRecordMapper.insert(new VideoWatchRecord(videoId,uid,0,0));
     }
 }

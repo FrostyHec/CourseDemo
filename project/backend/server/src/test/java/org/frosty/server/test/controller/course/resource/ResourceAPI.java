@@ -156,6 +156,13 @@ public class ResourceAPI {
         return e.getResourceId();
     }
 
+    public Long addTestResourceRecordAndGetId(Long chapterId,Resource.ResourceType type) {
+        var e = getTemplateResource(chapterId, "test", "pdf", type);
+        resourceMapper.insert(e);
+        assert e.getResourceId() != null;
+        return e.getResourceId();
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

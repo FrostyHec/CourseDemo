@@ -116,6 +116,10 @@ public class ChapterAPI {
 
     public Long addTestCourseTestChapterAndGetId(Long uid) {
         var coId = courseAPI.addTestCourseAndGetId(uid);
+        return addTestChapterAndGetId(coId);
+    }
+
+    public Long addTestChapterAndGetId(Long coId) {
         var e = getTemplateTeachingChapter(coId);
         chapterMapper.insert(e);
         assert e.getChapterId() != null;

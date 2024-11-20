@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.TimeUnit;
 
 @IdempotentControllerTest
-public class CheckCheckSmokeTest {
+public class CheatCheckSmokeTest {
     // 0. 通过反射设置RECORD_ALIVE_SECONDS和HEART_BEAT_INTERVAL_SECONDS
     // 1. 教师设置rq time，获得rq-time
     // 2. 学生查看自己的剩余时间
