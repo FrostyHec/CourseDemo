@@ -5,11 +5,16 @@ import axios from 'axios'
 const api_base = '/api/v1'
 export let service_backend_base: string = ''
 export let storage_backend_base:string = ''
+export let sse_backend_base:string = ''
 export function setAllBackendBase(backend_url: string) {
   setServiceBackendBase(backend_url)
   setStorageBackendBase(backend_url)
+  setSSEBackendBase(backend_url)
 }
 
+export function setSSEBackendBase(backend_url:string){
+  sse_backend_base = backend_url + api_base
+}
 export function setServiceBackendBase(backend_url:string){
   service_backend_base = backend_url + api_base
 }

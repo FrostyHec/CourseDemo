@@ -1,16 +1,14 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {
-  loginCall,
-  type LoginParam,
-  logoutCall,
-  type LogoutParam,
-  type
-  UserPublicInfoEntity,
-  UserType
+  loginCall, type LoginParam, logoutCall, type LogoutParam, type
+      UserPublicInfoEntity, UserType
 } from '@/api/user/UserAPI'
-import { reactive, ref } from 'vue'
+import {reactive, ref} from 'vue'
 import Cookies from 'js-cookie'
+import {useEventStore} from "@/stores/event";
+import {EventType} from "@/utils/EventBus";
 
+const {emitEvent} = useEventStore()
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('')
   const emptyUser: UserPublicInfoEntity = {
@@ -25,11 +23,12 @@ export const useAuthStore = defineStore('auth', () => {
   function init() {
     const res = getLoginToken()
     const res_ = getLoginUser()
-    if (res) {
+    if (res!=='') {
+      emitEvent(EventType.currentlyIsLoggedIn)
       token.value = res
-    }
-    if(res_) {
       Object.assign(user, res_)
+    }else{
+      emitEvent(EventType.currentlyIsLoggedOut)
     }
   }
   init()
@@ -42,6 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user, result.data.user)
     setLoginTokenUser(token.value, user)
     console.log(result, user)
+    emitEvent(EventType.currentlyIsLoggedIn)
     return result
   }
 
@@ -50,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = ''
     setLoginTokenUser('', emptyUser)
     Object.assign(user, emptyUser)
+    emitEvent(EventType.currentlyIsLoggedOut)
   }
 
   return {

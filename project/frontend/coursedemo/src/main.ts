@@ -14,7 +14,6 @@ import 'element-plus/dist/index.css'
 
 import '~/styles/index.scss'
 import 'uno.css'
-
 // If you want to use ElMessage, import it.
 import 'element-plus/theme-chalk/src/message.scss'
 import { createPinia } from 'pinia'
@@ -28,7 +27,6 @@ export async function main() {
   app.use(ElementPlus);
   return app
 }
-
 const app = await main()
 app.mount('#app')
 
