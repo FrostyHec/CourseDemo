@@ -8,6 +8,7 @@ import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.market.MyMarketScore;
+import org.frosty.server.services.market.MarketService;
 import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +22,10 @@ import java.util.Map;
 @RequestMapping(PathConstant.API + "/market")
 @RequiredArgsConstructor
 public class MarketController {
+    private final MarketService marketService;
+
     @GetMapping("/my-market-score")
     public MyMarketScore getMyMarketScore(@GetPassedToken AuthInfo auth){
-        FrameworkUtils.notImplemented();// TODO
-        return null;
+        return marketService.getMyMarketScore(auth.getUserID());
     }
 }
