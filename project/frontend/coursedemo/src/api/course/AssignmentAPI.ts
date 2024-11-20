@@ -5,7 +5,8 @@ import { AxiosAPI } from '@/utils/APIUtils'
 
 export interface AssignmentEntity {
   assignment_id: number
-  chapter_id: number
+  chapter_id: number,
+  assignment_name:string,
   description: string
   assignment_type: AssignmentType
   allow_update_submission: boolean
