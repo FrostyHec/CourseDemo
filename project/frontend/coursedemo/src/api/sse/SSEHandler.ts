@@ -40,15 +40,21 @@ export const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
     // TODO create another TS, complete the body structure(extent SSEBody)
     //  and handler function, and then register at here
     [SSEBodyType.announcement]: (message) => {
+        // 在页面的右下角弹出一个框，提示“您收到了一条来自xxx课程的公告，xxxx",然后点击可跳转查看公告
     },
     [SSEBodyType.new_login]: (message) => {
+        // 校验是否与当前store里存储的token一致，如果一致则忽略，否则提示"另一个用户登录“并且退出登录
     },
     [SSEBodyType.receive_credits]: (message) => {
+        // 跳出提示框”XXX原因，积分+200“之类的
     },
 };
 /////////////messages packages///////////////
 // TODO register handler here and remove nullable
 const multipleMessageHandler: ((message: MessagePacket) => void) = (e) => {
+    // 你可以考虑一下怎么处理，对于new_login的pkt应该忽略（应该是某种极端情况，理论上我觉得应该登出的，但我不知道有没有什么意外情况，因此就暂时忽略吧），
+    // receive_credits可以忽略。announcement应该合并说：”您收到了来自xxx课程，xxx课程与xxx课程的公告。“
+    // 理论上只有unposed的list会有东西
 }
 
 interface SSEPackage {
