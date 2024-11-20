@@ -110,7 +110,10 @@ public class NotificationService {
         queryWrapper2.eq("teacher_id", notification.getCourseId());
         Course course = courseMapper.selectOne(queryWrapper2);
 
-        JsonNode message = objectMapper.valueToTree(Map.of("course_name",course.getCourseName(),
+        JsonNode message = objectMapper.valueToTree(Map.of(
+                "course_id",course.getCourseId(),
+                "course_name",course.getCourseName(),
+                "announcement_id",notification.getNotificationId(),
                 "title", notification.getTitle()));
 
         // 设置消息格式
