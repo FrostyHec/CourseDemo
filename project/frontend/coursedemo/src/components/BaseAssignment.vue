@@ -38,7 +38,7 @@
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px; margin-top: 6pt;">
           <div i="ep-histogram"/>
           <span style="white-space-collapse: break-spaces;;">
-            {{ 'Score:' }}
+            {{ 'Total score:' }}
           </span>
           <span style="white-space-collapse: break-spaces; color: var(--ep-color-primary); font-weight: bold;">
             {{ c.data.maximum_score }}
@@ -62,36 +62,46 @@
         </div>
       </div>
       
-      <el-button v-if="course_store.current_course_teacher()===auth_store.user.user_id" style="float: right; margin-right: 20px;">
-        View all submissions
+      <el-button 
+        v-if="course_store.current_course_teacher()===auth_store.user.user_id" 
+        style="float: right; margin-right: 20px;"
+        @click="router.push('/assignment/' + c.data.assignment_id)">
+        View all submissions <span style="margin-left: 5px; margin-right: -12px;" i="ep-arrow-right"/>
       </el-button>
       <div v-else style="display: flex; float: right; flex-direction: column; align-items: flex-end; margin-right: 20px;">
         <div style="margin-bottom: 20px;">
-          <span :style="c.submitted ? 'color: var(--ep-color-success)' : 'color: var(--ep-color-danger)'">
-            {{ c.submitted ? "Submitted" : "No submission" }}
+          <span :style="c.submitted!==undefined ? 'color: var(--ep-color-success)' : 'color: var(--ep-color-danger)'">
+            {{ c.submitted!==undefined ? "Submitted" : "No submission" }}
           </span>
         </div>
         <div>
           <el-button 
-            v-if="!c.submitted" 
-            style="float: right; width: 0;" type="primary" 
-            @click="submit_visibility=true; current_assignment=c.data.assignment_id">
+            v-if="c.submitted===undefined" 
+            style="float: right; width: 100px; margin-left: 10px" type="primary" 
+            @click="submit_visibility=true; current_assignment=c.data.assignment_id"
+          >
             Submit
           </el-button>
           <el-button 
-            v-if="c.submitted && c.data.allow_update_submission" 
-            style="float: right; width: 0;" type="primary" 
-            @click="submit_visibility=true; current_assignment=c.data.assignment_id">
+            v-if="c.submitted!==undefined && c.data.allow_update_submission" 
+            style="float: right; width: 100px; margin-left: 10px" type="primary" 
+            @click="submit_visibility=true; current_assignment=c.data.assignment_id"
+          >
             Resubmit
           </el-button>
-          <el-button v-if="c.submitted" style="float: right; margin-right: 10px">View your submission</el-button>
+          <el-button
+            v-if="c.submitted!==undefined" style="float: right;"
+            @click="router.push('/assignment/submission/' + c.submitted)"
+          >
+            View your submission <span style="margin-left: 5px; margin-right: -12px;" i="ep-arrow-right"/>
+          </el-button>
         </div>
       </div>
         
     </div>
     <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
   
-    <AssignmentForm/>
+    <AssignmentForm @after-submit="load_assignment"/>
     <el-dialog
       v-model="submit_visibility"
       title="Submit the assignment"
@@ -126,13 +136,14 @@ import { deleteAssignmentCall, getAssignmentCall, getAssignmentsByChapterIdCall,
 import { useFormStore } from '@/stores/form';
 import { getStudentSubmissionCall, submitFileCall, type FileSubmissionEntity } from '@/api/course/FileSubmissionAPI';
 import type FileUploader from './FileUploader.vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const form_store = useFormStore()
 const is_assignment_chapter = ref(false)
 let current_chapter_id = -1
-const assignments = ref<{data: AssignmentEntity, submitted: boolean}[]>([])
+const assignments = ref<{data: AssignmentEntity, submitted?: number}[]>([])
 
 const open_form = (data: AssignmentEntity|undefined, mode: 'Add'|'Edit') => {
   if(mode=='Edit') {
@@ -162,9 +173,9 @@ async function load_assignment() {
   for(const a of msg.data.content) {
     const sub_msg = await getStudentSubmissionCall(a.assignment_id)
     if(sub_msg.code==200)
-      assignments.value.push({data: a, submitted: true})
+      assignments.value.push({data: a, submitted: sub_msg.data.file_submission.file_submission_id})
     else
-      assignments.value.push({data: a, submitted: false})
+      assignments.value.push({data: a})
   }
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
@@ -176,7 +187,6 @@ const watch_current_data = watch(() => course_store.current_data?.data,
       return
     current_chapter_id = new_data.chapter_id
     await load_assignment()
-    // await load_students()
   },
   { immediate: true }
 )
@@ -220,5 +230,7 @@ async function submit() {
   }
   await load_assignment()
 }
+
+const router = useRouter()
 
 </script>

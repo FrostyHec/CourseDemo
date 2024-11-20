@@ -28,7 +28,18 @@
       </el-form-item>
 
       <el-form-item v-if="form_store.mode=='Add'" label="File" prop="file_name">
-        <FileUploader ref="uploader"/>
+        <FileUploader ref="uploader" @change="change"/>
+      </el-form-item>
+
+      <el-form-item v-if="video_len!==undefined" label="Watch time require">
+        <el-input-number
+          v-model="time_require"
+          :min="0"
+          :max="video_len"
+          :step="60"
+          :value-on-clear="'min'"
+          controls-position="right"
+        /><span style="margin-left: 8px;">/ {{ video_len }}</span>
       </el-form-item>
 
     </el-form>
@@ -57,11 +68,33 @@ import { type FormInstance, type FormRules, ElMessage} from 'element-plus'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import type FileUploader from '../FileUploader.vue';
+import { setMinRequiredTimeCall } from '@/api/course/CheatCheckAPI';
 
 const uploader = ref<InstanceType<typeof FileUploader>>()
 
 const form_store = useFormStore()
 const course_store = useCourseStore()
+
+const video_len = ref<number|undefined>(undefined)
+const time_require = ref(0)
+function change(file: File|undefined) {
+  if(file===undefined) {
+    video_len.value = undefined
+    time_require.value = 0
+    return
+  }
+  if(!file.type.startsWith('video')) {
+    video_len.value = undefined
+    time_require.value = 0
+    return
+  }
+  const link = URL.createObjectURL(file)
+  const video = document.createElement('video')
+  video.addEventListener("loadedmetadata", () => {
+    video_len.value = video.duration
+  });
+  video.src = link
+}
 
 const resource_rules = reactive<FormRules<ResourceEntity>>({
   resource_name: [
@@ -84,7 +117,7 @@ const resource_rules = reactive<FormRules<ResourceEntity>>({
   ],
   resource_version_name: [
     { required: true, message: 'Please enter a version name', trigger: 'blur', },
-  ]
+  ],
 })
 
 const formRef = ref<FormInstance>()
@@ -110,6 +143,12 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       type: "success",
     })
     console.log('submit!')
+
+    if(video_len.value) {
+      const msg = await setMinRequiredTimeCall(0, {required_seconds: time_require.value})
+      //TODO
+    }
+
     form_store.resource_visibility = false
     await course_store.load_from_route(true)
   })

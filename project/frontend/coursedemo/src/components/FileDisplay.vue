@@ -1,7 +1,16 @@
 <template>
   <base-markdown v-if="resource_type==='md'" :markdown-content="md_file"/>
-  <embed v-if="resource_type==='pdf'" :src="link" type="application/pdf" style="margin-top: 30px; height: auto; width: 100%; height: 1000px;"/>
-  <video v-if="resource_type==='video'" controls><source :src=link :type="file_type"></video>
+  <base-pdf
+    v-if="resource_type==='pdf'"
+    :link="link"
+    :resource_id="resource_id"
+  />
+  <base-video
+    v-if="resource_type==='video'"
+    :link="link"
+    :file_type="file_type"
+    :resource_id="resource_id"
+  />
   <div v-if="resource_type==='attachment'">
     <p>{{ 'File: '+download_name }}</p>
     <a :href="link" :download="download_name" class="ep-button ep-button--primary" >Download</a>
@@ -9,17 +18,10 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref, watch, defineProps, toRef } from 'vue'
-import { useCourseStore } from '@/stores/course';
-import { type CourseEntity } from '@/api/course/CourseAPI'
-import { type ChapterEntity } from '@/api/course/ChapterAPI'
-import type { ResourceEntityPlus } from '@/stores/course';
-import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, type ResourceCommentEntity } from '@/api/course/ResourceCommentAPI';
-import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 import { getResourceAccessLink } from '@/api/resource_access/ResourceAccessAPI';
 import { AxiosAPI } from '@/utils/APIUtils';
 import axios from 'axios'
-import { ResourceType } from '@/api/course/CourseResourceAPI';
 
 const auth_store = useAuthStore()
 const resource_type = ref<'md'|'video'|'pdf'|'attachment'|undefined>(undefined)
@@ -34,14 +36,19 @@ async function load_resource(suffix: string, file_name: string, access_key: stri
   const type = type_and_name[0]
   const name = type_and_name[1]
   link.value = ''
+  resource_type.value = undefined
   if(is_attachment) {
     resource_type.value = 'attachment'
     download_name.value = name
   }
   else if(name.split('.').pop()==='md')
     resource_type.value = 'md'
-  else if(type.split('/')[0]==='video')
+  else if(type.split('/')[0]==='video') {
+    link.value = getResourceAccessLink(file_name, auth_store.user.user_id, access_key)
+    file_type.value = type
     resource_type.value = 'video'
+    return
+  }
   else if(type.split('/').pop()==='pdf')
     resource_type.value = 'pdf'
   else {
@@ -67,6 +74,7 @@ const p = defineProps({
   file_name: {type: String, default: ''}, 
   access_key: {type: String, default: ''}, 
   is_attachment: {type: Boolean, default: false},
+  resource_id: {type: Number, default: undefined}
 })
 const props = toRef(p)
 

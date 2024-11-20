@@ -18,6 +18,10 @@ const router = createRouter({
       component: () => import('@/views/Assignment/SubmissionList.vue')
     },
     {
+      path: '/assignment/submission/:submission_id(\\d+)',
+      component: () => import('@/views/Assignment/BaseSubmission.vue')
+    },
+    {
       path: '/course/hotCourse',
       component: () => import('@/views/Course/hotCourse.vue'),
     },

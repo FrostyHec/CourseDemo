@@ -34,12 +34,15 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.handleStart(file)
 } 
 
+const emit = defineEmits({change: (file: File|undefined) => true})
 const handleChange: UploadProps['onChange'] = (file) => {
   file_get.value = file.raw as File
+  emit('change', file_get.value)
 }
 
 const handleRemove: UploadProps['onRemove'] = (file) => {
   file_get.value = undefined
+  emit('change', undefined)
 }
 
 function clear() {

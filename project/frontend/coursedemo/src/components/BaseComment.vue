@@ -52,6 +52,11 @@
           {{ c.comment_text }}
         </span>
         <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
+          
+          <div style="color: var(--ep-text-color-placeholder);">  
+            {{ (new Date(c.updated_at)).toLocaleString() }}
+          </div>
+          
           <el-popover placement="bottom-start" :width="400" trigger="click" :hide-after="0" transition="None">
             <template #reference>
               <el-link type="primary" :underline="false" style="font-size: small;">Reply</el-link>
@@ -70,9 +75,26 @@
               Reset
             </el-button>
           </el-popover>
-          <div style="color: var(--ep-text-color-placeholder);">  
-            {{ (new Date(c.updated_at)).toLocaleString() }}
-          </div>
+
+          <el-popover v-if="c.user.user_id===auth_store.user.user_id" placement="bottom-start" :width="400" trigger="click" :hide-after="0" transition="None">
+            <template #reference>
+              <el-link type="primary" :underline="false" style="font-size: small;">Attach</el-link>
+            </template>
+            <el-input
+              v-model="resource_name"
+              placeholder="Please enter a name"
+              style="margin-bottom: 10px;"
+            />
+            <file-uploader ref="uploader"/>
+            <div style="margin: 10px;"></div>
+            <el-button type="primary" @click="send_comment(c.comment_id)">
+              Send
+            </el-button>
+            <el-button @click="uploader?.clear(); resource_name=''">
+              Reset
+            </el-button>
+          </el-popover>
+
         </div>
       </div>
       
@@ -88,7 +110,7 @@ import { useCourseStore } from '@/stores/course';
 import { type CourseEntity } from '@/api/course/CourseAPI'
 import { type ChapterEntity } from '@/api/course/ChapterAPI'
 import type { ResourceEntityPlus } from '@/stores/course';
-import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, type ResourceCommentEntity, type ResourceCommentWithUserEntity } from '@/api/course/ResourceCommentAPI';
+import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, uploadFilesCall, type CommentResource, type CommentWithUserAndFileAndAccessKey, type ResourceCommentEntity } from '@/api/course/ResourceCommentAPI';
 import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';
@@ -97,31 +119,8 @@ const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const is_resource = ref(false)
 let current_resource_id = -1
-const comments = ref<ResourceCommentWithUserEntity[]>([{
-  comment_id: 0, resource_id: 0, user: {user_id: 0, first_name: 'alice', last_name: 'bob', role: UserType.STUDENT, email: ''},
-  comment_text: 'happy happy happy',
-  created_at: new Date(), updated_at: new Date(),
-  comment_reply: -1,
-}, {
-  comment_id: 1, resource_id: 0, user: {user_id: 0, first_name: 'bob', last_name: 'alice', role: UserType.STUDENT, email: ''},
-  comment_text: 'tic tac toe',
-  created_at: new Date(), updated_at: new Date(),
-  comment_reply: -1,
-}, {
-  comment_id: 2, resource_id: 0, user: {user_id: 0, first_name: 'happy', last_name: 'happy', role: UserType.STUDENT, email: ''},
-  comment_text: `踊れ💃踊れ💃嘘に踊れ💃
-今までを捨↑て↑て↑
-腕を振れよ🤛🤜
-中身がなんもなくても💃
-✌🎵未来はあるのさ🎵✌
-Liar🤛Liar🤜Liar🤛Liar🤜Dancer🤛
-素直で傷ついたあ↗の→日↘を↗
-Liar🤛Liar🤜Liar🤛Liar🤜Dancer🤛
-🎵💃嘘で踊るのさ💃🎵`,
-  created_at: new Date(), updated_at: new Date(),
-  comment_reply: 2,
-}])
-let comment_map = new Map<number, ResourceCommentWithUserEntity>()
+const comments = ref<CommentWithUserAndFileAndAccessKey[]>([])
+let comment_map = new Map<number, CommentWithUserAndFileAndAccessKey>()
 comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 
 async function load_comments() {
@@ -192,6 +191,29 @@ async function send_comment(reply_id?: number) {
     new_comment.value = ''
   else
     reply_new_comment.value = ''
+  await load_comments()
+}
+
+const uploader = ref()
+const resource_name = ref('')
+async function submit(comment_id: number) {
+  if(uploader.value?.file_get===undefined || resource_name.value=='')
+    return
+  const file_submit: CommentResource = {
+    id: 0,
+    comment_id: comment_id,
+    resource_name: resource_name.value,
+    file_name: '',
+    suffix: uploader.value.file_get.type+'\\'+uploader.value.file_get.name,
+  }
+  const msg = await uploadFilesCall(comment_id, file_submit, uploader.value.file_get)
+  if(msg.code!==200) {
+    ElMessage({
+      message: 'Assignment submit network error',
+      type: 'error',
+    })
+    return
+  }
   await load_comments()
 }
 
