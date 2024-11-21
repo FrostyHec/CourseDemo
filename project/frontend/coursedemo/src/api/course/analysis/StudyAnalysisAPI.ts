@@ -24,6 +24,12 @@ export enum WarningType {
 
 export interface WarningInfoContent {}
 
+export interface AssignmentWarningInfoContent extends WarningInfoContent{
+    //两个type都是只有这个content
+    assignment:AssignmentEntity
+}
+
+
 export interface StudentsScoreTable {
     column: AssignmentEntity[];
     row: UserPublicInfoEntity[];
