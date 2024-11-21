@@ -7,9 +7,8 @@ import {reactive, ref} from 'vue'
 import Cookies from 'js-cookie'
 import {useEventStore} from "@/stores/event";
 import {EventType} from "@/utils/EventBus";
-
-const {emitEvent} = useEventStore()
 export const useAuthStore = defineStore('auth', () => {
+  const {emitEvent} = useEventStore()
   const token = ref('')
   const emptyUser: UserPublicInfoEntity = {
     user_id: 0,
