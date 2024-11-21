@@ -39,7 +39,7 @@ export async function uploadResourceCall(chapterId: number, resource: ResourceEn
 
   const config=AxiosAPI.setAuthHeader();
   (config.headers as any)['Content-Type'] = 'multipart/form-data' // TODO check correctness
-  return AxiosAPI.extractResult<null>(await axios.post(url,formData,config))
+  return AxiosAPI.extractResult<{resource_id:number}>(await axios.post(url,formData,config))
 }
 
 // 获取资源元数据
