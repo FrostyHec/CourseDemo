@@ -76,9 +76,11 @@ public class ResourceAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public void uploadResourceSuccess(String token, Long chapterId, Resource resource, MockMultipartFile file) throws Exception {
-        uploadResource(token, chapterId, resource, file)
-                .andExpect(RespChecker.success());
+    public Resource uploadResourceSuccess(String token, Long chapterId, Resource resource, MockMultipartFile file) throws Exception {
+        var resp = uploadResource(token, chapterId, resource, file)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return JsonUtils.toObject(resp,Resource.class);
     }
 
     public ResultActions getResourceMetaData(String token, Long id) throws Exception {
