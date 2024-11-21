@@ -18,8 +18,12 @@ import 'uno.css'
 import 'element-plus/theme-chalk/src/message.scss'
 import { createPinia } from 'pinia'
 import { handleBackendPath, handleMockStatus } from './utils/EnvUtils'
+
+
+
 export async function main() {
   const app = createApp(App)
+
   app.use(router)
   app.use(createPinia())
   handleBackendPath()

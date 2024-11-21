@@ -1,5 +1,5 @@
 import {useEventStore} from "@/stores/event";
-import {EventType} from "@/utils/EventBus";
+import {EventBus, EventType} from "@/utils/EventBus";
 import {InternalException} from "@/utils/Exceptions";
 import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
@@ -108,14 +108,11 @@ export function unSubscribeSSE() {
     eventSource = null
 }
 
-function init() {
-    const {registerEvent} = useEventStore();
-    registerEvent(EventType.currentlyIsLoggedIn, () => {
+export function sseEventSubscribe(eventBus:EventBus) {
+    eventBus.register(EventType.currentlyIsLoggedIn, () => {
         subscribeToSSE()
     })
-    registerEvent(EventType.currentlyIsLoggedOut, () => {
+    eventBus.register(EventType.currentlyIsLoggedOut, () => {
         unSubscribeSSE()
     })
 }
-
-init()

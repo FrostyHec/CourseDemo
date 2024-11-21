@@ -1,4 +1,3 @@
-
 export class EventBus {
 	private list: { [key: string]: Function[] };
 	constructor() {
@@ -6,7 +5,7 @@ export class EventBus {
 	}
 
 	// 订阅
-	on(name: EventType,fn: Function) {
+	register(name: EventType, fn: Function) {
 		this.list[name] = this.list[name] || [];
 		this.list[name].push(fn);
 	}
