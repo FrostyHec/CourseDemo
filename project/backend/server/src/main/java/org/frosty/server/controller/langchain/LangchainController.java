@@ -25,9 +25,7 @@ public class LangchainController {
     private final LangchainService langchainService;
 
     private final ChatService chatService;
-
-
-    // String 改成 ChantContext
+    
     @PostMapping("/chat")
     public ChatContext sendChat(@RequestBody ChatContext context, @GetToken TokenInfo tokenInfo) {
         try {
@@ -55,15 +53,14 @@ public class LangchainController {
 
     @PostMapping("/title")
     public TitleEntity generateTitle(@RequestBody ChatContext chatContext) {
-        // 依据输入的chatContext生成title
+        // TODO 依据输入的chatContext生成title
         FrameworkUtils.notImplemented();
         return null;
     }
 
     @PostMapping("/")
     public ChatEntity createNewChat(@GetToken TokenInfo tokenInfo, @RequestBody TitleEntity titleEntity) {
-        // TODO 连接文心一言创建一个新的聊天。但是我感觉目前理解到的信息，直接传递信息就行，文心不会对聊天做区分（描述有点不清楚有问题可以再说）
-        // 依据输入的chatEntity返回title？
+        // 依据输入的chatEntity返回title
         ChatEntity chatEntity = new ChatEntity();
         chatEntity.setTitle(titleEntity.getTitle());
         return chatEntity;
@@ -72,7 +69,7 @@ public class LangchainController {
     @PutMapping("/{id}")
     public void saveChatHistory(@RequestBody ChatContext context, @PathVariable Long id) {
         // 保存context到数据库
-        langchainService.saveChatHistory(context,id);
+        langchainService.saveChatHistory(context, id);
     }
 
     @GetMapping("/all")
@@ -94,7 +91,7 @@ public class LangchainController {
     @PatchMapping("/{id}/title")
     public ChatEntity setChatTitle(@RequestBody TitleEntity titleEntity, @PathVariable Long id) {
         // 设置chat标题并返回更新后的chat
-        langchainService.setChatTitle(titleEntity.getTitle(),id);
+        langchainService.setChatTitle(titleEntity.getTitle(), id);
         return langchainService.getChatEntityById(id);
     }
 
@@ -128,6 +125,7 @@ public class LangchainController {
     public static class SingleChatMessage {
         Role role;
         String content;
+
         public enum Role {
             user,
             assistant

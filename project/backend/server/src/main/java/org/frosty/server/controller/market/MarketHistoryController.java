@@ -8,6 +8,7 @@ import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.market.ConsumeRecord;
+import org.frosty.server.services.market.MarketHistoryService;
 import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MarketHistoryController {
 
+    private final MarketHistoryService marketHistoryService;
+
     @GetMapping("/history/my")
     public ConsumeRecordList getMyHistory(@GetPassedToken AuthInfo auth){
-        FrameworkUtils.notImplemented();// TODO
-        return null;
+        Long userId = auth.getUserID();
+        List<ConsumeRecord> records = marketHistoryService.getHistoryByUserId(userId);
+        return new ConsumeRecordList(records);
     }
 
     @Data
