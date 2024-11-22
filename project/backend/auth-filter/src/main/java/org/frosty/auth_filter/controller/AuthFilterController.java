@@ -73,6 +73,8 @@
 package org.frosty.auth_filter.controller;
 
 
+import io.micrometer.common.util.StringUtils;
+import io.netty.util.internal.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,8 +104,8 @@ public class AuthFilterController {
     @RequestMapping
     public ResponseEntity<?> auth(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        // null is acceptable for api not requiring auth
-        if (token == null) {
+        // null or empty is acceptable for api not requiring auth
+        if (StringUtils.isBlank(token)) {
             return ResponseEntity.ok().header(AuthConstant.parsedHeader,
                     TokenUtils.tokenInfoToString(TokenInfo.getWithoutAuthInfo())).build();
         }

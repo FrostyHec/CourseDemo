@@ -77,6 +77,14 @@ public class JsonUtils {
         return list;
     }
 
+    public static <T> T fromString(String resp, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(resp, clazz);
+        } catch (IOException e) {
+            throw new InternalException("unable to parse string:" + resp, e);
+        }
+    }
+
     @PostConstruct
     public void init() {
         objectMapper = injectedObjectMapper;
