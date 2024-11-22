@@ -21,7 +21,9 @@ class ChatRoomAPI {
 
     connectWebSocket(roomId: string, userId: number, onMessageFunc:OnMessageFunc) {
         const url = `ws://localhost:9977/websocket/livestream/${roomId}/${userId}`;
-
+        if(this.socket){
+            this.socket.close()
+        }
         this.socket = new WebSocket(url);
 
         this.socket.onopen = function (event) {
