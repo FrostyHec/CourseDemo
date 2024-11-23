@@ -64,24 +64,24 @@ public class CourseProgressController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CourseProgress{
-        public Long courseId;
-        public List<ChapterProgress> chapterProgress;
-        public Boolean isCompleted;
+        private Long courseId;
+        private List<ChapterProgress> chapterProgress;
+        private Boolean isCompleted;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ChapterProgress{
-        public Long chapterId;
-        public List<ResourceProgress> videoResources;
-        public Boolean isCompleted;
+        private Long chapterId;
+        private List<ResourceProgress> videoResources;
+        private Boolean isCompleted;
     }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ResourceProgress{
-        public Long resourceId;
-        public Boolean isCompleted;
+        private Long resourceId;
+        private Boolean isCompleted;
     }
 }

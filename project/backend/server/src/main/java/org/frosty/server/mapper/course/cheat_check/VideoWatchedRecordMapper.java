@@ -10,7 +10,14 @@ public interface VideoWatchedRecordMapper extends BaseMapper<VideoWatchRecord> {
     @Select("SELECT * FROM video_watch_records WHERE video_id = #{rid} AND student_id = #{uid}")
     VideoWatchRecord selectByPrimaryKey(Long rid, Long uid);
 
-    @Update("UPDATE video_watch_records SET remain_required_seconds = #{remainRequiredSeconds}, last_watched_seconds = #{lastWatchedSeconds} WHERE video_id = #{videoId} AND student_id = #{studentId}")
+    @Update("<script>" +
+            "UPDATE video_watch_records " +
+            "SET remain_required_seconds = #{remainRequiredSeconds}" +
+            "<if test='lastWatchedSeconds != null'>" +
+            ", last_watched_seconds = #{lastWatchedSeconds}" +
+            "</if>" +
+            " WHERE video_id = #{videoId} AND student_id = #{studentId}" +
+            "</script>")
     void updateByPrimaryKey(VideoWatchRecord record);
 
     @Delete("DELETE FROM video_watch_records WHERE video_id = #{rid} AND student_id = #{uid}")

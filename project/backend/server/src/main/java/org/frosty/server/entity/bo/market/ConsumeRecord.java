@@ -37,5 +37,9 @@ public class ConsumeRecord {
         complete_course(CompleteCourseActionParam.class)
         ;
         private final Class<?> actionParamType;
+
+        public ActionParam create() throws InstantiationException, IllegalAccessException {
+            return (ActionParam) actionParamType.newInstance();
+        }
     }
 }

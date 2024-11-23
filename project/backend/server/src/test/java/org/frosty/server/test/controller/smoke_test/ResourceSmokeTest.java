@@ -38,8 +38,8 @@ public class ResourceSmokeTest {
         var resource = resourceAPI.getTemplateResource(chapterId,
                 "test", "pdf", Resource.ResourceType.courseware);
         var file = resourceAPI.loadTemplateFile("test.pdf");
-        resourceAPI.uploadResourceSuccess(teacherToken, chapterId, resource, file);
-
+        var resp = resourceAPI.uploadResourceSuccess(teacherToken, chapterId, resource, file);
+        assert resp.getResourceId()>0;
         // get resource metadata
         var li = resourceAPI.getResourcesByChapterSuccess(teacherToken, chapterId);
         var rcvdResourceMetadataEntity = CommonCheck.checkSingleAndGet(li);

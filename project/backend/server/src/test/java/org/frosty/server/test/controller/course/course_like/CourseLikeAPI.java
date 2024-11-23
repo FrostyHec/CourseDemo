@@ -3,6 +3,7 @@ package org.frosty.server.test.controller.course.course_like;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.test.testutils.MockUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,8 +50,9 @@ public class CourseLikeAPI {
         return mockUtil.performRequest(requestBuilder, token, null);
     }
 
-    public boolean checkCourseLikeSuccess(String token, Long courseId, Long studentId) throws Exception {
+    public Map<String,Boolean> checkCourseLikeSuccess(String token, Long courseId, Long studentId) throws Exception {
         var resultActions = checkCourseLike(token, courseId, studentId);
-        return MockUtil.getSuccessResponse(resultActions, Boolean.class);
+        return MockUtil.getSuccessResponse(resultActions, new TypeReference<>() {
+        });
     }
 }

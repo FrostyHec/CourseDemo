@@ -76,9 +76,11 @@ public class ResourceAPI {
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public void uploadResourceSuccess(String token, Long chapterId, Resource resource, MockMultipartFile file) throws Exception {
-        uploadResource(token, chapterId, resource, file)
-                .andExpect(RespChecker.success());
+    public Resource uploadResourceSuccess(String token, Long chapterId, Resource resource, MockMultipartFile file) throws Exception {
+        var resp = uploadResource(token, chapterId, resource, file)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return JsonUtils.toObject(resp,Resource.class);
     }
 
     public ResultActions getResourceMetaData(String token, Long id) throws Exception {
@@ -151,6 +153,13 @@ public class ResourceAPI {
     public Long addTestCourseTestChapterTestResourceAndGetId(Long uid) {
         var chapterId = chapterAPI.addTestCourseTestChapterAndGetId(uid);
         var e = getTemplateResource(chapterId, "test", "pdf", Resource.ResourceType.courseware);
+        resourceMapper.insert(e);
+        assert e.getResourceId() != null;
+        return e.getResourceId();
+    }
+
+    public Long addTestResourceRecordAndGetId(Long chapterId,Resource.ResourceType type) {
+        var e = getTemplateResource(chapterId, "test", "pdf", type);
         resourceMapper.insert(e);
         assert e.getResourceId() != null;
         return e.getResourceId();

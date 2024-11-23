@@ -60,8 +60,8 @@ public class CourseProgressService {
         }
         // check & remove metadata
         var record = videoWatchedRecordMapper.selectByPrimaryKey(rid,uid);
-        Ex.check(record==null||record.getRemainRequiredSeconds()!=0,
-                Response.getBadRequest("video-not-complete")
+        Ex.check(record!=null&&record.getRemainRequiredSeconds()==0,
+                Response.getBadRequest("video-"+rid+"-not-complete")
         );
         videoWatchedRecordMapper.deleteByPrimaryKey(rid,uid);
     }
@@ -73,7 +73,7 @@ public class CourseProgressService {
         var videoResource = getVideoResources(cid);
         for(var r:videoResource){
             Ex.check(resourceCompleteMapper.contains(r.getResourceId(),uid),
-                    Response.getBadRequest("resource-not-complete"));
+                    Response.getBadRequest("resource-"+r.getResourceId()+"-not-complete"));
         }
         // add complete
         chapterCompleteMapper.insert(new ChapterCompleteRecord(cid, uid));
@@ -91,7 +91,7 @@ public class CourseProgressService {
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
         for(var c:chapters){
             Ex.check(chapterCompleteMapper.contains(c.getChapterId(),uid),
-                    Response.getBadRequest("chapter-not-complete"));
+                    Response.getBadRequest("chapter-"+c.getChapterId()+"-not-complete"));
         }
         // add complete
         courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
