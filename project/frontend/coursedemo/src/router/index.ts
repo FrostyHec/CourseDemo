@@ -13,6 +13,7 @@ const router = createRouter({
       path: '/course/:course_id(\\d+)/:labels*',
       component: () => import('@/views/Course/BaseCourse.vue'),
     },
+
     {
       path: '/assignment/:assignment_id(\\d+)',
       component: () => import('@/views/Assignment/SubmissionList.vue')
@@ -21,6 +22,37 @@ const router = createRouter({
       path: '/assignment/submission/:submission_id(\\d+)',
       component: () => import('@/views/Assignment/BaseSubmission.vue')
     },
+
+    {
+      path: '/analysis/scores/:course_id(\\d+)',
+      component: () => import('@/views/Analysis/OverallScore.vue')
+    },
+    {
+      path: '/analysis/warning/:course_id(\\d+)',
+      component: () => import('@/views/Analysis/StudentWarning.vue')
+    },
+    {
+      path: '/analysis/:course_id(\\d+)',
+      component: () => import('@/views/Analysis/BaseAnalysis.vue')
+    },
+    {
+      path: '/analysis/:course_id(\\d+)/assignments',
+      component: () => import('@/views/Analysis/AssignmentAnalysis.vue')
+    },
+    {
+      path: '/analysis/:course_id(\\d+)/projects',
+      component: () => import('@/views/Analysis/ProjectAnalysis.vue')
+    },
+
+    {
+      path: '/my-analysis/scores/:course_id(\\d+)',
+      component: () => import('@/views/MyAnalysis/OverallScore.vue')
+    },
+    {
+      path: '/my-analysis/progresses/:course_id(\\d+)',
+      component: () => import('@/views/MyAnalysis/BaseCompleted.vue')
+    },
+
     {
       path: '/course/hotCourse',
       component: () => import('@/views/Course/hotCourse.vue'),

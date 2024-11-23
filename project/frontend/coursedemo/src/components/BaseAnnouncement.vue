@@ -101,7 +101,6 @@ import { useCourseStore } from '@/stores/course';
 import { type CourseEntity } from '@/api/course/CourseAPI'
 import { type ChapterEntity } from '@/api/course/ChapterAPI'
 import type { ResourceEntityPlus } from '@/stores/course';
-import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCall, type ResourceCommentEntity, type ResourceCommentWithUserEntity } from '@/api/course/ResourceCommentAPI';
 import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';

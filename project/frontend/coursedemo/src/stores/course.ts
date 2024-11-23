@@ -4,17 +4,19 @@ import { CourseStatus, getCourseCall, Publication, type CourseEntity } from '@/a
 import { ChapterType, getAllChapterCall, getChapterCall, type ChapterEntity } from '@/api/course/ChapterAPI'
 import { getResourcesByChapterCall, ResourceType, type ResourceEntity, type ResourceWithAccessKey } from '@/api/course/CourseResourceAPI'
 import { useRoute } from 'vue-router'
+import { checkCourseProgressCall, completeChapterCall, completeCourseCall, completeResourceCall } from '@/api/course/CourseProgressAPI'
+import { ElMessage } from 'element-plus'
 
 export interface ResourceEntityPlus extends ResourceEntity {
   access_key: string
 }
-export function pack_resorce(data: ResourceEntityPlus): ResourceWithAccessKey {
+export function pack_resource(data: ResourceEntityPlus): ResourceWithAccessKey {
   return {
     resource: data,
     access_key: data.access_key
   }
 }
-export function unpack_resorce(data: ResourceWithAccessKey): ResourceEntityPlus {
+export function unpack_resource(data: ResourceWithAccessKey): ResourceEntityPlus {
   return {...data.resource, access_key: data.access_key}
 }
 
@@ -91,7 +93,7 @@ export function path_convert(path: undefined|string|string[]): string[] {
   return path
 }
 
-async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
+export async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
   const course_info = (await getCourseCall(course_id)).data
   const chapter_list = (await getAllChapterCall(course_id)).data.content.sort((a, b) => a.chapter_order - b.chapter_order)
   const chapter_all_list: {
@@ -102,32 +104,32 @@ async function get_all(course_id: number): Promise<AllInOneEntity|undefined> {
     }[]
   }[] = []
   for(const chapter_info of chapter_list) {
-    const resoruse_list = (await getResourcesByChapterCall(chapter_info.chapter_id))
+    const resource_list = (await getResourcesByChapterCall(chapter_info.chapter_id))
       .data.content
-      .map(unpack_resorce)
+      .map(unpack_resource)
       .sort((a, b) => {
         if(a.resource_order===b.resource_order)
           return b.resource_version_order - a.resource_version_order
         return b.resource_order - a.resource_order
       })
-    const resoruse_all_list: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]}[] = []
+    const resource_all_list: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]}[] = []
     let current: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]} | undefined = undefined
-    for(const resoruse of resoruse_list) {
+    for(const resource of resource_list) {
       if(current===undefined) {
-        current = {top: resoruse, vers: []}
+        current = {top: resource, vers: []}
       }
       else {
-        if(current.top.resource_order==resoruse.resource_order)
-          current.vers.push(resoruse)
+        if(current.top.resource_order==resource.resource_order)
+          current.vers.push(resource)
         else {
-          resoruse_all_list.push(current)
-          current = current = {top: resoruse, vers: []}
+          resource_all_list.push(current)
+          current = current = {top: resource, vers: []}
         }
       }
     }
     if(current!==undefined)
-      resoruse_all_list.push(current)
-    chapter_all_list.push({chapter_info: chapter_info, resources: resoruse_all_list})
+      resource_all_list.push(current)
+    chapter_all_list.push({chapter_info: chapter_info, resources: resource_all_list})
   }
   console.log({course_info: course_info, chapters: chapter_all_list})
   return {course_info: course_info, chapters: chapter_all_list}
@@ -147,7 +149,9 @@ export const useCourseStore = defineStore('course', () => {
     return course_data?.course_info.teacher_id
   }
 
+  const ver_resource_set :Set<number> = new Set()
   function build(course: AllInOneEntity): UnifyTree {
+    ver_resource_set.clear()
     let cnt = 0
     default_open.value = [0]
     return course.chapters.reduce<UnifyTree>((root, chapter) => {
@@ -157,6 +161,7 @@ export const useCourseStore = defineStore('course', () => {
           sub_root.children.push(
             resource.vers.reduce<UnifyTree>((subsub_root, ver_resource) => {
               subsub_root.children.push(unify(ver_resource, cnt++, false))
+              ver_resource_set.add(ver_resource.resource_id)
               return subsub_root
             }, unify(resource.top, cnt++))
           )
@@ -250,5 +255,55 @@ export const useCourseStore = defineStore('course', () => {
     {immediate: true}
   )
 
-  return {current_course_id, current_course_teacher, unify_course_data, current_data, load_from_route, default_open, breadcrumb}
+  async function complete_resource(resource_id: number) {
+    await completeResourceCall(resource_id)
+    const id = current_course_id()
+    if(id===undefined) return
+    const msg = await checkCourseProgressCall(id)
+    if(msg.code!==200) {
+      ElMessage({
+        message: 'Get progress network error',
+        type: 'error',
+      })
+    }
+    const course_pro = msg.data
+    let current_chapter: number|undefined = undefined
+    for(const chapter_pro of course_pro.chapter_progress) {
+      let finish = false
+      for(const resource_pro of chapter_pro.video_resources) {
+        if(resource_pro.resource_id===resource_id) {
+          finish = true
+          let chapter_complete = true
+          if(chapter_pro.is_completed)
+            break
+          current_chapter = chapter_pro.chapter_id
+          for(const res of chapter_pro.video_resources)
+            if(!res.is_completed && !ver_resource_set.has(res.resource_id)) {
+              chapter_complete = false
+              break
+            }
+          if(chapter_complete)
+            await completeChapterCall(chapter_pro.chapter_id)
+          break
+        }
+      }
+      if(finish)
+        break
+    }
+    if(current_chapter===undefined || course_pro.is_completed)
+      return
+    let course_complete = true
+    for(const chapter_pro of course_pro.chapter_progress)
+      if(chapter_pro.chapter_id!==current_chapter || !chapter_pro.is_completed)
+          course_complete = false
+    if(course_complete)
+      await completeCourseCall(course_pro.course_id)
+  }
+
+  return {
+    current_course_id, current_course_teacher, 
+    unify_course_data, current_data, 
+    load_from_route, default_open, breadcrumb,
+    complete_resource,
+  }
 })

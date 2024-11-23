@@ -56,6 +56,7 @@ export const useFormStore = defineStore('form', () => {
     assignment_id: 0,
     chapter_id: 0,
     description: '',
+    assignment_name: '',
     assignment_type: AssignmentType.file_upload,
     allow_update_submission: true,
     latest_submission_time: new Date(),

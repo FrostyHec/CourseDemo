@@ -51,6 +51,16 @@
         <span style="line-height: 1.5; white-space-collapse: break-spaces;">
           {{ c.comment_text }}
         </span>
+        <div v-for="r in c.comment_files" :key="r.resource_entity.id">
+          <el-button 
+            style="margin-top: 10px; text-align: left; width: 200px;"
+            tag='a'
+            :herf="getResourceAccessLink(r.resource_entity.file_name, auth_store.user.user_id, r.access_key)"
+            :download="r.resource_entity.suffix.split('\\')[1]"
+          >
+            <span i="ep-link" style="margin-right: 6px;"/>{{ r.resource_entity.resource_name }}
+          </el-button>
+        </div>
         <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
           
           <div style="color: var(--ep-text-color-placeholder);">  
@@ -114,6 +124,7 @@ import { addCommentToResourceCall, addReplyToCommentCall, getResourceCommentsCal
 import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';
+import { getResourceAccessLink } from '@/api/resource_access/ResourceAccessAPI';
 
 const course_store = useCourseStore()
 const auth_store = useAuthStore()
