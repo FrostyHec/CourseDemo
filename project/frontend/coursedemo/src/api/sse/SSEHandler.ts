@@ -3,7 +3,8 @@ import {EventBus, EventType} from "@/utils/EventBus";
 import {InternalException} from "@/utils/Exceptions";
 import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
-
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import {AxiosAPI} from "@/utils/APIUtils";
 let eventSource: EventSource | null = null;
 
 //////////////single message for common cases////////////////
@@ -84,7 +85,12 @@ export function subscribeToSSE(uid: number) {
     if (uid <= 0) {
         throw new InternalException('unexpected user id', uid)
     }
-    eventSource = new EventSource(sse_backend_base + "/msg/site/user/" + uid);
+    eventSource = new EventSourcePolyfill(sse_backend_base + "/msg/site/user/" + uid, {
+        headers: AxiosAPI.getAuthHeaderJson()
+    });
+    if(!eventSource){
+        throw new InternalException('unexpected event source', eventSource)
+    }
     eventSource.onmessage = (event) => {
         const packet: SSEPackage = JSON.parse(event.data)
         if (packet.push_type === PackageType.packet) {
