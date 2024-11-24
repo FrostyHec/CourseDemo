@@ -68,7 +68,7 @@ const handleLogin = async () => {
     console.log('happy')
     if (result.code == 200) {
       ElMessage.success('登录成功!')
-      if(authStore.user.role==UserType.STUDENT)router.push('/MainPage/student');
+      if(authStore.user.role==UserType.STUDENT)router.push('/MainPage');
       else if(authStore.user.role==UserType.TEACHER)router.push('/MainPage/teacher')
       else router.push('/manager')
     } else {

@@ -230,11 +230,6 @@ const handleDelete = () => {
   }
 };
 
-const handlePageChange = (newPage: number) => {
-  currentPage.value = newPage;
-  fetchCourses();
-};
-
 const fetchCourses = async () => {
   try {
       const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage, pageSize);
