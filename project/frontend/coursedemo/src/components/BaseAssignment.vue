@@ -21,9 +21,11 @@
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px;">
           <div i="ep-edit-pen"/>
           <span style="line-height: 1.5; white-space-collapse: break-spaces; font-weight: 600;">
-            {{ c.data.description }}
+            {{ c.data.assignment_name }}
           </span>
         </div>
+
+        <div style="margin: 15px; margin-top: 5px; color: var(--ep-color-primary);">{{ c.data.description }}</div>
 
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px; margin-top: 6pt;">
           <div i="ep-clock"/>
@@ -37,7 +39,7 @@
 
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px; margin-top: 6pt;">
           <div i="ep-histogram"/>
-          <span style="white-space-collapse: break-spaces;;">
+          <span style="white-space-collapse: break-spaces;">
             {{ 'Total score:' }}
           </span>
           <span style="white-space-collapse: break-spaces; color: var(--ep-color-primary); font-weight: bold;">

@@ -130,7 +130,8 @@ const submitForm = async (formIn: FormInstance | undefined) => {
     }
     form_store.resource_form.suffix = uploader.value.file_get.type+'\\'+uploader.value.file_get.name
     console.log(form_store.resource_form.suffix)
-    if(!await form_store.modify_resource(uploader.value.file_get)) {
+    const id = await form_store.modify_resource(uploader.value.file_get)
+    if(id==undefined) {
       ElMessage({
         message: 'Network error',
         type: 'error',
@@ -145,8 +146,14 @@ const submitForm = async (formIn: FormInstance | undefined) => {
     console.log('submit!')
 
     if(video_len.value) {
-      const msg = await setMinRequiredTimeCall(0, {required_seconds: time_require.value})
-      //TODO
+      const msg = await setMinRequiredTimeCall(id, {required_seconds: time_require.value})
+      if(msg.code!=200) {
+        ElMessage({
+          message: 'set require time error',
+          type: 'error',
+        })
+        return
+      }
     }
 
     form_store.resource_visibility = false

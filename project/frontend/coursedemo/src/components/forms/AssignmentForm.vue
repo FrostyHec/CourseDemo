@@ -11,6 +11,10 @@
       :rules="assignment_rules"
       label-width="auto"
     >
+    <el-form-item label="Name" prop="assignment_name">
+        <el-input v-model="form_store.assignment_form.assignment_name" type="textarea" placeholder="Enter the description"/>
+      </el-form-item>
+
       <el-form-item label="Description" prop="description">
         <el-input v-model="form_store.assignment_form.description" type="textarea" placeholder="Enter the description"/>
       </el-form-item>
@@ -67,8 +71,8 @@ import type { AssignmentEntity } from '@/api/course/AssignmentAPI';
 const form_store = useFormStore()
 
 const assignment_rules = reactive<FormRules<AssignmentEntity>>({
-  description: [
-    { required: true, message: 'Please enter the description', trigger: 'blur', },
+  assignment_name: [
+    { required: true, message: 'Please enter a name', trigger: 'blur', },
   ],
   maximum_score: [
     { required: true, message: 'Please select a maximum score', trigger: 'blur', }

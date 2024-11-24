@@ -66,4 +66,3 @@ export async function setChatTitleCall(titleEntity: TitleEntity, id: number) {
     const url = service_backend_base + `/langchain/${id}/title`;
     return AxiosAPI.authPatch<ChatEntity>(url, titleEntity);
 }
-

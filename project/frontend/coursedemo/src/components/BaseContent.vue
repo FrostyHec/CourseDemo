@@ -9,6 +9,32 @@
       <h1 style="font-size: x-large; margin: 0%;">
         {{ course_store.current_data?.label }}
       </h1>
+
+      <div v-if="'course_name' in course_store.current_data.data" style="margin-top: 10px;">
+        <div v-if="course_store.current_course_teacher()==auth_store.user.user_id">
+          <el-button @click="router.push(`/analysis/scores/${course_store.current_course_id()}`)">
+            All scores
+          </el-button>
+          <el-button type="primary" @click="router.push(`/analysis/${course_store.current_course_id()}`)">
+            Course analysis
+          </el-button>
+          <el-button type="warning" @click="router.push(`/analysis/warnings/${course_store.current_course_id()}`)">
+            Warnings
+          </el-button>
+        </div>
+        <div v-else>
+          <el-button @click="router.push(`/my-analysis/scores/${course_store.current_course_id()}`)">
+            My scores
+          </el-button>
+          <el-button type="primary" @click="router.push(`/my-analysis/progress/${course_store.current_course_id()}`)">
+            My progress
+          </el-button>
+          <el-button type="warning" @click="router.push(`/my-analysis/warnings/${course_store.current_course_id()}`)">
+            My warnings
+          </el-button>
+        </div>
+      </div>
+
       <div v-if="course_store.current_data?.description != ''">
         <h1 style="font-size: large;">
           Description
@@ -49,7 +75,11 @@
 </template>
 <script setup lang="ts">
 import { cancelCourseLikeCall, createCourseLikeCall, getCourseLikeCall } from '@/api/course/CourseLikeAPI';
+import { useAuthStore } from '@/stores/auth';
 import { useCourseStore } from '@/stores/course';
 import moment from 'moment';
+import { useRouter } from 'vue-router';
+const router = useRouter()
 const course_store = useCourseStore()
+const auth_store = useAuthStore()
 </script>

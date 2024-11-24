@@ -149,7 +149,7 @@ export async function teacher_check_chapter_study_situation_call(cid: number, cp
     return AxiosAPI.authGet<ChapterStudySituation>(url, {});
 }
 
-export async function teacher_check_course_study_situation_call(cid: number, cpid: number) {
+export async function teacher_check_course_study_situation_call(cid: number) {
     const url = `${service_backend_base}/course/${cid}/study/analysis/teacher/course`;
     return AxiosAPI.authGet<CourseStudySituation>(url, {});
 }

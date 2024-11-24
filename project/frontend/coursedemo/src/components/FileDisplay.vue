@@ -17,7 +17,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref, watch, defineProps, toRef } from 'vue'
+import { reactive, ref, watch, toRef } from 'vue'
 import { useAuthStore } from '@/stores/auth';
 import { getResourceAccessLink } from '@/api/resource_access/ResourceAccessAPI';
 import { AxiosAPI } from '@/utils/APIUtils';

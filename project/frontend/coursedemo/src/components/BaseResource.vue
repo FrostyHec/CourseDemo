@@ -5,6 +5,7 @@
       :file_name="current_resource?.file_name"
       :access_key="current_resource?.access_key"
       :is_attachment="current_resource?.resource_type===ResourceType.attachment"
+      :resource_id="current_resource?.resource_id"
     />
   </div>
 </template>

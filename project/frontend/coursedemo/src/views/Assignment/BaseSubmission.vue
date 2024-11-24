@@ -8,9 +8,11 @@
       <div style="overflow: hidden; display: flex; align-items: center; gap: 8px; font-size: larger;">
         <div i="ep-edit-pen"/>
         <span style="line-height: 1.5; white-space-collapse: break-spaces; font-weight: 600;">
-          {{ assignment_data?.description }}
+          {{ assignment_data?.assignment_name }}
         </span>
       </div>
+
+      <div style="margin: 15px; margin-top: 5px; color: var(--ep-color-primary);">{{ assignment_data?.description }}</div>
 
       <div style="display: flex; gap: 5px; flex-direction: row; align-items: baseline; margin-top: 12pt;">
         <div style="font-weight: bold; margin-top: 5px;">
