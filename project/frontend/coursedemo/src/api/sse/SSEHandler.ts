@@ -45,6 +45,9 @@ export const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         // 在页面的右下角弹出一个框，提示“您收到了一条来自xxx课程的公告，xxxx",然后点击可跳转查看公告
     },
     [SSEBodyType.new_login]: (message) => {
+        console.log("处理新登录的情况")
+        const {token} = useAuthStore()
+        // message.body.token !== token && console.log("另一个用户登录")
         // 校验是否与当前store里存储的token一致，如果一致则忽略，否则提示"另一个用户登录“并且退出登录
     },
     [SSEBodyType.receive_credits]: (message) => {
@@ -94,7 +97,7 @@ export function subscribeToSSE(uid: number) {
         throw new InternalException('unexpected event source', eventSource)
     }
     eventSource.onmessage = (event) => {
-        const packet: SSEPackage = JSON.parse(event.data)
+        const packet: SSEPackage = JSON.parse(event.data).data
         if (packet.push_type === PackageType.packet) {
             multipleMessageHandler(packet.body as MessagePacket)
         } else if (packet.push_type === PackageType.single) {
