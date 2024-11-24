@@ -73,14 +73,14 @@ export interface MessagePacket {
 }
 
 
-export function subscribeToSSE() {
+export function subscribeToSSE(uid: number) {
     if (eventSource) {
         console.log('SSE is registered status:', eventSource.readyState)
         return
     }
     console.log('subscribing To SSE')
-    const {user} = useAuthStore()
-    const uid = user.user_id;
+    // const {user} = useAuthStore()
+    // const uid = user.user_id;
     if (uid <= 0) {
         throw new InternalException('unexpected user id', uid)
     }
@@ -99,7 +99,10 @@ export function subscribeToSSE() {
     eventSource.onerror = (error) => {
         console.error(error);
         unSubscribeSSE();
-        subscribeToSSE();
+        const {user} = useAuthStore()
+        if (user && user.user_id > 0) {
+            subscribeToSSE(user.user_id);
+        }
     }
 }
 
@@ -108,9 +111,9 @@ export function unSubscribeSSE() {
     eventSource = null
 }
 
-export function sseEventSubscribe(eventBus:EventBus) {
-    eventBus.register(EventType.currentlyIsLoggedIn, () => {
-        subscribeToSSE()
+export function sseEventSubscribe(eventBus: EventBus) {
+    eventBus.register(EventType.currentlyIsLoggedIn, (e: number) => {
+        subscribeToSSE(e)
     })
     eventBus.register(EventType.currentlyIsLoggedOut, () => {
         unSubscribeSSE()

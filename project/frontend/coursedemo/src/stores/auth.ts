@@ -23,9 +23,9 @@ export const useAuthStore = defineStore('auth', () => {
     const res = getLoginToken()
     const res_ = getLoginUser()
     if (res!=='') {
-      emitEvent(EventType.currentlyIsLoggedIn)
       token.value = res
       Object.assign(user, res_)
+      emitEvent(EventType.currentlyIsLoggedIn,user.user_id)
     }else{
       emitEvent(EventType.currentlyIsLoggedOut)
     }
