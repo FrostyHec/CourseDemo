@@ -63,7 +63,7 @@
             label-position="right"
             size="default"
           >
-            <el-form-item label="课程名称" prop="course_name" @blur="checkNameAvailability">
+            <el-form-item label="课程名称" prop="course_name">
               <el-input v-model="courseForm.course_name"/>
             </el-form-item>
             <el-form-item label="描述" prop="description">
@@ -111,12 +111,13 @@ const tableData = ref<CourseEntity[]>([
   evaluation_type: EvaluationType.practice
 }
 ]);
-const courseId = ref(1);
+
 const currentPage = ref(1);
 const pageSize = ref(10);
 const dialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const currentCourseToDelete = ref<CourseEntity | null>(null);
+
 const courseForm = ref<CourseEntity>({
   course_id: 0,
   course_name: '',
