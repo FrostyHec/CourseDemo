@@ -94,7 +94,7 @@ public class CourseEvaluationController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public class CourseEvaluationMetadata{
+    public static class CourseEvaluationMetadata{
         Integer averageScore;
     }
 
