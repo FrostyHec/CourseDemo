@@ -52,7 +52,7 @@ public class AssignmentController {
     @GetMapping("/chapter/{id}/assignment")
     public Response getAssignmentsByChapterId(@PathVariable Long id) {
         List<Assignment> assignmentList = assignmentService.getAssignmentsByChapterId(id);
-        return Response.getSuccess(assignmentList);
+        return Response.getSuccess(new AssignmentList(assignmentList));
     }
 
 

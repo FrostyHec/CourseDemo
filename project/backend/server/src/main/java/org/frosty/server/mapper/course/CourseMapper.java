@@ -10,10 +10,6 @@ import java.util.List;
 @Mapper
 public interface CourseMapper extends BaseMapper<Course> {
 
-    @Insert("INSERT INTO Courses (course_name, description, teacher_id, status, publication) VALUES (#{courseName}, #{description}, #{teacherId}, #{status},#{publication} )")
-    @Options(useGeneratedKeys = true, keyProperty = "courseId")
-    void insertCourse(Course course);
-
     @Update("UPDATE Courses SET status = #{status} WHERE course_id = #{courseId}")
     void updateCourseStatus(@Param("courseId") Long courseId, @Param("status") String status);
 
@@ -71,5 +67,7 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<RecommendController.CourseWithStudentCount> getHotCourses(@Param("pageNum") int pageNum,
                                                                    @Param("pageSize") int pageSize);
 
+    @Select("SELECT * FROM Courses WHERE teacher_id = #{teacherId} LIMIT #{pageSize} OFFSET (#{pageNum} -1)* #{pageSize}")
+    List<Course> selectTeacherCourses(Long teacherId, int pageNum, int pageSize);
 }
 

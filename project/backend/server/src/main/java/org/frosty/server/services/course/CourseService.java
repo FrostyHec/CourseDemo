@@ -14,7 +14,8 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     public void createCourse(Course course) {
-        courseMapper.insertCourse(course);
+        course.setCourseId(null);
+        courseMapper.insert(course);
     }
 
     public void updateCourseStatus(Long id, String status) {

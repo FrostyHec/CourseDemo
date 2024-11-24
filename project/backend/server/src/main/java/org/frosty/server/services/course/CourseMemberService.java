@@ -163,9 +163,7 @@ public class CourseMemberService {
      * @return 课程列表。
      */
     public List<Course> getTeacherCourses(Long teacherId, int pageNum, int pageSize) {
-        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("teacher_id", teacherId);
-        return courseMapper.selectList(queryWrapper);
+        return courseMapper.selectTeacherCourses(teacherId,pageNum,pageSize);
     }
 
     /**
