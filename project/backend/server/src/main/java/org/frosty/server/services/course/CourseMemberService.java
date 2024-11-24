@@ -224,4 +224,8 @@ public class CourseMemberService {
         // 返回分页课程信息
         return courseMapper.selectBatchIds(courseIds);
     }
+
+    public List<Course> getHandledCourse(int pageNum, int pageSize) {
+        return courseMapper.selectHandledCourse(pageNum,pageSize);
+    }
 }

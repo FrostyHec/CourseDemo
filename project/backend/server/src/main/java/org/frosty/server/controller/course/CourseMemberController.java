@@ -97,6 +97,18 @@ public class CourseMemberController {
         return Response.getSuccess(new CourseList(
                 courseMemberService.getSubmittedCourses(page_num, page_size)));
     }
+
+    @GetMapping("/admin/{id}/courses/handled")
+    public Response getPublicCourses(@PathVariable Long id,
+                                        @RequestParam int page_num,
+                                        @RequestParam int page_size) {
+        if (page_size < -1 || page_num < 0) {
+            return Response.getBadRequest("Page parameter error");
+        }
+
+        return Response.getSuccess(new CourseList(
+                courseMemberService.getHandledCourse(page_num, page_size)));
+    }
     @PutMapping("/course/{id}/student/{studentId}/status")
     public void updateStudentEnrollStatus(@PathVariable String id,
                                           @PathVariable String studentId,
