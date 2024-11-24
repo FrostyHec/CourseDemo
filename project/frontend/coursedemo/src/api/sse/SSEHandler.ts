@@ -109,8 +109,8 @@ export function unSubscribeSSE() {
 }
 
 export function sseEventSubscribe(eventBus:EventBus) {
-    eventBus.register(EventType.currentlyIsLoggedIn, () => {
-        subscribeToSSE()
+    eventBus.register(EventType.currentlyIsLoggedIn, (e:number) => {
+        subscribeToSSE(e)
     })
     eventBus.register(EventType.currentlyIsLoggedOut, () => {
         unSubscribeSSE()
