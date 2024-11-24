@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
@@ -70,23 +70,11 @@ import { subscribeToSSE, unSubscribeSSE } from '@/api/sse/SSEHandler';
 const router = useRouter();
 const activeIndex = ref('1');
 
-// 组件挂载时注册 SSE
-onMounted(() => {
-  subscribeToSSE();
-  getHotCourses
-});
-
-// 组件卸载时取消注册 SSE
-onUnmounted(() => {
-  unSubscribeSSE();
-});
-
-
 const cs303 = ref<CourseEntity>({
   course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
   status: CourseStatus.published,
   publication: Publication.open,
-  evaluationType: EvaluationType.theory
+  evaluation_type: EvaluationType.theory
 });
 
 const teacher1 = ref<UserPublicInfoEntity>({
