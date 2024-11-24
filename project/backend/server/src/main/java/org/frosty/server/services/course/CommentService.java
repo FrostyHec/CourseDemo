@@ -28,4 +28,6 @@ public interface CommentService {
     void removeFiles(Long cid, Long fid);
 
     List<ResourceComment> findByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt);
+
+    Long findCourseIdByComment(Long commentId);
 }

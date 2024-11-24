@@ -34,22 +34,11 @@ public class EarnCreditEventHandler {
 
 
     @AllArgsConstructor
+    @Getter
     public enum ScoreRule {
-
         COMPLETE_COURSE(200),
         DAILY_COMMENT(10);
-
         private final int score; // 积分值
-//        private final String description; // 描述
-
-//        public static int getScoreByRule(String ruleName) {
-//            for (ScoreRule rule : values()) {
-//                if (rule.name().equalsIgnoreCase(ruleName)) {
-//                    return rule.getScore();
-//                }
-//            }
-//            throw new IllegalArgumentException("无效的积分规则：" + ruleName);
-//        }
     }
 
 }

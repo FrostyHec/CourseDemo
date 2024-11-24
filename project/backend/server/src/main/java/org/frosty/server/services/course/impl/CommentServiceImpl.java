@@ -104,4 +104,9 @@ public class CommentServiceImpl implements CommentService {
     public List<ResourceComment> findByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt) {
         return commentMapper.selcetByUserIdAndCreatedTime(userId, createdAt);
     }
+
+    @Override
+    public Long findCourseIdByComment(Long commentId) {
+        return commentMapper.findCourseIdByComment(commentId);
+    }
 }

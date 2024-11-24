@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.market.BadgeInfo;
 import org.frosty.server.services.market.BadgeByService;
 import org.frosty.server.utils.FrameworkUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,8 +33,9 @@ public class BadgeByController {
     }
 
     @PostMapping("/buy")
-    public void buyBadge(@GetPassedToken AuthInfo auth, BadgeInfo badgeInfo) {
-        badgeByService.buyBadge(badgeInfo);
+    public void buyBadge(@GetPassedToken AuthInfo auth, BadgeInfo badgeInfo) throws IOException {
+        Long userId = auth.getUserID();
+        badgeByService.buyBadge(userId,badgeInfo);
     }
 
     @GetMapping("/my-canbuy")
