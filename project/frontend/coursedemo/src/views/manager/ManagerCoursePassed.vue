@@ -36,7 +36,7 @@ const activeIndex = ref('2');
 import BaseHeader from '../../layouts/BaseHeader.vue';
 import router from '@/router';
 import { CourseEntity, CourseStatus, EvaluationType, Publication } from '@/api/course/CourseAPI';
-import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
+import { getAdminIdCourseHandle, getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -61,7 +61,7 @@ const navigateTo = (path: string) => {
 };
 const fetchCourses = async () => {
 try {
-    const response = await getAllPendingApprovedCourse(authStore.user.user_id, currentPage, pageSize);
+    const response = await getAdminIdCourseHandle(authStore.user.user_id, currentPage, pageSize);
     courses.value = response.data.content;
 } catch (error) {
     console.error('获取课程列表失败:', error);
