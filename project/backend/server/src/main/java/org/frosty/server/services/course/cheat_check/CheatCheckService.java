@@ -87,6 +87,7 @@ public class CheatCheckService {
 //            saveWatchingEntityWithoutUser(uid, we);
             throw new ExternalException(Response.getBadRequest("stop-abnormal"));
         }
+        log.info("stopWatchAlive: uid={}, rid={}, watchedInfoEntity={}", uid, rid, watchedInfoEntity);
         // normal save
         var watchedSeconds = watchedInfoEntity.getWatchedSeconds();
         var watchedRecord = cheatCheckTransactionalService.getWatchedRecord(rid, uid);
@@ -132,7 +133,7 @@ public class CheatCheckService {
         // 检查2. (cnt-1+1)*TimeInterval >= seconds
         int watchedSeconds = watchedInfo.getWatchedSeconds();
         long secondsSinceStartHeartBeat = Duration.between(we.getFirstHeartBeatTime(), OffsetDateTime.now()).getSeconds();
-        if (secondsSinceStartHeartBeat < watchedSeconds) {
+        if (secondsSinceStartHeartBeat+1 < watchedSeconds) {
             log.warn("secondsSinceStartHeartBeat is "+secondsSinceStartHeartBeat+"but watchedSeconds is "+watchedSeconds);
             return false;
         }

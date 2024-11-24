@@ -32,7 +32,7 @@ public interface CourseMapper extends BaseMapper<Course> {
             "OR u.last_name LIKE CONCAT('%', #{keyword}, '%')" +
             ") " +
             "<if test='pageSize != -1'>" +
-            "LIMIT #{pageSize} OFFSET #{pageNum} * #{pageSize}" +
+            "LIMIT #{pageSize} OFFSET (#{pageNum} * #{pageSize})" +
             "</if>" +
             "</script>")
     List<Course> searchPublicCourse(@Param("pageNum") int pageNum,
