@@ -9,8 +9,12 @@ export interface CourseEntity {
   teacher_id: number,
   status: CourseStatus,
   publication: Publication
+  evaluationType: EvaluationType,
   created_at: Date,
   updated_at: Date,
+}
+export enum EvaluationType{
+  practice,theory
 }
 
 export enum Publication {
@@ -25,6 +29,10 @@ export enum CourseStatus {
   published = 'published',
   rejected = 'rejected',
   archived = 'archived'
+}
+
+export interface CourseStatusUpdateParam {
+  status: CourseStatus
 }
 
 export async function createCourseCall(param: CourseEntity) {

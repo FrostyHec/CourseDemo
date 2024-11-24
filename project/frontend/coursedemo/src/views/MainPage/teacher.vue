@@ -33,39 +33,7 @@
             </el-pagination>
           </el-main>
         </el-container>
-        <el-button style="margin-left: 90%; margin-top: 10px" type="primary" @click="dialogVisible = true">创建课程</el-button>
       </el-main>
-
-      <!-- 创建课程对话框 -->
-      <el-dialog
-        title="添加课程"
-        v-model="dialogVisible"
-        width="40%"
-      >
-        <el-form
-          :model="courseForm"
-          label-width="auto"
-          label-position="right"
-          size="default"
-        >
-          <el-form-item label="课程名称" prop="course_name">
-            <el-input v-model="courseForm.course_name"/>
-          </el-form-item>
-          <el-form-item label="描述" prop="description">
-            <el-input v-model="courseForm.description"/>
-          </el-form-item>
-          <el-form-item label="课程类型" prop="publication">
-            <el-radio-group v-model="courseForm.publication">
-              <el-radio :label="Publication.open">开放</el-radio>
-              <el-radio :label="Publication.closed">私密</el-radio>
-              <el-radio :label="Publication.semi_open">半开放</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="AddCourse">创建</el-button>
-          </el-form-item>
-        </el-form>
-      </el-dialog>
     </el-container>
   </el-config-provider>
 </template>
@@ -75,7 +43,7 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
-import { CourseStatus, createCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType ,createCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import router from '@/router';
 
 const authStore = useAuthStore();
@@ -84,7 +52,8 @@ const tableData = ref<CourseEntity[]>([
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
-    publication: Publication.open
+    publication: Publication.open,
+    evaluationType: EvaluationType.practice
   }
 ]);
 const currentPage = ref(1);
@@ -101,6 +70,7 @@ const courseForm = ref<CourseEntity>({
   publication: Publication.open,
   created_at: new Date(),
   updated_at: new Date(),
+  evaluationType: EvaluationType.practice
 });
 
 onMounted(async () => {
@@ -124,6 +94,7 @@ const createNewCourse = () => {
     teacher_id: authStore.user.user_id,
     status: CourseStatus.submitted,
     publication: Publication.open,
+    evaluationType: EvaluationType.practice,
     created_at: new Date(),
     updated_at: new Date(),
   };

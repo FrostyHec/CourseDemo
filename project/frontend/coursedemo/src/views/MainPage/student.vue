@@ -48,7 +48,7 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router'; // 导入 useRouter
 import { getAllJoinedCourseList } from '@/api/course/CourseMemberAPI';
-import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -57,7 +57,8 @@ const tableData = ref<CourseEntity[]>([
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
-    publication: Publication.open
+    publication: Publication.open,
+    evaluationType: EvaluationType.practice
   }
 ]);
 

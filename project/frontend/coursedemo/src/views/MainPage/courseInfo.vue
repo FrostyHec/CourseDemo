@@ -11,7 +11,7 @@
 
       <el-container>
         <el-aside width="200px">
-          <el-menu>
+          <el-menu @select="handleMenuSelect">
             <el-menu-item index="1">课程详情</el-menu-item>
             <el-menu-item index="2">课程评价</el-menu-item>
           </el-menu>
@@ -24,8 +24,13 @@
             <p>授课教师：{{course[0].teacher_id}}</p>
           </div>
           <div v-if="activeMenu === '2'" class="course-evaluation">
-            <!-- 这里可以添加评价列表 -->
+          <el-rate v-model="evaluation.average_score" disabled></el-rate>
+            <p>课程评分: {{ evaluation.average_score }} 分</p>
+          <div v-for="review in evaluation.reviews" :key="review.id" class="course-review">
+            <el-rate v-model="review.score" disabled></el-rate>
+            <p>学生评价：{{ review.content }}</p>
           </div>
+        </div>
         </el-main>
       </el-container>
 
@@ -41,7 +46,8 @@
 import { onMounted, ref,watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
-import { CourseStatus, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType ,getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { getEvaluationCall } from '@/api/course/CourseEvaluationAPI';
 
 const router = useRouter();
 const activeIndex = ref('1');
@@ -49,19 +55,40 @@ const course = ref<CourseEntity[]>([
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
-    publication: Publication.open
+    publication: Publication.open,
+    evaluationType: EvaluationType.theory
   }
 ]);
 
-const course_id = 0;
+const course_score = ref(0);
+
+const evaluation = ref({
+  average_score: course_score,
+  reviews: [
+    { id: 1, score: 5, content: 'Excellent course!' },
+    { id: 2, score: 4, content: 'Very good, but could be better.' },
+    { id: 3, score: 3, content: 'Average experience.' },
+    { id: 4, score: 5, content: 'Highly recommend!' },
+    { id: 5, score: 4, content: 'Good course, a bit too fast-paced.' }
+  ]
+});
+
+let course_id = 0;
 
 onMounted(async () => {
-  const course_id = router.currentRoute.course_id;
-  await fetchCourses();
+  const routeCourseId = router.currentRoute.value.params.course_id;
+  if (routeCourseId) {
+    course_id = Number(routeCourseId);
+    await fetchCourses();
+  }
 });
 
 const routerBack = () => {
   router.back();
+};
+
+const handleMenuSelect = (key: string) => {
+  activeMenu.value = key;
 };
 
 const navigateTo = (path: string) => {
@@ -77,7 +104,9 @@ watch(activeMenu, (newVal) => {
 const fetchCourses = async () => {
   try {
     const response = await getCourseCall(course_id);
-    const course = response.data;
+    course.value = [response.data];
+    const evaluationResponse = await getEvaluationCall(course_id);
+    course_score.value = evaluationResponse.data.score;
   } catch (error) {
     console.error('获取课程列表失败:', error);
   }
@@ -99,7 +128,7 @@ const fetchCourses = async () => {
   top: 60px;
 }
 
-.course-info {
+.course-info, .course-evaluation {
   margin-top: 20px;
 }
 
@@ -163,4 +192,12 @@ const fetchCourses = async () => {
 .search-button {
   margin-left: 0; /* 调整按钮样式 */
 }
+
+.course-review {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+}
+
 </style>

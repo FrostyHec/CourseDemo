@@ -31,22 +31,29 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { createNewChatCall, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity } from '@/api/langchain/langchainAPI';
+import { ref } from 'vue';
   
   const chatWindowVisible = ref(false);
   const historyDialogVisible = ref(false);
   const inputMessage = ref('');
-  const currentChat = ref({
+  const currentChat = ref<ChatEntity>({
     id: 1,
     title: 'New Chat',
-    messages: [{ content: 'Hello, this is Kimi. How can I assist you today?', self: false }]
+    createdAt: new Date(),
+    updatedAt: new Date()
   });
-  const chatHistories = ref([
-    { id: 1, title: 'Chat with Kimi' },
-    { id: 2, title: 'Another Conversation' }
-  ]);
+
+  const title = ref<TitleEntity>({
+    title: 'new chat'
+  })
+  
+  const context = ref<ChatContext>()
+
+  const chatHistories = ref<ChatMetadataList>();
   
   const toggleChatWindow = () => {
+    createNewChatCall(title.value)
     chatWindowVisible.value = !chatWindowVisible.value;
   };
   

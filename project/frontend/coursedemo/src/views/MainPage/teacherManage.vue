@@ -69,11 +69,17 @@
             <el-form-item label="描述" prop="description">
               <el-input v-model="courseForm.description"/>
             </el-form-item>
-            <el-form-item label="课程类型" prop="publication">
+            <el-form-item label="课程开放度" prop="publication">
               <el-radio-group v-model="courseForm.publication">
                 <el-radio :label="Publication.open">开放</el-radio>
                 <el-radio :label="Publication.closed">私密</el-radio>
                 <el-radio :label="Publication.semi_open">半开放</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="课程类型" prop="evaluationType">
+              <el-radio-group v-model="courseForm.evaluationType">
+                <el-radio :label="EvaluationType.practice">实践</el-radio>
+                <el-radio :label="EvaluationType.theory">理论</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item>
@@ -91,7 +97,7 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
-import { CourseStatus, createCourseCall, deleteCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType ,createCourseCall, deleteCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
 
@@ -99,9 +105,10 @@ const authStore = useAuthStore();
 const activeIndex = ref('2');
 const tableData = ref<CourseEntity[]>([
 {
-    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.published,
-    publication: Publication.open
+  course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+  status: CourseStatus.published,
+  publication: Publication.open,
+  evaluationType: EvaluationType.practice
 }
 ]);
 const courseId = ref(1);
@@ -119,6 +126,7 @@ const courseForm = ref<CourseEntity>({
   publication: Publication.open,
   created_at: new Date(),
   updated_at: new Date(),
+  evaluationType: EvaluationType.practice
 });
 
 onMounted(async () => {
@@ -129,19 +137,6 @@ const navigateTo = (path: string) => {
     router.push(path); // 使用 router.push 进行路由跳转
 };
 
-const createNewCourse = () => {
-courseForm.value = {
-    course_id: 0,
-    course_name: '',
-    description: '',
-    teacher_id: authStore.user.user_id,
-    status: CourseStatus.creating,
-    publication: Publication.open,
-    created_at: new Date(),
-    updated_at: new Date(),
-};
-dialogVisible.value = true;
-};
 
 const createCourse = () => {
   courseForm.value = {
@@ -151,6 +146,7 @@ const createCourse = () => {
         teacher_id: authStore.user.user_id,
         status: CourseStatus.creating,
         publication: Publication.open,
+        evaluationType: EvaluationType.practice,
         created_at: new Date(),
         updated_at: new Date(),
   };
@@ -182,6 +178,12 @@ const saveCourse = () => {
 };
 
 const AddCourse = () => {
+    if(courseForm.value.status==CourseStatus.creating){
+      const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
+      if (index !== -1) {
+        tableData.value.splice(index, 1);
+      }
+    }
     if (isCourseNameExist(courseForm.value.course_name)) {
       ElMessage.error('课程名称已存在');
       return;
@@ -197,6 +199,7 @@ const confirmDelete = (row: CourseEntity) => {
     currentCourseToDelete.value = row;
     deleteDialogVisible.value = true;
 };
+
 const handleDelete = () => {
   if (currentCourseToDelete.value) {
     if (currentCourseToDelete.value.status === CourseStatus.creating) {

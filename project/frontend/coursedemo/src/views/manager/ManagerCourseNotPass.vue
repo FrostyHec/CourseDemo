@@ -87,7 +87,7 @@ import BaseHeader from '@/layouts/BaseHeader.vue';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
-import { type CourseEntity, CourseStatus, createCourseCall, Publication, updateCourseStatusCall } from '@/api/course/CourseAPI';
+import { type CourseEntity, EvaluationType, CourseStatus, createCourseCall, Publication, updateCourseStatusCall } from '@/api/course/CourseAPI';
 import { ElMessage } from 'element-plus';
 
 
@@ -101,9 +101,10 @@ const authStore = useAuthStore();
 
 const courses = ref<CourseEntity[]>([
 {
-    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.submitted,
-    publication: Publication.open
+  course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+  status: CourseStatus.submitted,
+  publication: Publication.open,
+  evaluationType: EvaluationType.practice
 }
 ]);
 const courseForm = ref<CourseEntity>({
@@ -113,6 +114,7 @@ const courseForm = ref<CourseEntity>({
   teacher_id: authStore.user.user_id,
   status: CourseStatus.submitted,
   publication: Publication.open,
+  evaluationType: EvaluationType.practice,
   created_at: new Date(),
   updated_at: new Date(),
 });
