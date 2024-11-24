@@ -135,7 +135,7 @@ const checkCourse = (row: CourseEntity) => {
 
 const approveCourse = async (row: CourseEntity) => {
   const result = await updateCourseStatusCall(row.course_id, {status:CourseStatus.published});
-  if((await result).code == 200){
+  if(result.code == 200){
       fetchCourses;
   }
   else{
@@ -145,7 +145,7 @@ const approveCourse = async (row: CourseEntity) => {
 
 const rejectCourse = async (row: CourseEntity) => {
   const result = await updateCourseStatusCall(row.course_id, {status:CourseStatus.rejected});
-  if((await result).code == 200){
+  if(result.code == 200){
       fetchCourses;
   }
   else{
