@@ -6,6 +6,7 @@
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
         <el-menu-item index="1">全部课程</el-menu-item>
         <el-menu-item index="2" @click="navigateTo('/MainPage/student')">我的课程</el-menu-item>
+        <el-menu-item index="3" @click="navigateTo('/MainPage/learningScore')">学习积分</el-menu-item>      
       </el-menu>
       <div class="search-box">
         <el-input

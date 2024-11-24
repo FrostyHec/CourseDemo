@@ -6,15 +6,15 @@
       <el-dialog v-model="chatWindowVisible" title="Chat with Kimi" width="50%" custom-class="kimi-chat-dialog">
         <el-button type="text" @click="viewHistory">查看历史对话</el-button>
         <div class="chat-messages">
-          <div v-for="(msg, index) in currentChat.messages" :key="index" class="chat-message">
-            <div :class="{'self': msg.self, 'other': !msg.self}">
-              {{ msg.content }}
+          <div v-for="chat in chatHistories.chatHistory" :key="chat.id" class="chat-message">
+            <div :class="{'self': chat.title, 'other': !chat.title}">
+              {{ chat.title }}
             </div>
           </div>
         </div>
         <div class="chat-input-area">
           <el-input
-            v-model="inputMessage"
+            v-model="inputMessage.content"
             placeholder="Type your message..."
             @keyup.enter="sendMessage"
             class="chat-input"
@@ -23,7 +23,7 @@
         </div>
       </el-dialog>
       <el-dialog v-model="historyDialogVisible" title="历史对话" width="50%">
-        <div v-for="chat in chatHistories" :key="chat.id" class="history-item" @click="selectChatHistory(chat)">
+        <div v-for="chat in chatHistories.chatHistory" :key="chat.id" class="history-item" @click="selectChatHistory(chat)">
           {{ chat.title }}
         </div>
       </el-dialog>
@@ -31,12 +31,19 @@
   </template>
   
   <script setup lang="ts">
-  import { createNewChatCall, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity } from '@/api/langchain/langchainAPI';
+  import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity } from '@/api/langchain/langchainAPI';
 import { ref } from 'vue';
   
   const chatWindowVisible = ref(false);
   const historyDialogVisible = ref(false);
-  const inputMessage = ref('');
+  
+  const inputMessage = ref<SingleChatMessage>(
+    {
+      role: '',
+      content: ''
+    }
+  );
+
   const currentChat = ref<ChatEntity>({
     id: 1,
     title: 'New Chat',
@@ -48,9 +55,17 @@ import { ref } from 'vue';
     title: 'new chat'
   })
   
-  const context = ref<ChatContext>()
+  const context = ref<ChatContext>(
+    {
+      messages: []
+    }
+  );
 
-  const chatHistories = ref<ChatMetadataList>();
+  const chatHistories = ref<ChatMetadataList>(
+    {
+      chatHistory: []
+    }
+  );
   
   const toggleChatWindow = () => {
     createNewChatCall(title.value)
@@ -62,16 +77,13 @@ import { ref } from 'vue';
   };
   
   const sendMessage = () => {
-    if (inputMessage.value.trim() !== '') {
-      currentChat.value.messages.push({ content: inputMessage.value, self: true });
-      inputMessage.value = '';
-      setTimeout(() => {
-        currentChat.value.messages.push({ content: 'Understood. Let me think about it.', self: false });
-      }, 1000);
+    if (inputMessage.value.content !== '') {
+      context.value.messages.push(inputMessage.value);
+      inputMessage.value ={role: '', content: ''};
     }
   };
   
-  const selectChatHistory = (selectedChat: { id: number; title: string }) => {
+  const selectChatHistory = (selectedChat: { id: number; title: string, createdAt: Date,updatedAt:Date}) => {
     currentChat.value = selectedChat;
     historyDialogVisible.value = false;
     chatWindowVisible.value = true;
