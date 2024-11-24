@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user, result.data.user)
     setLoginTokenUser(token.value, user)
     console.log(result, user)
-    emitEvent(EventType.currentlyIsLoggedIn)
+    emitEvent(EventType.currentlyIsLoggedIn,user.user_id)
     return result
   }
 
