@@ -1,7 +1,10 @@
+import {useEventStore} from "@/stores/event";
 import {EventBus, EventType} from "@/utils/EventBus";
 import {InternalException} from "@/utils/Exceptions";
 import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
+// import { EventSourcePolyfill } from 'event-source-polyfill';
+import {AxiosAPI} from "@/utils/APIUtils";
 import { useRouter } from "vue-router";
 import { handleAnnouncement } from "./SSEEventHandle";
 
@@ -21,7 +24,7 @@ export interface SSEMessage {
 export interface SSEBody {
 
 }
-  
+
 export interface AnnouncementBody extends SSEBody{
     BodyType: SSEBodyType.announcement
     course_id: number;
@@ -61,7 +64,6 @@ export enum SSEBodyType {
 export interface EventHandler {
     (message: SSEMessage): void;
 }
-
 
 interface SSEPackage {
     push_type: PackageType,
@@ -148,7 +150,7 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
   });
 };
 
-export function subscribeToSSE() {
+export function subscribeToSSE(uid: number) {
     if (eventSource) {
         console.log('SSE is registered status:', eventSource.readyState)
         return
@@ -159,9 +161,15 @@ export function subscribeToSSE() {
     if (uid <= 0) {
         throw new InternalException('unexpected user id', uid)
     }
-    eventSource = new EventSource(sse_backend_base + "/msg/site/user/" + uid);
+    // eventSource = new EventSourcePolyfill(sse_backend_base + "/msg/site/user/" + uid, {
+    //     headers: AxiosAPI.getAuthHeaderJson()
+    // });
+    eventSource = new EventSource(sse_backend_base + "/msg/site/user/" + uid)
+    if(!eventSource){
+        throw new InternalException('unexpected event source', eventSource)
+    }
     eventSource.onmessage = (event) => {
-        const packet: SSEPackage = JSON.parse(event.data)
+        const packet: SSEPackage = JSON.parse(event.data).data
         if (packet.push_type === PackageType.packet) {
             multipleMessageHandler(packet.body as MessagePacket)
         } else if (packet.push_type === PackageType.single) {
