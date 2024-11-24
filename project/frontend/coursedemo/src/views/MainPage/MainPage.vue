@@ -6,6 +6,7 @@
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
       <el-menu-item index="1">全部课程</el-menu-item>
       <el-menu-item index="2" @click="navigateTo('/MainPage/student')">我的课程</el-menu-item>
+      <el-menu-item index="3" @click="navigateTo('/MainPage/learningScore')">学习积分</el-menu-item>
     </el-menu>
     <div class="search-box">
       <el-input
@@ -57,7 +58,7 @@ import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
-import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
+import { getUserPublicInfoCall, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 
 const router = useRouter();
 const activeIndex = ref('1');
@@ -73,7 +74,7 @@ const teacher1 = ref<UserPublicInfoEntity>({
   user_id: 1,
   first_name: 'Zhang',
   last_name: 'San',
-  role: UserType.TEACHER,
+  role: "c:/Users/21196/Desktop/vue/CourseDemo/project/frontend/coursedemo/src/api/user/UserAPI".TEACHER,
   email: ''
 })
 
@@ -86,7 +87,7 @@ const repositories = ref<CourseWithStudentCount[]>([
 const hotTeachers = ref<TeacherWithStudentCount[]>([
   {
     teacher: teacher1.value,
-    studentNum: 100
+    studentNum: 0
   }
 ])
 
@@ -121,7 +122,10 @@ const getHotCourses = async () => {
 const getHotTeachers = async () => {
   try {
     const response = await getHotTeachersCall(1, 10);
-    const hotTeachers = response.data.content;
+    const hotTeachers = response.data.content.map(teacher => ({
+      teacher,
+      studentNum: teacher.studentNum
+    }));
     showCourses = false;
     showTeachers = true;
     return hotTeachers;
