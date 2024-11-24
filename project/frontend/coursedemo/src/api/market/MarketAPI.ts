@@ -18,8 +18,10 @@ export async function getMyMarketScoreCall() {
 export interface BadgeInfo {
     user_id: number
     badge_id: number
+    image:string
     badge_name: string
     market_score: number
+    owned: boolean
 }
 
 export async function getMyBadgeCall() {

@@ -58,10 +58,6 @@ const router = createRouter({
     },
 
     {
-      path: '/course/hotCourse',
-      component: () => import('@/views/Course/hotCourse.vue'),
-    },
-    {
       path: '/manager',
       redirect: '/manager/NotPass'
     },
@@ -89,6 +85,46 @@ const router = createRouter({
       path: '/courseEvaluation',
       component: () => import('@/views/Course/CourseEvaluate.vue'),
     },
+    {
+      path: '/MainPage/allCourse',
+      component: () => import('@/views/MainPage/allCourse.vue'),
+    },
+    {
+      path: '/MainPage',
+      component: () => import('@/views/MainPage/MainPage.vue'),
+    },
+    {
+      path: '/MainPage/teacher/manage',
+      component: () => import('@/views/MainPage/teacherManage.vue'),
+    },
+    {
+      path: '/MainPage/searchCourse',
+      component: () => import('@/views/MainPage/searchCourse.vue'),
+    },
+    {
+      path: '/MainPage/courseInfo',
+      component: () => import('@/views/MainPage/courseInfo.vue'),
+    },
+    {
+      path: '/course/liveStream',
+      component: () => import('@/views/Course/liveStream.vue'),
+    },       
+    {
+      path: '/course/practiceSurvey',
+      component: () => import('@/views/Course/PracticeSurvey.vue'),
+    },
+    {
+      path: '/course/theorySurvey',
+      component: () => import('@/views/Course/TheorySurvey.vue'),
+    },           
+    {
+      path: '/course/llm',
+      component: () => import('@/views/Course/llm.vue'),
+    },
+    {
+      path: '/MainPage/learningScore',
+      component: () => import('@/views/MainPage/learningScore.vue'),
+    },      
   ],
 })
 

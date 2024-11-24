@@ -13,6 +13,17 @@ export interface CourseEvaluationEntity {
     updated_at: Date
 }
 
+export enum evaluationType {
+    rating = 'rating',
+    filling = 'filling',
+}
+
+export interface answer {
+    id: number;
+    type: evaluationType;
+    result: string;
+}
+
 export async function createEvaluationCall(courseId: number, param: CourseEvaluationEntity) {
     const url = service_backend_base + `/course/${courseId}/evaluation`
     return AxiosAPI.authPost<null>(url, param)

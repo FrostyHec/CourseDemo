@@ -6,70 +6,66 @@
       </el-header>
       <el-main>
         <el-header class="app-header">
-        <div class="topbar">
-          <el-row>
-            <el-col :span="24">课程审批</el-col>
-          </el-row>
-        </div>
-      </el-header>
-
-      <el-container>
-        <el-aside width="200px" class="app-aside">
-          <el-menu default-active="1">
-            <el-menu-item index="1"><router-link to="/manager/NotPass">待审批</router-link></el-menu-item>
-            <el-menu-item index="2"><router-link to="/manager/Passed">已通过</router-link></el-menu-item>
-          </el-menu>
-        </el-aside>
-
-        <el-main>
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="courseName" label="课程名称"></el-table-column>
-            <el-table-column prop="status" label="状态" width="180"></el-table-column>
-          </el-table>
-        </el-main>
-      </el-container>
+          <div class="topbar">
+            <el-row>
+              <el-col :span="24">课程审批</el-col>
+            </el-row>
+          </div>
+        </el-header>
+        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+            <el-menu-item index="1" @click="navigateTo('/manager/NotPass')">待审批</el-menu-item>
+            <el-menu-item index="2">已处理</el-menu-item>
+        </el-menu>
+        <el-container>
+          <el-main>
+            <el-table :data="courses" style="width: 100%">
+              <el-table-column prop="course_name" label="课程名称"></el-table-column>
+              <el-table-column prop="teacher_id" label="授课老师"></el-table-column>
+              <el-table-column prop="status" label="状态" width="180"></el-table-column>
+            </el-table>
+          </el-main>
+        </el-container>
       </el-main>
     </el-container>
   </el-config-provider>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+const activeIndex = ref('2');
 import BaseHeader from '../../layouts/BaseHeader.vue';
+import router from '@/router';
+import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
 
-export default {
-  name: 'CourseApproval',
-  components: {
-    BaseHeader
-  },
+onMounted(async () => {
+    fetchCourses();
+});
 
-  setup() {
-    const tableData = ref([
-      { status: '已通过', action: '', courseName: 'CS303 Artificial Intelligence' },
-      { status: '已通过', action: '', courseName: 'CS309 OOAD' },
-    ]);
-
-    const approveCourse = (row) => {
-      console.log('Approve course:', row);
-    };
-
-    const rejectCourse = (row) => {
-      console.log('Reject course:', row);
-    };
-
-    return {
-      tableData,
-      approveCourse,
-      rejectCourse,
-    };
-  },
+const courses = ref<CourseEntity[]>([
+{
+    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+    status: CourseStatus.published,
+    publication: Publication.open
+}
+]);
+const navigateTo = (path: string) => {
+    router.push(path); // 使用 router.push 进行路由跳转
+};
+const fetchCourses = async () => {
+try {
+    const response = await getAllPendingApprovedCourse(authStore.user.user_id, currentPage.value, pageSize.value);
+    courses.value = response.data.content;
+} catch (error) {
+    console.error('获取课程列表失败:', error);
+}
 };
 </script>
 
 <style scoped>
 .app-header {
-  background-color: #b3c0d1;
-  color: #333;
+  background-color: #c2cbcc;
+  color: #0e0b0b;
   text-align: center;
   line-height: 60px;
 }
