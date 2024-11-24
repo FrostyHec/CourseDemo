@@ -7,10 +7,12 @@ import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.market.BadgeByController;
 import org.frosty.server.entity.bo.market.BadgeInfo;
 
+import java.util.List;
+
 @Mapper
 public interface BadgeByMapper extends BaseMapper<BadgeInfo> {
     @Select("SELECT * FROM badge_record WHERE user_id = #{userID}")
-    BadgeByController.BadgeList selectMyBadge(long userID);
+    List<BadgeInfo> selectMyBadge(long userID);
 
     @Insert("""
                 INSERT INTO badge_record (
@@ -38,5 +40,5 @@ public interface BadgeByMapper extends BaseMapper<BadgeInfo> {
                     WHERE user_id = #{userID}
                 )
             """)
-    BadgeByController.BadgeList selectMyCanByBadge(long userID);
+    List<BadgeInfo> selectMyCanByBadge(long userID);
 }

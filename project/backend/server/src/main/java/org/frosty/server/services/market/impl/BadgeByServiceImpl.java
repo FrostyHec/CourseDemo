@@ -14,6 +14,7 @@ import org.frosty.server.services.market.MarketService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -25,7 +26,7 @@ public class BadgeByServiceImpl implements BadgeByService {
     private final MarketHistoryService marketHistoryService;
 
     @Override
-    public BadgeByController.BadgeList getMyBadge(Long userID) {
+    public List<BadgeInfo> getMyBadge(Long userID) {
         return badgeByMapper.selectMyBadge(userID);
     }
 
@@ -33,9 +34,10 @@ public class BadgeByServiceImpl implements BadgeByService {
     public void buyBadge(Long userId, BadgeInfo badgeInfo) {
         int marketScore = marketService.getMyMarketScore(userId).getMarketScore();
         Ex.check(badgeInfo.getMarketScore() <= marketScore, Response.getBadRequest("积分不足"));
+
         badgeByMapper.insert(badgeInfo);
 
-
+        List<BadgeInfo> badgeList = badgeByMapper.selectMyBadge(userId);
         // 计算购买后剩余的积分
         int remainingScore = marketScore - badgeInfo.getMarketScore();
 
@@ -61,7 +63,7 @@ public class BadgeByServiceImpl implements BadgeByService {
     }
 
     @Override
-    public BadgeByController.BadgeList getMyCanByBadge(Long userID) {
+    public List<BadgeInfo> getMyCanByBadge(Long userID) {
         return badgeByMapper.selectMyCanByBadge(userID);
     }
 }

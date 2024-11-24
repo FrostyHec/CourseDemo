@@ -40,10 +40,10 @@ public class BadgeByAPI {
         // 解析响应为 BadgeList
         var badgeList = JsonUtils.toObject(resp, BadgeByController.BadgeList.class);
 
-        // 安全处理：如果 badgeList 或内容为空，返回空列表
-        if (badgeList == null || badgeList.getContent() == null) {
-            return Collections.emptyList();
-        }
+//        // 安全处理：如果 badgeList 或内容为空，返回空列表
+//        if (badgeList == null || badgeList.getContent() == null) {
+//            return Collections.emptyList();
+//        }
 
         return badgeList.getContent();
     }
