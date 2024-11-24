@@ -28,17 +28,17 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
 
     @Override
     public void insertCourseCompleteHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insertHistory(consumeRecord);
+        marketHistoryMapper.insert(consumeRecord);
     }
 
     @Override
     public void insertDailyCommentHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insertHistory(consumeRecord);
+        marketHistoryMapper.insert(consumeRecord);
     }
 
     @Override
     public void insertConsumeRecord(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insertHistory(consumeRecord);
+        marketHistoryMapper.insert(consumeRecord);
     }
 
     private ConsumeRecord deserializeActionParam(ConsumeRecord record) {

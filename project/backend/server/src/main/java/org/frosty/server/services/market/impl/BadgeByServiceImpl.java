@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 public class BadgeByServiceImpl implements BadgeByService {
     private final BadgeByMapper badgeByMapper;
     private final MarketService marketService;
+
     private final MarketHistoryService marketHistoryService;
 
     @Override

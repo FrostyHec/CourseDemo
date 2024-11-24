@@ -15,7 +15,12 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public MyMarketScore getMyMarketScore(long userID) {
-        return marketMapper.selectByUserId(userID);
+        MyMarketScore myMarketScore = marketMapper.selectByUserId(userID);
+        if (myMarketScore == null) {
+            marketMapper.initialize(userID);
+            myMarketScore = marketMapper.selectByUserId(userID);
+        }
+        return myMarketScore;
     }
 
     @Override

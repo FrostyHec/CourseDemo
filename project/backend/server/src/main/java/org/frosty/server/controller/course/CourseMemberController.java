@@ -1,9 +1,6 @@
 package org.frosty.server.controller.course;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
@@ -121,6 +118,7 @@ public class CourseMemberController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Getter
     public static class StudentStatusList {
         private List<StudentWithEnrollStatus> content;
     }

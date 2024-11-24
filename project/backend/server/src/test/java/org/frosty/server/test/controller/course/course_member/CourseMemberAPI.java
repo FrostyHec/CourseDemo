@@ -77,7 +77,7 @@ public class CourseMemberAPI {
 
     public List<StudentWithEnrollStatus> getStudentListSuccess(String token, Long courseId, int pageNum, int pageSize) throws Exception {
         var resultActions = getStudentList(token, courseId, pageNum, pageSize);
-        return getSuccessResponse(resultActions, CourseMemberController.StudentStatusList.class).getStudentList();
+        return getSuccessResponse(resultActions, CourseMemberController.StudentStatusList.class).getContent();
     }
 
     // 获取学生加入的课程
