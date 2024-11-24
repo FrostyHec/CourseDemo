@@ -91,7 +91,7 @@ function change(file: File|undefined) {
   const link = URL.createObjectURL(file)
   const video = document.createElement('video')
   video.addEventListener("loadedmetadata", () => {
-    video_len.value = video.duration
+    video_len.value = Math.floor(video.duration)
   });
   video.src = link
 }
@@ -128,7 +128,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
       console.log('error submit!')
       return
     }
-    form_store.resource_form.suffix = uploader.value.file_get.type+'\\'+uploader.value.file_get.name
+    form_store.resource_form.suffix = uploader.value.file_get.type+':'+uploader.value.file_get.name
     console.log(form_store.resource_form.suffix)
     const id = await form_store.modify_resource(uploader.value.file_get)
     if(id==undefined) {
@@ -145,7 +145,7 @@ const submitForm = async (formIn: FormInstance | undefined) => {
     })
     console.log('submit!')
 
-    if(video_len.value) {
+    if(video_len.value && video_len.value!==0) {
       const msg = await setMinRequiredTimeCall(id, {required_seconds: time_require.value})
       if(msg.code!=200) {
         ElMessage({

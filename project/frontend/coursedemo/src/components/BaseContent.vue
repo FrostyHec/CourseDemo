@@ -35,6 +35,10 @@
         </div>
       </div>
 
+      <el-button v-if="'course_name' in course_store.current_data.data" type="primary" @click="router.push(`/course/liveStream/${course_store.current_course_id()}`)" style="margin-top: 10px;">
+        Live stream
+      </el-button>
+
       <div v-if="course_store.current_data?.description != ''">
         <h1 style="font-size: large;">
           Description

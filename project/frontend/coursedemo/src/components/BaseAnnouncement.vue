@@ -177,6 +177,7 @@ async function send_announcement() {
 
 async function load_students() {
   const msg = await getAllStudentList(current_course_id, 1, 100)
+  console.log(msg)
   if(msg.code!=200) {
     ElMessage({
       message: 'Announcement network error',

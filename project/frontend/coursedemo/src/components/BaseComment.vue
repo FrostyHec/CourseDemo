@@ -56,7 +56,7 @@
             style="margin-top: 10px; text-align: left; width: 200px;"
             tag='a'
             :herf="getResourceAccessLink(r.resource_entity.file_name, auth_store.user.user_id, r.access_key)"
-            :download="r.resource_entity.suffix.split('\\')[1]"
+            :download="r.resource_entity.suffix.split(':')[1]"
           >
             <span i="ep-link" style="margin-right: 6px;"/>{{ r.resource_entity.resource_name }}
           </el-button>
@@ -186,7 +186,7 @@ async function send_comment(reply_id?: number) {
       return
     msg = await addReplyToCommentCall(reply_id, {
       comment_id: 0, resource_id: current_resource_id, user_id: auth_store.user.user_id,
-      comment_text: new_comment.value, 
+      comment_text: reply_new_comment.value, 
       created_at: new Date(), updated_at: new Date(),
       comment_reply: reply_id,
     })
@@ -215,7 +215,7 @@ async function submit(comment_id: number) {
     comment_id: comment_id,
     resource_name: resource_name.value,
     file_name: '',
-    suffix: uploader.value.file_get.type+'\\'+uploader.value.file_get.name,
+    suffix: uploader.value.file_get.type+':'+uploader.value.file_get.name,
   }
   const msg = await uploadFilesCall(comment_id, file_submit, uploader.value.file_get)
   if(msg.code!==200) {

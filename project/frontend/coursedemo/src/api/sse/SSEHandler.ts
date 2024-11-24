@@ -79,6 +79,7 @@ export interface MessagePacket {
 
 
 export function subscribeToSSE(uid: number) {
+    return
     if (eventSource) {
         console.log('SSE is registered status:', eventSource.readyState)
         return

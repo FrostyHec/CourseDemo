@@ -53,7 +53,7 @@ const tableData = ref<CourseEntity[]>([
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
     publication: Publication.open,
-    evaluationType: EvaluationType.practice
+    evaluation_type: EvaluationType.practice
   }
 ]);
 const currentPage = ref(1);
@@ -70,7 +70,7 @@ const courseForm = ref<CourseEntity>({
   publication: Publication.open,
   created_at: new Date(),
   updated_at: new Date(),
-  evaluationType: EvaluationType.practice
+  evaluation_type: EvaluationType.practice
 });
 
 onMounted(async () => {
@@ -94,15 +94,15 @@ const createNewCourse = () => {
     teacher_id: authStore.user.user_id,
     status: CourseStatus.submitted,
     publication: Publication.open,
-    evaluationType: EvaluationType.practice,
+    evaluation_type: EvaluationType.practice,
     created_at: new Date(),
     updated_at: new Date(),
   };
   dialogVisible.value = true;
 };
 
-const AddCourse = () => {
-  createCourseCall(courseForm.value);
+const AddCourse = async () => {
+  await createCourseCall(courseForm.value);
   dialogVisible.value = false;
   tableData.value.push(courseForm.value);
   fetchCourses(); // Refresh the course list after adding a new course
