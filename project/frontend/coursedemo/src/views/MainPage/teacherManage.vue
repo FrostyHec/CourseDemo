@@ -185,7 +185,6 @@ const saveCourse = async () => {
   if (index !== -1) {
     tableData.value.splice(index, 1);
   }
-  await createCourseCall(courseForm.value);
   tableData.value.push(courseForm.value);
   fetchCourses();
 };
@@ -202,12 +201,7 @@ const AddCourse = async () => {
     return;
   }
   courseForm.value.status = CourseStatus.submitted;
-  const cid = courseForm.value.course_id
-  if (cid !== 0) {
-    await updateCourseInfoCall(cid, courseForm.value);
-  } else {
-    await createCourseCall(courseForm.value);
-  }
+  await createCourseCall(courseForm.value);
   dialogVisible.value = false;
   tableData.value.push(courseForm.value);
   fetchCourses();
