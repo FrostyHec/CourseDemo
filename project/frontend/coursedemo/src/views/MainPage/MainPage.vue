@@ -58,14 +58,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
 import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
-import { SSEBodyType, SSEMessageType, subscribeToSSE, unSubscribeSSE, type AnnouncementBody, type EventHandler, type MessagePacket, type NewLoginBody, type ReceiveCreditsBody, type SSEBody } from '@/api/sse/SSEHandler';
-import { useAuthStore } from '@/stores/auth';
+import { getAnnouncementMessages, SSEBodyType, SSEMessageType, subscribeToSSE, unSubscribeSSE, type AnnouncementBody, type EventHandler, type MessagePacket, type NewLoginBody, type ReceiveCreditsBody, type SSEBody } from '@/api/sse/SSEHandler';
 
 const router = useRouter();
 const activeIndex = ref('1');
@@ -185,94 +184,15 @@ const announcementMessages = ref<string[]>([
   'this is an example','this is an example','this is an example'
 ]);
 
+watch(() => getAnnouncementMessages(), (newMessages) => {
+  announcementMessages.value = newMessages;
+}, { immediate: true });
+
 let announcementTimer: number | null = null;
-
-const handleAnnouncementDisplay = (message: string) => {
-  announcementMessages.value.push(message);
-  // 如果已经有一个定时器存在，先清除
-  if (announcementTimer !== null) {
-    clearTimeout(announcementTimer);
-  }
-  // 设置一个新的10秒计时器来清空公告消息
-  announcementTimer = window.setTimeout(() => {
-    announcementMessages.value = [];
-  }, 10000); // 10000毫秒 = 10秒
-};
-
-const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
-    [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
-      const announcementBody = message.body as AnnouncementBody;
-      handleAnnouncementDisplay(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
-    },
-    [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
-      const authStore = useAuthStore();
-      const newLoginBody = message.body as NewLoginBody;
-      // 校验 token 是否一致
-      if (authStore.token !== newLoginBody.Token) {
-        handleAnnouncementDisplay("另一个用户登录，您将被登出");
-        // 执行登出操作
-        authStore.logout({user_id:authStore.user.user_id});
-        // 跳转到登录页面
-        const router = useRouter();
-        router.push('/MainPage/login');
-      }
-    },
-    [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
-      const receiveCreditsBody = message.body as ReceiveCreditsBody;
-      handleAnnouncementDisplay(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
-    },
-  };
-
-
-  const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
-  const authStore = useAuthStore();
-  const router = useRouter();
-
-  packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
-    switch (message.type) {
-      case SSEMessageType.NEW: {
-        const body = message.body;
-        switch (message.body_type) {
-          case SSEBodyType.new_login: {
-            const newLoginBody = body as NewLoginBody;
-            if (authStore.token !== newLoginBody.Token) {
-              handleAnnouncementDisplay("另一个用户登录，您将被登出");
-              authStore.logout({ user_id: authStore.user.user_id });
-              router.push('/login');
-            }
-            break;
-          }
-          case SSEBodyType.receive_credits: {
-            const receiveCreditsBody = message.body as ReceiveCreditsBody;
-            handleAnnouncementDisplay(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
-            break;
-          }
-          case SSEBodyType.announcement: {
-            const announcementBody = body as AnnouncementBody;
-            handleAnnouncementDisplay(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
-            break;
-          }
-          default:
-            console.error('未知的消息类型:', message.type);
-        }
-        break;
-      }
-      case SSEMessageType.UPDATE:
-        announcementMessages.value = [];
-        break;
-      case SSEMessageType.DELETE:
-        // 处理删除消息（如果有需要）
-        break;
-      default:
-        // 处理未知类型的消息
-        console.error('未知的消息类型:', message.type);
-    }
-  });
-};
 
 // 如果有新的公告消息，显示通知
 if (announcementMessages.value.length > 0) {
-  const combinedMessage = announcementMessages.value.join('，');
+  const combinedMessage = announcementMessages.value.join(',');
   alert(combinedMessage); // 使用 alert 或其他方式显示通知
   // 清空公告信息数组以便下一次通知
   announcementMessages.value = [];

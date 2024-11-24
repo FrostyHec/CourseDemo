@@ -3,7 +3,6 @@ import {InternalException} from "@/utils/Exceptions";
 import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 
 let eventSource: EventSource | null = null;
 
@@ -78,6 +77,94 @@ export interface MessagePacket {
     unacked: SSEMessage[]
 }
 
+// 在SSEHandler.ts中添加一个全局状态来存储公告信息
+import { ref } from 'vue';
+
+// 定义一个响应式的公告信息数组
+const announcementMessages = ref<string[]>([]);
+let announcementTimer: number | null = null;
+export const getAnnouncementMessages = () => announcementMessages.value;
+
+export const handleAnnouncement = (message: string) => {
+  announcementMessages.value.push(message);
+  // 如果已经有一个定时器存在，先清除
+  if (announcementTimer !== null) {
+    clearTimeout(announcementTimer);
+  }
+  // 设置一个新的10秒计时器来清空公告消息
+  announcementTimer = window.setTimeout(() => {
+    announcementMessages.value = [];
+  }, 10000); // 10000毫秒 = 10秒
+};
+
+const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
+    [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
+      const announcementBody = message.body as AnnouncementBody;
+      handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+    },
+    [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
+      const authStore = useAuthStore();
+      const newLoginBody = message.body as NewLoginBody;
+      // 校验 token 是否一致
+      if (authStore.token !== newLoginBody.Token) {
+        handleAnnouncement("另一个用户登录，您将被登出");
+        // 执行登出操作
+        authStore.logout({user_id:authStore.user.user_id});
+        // 跳转到登录页面
+        const router = useRouter();
+        router.push('/MainPage/login');
+      }
+    },
+    [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
+      const receiveCreditsBody = message.body as ReceiveCreditsBody;
+      handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
+    },
+  };
+
+
+  const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
+  const authStore = useAuthStore();
+  const router = useRouter();
+
+  packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
+    switch (message.type) {
+      case SSEMessageType.NEW: {
+        const body = message.body;
+        switch (message.body_type) {
+          case SSEBodyType.new_login: {
+            const newLoginBody = body as NewLoginBody;
+            if (authStore.token !== newLoginBody.Token) {
+                handleAnnouncement("另一个用户登录，您将被登出");
+                authStore.logout({ user_id: authStore.user.user_id });
+                router.push('/login');
+            }
+            break;
+          }
+          case SSEBodyType.receive_credits: {
+            const receiveCreditsBody = message.body as ReceiveCreditsBody;
+            handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
+            break;
+          }
+          case SSEBodyType.announcement: {
+            const announcementBody = body as AnnouncementBody;
+            handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+            break;
+          }
+          default:
+            console.error('未知的消息类型:', message.type);
+        }
+        break;
+      }
+      case SSEMessageType.UPDATE:
+        break;
+      case SSEMessageType.DELETE:
+        break;
+      default:
+        // 处理未知类型的消息
+        console.error('未知的消息类型:', message.type);
+    }
+  });
+};
 
 export function subscribeToSSE() {
     if (eventSource) {
