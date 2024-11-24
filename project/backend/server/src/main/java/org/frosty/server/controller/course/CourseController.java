@@ -25,13 +25,13 @@ public class CourseController {
         return Response.getSuccess(course);
     }
 
-    @PatchMapping("course/{id}/status")
+    @PatchMapping("/course/{id}/status")
     public void updateCourseStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {
         String status = statusMap.get("status");
         courseService.updateCourseStatus(id, status);
     }
 
-    @PutMapping("course/{id}")
+    @PutMapping("/course/{id}")
     public void updateCourse(@PathVariable Long id, @RequestBody Course course) {
         // 确保忽略前端传递的敏感字段，如 id 和 status
         course.setCourseId(id);
@@ -40,7 +40,7 @@ public class CourseController {
     }
 
 
-    @GetMapping("course/{id}")
+    @GetMapping("/course/{id}")
     public Response getCourse(@PathVariable Long id) {
         Course course = courseService.getCourse(id);
         return Response.getSuccess(course);

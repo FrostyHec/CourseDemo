@@ -69,5 +69,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     @Select("SELECT * FROM Courses WHERE teacher_id = #{teacherId} LIMIT #{pageSize} OFFSET (#{pageNum} -1)* #{pageSize}")
     List<Course> selectTeacherCourses(Long teacherId, int pageNum, int pageSize);
+
+    @Select("SELECT * FROM Courses WHERE status = 'rejected' or status = 'published' LIMIT #{pageSize} OFFSET (#{pageNum} -1)* #{pageSize}")
+    List<Course> selectHandledCourse(int pageNum, int pageSize);
 }
 

@@ -88,9 +88,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private String getCommentFileCaseName(long cid) {
-        return "comment-resource-" + cid;
+        return "resource-" + cid;
     }
-
     @Override
     @Transactional
     public void removeFiles(Long cid, Long fid) {

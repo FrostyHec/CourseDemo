@@ -21,7 +21,7 @@
 <button onclick="receiveMessages(document.getElementById('senderId').value)">Set Sender</button>
 <h2>Received Messages</h2>
 <ul id="messages"></ul>
-
+<!--<script src="https://cdn.jsdelivr.net/npm/event-source-polyfill/dist/eventsource.min.js"></script>-->
 <script>
     let eventSource = null;
     function sendMessage() {
@@ -46,7 +46,7 @@
     }
 
     function receiveMessages(id) {
-        eventSource = new EventSource(`http://localhost:9973/api/v1/msg/site/user/${id}`);
+        eventSource = new EventSourcePolyfill(`http://localhost:9973/api/v1/msg/site/user/${id}`);
 
         eventSource.onmessage = function(event) {
             const message = JSON.parse(event.data);
