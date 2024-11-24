@@ -10,10 +10,7 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.market.BadgeInfo;
 import org.frosty.server.services.market.BadgeByService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +27,7 @@ public class BadgeByController {
     }
 
     @PostMapping("/buy")
-    public void buyBadge(@GetPassedToken AuthInfo auth, BadgeInfo badgeInfo) throws IOException {
+    public void buyBadge(@GetPassedToken AuthInfo auth, @RequestBody BadgeInfo badgeInfo) throws IOException {
         Long userId = auth.getUserID();
         badgeByService.buyBadge(userId,badgeInfo);
     }

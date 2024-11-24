@@ -36,4 +36,5 @@ public class MarketHistoryController {
     public static class ConsumeRecordList{
         private List<ConsumeRecord> content;
     }
+
 }

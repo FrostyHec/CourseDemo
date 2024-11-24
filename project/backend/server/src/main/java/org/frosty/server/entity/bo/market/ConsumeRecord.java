@@ -1,6 +1,7 @@
 package org.frosty.server.entity.bo.market;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import org.frosty.server.entity.bo.market.action_type.ActionParam;
 import org.frosty.server.entity.bo.market.action_type.BuyBadgeActionParam;
 import org.frosty.server.entity.bo.market.action_type.CompleteCourseActionParam;
 import org.frosty.server.entity.bo.market.action_type.DailyCommentActionParam;
+import org.frosty.server.entity.handler.JsonNodeTypeHandler;
+import org.frosty.server.utils.ActionParamTypeHandler;
 
 import java.time.OffsetDateTime;
 
@@ -25,7 +28,10 @@ public class ConsumeRecord {
     private Long recordId;
     private Long userId;
     private ConsumeActionType actionType;
+
+    @TableField(typeHandler = ActionParamTypeHandler.class)
     private ActionParam actionParam;
+
     private Integer changedScore;
     private Integer remainScore;
     private OffsetDateTime createdAt;

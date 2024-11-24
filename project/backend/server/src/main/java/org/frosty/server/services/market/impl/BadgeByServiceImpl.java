@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 public class BadgeByServiceImpl implements BadgeByService {
     private final BadgeByMapper badgeByMapper;
     private final MarketService marketService;
-
     private final MarketHistoryService marketHistoryService;
 
     @Override
@@ -33,8 +32,8 @@ public class BadgeByServiceImpl implements BadgeByService {
     @Override
     public void buyBadge(Long userId, BadgeInfo badgeInfo) {
         int marketScore = marketService.getMyMarketScore(userId).getMarketScore();
-        Ex.check(badgeInfo.getMarketScore() > marketScore, Response.getBadRequest("积分不足"));
-        badgeByMapper.insertBadge(badgeInfo);
+        Ex.check(badgeInfo.getMarketScore() <= marketScore, Response.getBadRequest("积分不足"));
+        badgeByMapper.insert(badgeInfo);
 
 
         // 计算购买后剩余的积分
@@ -57,7 +56,7 @@ public class BadgeByServiceImpl implements BadgeByService {
         marketHistoryService.insertConsumeRecord(consumeRecord);
 
         // 更新用户市场积分
-        marketService.addUserMarketScore(userId, -badgeInfo.getMarketScore());  // 减去消费的积分
+        marketService.addUserMarketScore(userId, remainingScore);  // 减去消费的积分
 
     }
 

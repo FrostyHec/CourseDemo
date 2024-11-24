@@ -56,15 +56,15 @@ EXECUTE PROCEDURE auto_time();
 DROP TABLE IF EXISTS courses;
 CREATE TABLE courses
 (
-    course_id            BIGSERIAL PRIMARY KEY,                                                                                 -- 自增课程ID
-    course_name          VARCHAR(100)                                                                                 NOT NULL, -- 课程名称
-    description          TEXT,                                                                                                  -- 课程描述
-    teacher_id           BIGINT                                                                                       NOT NULL, -- 教师ID
-    status               VARCHAR(20) CHECK (status IN ('creating', 'submitted', 'published', 'rejected', 'archived')) NOT NULL, -- 课程状态
-    created_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL, -- 课程创建时间
-    updated_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL,
-    publication          VARCHAR(20) CHECK (publication IN ('open', 'closed', 'semi_open'))                           NOT NULL,
-    evaluation_type  VARCHAR                                                                                  NOT NULL  --如果设置为0则无教评版本
+    course_id       BIGSERIAL PRIMARY KEY,                                                                                 -- 自增课程ID
+    course_name     VARCHAR(100)                                                                                 NOT NULL, -- 课程名称
+    description     TEXT,                                                                                                  -- 课程描述
+    teacher_id      BIGINT                                                                                       NOT NULL, -- 教师ID
+    status          VARCHAR(20) CHECK (status IN ('creating', 'submitted', 'published', 'rejected', 'archived')) NOT NULL, -- 课程状态
+    created_at      TIMESTAMP WITH TIME ZONE                                                                     NOT NULL, -- 课程创建时间
+    updated_at      TIMESTAMP WITH TIME ZONE                                                                     NOT NULL,
+    publication     VARCHAR(20) CHECK (publication IN ('open', 'closed', 'semi_open'))                           NOT NULL,
+    evaluation_type VARCHAR                                                                                      NOT NULL  --如果设置为0则无教评版本
     -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
 );
@@ -336,7 +336,8 @@ CREATE TABLE resource_complete_records
 drop table if exists consume_record;
 CREATE TABLE consume_record
 (
-    record_id     BIGSERIAL PRIMARY KEY    NOT NULL,
+    record_id     BIGSERIAL PRIMARY KEY,
+    user_id       BIGINT                   NOT NULL,
     action_type   VARCHAR                  NOT NULL,
     action_param  JSON                     NOT NULL,
     changed_score INT                      NOT NULL,

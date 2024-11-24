@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -35,8 +36,18 @@ public class BadgeByAPI {
         var resp = getMyBadge(token)
                 .andExpect(RespChecker.success())
                 .andReturn();
-        return JsonUtils.toObject(resp, BadgeByController.BadgeList.class).getContent();
+
+        // 解析响应为 BadgeList
+        var badgeList = JsonUtils.toObject(resp, BadgeByController.BadgeList.class).getContent();
+
+        // 安全处理：如果 badgeList 或内容为空，返回空列表
+        if (badgeList == null || badgeList.getContent() == null) {
+            return Collections.emptyList();
+        }
+
+        return badgeList.getContent();
     }
+
 
     public ResultActions buyBadge(String token, BadgeInfo badgeInfo) throws Exception {
         String url = badgeBaseUrl + "/buy";

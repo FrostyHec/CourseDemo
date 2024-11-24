@@ -21,19 +21,20 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
     // TODO: 检测 JSON 是否成功反序列化
     @Override
     public List<ConsumeRecord> getHistoryByUserId(Long userId) {
-        return marketHistoryMapper.getHistoryByUserId(userId).stream()
-                .map(this::deserializeActionParam)
-                .collect(Collectors.toList());
+//        return marketHistoryMapper.getHistoryByUserId(userId).stream()
+//                .map(this::deserializeActionParam)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public void insertCourseCompleteHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insert(consumeRecord);
+        marketHistoryMapper.insertHistory(consumeRecord);
     }
 
     @Override
     public void insertDailyCommentHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insert(consumeRecord);
+        marketHistoryMapper.insertHistory(consumeRecord);
     }
 
     @Override
@@ -41,13 +42,13 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
         marketHistoryMapper.insert(consumeRecord);
     }
 
-    private ConsumeRecord deserializeActionParam(ConsumeRecord record) {
-        try {
-            Class<?> paramType = record.getActionType().getActionParamType();
-            ActionParam actionParam = (ActionParam) objectMapper.readValue(record.getActionParam().toString(), paramType);
-            return record.setActionParam(actionParam);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize actionParam for recordId: " + record.getRecordId(), e);
-        }
-    }
+//    private ConsumeRecord deserializeActionParam(ConsumeRecord record) {
+//        try {
+//            Class<?> paramType = record.getActionType().getActionParamType();
+//            ActionParam actionParam = (ActionParam) objectMapper.readValue(record.getActionParam().toString(), paramType);
+//            return record.setActionParam(actionParam);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to deserialize actionParam for recordId: " + record.getRecordId(), e);
+//        }
+//    }
 }

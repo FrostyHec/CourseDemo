@@ -58,7 +58,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
         ConsumeRecord consumeRecord = new ConsumeRecord()
                 .setUserId(userId)
                 .setActionType(ConsumeRecord.ConsumeActionType.complete_course)
-                .setActionParam(actionParam)
+//                .setActionParam(actionParam)
                 .setChangedScore(changedScore)
                 .setRemainScore(remainScore);
 
@@ -119,7 +119,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
             ConsumeRecord consumeRecord = new ConsumeRecord()
                     .setUserId(userId)
                     .setActionType(ConsumeRecord.ConsumeActionType.daily_comment)
-                    .setActionParam(actionParam)
+//                    .setActionParam(actionParam)
                     .setChangedScore(changedScore)
                     .setRemainScore(remainScore);
 

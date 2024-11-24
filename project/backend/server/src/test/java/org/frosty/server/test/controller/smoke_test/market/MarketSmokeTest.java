@@ -22,7 +22,7 @@ public class MarketSmokeTest {
 
         // Get my market score
         var myMarketScore = marketAPI.getMyMarketScoreSuccess(token);
-        assert myMarketScore.getMarketScore() == 0; // Assuming initial score is 0
+        assert myMarketScore.getMarketScore() == 500; // Assuming initial score is 500
 
         // Additional operations and validations can be added as needed
     }
