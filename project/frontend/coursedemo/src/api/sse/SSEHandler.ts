@@ -3,6 +3,7 @@ import {InternalException} from "@/utils/Exceptions";
 import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
 import { useRouter } from "vue-router";
+import { handleAnnouncement } from "./SSEEventHandle";
 
 let eventSource: EventSource | null = null;
 
@@ -77,25 +78,6 @@ export interface MessagePacket {
     unacked: SSEMessage[]
 }
 
-// 在SSEHandler.ts中添加一个全局状态来存储公告信息
-import { ref } from 'vue';
-
-// 定义一个响应式的公告信息数组
-const announcementMessages = ref<string[]>([]);
-let announcementTimer: number | null = null;
-export const getAnnouncementMessages = () => announcementMessages.value;
-
-export const handleAnnouncement = (message: string) => {
-  announcementMessages.value.push(message);
-  // 如果已经有一个定时器存在，先清除
-  if (announcementTimer !== null) {
-    clearTimeout(announcementTimer);
-  }
-  // 设置一个新的10秒计时器来清空公告消息
-  announcementTimer = window.setTimeout(() => {
-    announcementMessages.value = [];
-  }, 10000); // 10000毫秒 = 10秒
-};
 
 const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
     [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
