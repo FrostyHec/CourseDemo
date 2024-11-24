@@ -35,18 +35,25 @@ import { onMounted, ref } from 'vue';
 const activeIndex = ref('2');
 import BaseHeader from '../../layouts/BaseHeader.vue';
 import router from '@/router';
-import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseEntity, CourseStatus, EvaluationType, Publication } from '@/api/course/CourseAPI';
 import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 onMounted(async () => {
     fetchCourses();
 });
 
+const currentPage = 1;
+const pageSize = 10;
+
 const courses = ref<CourseEntity[]>([
 {
-    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.published,
-    publication: Publication.open
+  course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+  status: CourseStatus.published,
+  publication: Publication.open,
+  evaluation_type: EvaluationType.practice
 }
 ]);
 const navigateTo = (path: string) => {
