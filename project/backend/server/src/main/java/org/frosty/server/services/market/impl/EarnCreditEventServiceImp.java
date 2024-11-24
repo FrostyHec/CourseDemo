@@ -12,6 +12,7 @@ import org.frosty.server.services.course.CommentService;
 import org.frosty.server.services.market.EarnCreditEventService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -36,11 +37,23 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
         // TODO: 根据逻辑完成
         Long commentId = event.getCommentId();
         ResourceComment resourceComment = commentService.findById(commentId);
+        List<ResourceComment> resourceCommentList = commentService.findByUserIdAndCreatedTime(resourceComment.getUserId(), resourceComment.getCreatedAt());
 
+        // 判断当前评论是否是当天最早的评论
+        boolean isEarliestComment = resourceCommentList.stream()
+                .min(Comparator.comparing(ResourceComment::getCreatedAt))
+                .map(ResourceComment::getCreatedAt)
+                .map(earliestTime -> earliestTime.equals(resourceComment.getCreatedAt()))
+                .orElse(false);
 
+        // 如果是最早评论，则处理积分逻辑
+        if (isEarliestComment) {
+            earnCreditEventMapper.insertDailyCommentHistory();
+            earnCreditEventMapper.addUserMarketScore(
+                    resourceComment.getUserId(),
+                    EarnCreditEventHandler.ScoreRule.DAILY_COMMENT
+            );
+        }
 
-
-        earnCreditEventMapper.insertDailyCommentHistory();
-        earnCreditEventMapper.addUserMarketScore(resourceComment.getUserId(), EarnCreditEventHandler.ScoreRule.DAILY_COMMENT);
     }
 }

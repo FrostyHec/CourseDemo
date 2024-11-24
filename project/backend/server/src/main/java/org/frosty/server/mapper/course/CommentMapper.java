@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Mapper
@@ -57,4 +58,14 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
 //    @Select("SELECT * FROM resource_comments WHERE resource_id = #{resourceId}")
     List<CommentController.CommentWithUser> getAllPublicByResourceId(@Param("resourceId") long resourceId);
 
+
+
+    @Select("""
+    SELECT * 
+    FROM resource_comments
+    WHERE user_id = #{userId} 
+      AND created_at >= #{createdAt.atStartOfDay()} 
+      AND created_at < #{createdAt.plusDays(1).atStartOfDay()}
+""")
+    List<ResourceComment> selcetByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt);
 }
