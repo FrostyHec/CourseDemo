@@ -64,7 +64,7 @@ CREATE TABLE courses
     created_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL, -- 课程创建时间
     updated_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL,
     publication          VARCHAR(20) CHECK (publication IN ('open', 'closed', 'semi_open'))                           NOT NULL,
-    evaluation_form_type BIGSERIAL                                                                                    NOT NULL  --如果设置为0则无教评版本
+    evaluation_type  VARCHAR                                                                                  NOT NULL  --如果设置为0则无教评版本
     -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
 );
@@ -354,12 +354,13 @@ EXECUTE PROCEDURE auto_time_only_created();
 drop table if exists badge_record;
 CREATE TABLE badge_record
 (
-    user_id BIGINT NOT NULL ,
-    badge_id BIGINT NOT NULL ,
-    badge_name VARCHAR NOT NULL ,
-    market_score INT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    primary key (user_id,badge_id)
+    user_id      BIGINT                   NOT NULL,
+    badge_id     BIGINT                   NOT NULL,
+    image        VARCHAR                  NOT NULL,
+    badge_name   VARCHAR                  NOT NULL,
+    market_score INT                      NOT NULL,
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    primary key (user_id, badge_id)
 );
 CREATE
     OR REPLACE TRIGGER auto_badge_record_time
@@ -372,7 +373,7 @@ EXECUTE PROCEDURE auto_time_only_created();
 drop table if exists market_score_record;
 CREATE TABLE market_score_record
 (
-    user_id BIGINT NOT NULL ,
-    market_score INT NOT NULL ,
-    primary key (user_id,market_score)
+    user_id      BIGINT NOT NULL,
+    market_score INT    NOT NULL,
+    primary key (user_id, market_score)
 );

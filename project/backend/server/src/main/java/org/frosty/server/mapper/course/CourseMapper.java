@@ -10,10 +10,6 @@ import java.util.List;
 @Mapper
 public interface CourseMapper extends BaseMapper<Course> {
 
-    @Insert("INSERT INTO Courses (course_name, description, teacher_id, status, publication) VALUES (#{courseName}, #{description}, #{teacherId}, #{status},#{publication} )")
-    @Options(useGeneratedKeys = true, keyProperty = "courseId")
-    void insertCourse(Course course);
-
     @Update("UPDATE Courses SET status = #{status} WHERE course_id = #{courseId}")
     void updateCourseStatus(@Param("courseId") Long courseId, @Param("status") String status);
 
@@ -36,7 +32,7 @@ public interface CourseMapper extends BaseMapper<Course> {
             "OR u.last_name LIKE CONCAT('%', #{keyword}, '%')" +
             ") " +
             "<if test='pageSize != -1'>" +
-            "LIMIT #{pageSize} OFFSET #{pageNum} * #{pageSize}" +
+            "LIMIT #{pageSize} OFFSET (#{pageNum} * #{pageSize})" +
             "</if>" +
             "</script>")
     List<Course> searchPublicCourse(@Param("pageNum") int pageNum,
@@ -71,5 +67,10 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<RecommendController.CourseWithStudentCount> getHotCourses(@Param("pageNum") int pageNum,
                                                                    @Param("pageSize") int pageSize);
 
+    @Select("SELECT * FROM Courses WHERE teacher_id = #{teacherId} LIMIT #{pageSize} OFFSET (#{pageNum} -1)* #{pageSize}")
+    List<Course> selectTeacherCourses(Long teacherId, int pageNum, int pageSize);
+
+    @Select("SELECT * FROM Courses WHERE status = 'rejected' or status = 'published' LIMIT #{pageSize} OFFSET (#{pageNum} -1)* #{pageSize}")
+    List<Course> selectHandledCourse(int pageNum, int pageSize);
 }
 

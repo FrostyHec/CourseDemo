@@ -50,8 +50,13 @@ public class CourseProgressService {
                 Response.getBadRequest("cannot-complete-nonvideo"));
         checkStudentCompleteResource(rid, uid);
         // add complete
-        resourceCompleteMapper.insert(new ResourceCompleteRecord(rid, uid));
+        try {
+            resourceCompleteMapper.insert(new ResourceCompleteRecord(rid, uid));
+        } catch (Exception e) {
+            if (!resourceCompleteMapper.contains(rid, uid)) throw e;
+        }
     }
+
     private void checkStudentCompleteResource(Long rid, Long uid) {
         var resourceRequiredSeconds = videoRequiredSecondsMapper.selectById(rid);
         if (resourceRequiredSeconds == null ||
@@ -59,11 +64,11 @@ public class CourseProgressService {
             return;
         }
         // check & remove metadata
-        var record = videoWatchedRecordMapper.selectByPrimaryKey(rid,uid);
-        Ex.check(record!=null&&record.getRemainRequiredSeconds()==0,
-                Response.getBadRequest("video-"+rid+"-not-complete")
+        var record = videoWatchedRecordMapper.selectByPrimaryKey(rid, uid);
+        Ex.check(record != null && record.getRemainRequiredSeconds() == 0,
+                Response.getBadRequest("video-" + rid + "-not-complete")
         );
-        videoWatchedRecordMapper.deleteByPrimaryKey(rid,uid);
+        videoWatchedRecordMapper.deleteByPrimaryKey(rid, uid);
     }
 
     @Transactional
@@ -71,14 +76,19 @@ public class CourseProgressService {
         // check if all video resource complete and add complete
         var uid = auth.getUserID();
         var videoResource = getVideoResources(cid);
-        for(var r:videoResource){
-            Ex.check(resourceCompleteMapper.contains(r.getResourceId(),uid),
-                    Response.getBadRequest("resource-"+r.getResourceId()+"-not-complete"));
+        for (var r : videoResource) {
+            Ex.check(resourceCompleteMapper.contains(r.getResourceId(), uid),
+                    Response.getBadRequest("resource-" + r.getResourceId() + "-not-complete"));
         }
         // add complete
-        chapterCompleteMapper.insert(new ChapterCompleteRecord(cid, uid));
+        try {
+            chapterCompleteMapper.insert(new ChapterCompleteRecord(cid, uid));
+        } catch (Exception e) {
+            if (!chapterCompleteMapper.contains(cid, uid)) throw e;
+        }
     }
-    private List<Resource> getVideoResources(Long cid){
+
+    private List<Resource> getVideoResources(Long cid) {
         var resources = resourceMapper.getAll(cid);
         return resources.stream()
                 .filter(r -> r.getResourceType() == Resource.ResourceType.video)
@@ -89,13 +99,17 @@ public class CourseProgressService {
         // check if all chapter complete and add complete
         var uid = auth.getUserID();
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
-        for(var c:chapters){
-            Ex.check(chapterCompleteMapper.contains(c.getChapterId(),uid),
-                    Response.getBadRequest("chapter-"+c.getChapterId()+"-not-complete"));
+        for (var c : chapters) {
+            Ex.check(chapterCompleteMapper.contains(c.getChapterId(), uid),
+                    Response.getBadRequest("chapter-" + c.getChapterId() + "-not-complete"));
         }
         // add complete
-        courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
-        applicationEventPublisher.publishEvent(new CompleteCourseEvent(this,csid,uid));
+        try {
+            courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
+        } catch (Exception e) {
+            if (!courseCompleteMapper.contains(csid, uid)) throw e;
+        }
+        applicationEventPublisher.publishEvent(new CompleteCourseEvent(this, csid, uid));
     }
 
 
@@ -116,27 +130,28 @@ public class CourseProgressService {
         // TODO AUTH CHECK ONLY TEACHER CAN DO THIS
         resourceCompleteMapper.deleteAllByResourceId(rid);
     }
+
     @Transactional
     public CourseProgressController.CourseProgress queryCourseProgress(Long csid, AuthInfo auth) {
         var uid = auth.getUserID();
         // for each chapter for each v rs
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
         List<CourseProgressController.ChapterProgress> chapterProgresses = new ArrayList<>(chapters.size());
-        for(var c:chapters){
+        for (var c : chapters) {
             var cid = c.getCourseId();
             var videoResources = getVideoResources(cid);
             List<CourseProgressController.ResourceProgress> resourceProgresses = new ArrayList<>(chapters.size());
-            for(var r:videoResources){
+            for (var r : videoResources) {
                 var rid = r.getResourceId();
-                var complete = resourceCompleteMapper.contains(rid,uid);
-                resourceProgresses.add(new CourseProgressController.ResourceProgress(rid,complete));
+                var complete = resourceCompleteMapper.contains(rid, uid);
+                resourceProgresses.add(new CourseProgressController.ResourceProgress(rid, complete));
             }
-            var complete = chapterCompleteMapper.contains(cid,uid);
+            var complete = chapterCompleteMapper.contains(cid, uid);
             chapterProgresses.add(
                     new CourseProgressController.ChapterProgress(
-                            cid,resourceProgresses,complete));
+                            cid, resourceProgresses, complete));
         }
-        var complete = courseCompleteMapper.contains(csid,uid);
-        return new CourseProgressController.CourseProgress(csid,chapterProgresses,complete);
+        var complete = courseCompleteMapper.contains(csid, uid);
+        return new CourseProgressController.CourseProgress(csid, chapterProgresses, complete);
     }
 }

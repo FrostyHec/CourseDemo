@@ -27,7 +27,7 @@ public class CheatCheckAPI {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final AuthUtil authUtil;
-    private final String baseUrl = PathConstant.API + "resource/{id}/watch";
+    private final String baseUrl = PathConstant.API + "/resource/{id}/watch";
 
     public void resetTimeConfig(int recordAliveSeconds, int heartBeatIntervalSeconds) {
         // 0. 通过反射设置RECORD_ALIVE_SECONDS和HEART_BEAT_INTERVAL_SECONDS

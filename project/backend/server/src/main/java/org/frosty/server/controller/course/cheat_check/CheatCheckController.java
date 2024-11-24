@@ -15,21 +15,23 @@ import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(PathConstant.API+"resource/{id}/watch")
+@RequestMapping(PathConstant.API + "/resource/{id}/watch")
 @RequiredArgsConstructor
 public class CheatCheckController {
     private final CheatCheckService cheatCheckService;
+
     //TODO auth check
     @PutMapping("/required-time")
     public void setMinRequiredTime(@PathVariable Long id,
-                                           @GetToken TokenInfo tokenInfo,
-                                       @RequestBody VideoRequiredSeconds videoRequiredSeconds) {
+                                   @GetToken TokenInfo tokenInfo,
+                                   @RequestBody VideoRequiredSeconds videoRequiredSeconds) {
         videoRequiredSeconds.setVideoId(id);
         cheatCheckService.setMinRequiredTime(videoRequiredSeconds);
     }
+
     @GetMapping("/required-time")
     public VideoRequiredSeconds enrollStudentsToCourse(@PathVariable Long id,
-                                       @GetToken TokenInfo tokenInfo) {
+                                                       @GetToken TokenInfo tokenInfo) {
         return cheatCheckService.getMinRequiredTime(id);
     }
 
@@ -37,28 +39,31 @@ public class CheatCheckController {
     public VideoWatchRecord getLastWatched(@PathVariable Long id,
                                            @GetToken TokenInfo tokenInfo) {
         var auth = AuthEx.checkPass(tokenInfo);
-        return cheatCheckService.getWatchedRecord(id,auth);
+        return cheatCheckService.getWatchedRecord(id, auth);
     }
 
     @PutMapping("/start")
     public void startWatchAlive(@PathVariable Long id,
-                                            @GetToken TokenInfo tokenInfo) {
+                                @GetToken TokenInfo tokenInfo) {
         var auth = AuthEx.checkPass(tokenInfo);
-        cheatCheckService.startWatchAlive(id,auth);
+        cheatCheckService.startWatchAlive(id, auth);
     }
 
     @GetMapping("/alive")
     public void keepWatchAlive(@PathVariable Long id,
-                                            @GetToken TokenInfo tokenInfo) {
+                               @GetToken TokenInfo tokenInfo) {
         var auth = AuthEx.checkPass(tokenInfo);
-        cheatCheckService.keepWatchAlive(id,auth);
+        cheatCheckService.keepWatchAlive(id, auth);
     }
 
     @GetMapping("/stop")
     public void stopWatchAlive(@PathVariable Long id,
-                                            @GetToken TokenInfo tokenInfo,@RequestBody WatchedInfoEntity watchedInfoEntity) {
+                               @GetToken TokenInfo tokenInfo, String watched_seconds, String watched_until) {
+        int watchedSeconds = (int) Double.parseDouble(watched_seconds),// watched seconds是start-end的时间，until是end的时间
+                watchedUntil = (int) Double.parseDouble(watched_until);
+        var watchedInfoEntity = new WatchedInfoEntity(watchedSeconds, watchedUntil);
         var auth = AuthEx.checkPass(tokenInfo);
-        cheatCheckService.stopWatchAlive(id,auth,watchedInfoEntity);
+        cheatCheckService.stopWatchAlive(id, auth, watchedInfoEntity);
     }
 
     @Data
