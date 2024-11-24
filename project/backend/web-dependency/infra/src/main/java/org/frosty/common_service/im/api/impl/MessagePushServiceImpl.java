@@ -36,8 +36,9 @@ public class MessagePushServiceImpl implements MessagePushService {
     @Override
     public SiteMessage pushSite(SiteMessage siteMessage) {
         String url = siteMsgPath + PathConstant.INTERNAL_API + "/msg/site";
+        var map = objectMapper.convertValue(siteMessage, Map.class);
         ResponseEntity<Response> res =
-                restTemplate.postForEntity(url, siteMessage, Response.class);
+                restTemplate.postForEntity(url,map, Response.class);
         Object body = RestTemplateUtils.checkSuccess(res,
                 "Failed to connect to site dispatcher.",
                 "Exception thrown by server.");
