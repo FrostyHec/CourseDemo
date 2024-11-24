@@ -72,11 +72,11 @@ import { ref } from 'vue';
   }
 
   let isFirstMessage = true; // 新增变量，用于跟踪是否是第一次发送消息
-  
+
   const toggleChatWindow = () => {
   if (isFirstMessage) {
     createNewChatCall(title.value);
-    isFirstMessage = false; // 标记已创建新聊天
+    isFirstMessage = false;
   }
   chatWindowVisible.value = !chatWindowVisible.value;
 };
