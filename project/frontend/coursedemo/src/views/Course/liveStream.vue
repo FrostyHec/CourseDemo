@@ -49,7 +49,7 @@ const handleBarrageMessage = (message: ReceivedMessage) => {
 
 // 连接 WebSocket
 const connectWebSocket = () => {
-    chatRoomAPI.connectWebSocket('liveStream', 1, handleBarrageMessage);
+    chatRoomAPI.connectWebSocket('liveStream', user_id, handleBarrageMessage);
 };
 
 const getStreamName = async () => {

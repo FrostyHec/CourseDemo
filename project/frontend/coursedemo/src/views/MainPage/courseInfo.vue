@@ -18,17 +18,17 @@
         </el-aside>
 
         <el-main>
-          <h2>{{course[0].course_name}}</h2>
+          <h2>{{course.course_name}}</h2>
           <div v-if="activeMenu === '1'" class="course-description">
-            <p>课程简介：{{course[0].description}}</p>
-            <p>授课教师：{{course[0].teacher_id}}</p>
+            <p>课程简介：{{course.description}}</p>
+            <p>授课教师：{{course.teacher_id}}</p>
           </div>
           <div v-if="activeMenu === '2'" class="course-evaluation">
-          <el-rate v-model="evaluation.average_score" disabled></el-rate>
-            <p>课程评分: {{ evaluation.average_score }} 分</p>
-          <div v-for="review in evaluation.reviews" :key="review.id" class="course-review">
+          <el-rate v-model="course_score" disabled></el-rate>
+            <p>课程评分: {{ course_score }} 分</p>
+          <div v-for="review in evaluation" :key="review.student_id" class="course-review">
             <el-rate v-model="review.score" disabled></el-rate>
-            <p>学生评价：{{ review.content }}</p>
+            <p>学生评价：{{ review.comment }}</p>
           </div>
         </div>
         </el-main>
@@ -47,31 +47,32 @@ import { onMounted, ref,watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType ,getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { getEvaluationCall } from '@/api/course/CourseEvaluationAPI';
+import { getEvaluationCall, getEvaluationMetadataCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 
 const router = useRouter();
 const activeIndex = ref('1');
-const course = ref<CourseEntity[]>([
+const course = ref<CourseEntity>(
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
     publication: Publication.open,
     evaluation_type: EvaluationType.theory
   }
+);
+
+const course_score = ref(4);
+
+const evaluation = ref<CourseEvaluationEntity[]>([
+  {
+    course_id: course.value.course_id,
+    student_id: 1,
+    comment: 'pretty good',
+    score: 4,
+    evaluation_form_answer: '',
+    created_at: new Date(),
+    updated_at: new Date()
+  }
 ]);
-
-const course_score = ref(0);
-
-const evaluation = ref({
-  average_score: course_score,
-  reviews: [
-    { id: 1, score: 5, content: 'Excellent course!' },
-    { id: 2, score: 4, content: 'Very good, but could be better.' },
-    { id: 3, score: 3, content: 'Average experience.' },
-    { id: 4, score: 5, content: 'Highly recommend!' },
-    { id: 5, score: 4, content: 'Good course, a bit too fast-paced.' }
-  ]
-});
 
 let course_id = 0;
 
@@ -104,9 +105,9 @@ watch(activeMenu, (newVal) => {
 const fetchCourses = async () => {
   try {
     const response = await getCourseCall(course_id);
-    course.value = [response.data];
-    const evaluationResponse = await getEvaluationCall(course_id);
-    course_score.value = evaluationResponse.data.score;
+    course.value = response.data;
+    const evaluationResponse = await getEvaluationMetadataCall(course_id);
+    course_score.value = evaluationResponse.data.average_score;
   } catch (error) {
     console.error('获取课程列表失败:', error);
   }

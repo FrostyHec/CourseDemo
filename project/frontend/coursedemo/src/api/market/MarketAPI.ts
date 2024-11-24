@@ -21,7 +21,6 @@ export interface BadgeInfo {
     image:string
     badge_name: string
     market_score: number
-    owned: boolean
 }
 
 export async function getMyBadgeCall() {

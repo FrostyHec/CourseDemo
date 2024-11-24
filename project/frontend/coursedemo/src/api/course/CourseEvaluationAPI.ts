@@ -39,7 +39,7 @@ export async function deleteEvaluationCall(courseId: number) {
     return AxiosAPI.authDelete<null>(url, {})
 }
 
-export async function getEvaluationCall(courseId: number) {
+export async function getMyEvaluationCall(courseId: number) {
     const url = service_backend_base + `/course/${courseId}/evaluation`
     return AxiosAPI.authGet<CourseEvaluationEntity>(url, {})
 }
@@ -47,4 +47,10 @@ export async function getEvaluationCall(courseId: number) {
 export async function getEvaluationsCall(courseId: number, pageSize: number, pageNum: number) {
     const url = service_backend_base + `/course/${courseId}/evaluations?page_size=${pageSize}&page_num=${pageNum}`
     return AxiosAPI.authGet<{ content: CourseEvaluationEntity[] }>(url, {})
+}
+
+
+export async function getEvaluationMetadataCall(courseId: number) {
+    const url = service_backend_base + `/course/${courseId}/evaluations/metadata'`
+    return AxiosAPI.authGet<{ average_score:number }>(url, {})
 }

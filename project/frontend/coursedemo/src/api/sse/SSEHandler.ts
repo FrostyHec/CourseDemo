@@ -5,6 +5,8 @@ import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
 // import { EventSourcePolyfill } from 'event-source-polyfill';
 import {AxiosAPI} from "@/utils/APIUtils";
+import { useRouter } from "vue-router";
+import { handleAnnouncement } from "./SSEEventHandle";
 
 let eventSource: EventSource | null = null;
 
@@ -20,6 +22,31 @@ export interface SSEMessage {
 }
 
 export interface SSEBody {
+
+}
+
+export interface AnnouncementBody extends SSEBody{
+    BodyType: SSEBodyType.announcement
+    course_id: number;
+    course_name: string,
+    announcement_id: number
+    Title: string;
+}
+
+export interface NewLoginBody extends SSEBody{
+    BodyType: SSEBodyType.new_login
+    Token: string;
+}
+
+export interface ReceiveCreditsBody extends SSEBody{
+    BodyType: SSEBodyType.receive_credits
+    type: CreditType
+    count:  number
+}
+
+export enum CreditType {
+    daily_comment = "daily_comment",
+    complete_course = "complete_course"
 }
 
 export enum SSEMessageType {
@@ -34,32 +61,8 @@ export enum SSEBodyType {
     receive_credits = 'receive_credits',
 }
 
-interface EventHandler {
+export interface EventHandler {
     (message: SSEMessage): void;
-}
-
-export const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
-    // TODO create another TS, complete the body structure(extent SSEBody)
-    //  and handler function, and then register at here
-    [SSEBodyType.announcement]: (message) => {
-        // 在页面的右下角弹出一个框，提示“您收到了一条来自xxx课程的公告，xxxx",然后点击可跳转查看公告
-    },
-    [SSEBodyType.new_login]: (message) => {
-        console.log("处理新登录的情况")
-        const {token} = useAuthStore()
-        // message.body.token !== token && console.log("另一个用户登录")
-        // 校验是否与当前store里存储的token一致，如果一致则忽略，否则提示"另一个用户登录“并且退出登录
-    },
-    [SSEBodyType.receive_credits]: (message) => {
-        // 跳出提示框”XXX原因，积分+200“之类的
-    },
-};
-/////////////messages packages///////////////
-// TODO register handler here and remove nullable
-const multipleMessageHandler: ((message: MessagePacket) => void) = (e) => {
-    // 你可以考虑一下怎么处理，对于new_login的pkt应该忽略（应该是某种极端情况，理论上我觉得应该登出的，但我不知道有没有什么意外情况，因此就暂时忽略吧），
-    // receive_credits可以忽略。announcement应该合并说：”您收到了来自xxx课程，xxx课程与xxx课程的公告。“
-    // 理论上只有unposed的list会有东西
 }
 
 interface SSEPackage {
@@ -78,8 +81,76 @@ export interface MessagePacket {
 }
 
 
+const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
+    [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
+      const announcementBody = message.body as AnnouncementBody;
+      handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+    },
+    [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
+      const authStore = useAuthStore();
+      const newLoginBody = message.body as NewLoginBody;
+      // 校验 token 是否一致
+      if (authStore.token !== newLoginBody.Token) {
+        handleAnnouncement("另一个用户登录，您将被登出");
+        // 执行登出操作
+        authStore.logout({user_id:authStore.user.user_id});
+        // 跳转到登录页面
+        const router = useRouter();
+        router.push('/MainPage/login');
+      }
+    },
+    [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
+      const receiveCreditsBody = message.body as ReceiveCreditsBody;
+      handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
+    },
+  };
+
+
+  const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
+  const authStore = useAuthStore();
+  const router = useRouter();
+
+  packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
+    switch (message.type) {
+      case SSEMessageType.NEW: {
+        const body = message.body;
+        switch (message.body_type) {
+          case SSEBodyType.new_login: {
+            const newLoginBody = body as NewLoginBody;
+            if (authStore.token !== newLoginBody.Token) {
+                handleAnnouncement("另一个用户登录，您将被登出");
+                authStore.logout({ user_id: authStore.user.user_id });
+                router.push('/login');
+            }
+            break;
+          }
+          case SSEBodyType.receive_credits: {
+            const receiveCreditsBody = message.body as ReceiveCreditsBody;
+            handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
+            break;
+          }
+          case SSEBodyType.announcement: {
+            const announcementBody = body as AnnouncementBody;
+            handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+            break;
+          }
+          default:
+            console.error('未知的消息类型:', message.type);
+        }
+        break;
+      }
+      case SSEMessageType.UPDATE:
+        break;
+      case SSEMessageType.DELETE:
+        break;
+      default:
+        // 处理未知类型的消息
+        console.error('未知的消息类型:', message.type);
+    }
+  });
+};
+
 export function subscribeToSSE(uid: number) {
-    return
     if (eventSource) {
         console.log('SSE is registered status:', eventSource.readyState)
         return
