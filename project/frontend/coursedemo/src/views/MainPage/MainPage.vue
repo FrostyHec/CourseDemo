@@ -64,7 +64,8 @@ import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
 import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
-import { getAnnouncementMessages, SSEBodyType, SSEMessageType, subscribeToSSE, unSubscribeSSE, type AnnouncementBody, type EventHandler, type MessagePacket, type NewLoginBody, type ReceiveCreditsBody, type SSEBody } from '@/api/sse/SSEHandler';
+import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
+import { subscribeToSSE, unSubscribeSSE } from '@/api/sse/SSEHandler';
 
 const router = useRouter();
 const activeIndex = ref('1');
@@ -77,9 +78,6 @@ onMounted(() => {
 
 // 组件卸载时取消注册 SSE
 onUnmounted(() => {
-  if (announcementTimer) {
-    clearTimeout(announcementTimer);
-  }
   unSubscribeSSE();
 });
 
@@ -143,7 +141,7 @@ const getHotCourses = async () => {
 const getHotTeachers = async () => {
   try {
     const response = await getHotTeachersCall(1, 10);
-    const hotTeachers = response.data.content.map(teacher => ({
+    const hotTeachers = response.data.content.map((teacher: { studentNum: number; }) => ({
       teacher,
       studentNum: teacher.studentNum
     }));
@@ -188,15 +186,6 @@ watch(() => getAnnouncementMessages(), (newMessages) => {
   announcementMessages.value = newMessages;
 }, { immediate: true });
 
-let announcementTimer: number | null = null;
-
-// 如果有新的公告消息，显示通知
-if (announcementMessages.value.length > 0) {
-  const combinedMessage = announcementMessages.value.join(',');
-  alert(combinedMessage); // 使用 alert 或其他方式显示通知
-  // 清空公告信息数组以便下一次通知
-  announcementMessages.value = [];
-}
 ;
 </script>
 

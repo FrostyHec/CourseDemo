@@ -31,7 +31,9 @@ import { ElButton } from 'element-plus';
 import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
 
+
 const courseId = 1;
+const user_id = 1;
 const baseUrl = 'http://localhost:9977';
 const videoUrl = 'http://localhost:8088'; // 流媒体服务器的url
 let streamName = '';
@@ -47,7 +49,7 @@ const handleBarrageMessage = (message: ReceivedMessage) => {
 
 // 连接 WebSocket
 const connectWebSocket = () => {
-    chatRoomAPI.connectWebSocket('liveStream', 1, handleBarrageMessage);
+    chatRoomAPI.connectWebSocket('liveStream', user_id, handleBarrageMessage);
 };
 
 const getStreamName = async () => {
