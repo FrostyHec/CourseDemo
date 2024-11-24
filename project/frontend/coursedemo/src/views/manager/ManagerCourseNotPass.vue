@@ -134,23 +134,13 @@ const checkCourse = (row: CourseEntity) => {
 };
 
 const approveCourse = async (row: CourseEntity) => {
-  const result = await updateCourseStatusCall(row.course_id, {status:CourseStatus.published});
-  if(result.code == 200){
-      fetchCourses;
-  }
-  else{
-      console.error('服务异常');
-  }
+  await updateCourseStatusCall(row.course_id, {status:CourseStatus.published});
+  fetchCourses();
 };
 
 const rejectCourse = async (row: CourseEntity) => {
-  const result = await updateCourseStatusCall(row.course_id, {status:CourseStatus.rejected});
-  if(result.code == 200){
-      fetchCourses;
-  }
-  else{
-      console.error('服务异常');
-  }
+  await updateCourseStatusCall(row.course_id, {status:CourseStatus.rejected});
+  fetchCourses();
 };
 
 const createNewCourse = () => {

@@ -25,8 +25,14 @@
             </el-table>
           </el-main>
         </el-container>
+        <el-pagination
+          @current-change="handleCurrentChange"
+          layout="prev, pager, next"
+          :total="50">
+        </el-pagination>
       </el-main>
     </el-container>
+
   </el-config-provider>
 </template>
 
@@ -45,8 +51,13 @@ onMounted(async () => {
     fetchCourses();
 });
 
-const currentPage = 1;
+let currentPage = 1;
 const pageSize = 10;
+
+const handleCurrentChange = (newPage:number) =>{
+  currentPage = newPage;
+  fetchCourses();
+}
 
 const courses = ref<CourseEntity[]>([
 {
