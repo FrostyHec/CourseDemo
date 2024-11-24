@@ -13,6 +13,7 @@ public class BadgeInfo {
     private Long userId;
     private Long badgeId;
     private String badgeName;
+    private String image;//image url
     private Integer marketScore;
     private OffsetDateTime createdAt;
 }
