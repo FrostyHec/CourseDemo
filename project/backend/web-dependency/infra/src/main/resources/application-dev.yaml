@@ -9,15 +9,15 @@ jwt: # ensure same with auth-filter
 api:
   storage:
 #     remote or mock
-#    type: mock
-    type: remote
+    type: mock
+#    type: remote
     object-storage:
       url: http://localhost:9976
     redis:
       url: todo
   message:
-#    type: mock
-    type: remote
+    type: mock
+#    type: remote
     site:
       url: http://localhost:9972
     email:

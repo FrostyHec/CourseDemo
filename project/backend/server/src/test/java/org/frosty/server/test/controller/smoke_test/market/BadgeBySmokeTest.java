@@ -36,6 +36,8 @@ public class BadgeBySmokeTest {
         badgeInfo.setUserId(res.second.getUserId());
         badgeInfo.setImage("aaa");
 
+
+
         // Get my market score
         var myMarketScore = marketAPI.getMyMarketScoreSuccess(token);
         assert myMarketScore.getMarketScore() == 500; // Assuming initial score is 500
