@@ -52,8 +52,9 @@ public class CourseController {
             return Response.getBadRequest("Page parameter error");
         }
 
-        return Response.getSuccess(new CourseList(
-                courseService.searchPublicCourse(page_num, page_size, name)));
+        var li = new CourseList(
+                courseService.searchPublicCourse(page_num, page_size, name));
+        return Response.getSuccess(li);
     }
 
     @DeleteMapping("/course/{id}")

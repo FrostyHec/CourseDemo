@@ -9,6 +9,7 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.CourseEvaluation;
 import org.frosty.server.services.course.CourseEvaluationService;
+import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -83,6 +84,18 @@ public class CourseEvaluationController {
             return null; // bad request
         }
         return new CourseEvaluationList(courseEvaluationService.getAllEvaluationsByCourse(id, page_size, page_num));
+    }
+
+    @GetMapping("/evaluations/metadata")
+    public CourseEvaluationMetadata getEvaluationsMetadata(@PathVariable Long id) {
+        FrameworkUtils.notImplemented();// TODO @hlh
+        return null;
+    }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class CourseEvaluationMetadata{
+        Integer averageScore;
     }
 
     @Data

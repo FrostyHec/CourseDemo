@@ -1,6 +1,7 @@
 package org.frosty.object_storage.service.access_key.impl;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.common.utils.Pair;
 import org.frosty.object_storage.service.access_key.AccessKeyService;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
+@Slf4j
 @Service
 public class NaiveAccessKeyServiceImpl implements AccessKeyService {
     private final Map<Pair<String, String>, String> storage = new HashMap<>();
@@ -31,7 +32,7 @@ public class NaiveAccessKeyServiceImpl implements AccessKeyService {
 
     @Override
     public boolean valid(String objName, String caseName, String accessKey) {
-        if (!storage.containsKey(new Pair<>(objName, caseName))) {
+        if (!storage.containsKey(new Pair<>(objName,caseName))) {
             return false;
         }
         return storage.get(new Pair<>(objName, caseName)).equals(accessKey);
