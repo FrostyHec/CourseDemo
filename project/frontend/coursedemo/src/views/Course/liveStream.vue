@@ -32,8 +32,14 @@ import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
 import { useRoute } from 'vue-router';
 
+<<<<<<< HEAD
+
+const courseId = 1;
+const user_id = 1;
+=======
 const route = useRoute()
 const courseId = Number(route.params.course_id);
+>>>>>>> origin/frontend_duanbohan
 const baseUrl = 'http://localhost:9977';
 const videoUrl = 'http://localhost:8088'; // 流媒体服务器的url
 let streamName = '';

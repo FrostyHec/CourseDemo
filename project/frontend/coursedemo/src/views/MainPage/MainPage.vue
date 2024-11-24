@@ -63,9 +63,7 @@ import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
-import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
-import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
-import { subscribeToSSE, unSubscribeSSE } from '@/api/sse/SSEHandler';
+import { getUserPublicInfoCall, UserType, type UserPubscribeSSE } from '@/api/sse/SSEHandler';
 
 const router = useRouter();
 const activeIndex = ref('1');
