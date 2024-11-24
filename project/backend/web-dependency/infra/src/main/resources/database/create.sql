@@ -17,6 +17,18 @@ END;
 $$
     LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION auto_time_only_created()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.created_at = now();
+    END IF;
+    RETURN NEW;
+END;
+$$
+    LANGUAGE 'plpgsql';
+
 
 -- 创建用户表（Users）
 DROP TABLE IF EXISTS users;
@@ -236,6 +248,7 @@ CREATE TABLE assignments
 (
     assignment_id               BIGSERIAL PRIMARY KEY,             -- 自增作业ID
     chapter_id                  INT                      NOT NULL, -- 章节ID
+    assignment_name             VARCHAR                  NOT NULL,
     description                 TEXT                     NOT NULL, -- 作业描述
     assignment_type             VARCHAR                  NOT NULL CHECK ( assignments.assignment_type IN ('file_upload', 'online_form') ),
     allow_update_submission     BOOLEAN                  NOT NULL,
@@ -279,18 +292,18 @@ EXECUTE PROCEDURE auto_time();
 DROP TABLE IF EXISTS video_required_seconds;
 CREATE TABLE video_required_seconds
 (
-    video_id BIGINT NOT NULL ,
-    required_seconds INT NOT NULL
+    video_id         BIGINT NOT NULL,
+    required_seconds INT    NOT NULL
 --     foreign key (video_id) references resources(resource_id) on delete cascade
 );
 
 DROP TABLE IF EXISTS video_watch_records;
 CREATE TABLE video_watch_records
 (
-    video_id      BIGINT                   NOT NULL,
-    student_id    BIGINT                   NOT NULL,
-    remain_required_seconds INT NOT NULL,
-    last_watched_seconds INT NOT NULL, -- 这个指的是上次视频停在了哪里，而不是总共看了多少秒
+    video_id                BIGINT NOT NULL,
+    student_id              BIGINT NOT NULL,
+    remain_required_seconds INT    NOT NULL,
+    last_watched_seconds    INT    NOT NULL, -- 这个指的是上次视频停在了哪里，而不是总共看了多少秒
     primary key (video_id, student_id)
 --     ,foreign key (video_id) references resources(resource_id) on delete cascade
 --     ,foreign key (student_id) references users(user_id) on delete cascade
@@ -299,23 +312,67 @@ CREATE TABLE video_watch_records
 DROP TABLE IF EXISTS course_complete_records;
 CREATE TABLE course_complete_records
 (
-    course_id BIGINT NOT NULL ,
+    course_id  BIGINT NOT NULL,
     student_id BIGINT NOT NULL,
-    primary key (course_id,student_id)
+    primary key (course_id, student_id)
 );
 
 DROP TABLE IF EXISTS chapter_complete_records;
 CREATE TABLE chapter_complete_records
 (
-    chapter_id BIGINT NOT NULL ,
+    chapter_id BIGINT NOT NULL,
     student_id BIGINT NOT NULL,
-    primary key (chapter_id,student_id)
+    primary key (chapter_id, student_id)
 );
 
 DROP TABLE IF EXISTS resource_complete_records;
 CREATE TABLE resource_complete_records
 (
-    resource_id BIGINT NOT NULL ,
-    student_id BIGINT NOT NULL,
-    primary key (resource_id,student_id)
+    resource_id BIGINT NOT NULL,
+    student_id  BIGINT NOT NULL,
+    primary key (resource_id, student_id)
+);
+
+drop table if exists consume_record;
+CREATE TABLE consume_record
+(
+    record_id     BIGSERIAL PRIMARY KEY    NOT NULL,
+    action_type   VARCHAR                  NOT NULL,
+    action_param  JSON                     NOT NULL,
+    changed_score INT                      NOT NULL,
+    remain_score  INT                      NOT NULL,
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL
+);
+CREATE
+    OR REPLACE TRIGGER auto_consume_record_time
+    BEFORE INSERT OR
+        UPDATE
+    ON consume_record
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time_only_created();
+
+drop table if exists badge_record;
+CREATE TABLE badge_record
+(
+    user_id BIGINT NOT NULL ,
+    badge_id BIGINT NOT NULL ,
+    badge_name VARCHAR NOT NULL ,
+    market_score INT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    primary key (user_id,badge_id)
+);
+CREATE
+    OR REPLACE TRIGGER auto_badge_record_time
+    BEFORE INSERT OR
+        UPDATE
+    ON badge_record
+    FOR EACH ROW
+EXECUTE PROCEDURE auto_time_only_created();
+
+drop table if exists market_score_record;
+CREATE TABLE market_score_record
+(
+    user_id BIGINT NOT NULL ,
+    market_score INT NOT NULL ,
+    primary key (user_id,market_score)
 );

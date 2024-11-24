@@ -9,7 +9,7 @@ import org.frosty.auth.entity.AuthInfo;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.AuthEx;
 import org.frosty.common.constant.PathConstant;
-import org.frosty.server.services.course.LiveStreamService;
+import org.frosty.server.services.course.livestream.LiveStreamService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

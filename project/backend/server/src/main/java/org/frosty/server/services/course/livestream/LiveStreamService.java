@@ -1,4 +1,4 @@
-package org.frosty.server.services.course;
+package org.frosty.server.services.course.livestream;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
