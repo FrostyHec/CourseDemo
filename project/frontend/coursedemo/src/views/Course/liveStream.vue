@@ -30,8 +30,10 @@ import flvjs from 'flv.js';
 import { ElButton } from 'element-plus';
 import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
+import { useRoute } from 'vue-router';
 
-const courseId = 1;
+const route = useRoute()
+const courseId = Number(route.params.course_id);
 const baseUrl = 'http://localhost:9977';
 const videoUrl = 'http://localhost:8088'; // 流媒体服务器的url
 let streamName = '';

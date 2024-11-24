@@ -12,7 +12,7 @@
       label-width="auto"
     >
     <el-form-item label="Name" prop="assignment_name">
-        <el-input v-model="form_store.assignment_form.assignment_name" type="textarea" placeholder="Enter the description"/>
+        <el-input v-model="form_store.assignment_form.assignment_name" type="textarea" placeholder="Enter the name"/>
       </el-form-item>
 
       <el-form-item label="Description" prop="description">

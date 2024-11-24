@@ -162,7 +162,6 @@ const open_form = (data: AssignmentEntity|undefined, mode: 'Add'|'Edit') => {
 }
 
 async function load_assignment() {
-  assignments.value = []
   const msg = await getAssignmentsByChapterIdCall(current_chapter_id)
   if(msg.code!=200) {
     ElMessage({
@@ -171,6 +170,7 @@ async function load_assignment() {
     })
     return
   }
+  console.log(msg.data)
   assignments.value = []
   for(const a of msg.data.content) {
     const sub_msg = await getStudentSubmissionCall(a.assignment_id)
@@ -216,7 +216,7 @@ async function submit() {
     file_submission_id: 0,
     assignment_id: current_assignment,
     student_id: auth_store.user.user_id,
-    suffix: uploader.value.file_get.type+'\\'+uploader.value.file_get.name,
+    suffix: uploader.value.file_get.type+':'+uploader.value.file_get.name,
     file_name: '',
     gained_score: 0,
     created_at: new Date(),

@@ -9,7 +9,7 @@ export interface CourseEntity {
   teacher_id: number,
   status: CourseStatus,
   publication: Publication
-  evaluationType: EvaluationType,
+  evaluation_type: EvaluationType,
   created_at: Date,
   updated_at: Date,
 }

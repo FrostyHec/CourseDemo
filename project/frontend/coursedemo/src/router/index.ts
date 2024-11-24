@@ -106,7 +106,7 @@ const router = createRouter({
       component: () => import('@/views/MainPage/courseInfo.vue'),
     },
     {
-      path: '/course/liveStream',
+      path: '/course/liveStream/:course_id(\\d+)',
       component: () => import('@/views/Course/liveStream.vue'),
     },       
     {

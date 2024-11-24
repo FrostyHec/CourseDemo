@@ -47,7 +47,7 @@
           <span>确定要删除这个课程吗？</span>
           <template #footer>
             <el-button @click="deleteDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="handleDelete">确认删除</el-button>
+            <el-button type="primary" @click="handleDelete(); deleteDialogVisible=false;">确认删除</el-button>
           </template>
         </el-dialog>
   
@@ -108,7 +108,7 @@ const tableData = ref<CourseEntity[]>([
   course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
   status: CourseStatus.published,
   publication: Publication.open,
-  evaluationType: EvaluationType.practice
+  evaluation_type: EvaluationType.practice
 }
 ]);
 const courseId = ref(1);
@@ -126,7 +126,7 @@ const courseForm = ref<CourseEntity>({
   publication: Publication.open,
   created_at: new Date(),
   updated_at: new Date(),
-  evaluationType: EvaluationType.practice
+  evaluation_type: EvaluationType.practice
 });
 
 onMounted(async () => {
@@ -146,7 +146,7 @@ const createCourse = () => {
         teacher_id: authStore.user.user_id,
         status: CourseStatus.creating,
         publication: Publication.open,
-        evaluationType: EvaluationType.practice,
+        evaluation_type: EvaluationType.practice,
         created_at: new Date(),
         updated_at: new Date(),
   };
@@ -177,7 +177,7 @@ const saveCourse = () => {
     fetchCourses(); 
 };
 
-const AddCourse = () => {
+const AddCourse = async () => {
     if(courseForm.value.status==CourseStatus.creating){
       const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
       if (index !== -1) {
@@ -189,7 +189,7 @@ const AddCourse = () => {
       return;
     }
     courseForm.value.status = CourseStatus.submitted;
-    createCourseCall(courseForm.value);
+    await createCourseCall(courseForm.value);
     dialogVisible.value = false;
     tableData.value.push(courseForm.value);
     fetchCourses(); 

@@ -31,8 +31,8 @@ const file_type = ref('')
 const download_name = ref('')
 
 async function load_resource(suffix: string, file_name: string, access_key: string, is_attachment: boolean) {
-  console.log('load_resouce')
-  const type_and_name = suffix.split('\\')
+  console.log('load_resource')
+  const type_and_name = suffix.split(':')
   const type = type_and_name[0]
   const name = type_and_name[1]
   link.value = ''
