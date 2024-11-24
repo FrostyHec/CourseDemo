@@ -42,7 +42,7 @@ import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore();
 
 onMounted(async () => {
-    fetchCourses;
+    fetchCourses();
 });
 
 const currentPage = 1;
