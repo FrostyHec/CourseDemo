@@ -55,6 +55,7 @@ import { evaluationType, updateEvaluationCall, type answer, type CourseEvaluatio
 import router from '@/router';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useRoute } from 'vue-router';
 
 // 存储单选问题的结果
 const question1Result = ref('');
@@ -79,7 +80,7 @@ const evaluation_form_answer = ref<answer[]>([
   },
 ]);
 
-const course_id = 0;
+let course_id = 0;
 const student_id = 0;
 
 const course = ref<CourseEntity[]>([
@@ -107,7 +108,9 @@ const evaluationForm = ref<CourseEvaluationEntity>({
 });
 
 onMounted(async () => {
-  const course_id = router.currentRoute.value.params.course_id;
+  const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
+  const courseId = Number(route.query.course_id); // 从查询参数中获取 course_id 并转换为数字
+  course_id = Number(courseId);
   await fetchCourses();
 });
 

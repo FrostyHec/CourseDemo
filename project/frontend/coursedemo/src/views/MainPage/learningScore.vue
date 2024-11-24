@@ -32,7 +32,7 @@
               <el-card v-for="(item, index) in mallItems" :key="index" class="mall-item-card">
                 <img :src="item.image" class="mall-item-image">
                 <div>{{ item.badge_name }}</div>
-                <el-button type="primary" @click="exchangeItem(index)">兑换</el-button>
+                <el-button type="primary" @click="getMedalIndex(index);exchangeMetalVisible = true">兑换</el-button>
               </el-card>
             </div>
           </div>
@@ -43,6 +43,16 @@
             </el-card>
           </div>
         </el-main>
+        <el-dialog
+          title="兑换勋章"
+          v-model="exchangeMetalVisible"
+        >
+          <span>确定要兑换这个勋章吗？</span>
+          <template #footer>
+            <el-button @click="exchangeMetalVisible = false">取消</el-button>
+            <el-button type="primary" @click="exchangeMetalVisible=false;exchangeItem(medalIndex);">确认加入</el-button>
+          </template>
+        </el-dialog>
       </el-container>
     </div>
   </template>
@@ -56,6 +66,13 @@ import { buyBadgeCall, ConsumeActionType, getMyCanBuyBadgeCall, getMyHistoryCall
 const router = useRouter();
 const activeIndex = ref('3');
 const activeTab = ref('1'); 
+const exchangeMetalVisible = ref(false);
+const medalIndex = 1;
+
+const getMedalIndex = (index:number)=>{
+  const medalIndex = index;
+}
+
 const medals = ref<BadgeInfo[]>([
   { user_id: 1, badge_id: 1, badge_name: '勤学好问', image: '../../assets/Medal/medal1.png', market_score: 100 },
   { user_id: 1, badge_id: 2, badge_name: '作业达人', image: '../../assets/Medal/medal2.png', market_score: 100 },

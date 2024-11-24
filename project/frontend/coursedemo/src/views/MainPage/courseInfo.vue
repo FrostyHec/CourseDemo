@@ -108,7 +108,6 @@ let course_id = 0;
 onMounted(async () => {
   const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
   const courseId = Number(route.query.course_id); // 从查询参数中获取 course_id 并转换为数字
-  console.log(courseId); // 打印 course_id 的值
   course_id = Number(courseId);
   await fetchCourses();
   checkJoin();
@@ -120,10 +119,6 @@ const routerBack = () => {
 
 const handleMenuSelect = (key: string) => {
   activeMenu.value = key;
-};
-
-const navigateTo = (path: string) => {
-  router.push(path); 
 };
 
 const activeMenu = ref('1');

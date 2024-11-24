@@ -102,11 +102,11 @@ const router = createRouter({
       component: () => import('@/views/Course/liveStream.vue'),
     },       
     {
-      path: '/course/practiceSurvey',
+      path: '/course/practiceSurvey/:course_id(\\d+)',
       component: () => import('@/views/Course/PracticeSurvey.vue'),
     },
     {
-      path: '/course/theorySurvey',
+      path: '/course/theorySurvey/:course_id(\\d+)',
       component: () => import('@/views/Course/TheorySurvey.vue'),
     },           
     {
