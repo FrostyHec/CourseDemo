@@ -22,7 +22,7 @@
           <el-button type="primary" @click="sendMessage" class="send-button">Send</el-button>
         </div>
       </el-dialog>
-      <el-dialog v-model="historyDialogVisible" title="历史对话" width="50%">
+      <el-dialog v-model="historyDialogVisible" title="历史对话" width="50%" @click="getChatHistory">
         <div v-for="chat in chatHistories.chatHistory" :key="chat.id" class="history-item" @click="selectChatHistory(chat)">
           {{ chat.title }}
         </div>
@@ -31,7 +31,7 @@
   </template>
   
   <script setup lang="ts">
-  import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity } from '@/api/langchain/langchainAPI';
+  import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall } from '@/api/langchain/langchainAPI';
 import { ref } from 'vue';
   
   const chatWindowVisible = ref(false);
@@ -67,6 +67,10 @@ import { ref } from 'vue';
     }
   );
   
+  const getChatHistory = async () => {
+    chatHistories.value = (await getAllMyChatMetadataCall()).data
+  }
+
   const toggleChatWindow = () => {
     createNewChatCall(title.value)
     chatWindowVisible.value = !chatWindowVisible.value;

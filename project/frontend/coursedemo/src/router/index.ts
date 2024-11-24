@@ -38,10 +38,6 @@ const router = createRouter({
       component: () => import('@/views/MainPage/login.vue'),
     },
     {
-      path: '/courseEvaluation',
-      component: () => import('@/views/Course/CourseEvaluate.vue'),
-    },
-    {
       path: '/MainPage/allCourse',
       component: () => import('@/views/MainPage/allCourse.vue'),
     },
