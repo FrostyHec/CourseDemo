@@ -32,19 +32,19 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
-import { useRouter } from 'vue-router'; 
-import { CourseStatus, Publication, searchCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
+import { useRoute, useRouter } from 'vue-router'; 
+import { searchCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
 
 const router = useRouter(); 
-const searchQuery = ref<string | undefined>(undefined);
+let searchQuery = ref('');
 const repositories = ref<CourseEntity[]>([]);
 
-const pageSize = 1;
-const pageNum = 10;
+const pageSize = 10;
+const pageNum = 1;
 
 
 const handleSearch = () => {
-  searchCourseCall(pageSize, pageNum, searchQuery.value).then(response => {
+  searchCourseCall(pageSize, pageNum, searchQuery.value).then((response: { data: { content: any[]|CourseEntity[]; }; }) => {
     repositories.value = response.data.content;
   });
 };
@@ -67,7 +67,8 @@ const fetchCourses = async () => {
 };
 
 onMounted(async () => {
-  searchQuery.value = router.currentRoute.value.query.search ? String(router.currentRoute.value.query.search) : undefined;
+  const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
+  searchQuery.value = route.query.search;
   await fetchCourses();
 });
 

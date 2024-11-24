@@ -58,6 +58,6 @@ export interface StudentInfoWithEnrollStatus extends UserPublicInfoEntity {
 }
 
 export enum StudentEnrollType {
-  publik = 'publik',
+  public = 'public',
   invited = 'invited'
 }

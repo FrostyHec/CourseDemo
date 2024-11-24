@@ -76,7 +76,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="课程类型" prop="evaluationType">
-              <el-radio-group v-model="courseForm.evaluationType">
+              <el-radio-group v-model="courseForm.evaluation_type">
                 <el-radio :label="EvaluationType.practice">实践</el-radio>
                 <el-radio :label="EvaluationType.theory">理论</el-radio>
               </el-radio-group>

@@ -58,17 +58,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
-import { getUserPublicInfoCall, UserType, type UserPubscribeSSE } from '@/api/sse/SSEHandler';
-import type { UserPublicInfoEntity } from '@/api/user/UserAPI';
+import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
 
 const router = useRouter();
 const activeIndex = ref('1');
+
+onMounted(async () => {
+    getHotCourses();
+});
 
 const cs303 = ref<CourseEntity>({
   course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),

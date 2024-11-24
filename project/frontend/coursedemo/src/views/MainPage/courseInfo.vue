@@ -6,7 +6,7 @@
     <el-container>
       <el-header>
         <el-button type="primary" class="back-button" @click="routerBack">返回</el-button>
-        <el-button type="primary" class="join-button">申请加入</el-button>
+        <el-button type="primary" class="join-button" v-show="showJoinButton" @click="joinClass">申请加入</el-button>
       </el-header>
 
       <el-container>
@@ -34,23 +34,34 @@
         </el-main>
       </el-container>
 
-      <el-footer>
-        <div class="teacher-info">
-          
-        </div>
-      </el-footer>
+      <el-dialog
+          title="加入课程"
+          v-model="joinDialogVisible"
+        >
+          <span>确定要加入这个课程吗？</span>
+          <template #footer>
+            <el-button @click="joinDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleJoin(); joinDialogVisible=false;">确认加入</el-button>
+          </template>
+        </el-dialog>
+
     </el-container>
   </div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref,watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType ,getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { getEvaluationCall, getEvaluationMetadataCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
+import { getEvaluationMetadataCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
+import { getAllJoinedCourseList, studentEnrollCourseCall } from '@/api/course/CourseMemberAPI';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const joinDialogVisible = ref(false);
+const showJoinButton = ref(false); 
 const activeIndex = ref('1');
+const authStore = useAuthStore();
 const course = ref<CourseEntity>(
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
@@ -61,6 +72,24 @@ const course = ref<CourseEntity>(
 );
 
 const course_score = ref(4);
+
+const checkJoin = async () =>{
+  const response = await getAllJoinedCourseList(authStore.user.user_id,1,100);
+  const courseId = course.value.course_id;
+  const isJoined = response.data.content.some((course: { course_id: number; }) => course.course_id === courseId);
+  if(!isJoined){
+    showJoinButton.value = true;
+  }
+}
+
+const joinClass = () =>{
+  joinDialogVisible.value = true;
+}
+
+const handleJoin = async () => {
+  await studentEnrollCourseCall(course.value.course_id);
+  fetchCourses();
+};
 
 const evaluation = ref<CourseEvaluationEntity[]>([
   {
@@ -77,11 +106,12 @@ const evaluation = ref<CourseEvaluationEntity[]>([
 let course_id = 0;
 
 onMounted(async () => {
-  const routeCourseId = router.currentRoute.value.params.course_id;
-  if (routeCourseId) {
-    course_id = Number(routeCourseId);
-    await fetchCourses();
-  }
+  const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
+  const courseId = Number(route.query.course_id); // 从查询参数中获取 course_id 并转换为数字
+  console.log(courseId); // 打印 course_id 的值
+  course_id = Number(courseId);
+  await fetchCourses();
+  checkJoin();
 });
 
 const routerBack = () => {
