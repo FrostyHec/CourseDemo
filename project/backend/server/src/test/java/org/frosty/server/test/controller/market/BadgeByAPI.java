@@ -38,7 +38,7 @@ public class BadgeByAPI {
                 .andReturn();
 
         // 解析响应为 BadgeList
-        var badgeList = JsonUtils.toObject(resp, BadgeByController.BadgeList.class).getContent();
+        var badgeList = JsonUtils.toObject(resp, BadgeByController.BadgeList.class);
 
         // 安全处理：如果 badgeList 或内容为空，返回空列表
         if (badgeList == null || badgeList.getContent() == null) {
