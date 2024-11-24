@@ -167,12 +167,13 @@ const isCourseNameExist = (name: string) => {
   return tableData.value.some(course => course.course_name.toLowerCase() === name.toLowerCase());
 };
 
-const saveCourse = () => {
+const saveCourse = async () => {
     dialogVisible.value = false;
     const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
     if (index !== -1) {
       tableData.value.splice(index, 1);
     }
+    await createCourseCall(courseForm.value);
     tableData.value.push(courseForm.value);
     fetchCourses(); 
 };
