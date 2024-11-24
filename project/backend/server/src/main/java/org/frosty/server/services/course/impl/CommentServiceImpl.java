@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
             List<CommentResource> resources = commentResourceMapper.getAllByCommentId(cid);
             List<CommentController.CommentResourceWithAccessKey> resourceWithAccessKeys = new ArrayList<>(resources.size());
             for(var resource : resources) {
-                var accessKey = objectStorageService.getAccessKey(getCommentFileCaseName(uid),resource.getFileName());
+                var accessKey = objectStorageService.getAccessKey(resource.getFileName(),getCommentFileCaseName(uid));
                 resourceWithAccessKeys.add(new CommentController.CommentResourceWithAccessKey(resource, accessKey));
             }
             result.add(new CommentController.CommentWithUserAndFileAndAccessKey(comment, resourceWithAccessKeys));
