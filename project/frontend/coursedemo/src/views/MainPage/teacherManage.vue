@@ -29,10 +29,9 @@
                 </el-table-column>
               </el-table>
               <el-pagination
-                @current-change="handlePageChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="prev, pager, next">
+                @current-change="handleCurrentChange"
+                layout="prev, pager, next"
+                :total="50">
               </el-pagination>
             </el-main>
           </el-container>
@@ -112,8 +111,13 @@ const tableData = ref<CourseEntity[]>([
 }
 ]);
 
-const currentPage = ref(1);
-const pageSize = ref(10);
+let currentPage = 1;
+const pageSize = 10;
+
+const handleCurrentChange = (newPage:number) =>{
+  currentPage = newPage;
+  fetchCourses();
+}
 const dialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const currentCourseToDelete = ref<CourseEntity | null>(null);
@@ -233,7 +237,7 @@ const handlePageChange = (newPage: number) => {
 
 const fetchCourses = async () => {
   try {
-      const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
+      const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage, pageSize);
       tableData.value = response.data.content;
   } catch (error) {
       console.error('获取课程列表失败:', error);
