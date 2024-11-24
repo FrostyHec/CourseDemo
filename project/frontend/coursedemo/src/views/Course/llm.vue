@@ -71,10 +71,15 @@ import { ref } from 'vue';
     chatHistories.value = (await getAllMyChatMetadataCall()).data
   }
 
+  let isFirstMessage = true; // 新增变量，用于跟踪是否是第一次发送消息
+  
   const toggleChatWindow = () => {
-    createNewChatCall(title.value)
-    chatWindowVisible.value = !chatWindowVisible.value;
-  };
+  if (isFirstMessage) {
+    createNewChatCall(title.value);
+    isFirstMessage = false; // 标记已创建新聊天
+  }
+  chatWindowVisible.value = !chatWindowVisible.value;
+};
   
   const viewHistory = () => {
     historyDialogVisible.value = true;
