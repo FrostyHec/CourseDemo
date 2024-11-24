@@ -98,7 +98,7 @@ public class CourseMemberController {
                 courseMemberService.getSubmittedCourses(page_num, page_size)));
     }
 
-    @GetMapping("/admin/{id}/courses/handled")
+    @GetMapping("/admin/{id}/courses/handle")
     public Response getPublicCourses(@PathVariable Long id,
                                         @RequestParam int page_num,
                                         @RequestParam int page_size) {
