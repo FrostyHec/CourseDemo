@@ -73,14 +73,14 @@ export interface MessagePacket {
 }
 
 
-export function subscribeToSSE() {
+export function subscribeToSSE(uid:number) {
     if (eventSource) {
         console.log('SSE is registered status:', eventSource.readyState)
         return
     }
     console.log('subscribing To SSE')
-    const {user} = useAuthStore()
-    const uid = user.user_id;
+    // const {user} = useAuthStore()
+    // const uid = user.user_id;
     if (uid <= 0) {
         throw new InternalException('unexpected user id', uid)
     }
