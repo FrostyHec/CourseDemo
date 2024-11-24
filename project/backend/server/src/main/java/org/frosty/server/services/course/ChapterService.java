@@ -12,9 +12,12 @@ public interface ChapterService {
 
     Chapter findByID(Long id);
 
-    void updateChapter(Chapter updatedChapter);
+    void updateChapter(Long id, Chapter updatedChapter);
 
     void deleteChapter(Long id);
 
-    List<Chapter> getAll();
+    List<Chapter> getAllChaptersByCourseId(Long courseId);
+
+    List<Chapter> getAllChaptersForStudentByCourseId(Long id);
+//List<Chapter> getAll();
 }

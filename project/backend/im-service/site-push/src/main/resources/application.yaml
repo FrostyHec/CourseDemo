@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: site-push
+  profiles:
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  aop:
+    proxy-target-class: true
+env:
+  on-k8s: false
+
+server:
+  port: 9973

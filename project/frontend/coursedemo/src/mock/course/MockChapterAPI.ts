@@ -20,7 +20,7 @@ export function mockDeleteChapterCall(chapterId: number, data: APIResult<null>) 
   setMockFunc(url, RequestType.DELETE, null, () => data)
 }
 
-export function mockGetChapterCall(chapterId: number, data: APIResult<{content:ChapterEntity[]}>) {
+export function mockGetChapterCall(chapterId: number, data: APIResult<ChapterEntity>) {
   const url = service_backend_base + '/chapter/' + chapterId
   setMockFunc(url, RequestType.GET, null, () => data)
 }

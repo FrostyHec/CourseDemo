@@ -3,7 +3,7 @@
     v-model="form_store.course_visibility" 
     :title="form_store.mode+' the course'" 
     width="600"
-    :before-close="(done) => { formRef?.resetFields(); done(); }">
+    @closed="() => { formRef?.resetFields(); }">
     
     <el-form
       ref="formRef"
@@ -63,11 +63,6 @@ const course_rules = reactive<FormRules<CourseEntity>>({
 })
 
 const formRef = ref<FormInstance>()
-
-const resetForm = (formIn: FormInstance | undefined) => {
-  if (!formIn) return
-  formIn.resetFields()
-}
 
 const submitForm = async (formIn: FormInstance | undefined) => {
   if (!formIn) return

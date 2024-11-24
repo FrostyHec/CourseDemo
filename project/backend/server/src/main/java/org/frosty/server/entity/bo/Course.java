@@ -1,4 +1,5 @@
 package org.frosty.server.entity.bo;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -23,6 +24,7 @@ public class Course {
     private CourseStatus status;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private PublicationType publication;
 
     public enum CourseStatus {
         creating,
@@ -31,5 +33,9 @@ public class Course {
         rejected,
         archived,
         deleted
+    }
+
+    public enum PublicationType {
+        open, closed, semi_open
     }
 }

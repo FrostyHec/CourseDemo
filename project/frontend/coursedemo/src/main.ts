@@ -14,22 +14,27 @@ import 'element-plus/dist/index.css'
 
 import '~/styles/index.scss'
 import 'uno.css'
-
 // If you want to use ElMessage, import it.
 import 'element-plus/theme-chalk/src/message.scss'
 import { createPinia } from 'pinia'
 import { handleBackendPath, handleMockStatus } from './utils/EnvUtils'
+
+import ECharts from "vue-echarts"
+import * as echarts from "echarts"
+
 export async function main() {
   const app = createApp(App)
+
   app.use(router)
   app.use(createPinia())
   handleBackendPath()
   await handleMockStatus()
- app.use(ElementPlus);
+  app.use(ElementPlus);
   return app
 }
-
 const app = await main()
+app.component('e-charts', ECharts)
+app.config.globalProperties.$echarts = echarts
 app.mount('#app')
 
 

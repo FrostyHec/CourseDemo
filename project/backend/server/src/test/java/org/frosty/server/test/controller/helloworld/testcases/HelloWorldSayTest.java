@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class HelloWorldSayTest {
     @Autowired
     private HelloWorldAPI helloWorldAPI;
+
     @Test
     public void testValidSay() throws Exception {
         helloWorldAPI.say("hello")
                 .andExpect(RespChecker.success())
                 .andExpect(RespChecker.dataParam("say", "Hello World"));
     }
+
     @Test
     public void testInvalidSay() throws Exception {
         helloWorldAPI.say("hi")

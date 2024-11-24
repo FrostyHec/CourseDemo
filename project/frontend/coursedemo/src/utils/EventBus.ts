@@ -11,7 +11,7 @@ export class EventBus {
 	}
 
 	// 发布
-	emit(name:EventType, param:object|null = null) {
+	emit(name:EventType, param:any = null) {
 		if (this.list[name]) {
 			this.list[name].forEach((fn) => {
 				fn(param);

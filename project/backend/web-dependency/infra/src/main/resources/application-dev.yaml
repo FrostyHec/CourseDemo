@@ -5,3 +5,22 @@ logging:
 jwt: # ensure same with auth-filter
   secret: secret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQfsecret12740184018403rujdfcu9hv9nsdzsajsz0ehfUO(vhqoCQf
   expiration: 86400000
+
+api:
+  storage:
+#     remote or mock
+#    type: mock
+    type: remote
+    object-storage:
+      url: http://localhost:9976
+    redis:
+      url: todo
+  message:
+    type: mock
+#    type: remote
+    site:
+      url: http://localhost:9972
+    email:
+      url: http://localhost:9983
+
+

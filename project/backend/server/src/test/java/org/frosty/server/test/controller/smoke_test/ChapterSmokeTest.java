@@ -17,6 +17,7 @@ public class ChapterSmokeTest {
     private ChapterAPI chapterAPI;
     @Autowired
     private AuthAPI authAPI;
+
     @Test
     public void testBasicCRUD() throws Exception {
         var name = "test";
@@ -26,10 +27,9 @@ public class ChapterSmokeTest {
         var courseId = courseAPI.addTestCourseAndGetId(uid);
 
         //-----test start---
-        Chapter chapter = chapterAPI.getTemplateTeachingChapter();
+        Chapter chapter = chapterAPI.getTemplateTeachingChapter(courseId);
         String title = chapter.getChapterTitle();
         chapterAPI.createSuccess(token, courseId, chapter);
-
         var li = chapterAPI.getAllSuccess(token, courseId);
         assert li.size() == 1;
 

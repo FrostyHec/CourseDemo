@@ -22,8 +22,8 @@ public class ExceptionAdvisor {
     public Response exceptionHandler(InternalException e) {
         log.error("InternalException:", e);
         return new Response(ResponseCodeType.INTERNAL_ERROR,
-                            e.getMessage(),
-                            e.getCause());
+                e.getMessage(),
+                e.getCause());
     }
 
     @ExceptionHandler(ExternalException.class)
@@ -37,7 +37,7 @@ public class ExceptionAdvisor {
     public Response exceptionHandler(Exception e) {
         log.error("InternalException:", e);
         return new Response(ResponseCodeType.INTERNAL_ERROR,
-                            e.getMessage(),
-                            e.getCause());
+                e.getMessage(),
+                e.getCause());
     }
 }

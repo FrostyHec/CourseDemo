@@ -1,31 +1,39 @@
 package org.frosty.server.services.user;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+import org.frosty.server.entity.bo.User;
+import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.event.delete_event.UserDeleteEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    private final ApplicationEventPublisher eventPublisher;
+
+import java.util.List;
+
+
+public interface UserService {
+
 
     // TODO example for event mechanism to handle delete
-    public void deleteUserById(Long userId) {
-        publishDeleteUser(userId);
-    }
+    void deleteUserById(Long userId);
 
-    public void publishDeleteUser(Long userId){
-        eventPublisher.publishEvent(new UserDeleteEvent(this, userId));
-    }
+    void publishDeleteUser(Long userId);
 
-    @EventListener
-    public void handleUserDeleteEvent(UserDeleteEvent event) {
-        log.info("user_deleted");
-    }
 
-    public void create(String username, String password) {
-    }
+
+
+
+    void updateUser(Long id, User updatedUser);
+
+    User findById(Long id);
+
+    void deleteUser(Long id);
+
+    User findPublicInfoById(Long id);
+
+
+    List<User> searchByRealName(String firstName, String lastName,int pageNum, int pageSize);
+
+    void handleUserDeleteEvent(UserDeleteEvent event);
+
+    void insertUser(User user);//
+
+    List<UserPublicInfo> searchUser(String firstName, String lastName, int pageNum, int pageSize);
 }

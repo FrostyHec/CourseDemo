@@ -58,7 +58,7 @@ const tableData = ref<CourseEntity[]>([
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
     publication: Publication.open,
-    evaluationType: EvaluationType.practice
+    evaluation_type: EvaluationType.practice
   }
 ]);
 

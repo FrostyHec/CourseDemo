@@ -104,7 +104,7 @@ const courses = ref<CourseEntity[]>([
   course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
   status: CourseStatus.submitted,
   publication: Publication.open,
-  evaluationType: EvaluationType.practice
+  evaluation_type: EvaluationType.practice
 }
 ]);
 const courseForm = ref<CourseEntity>({
@@ -114,7 +114,7 @@ const courseForm = ref<CourseEntity>({
   teacher_id: authStore.user.user_id,
   status: CourseStatus.submitted,
   publication: Publication.open,
-  evaluationType: EvaluationType.practice,
+  evaluation_type: EvaluationType.practice,
   created_at: new Date(),
   updated_at: new Date(),
 });

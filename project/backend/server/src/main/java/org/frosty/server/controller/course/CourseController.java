@@ -9,6 +9,7 @@ import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.services.course.CourseService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -21,23 +22,21 @@ public class CourseController {
     @PostMapping("/course")
     public Response createCourse(@RequestBody Course course) {
         courseService.createCourse(course);
-        return Response.getSuccess("Course created successfully");
+        return Response.getSuccess(course);
     }
 
     @PatchMapping("course/{id}/status")
-    public Response updateCourseStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {
+    public void updateCourseStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {
         String status = statusMap.get("status");
         courseService.updateCourseStatus(id, status);
-        return Response.getSuccess("Course status updated successfully");
     }
 
     @PutMapping("course/{id}")
-    public Response updateCourse(@PathVariable Long id, @RequestBody Course course) {
+    public void updateCourse(@PathVariable Long id, @RequestBody Course course) {
         // 确保忽略前端传递的敏感字段，如 id 和 status
         course.setCourseId(id);
         course.setStatus(null);
         courseService.updateCourse(id, course);
-        return Response.getSuccess("Course updated successfully");
     }
 
 
@@ -47,21 +46,38 @@ public class CourseController {
         return Response.getSuccess(course);
     }
 
-    @GetMapping("teacher/{id}/courses")
-    public Response findCoursesByTeacherId(@PathVariable Long id) {
-        List<Course> courses = courseService.findCoursesByTeacherId(id);
-        return Response.getSuccess(new CourseList(courses));
+    @GetMapping("/course/search")
+    public Response searchPublicCourse(int page_num, int page_size, String name) {
+        if (page_size < -1 || page_num < 0) {
+            return Response.getBadRequest("Page parameter error");
+        }
+
+        return Response.getSuccess(new CourseList(
+                courseService.searchPublicCourse(page_num, page_size, name)));
     }
-    @GetMapping("/admin/{id}/courses/submitted")
-   public Response adminGetRequiredApprovedCourse (@PathVariable Long id){
-        List<Course> courses = courseService.adminGetRequiredApprovedCourse(id);
-        return Response.getSuccess(new CourseList(courses));
+
+    @DeleteMapping("/course/{id}")
+    public void deleteCourse(@PathVariable Long id) {
+        courseService.deleteCourse(id);
+    }
+
+    @PatchMapping("/course/{id}/publication")
+    public void updateCoursePublication(@PathVariable Long id, @RequestBody PublicationStatus publicationStatus) {
+        courseService.updateCoursePublication(id, publicationStatus.getPublication().name());
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CourseList{
-        List<Course> content;
+    public static class CourseList {
+        private List<Course> content;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PublicationStatus {
+        private Course.PublicationType publication;
+    }
+
 }

@@ -92,7 +92,7 @@ const course = ref<CourseEntity[]>([
     updated_at: new Date(),
     status: CourseStatus.published,
     publication: Publication.open,
-    evaluationType: EvaluationType.practice,
+    evaluation_type: EvaluationType.practice,
   },
 ]);
 

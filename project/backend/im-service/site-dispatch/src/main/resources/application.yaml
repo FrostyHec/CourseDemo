@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: site-dispatch
+  profiles:
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+server:
+  port: 9972
