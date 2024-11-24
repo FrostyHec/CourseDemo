@@ -77,4 +77,15 @@ public class CourseEvaluationAPI {
         var resultActions = getAllEvaluations(token, courseId, pageSize, pageNum);
         return MockUtil.getSuccessResponse(resultActions, CourseEvaluationController.CourseEvaluationList.class).getContent();
     }
+
+    // Get course evaluation metadata
+    public ResultActions getEvaluationMetadata(String token, Long courseId) throws Exception {
+        String url = courseBaseUrl + "/" + courseId + "/evaluations/metadata";
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(url);
+        return mockUtil.performRequest(requestBuilder, token, null);
+    }
+    public CourseEvaluationController.CourseEvaluationMetadata getEvaluationMetadataSuccess(String token, Long courseId) throws Exception {
+        var resultActions = getEvaluationMetadata(token, courseId);
+        return MockUtil.getSuccessResponse(resultActions, CourseEvaluationController.CourseEvaluationMetadata.class);
+    }
 }

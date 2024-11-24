@@ -98,6 +98,7 @@ public class CourseMemberController {
                 courseMemberService.getSubmittedCourses(page_num, page_size)));
     }
 
+    // 管理员获取已审核的课程列表
     @GetMapping("/admin/{id}/courses/handle")
     public Response getPublicCourses(@PathVariable Long id,
                                         @RequestParam int page_num,
@@ -109,17 +110,23 @@ public class CourseMemberController {
         return Response.getSuccess(new CourseList(
                 courseMemberService.getHandledCourse(page_num, page_size)));
     }
+
+    // 修改学生在课程中的状态
     @PutMapping("/course/{id}/student/{studentId}/status")
-    public void updateStudentEnrollStatus(@PathVariable String id,
-                                          @PathVariable String studentId,
+    public void updateStudentEnrollStatus(@PathVariable Long id,
+                                          @PathVariable Long studentId,
                                           @RequestBody StudentStatusDTO studentStatusDTO) {
-        FrameworkUtils.notImplemented();// TODO
+        if(studentStatusDTO.getStatus() == null) {
+            throw new ExternalException(Response.getBadRequest("Status is null"));
+        }
+        courseMemberService.updateStudentEnrollStatus(id, studentId, studentStatusDTO.getStatus());
     }
 
+    // 教师删除课程中的学生
     @DeleteMapping("/course/{id}/student/{studentId}")
     public void removeStudentFromCourse(@PathVariable Long id,
                                         @PathVariable Long studentId) {
-        FrameworkUtils.notImplemented();// TODO
+        courseMemberService.removeStudentFromCourse(id, studentId);
     }
 
 

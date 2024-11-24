@@ -8,6 +8,7 @@ import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.po.StudentWithEnrollStatus;
 import org.frosty.server.test.controller.auth.AuthUtil;
+import org.frosty.server.test.testutils.MockUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ public class CourseMemberAPI {
     private final ObjectMapper objectMapper;
     private final AuthUtil AuthUtil;
     private final String courseBaseUrl = PathConstant.API + "/course";
+    private final MockUtil mockUtil;
 
     // 提取通用的Success处理
     public static <T> T getSuccessResponse(ResultActions resultActions, Class<T> responseType) throws Exception {
@@ -77,7 +79,7 @@ public class CourseMemberAPI {
 
     public List<StudentWithEnrollStatus> getStudentListSuccess(String token, Long courseId, int pageNum, int pageSize) throws Exception {
         var resultActions = getStudentList(token, courseId, pageNum, pageSize);
-        return getSuccessResponse(resultActions, CourseMemberController.StudentStatusList.class).getStudentList();
+        return getSuccessResponse(resultActions, CourseMemberController.StudentStatusList.class).getContent();
     }
 
     // 获取学生加入的课程
@@ -134,4 +136,27 @@ public class CourseMemberAPI {
         var resultActions = getSubmittedCourses(adminToken, adminId, pageNum, pageSize);
         return getSuccessResponse(resultActions, CourseMemberController.CourseList.class).getContent();
     }
+
+    // 修改学生在课程中的状态
+    public ResultActions updateStudentEnrollStatus(String token, Long courseId, Long studentId, CourseMemberController.StudentStatusDTO studentStatusDTO) throws Exception {
+        String url = courseBaseUrl + "/" + courseId + "/student/" + studentId + "/status";
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put(url);
+        return mockUtil.performRequest(requestBuilder, token, studentStatusDTO);
+    }
+
+    public void updateStudentEnrollStatusSuccess(String token, Long courseId, Long studentId, CourseMemberController.StudentStatusDTO studentStatusDTO) throws Exception {
+        updateStudentEnrollStatus(token, courseId, studentId, studentStatusDTO).andExpect(RespChecker.success());
+    }
+
+    // 删除学生在课程中
+    public ResultActions deleteStudentFromCourse(String token, Long courseId, Long studentId) throws Exception {
+        String url = courseBaseUrl + "/" + courseId + "/student/" + studentId;
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete(url);
+        return performRequest(requestBuilder, token, null);
+    }
+
+    public void deleteStudentFromCourseSuccess(String token, Long courseId, Long studentId) throws Exception {
+        deleteStudentFromCourse(token, courseId, studentId).andExpect(RespChecker.success());
+    }
+
 }
