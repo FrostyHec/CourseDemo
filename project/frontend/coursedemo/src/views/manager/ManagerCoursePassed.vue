@@ -42,7 +42,7 @@ import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore();
 
 onMounted(async () => {
-    fetchCourses();
+    fetchCourses;
 });
 
 const currentPage = 1;
@@ -61,7 +61,7 @@ const navigateTo = (path: string) => {
 };
 const fetchCourses = async () => {
 try {
-    const response = await getAllPendingApprovedCourse(authStore.user.user_id, currentPage.value, pageSize.value);
+    const response = await getAllPendingApprovedCourse(authStore.user.user_id, currentPage, pageSize);
     courses.value = response.data.content;
 } catch (error) {
     console.error('获取课程列表失败:', error);
