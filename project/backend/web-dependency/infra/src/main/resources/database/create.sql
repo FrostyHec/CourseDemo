@@ -64,7 +64,7 @@ CREATE TABLE courses
     created_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL, -- 课程创建时间
     updated_at           TIMESTAMP WITH TIME ZONE                                                                     NOT NULL,
     publication          VARCHAR(20) CHECK (publication IN ('open', 'closed', 'semi_open'))                           NOT NULL,
-    evaluation_form_type BIGSERIAL                                                                                    NOT NULL  --如果设置为0则无教评版本
+    evaluation_type  VARCHAR                                                                                  NOT NULL  --如果设置为0则无教评版本
     -- 课程可见性
     -- FOREIGN KEY (teacher_id) REFERENCES Users (user_id) ON DELETE CASCADE         -- 教师ID外键，已注释
 );

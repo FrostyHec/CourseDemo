@@ -15,7 +15,7 @@ import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(PathConstant.API+"resource/{id}/watch")
+@RequestMapping(PathConstant.API+"/resource/{id}/watch")
 @RequiredArgsConstructor
 public class CheatCheckController {
     private final CheatCheckService cheatCheckService;
@@ -56,7 +56,7 @@ public class CheatCheckController {
 
     @GetMapping("/stop")
     public void stopWatchAlive(@PathVariable Long id,
-                                            @GetToken TokenInfo tokenInfo,@RequestBody WatchedInfoEntity watchedInfoEntity) {
+                                            @GetToken TokenInfo tokenInfo,@RequestParam WatchedInfoEntity watchedInfoEntity) {
         var auth = AuthEx.checkPass(tokenInfo);
         cheatCheckService.stopWatchAlive(id,auth,watchedInfoEntity);
     }
