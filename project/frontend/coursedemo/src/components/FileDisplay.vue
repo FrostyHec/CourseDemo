@@ -35,6 +35,7 @@ async function load_resource(suffix: string, file_name: string, access_key: stri
   const type_and_name = suffix.split(':')
   const type = type_and_name[0]
   const name = type_and_name[1]
+  console.log(name)
   link.value = ''
   resource_type.value = undefined
   if(is_attachment) {
@@ -61,8 +62,8 @@ async function load_resource(suffix: string, file_name: string, access_key: stri
     return
   }
   if(resource_type.value=='pdf') {
-    const bin = (await axios({method: 'get', url: l})).data
-    link.value = URL.createObjectURL(bin)
+    const bin = (await axios({method: 'get', url: l, responseType: 'blob'})).data
+    link.value = URL.createObjectURL(new Blob([bin], {type: 'application/pdf; chartset=UTF-8'}))
     return
   }
   link.value = l

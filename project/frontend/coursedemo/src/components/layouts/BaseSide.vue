@@ -78,7 +78,8 @@ const student_table_ref = ref()
 const student_enroll_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
-  const cnt = (node.data as UnifyTree).children.length
+  const children = (node.data as UnifyTree).children
+  const cnt = children[children.length-1].order + 1
   const data = (node.data as UnifyTree).data
   if(mode=='Edit')
     form_store.open_form(data, mode)
@@ -116,9 +117,10 @@ async function to_top(node: Node) {
   form_store.resource_form.resource_name = parent.resource_name
   form_store.resource_form.resource_order = parent.resource_order
   form_store.resource_form.resource_version_order = parent.resource_version_order - 1
-  if(await form_store.modify_resource())
+  if(await form_store.modify_resource()) {
     handleClick(null, node.parent)
-  else {
+    course_store.load_from_route(true)
+  } else {
     ElMessage({
       message: 'To top network error',
       type: 'error',
@@ -181,19 +183,23 @@ const allowDrag = (draggingNode: Node) => {
 }
 const handleDrop = async (
   draggingNode: Node,
+  p: Node,
 ) => {
-  const parent = draggingNode.parent.data as UnifyTree
+  const parent = p.parent.data as UnifyTree
   let min = (draggingNode.level==4 && ('resource_name' in parent.data)) 
             ? parent.data.resource_version_order : -1
+  console.log(parent.children)
   for(const sub of parent.children) {
     if(sub.order<=min) {
       min += 1
       let msg
       if('chapter_title' in sub.data) {
+        console.log(min)
         sub.data.chapter_order = min
         msg = await updateChapterCall(sub.data.chapter_id, sub.data)
       }
       if('resource_name' in sub.data) {
+        console.log(min)
         if(draggingNode.level!=4) {
           sub.data.resource_order = min
           for(const subsub of sub.children)

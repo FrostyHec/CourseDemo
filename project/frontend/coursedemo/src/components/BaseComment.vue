@@ -55,7 +55,7 @@
           <el-button 
             style="margin-top: 10px; text-align: left; width: 200px;"
             tag='a'
-            :herf="getResourceAccessLink(r.resource_entity.file_name, auth_store.user.user_id, r.access_key)"
+            :href="getResourceAccessLink(r.resource_entity.file_name, auth_store.user.user_id, r.access_key)"
             :download="r.resource_entity.suffix.split(':')[1]"
           >
             <span i="ep-link" style="margin-right: 6px;"/>{{ r.resource_entity.resource_name }}
@@ -86,24 +86,13 @@
             </el-button>
           </el-popover>
 
-          <el-popover v-if="c.user.user_id===auth_store.user.user_id" placement="bottom-start" :width="400" trigger="click" :hide-after="0" transition="None">
-            <template #reference>
-              <el-link type="primary" :underline="false" style="font-size: small;">Attach</el-link>
-            </template>
-            <el-input
-              v-model="resource_name"
-              placeholder="Please enter a name"
-              style="margin-bottom: 10px;"
-            />
-            <file-uploader ref="uploader"/>
-            <div style="margin: 10px;"></div>
-            <el-button type="primary" @click="send_comment(c.comment_id)">
-              Send
-            </el-button>
-            <el-button @click="uploader?.clear(); resource_name=''">
-              Reset
-            </el-button>
-          </el-popover>
+          <el-link 
+            v-if="c.user.user_id===auth_store.user.user_id" 
+            type="primary" :underline="false" style="font-size: small;"
+            @click="current_comment = c.comment_id; attach_visibility=true;"
+          >
+            Attach
+          </el-link>
 
         </div>
       </div>
@@ -112,6 +101,25 @@
     <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
   
   </div>
+
+  <el-dialog 
+    v-model="attach_visibility" 
+    title="Upload an attach" 
+    width="600">
+    <el-input
+      v-model="resource_name"
+      placeholder="Please enter a name"
+      style="margin-bottom: 10px;"
+    />
+    <file-uploader ref="uploader"/>
+    <div style="margin: 10px;"></div>
+    <el-button type="primary" @click="submit()">
+      Send
+    </el-button>
+    <el-button @click="uploader?.clear(); resource_name=''">
+      Reset
+    </el-button>
+  </el-dialog>
 </template>
 
 <script lang='ts' setup>
@@ -205,19 +213,22 @@ async function send_comment(reply_id?: number) {
   await load_comments()
 }
 
+let current_comment = 0;
+const attach_visibility = ref(false)
 const uploader = ref()
 const resource_name = ref('')
-async function submit(comment_id: number) {
+async function submit() {
+  console.log('load_comments', uploader.value.file_get)
   if(uploader.value?.file_get===undefined || resource_name.value=='')
     return
   const file_submit: CommentResource = {
     id: 0,
-    comment_id: comment_id,
+    comment_id: current_comment,
     resource_name: resource_name.value,
     file_name: '',
     suffix: uploader.value.file_get.type+':'+uploader.value.file_get.name,
   }
-  const msg = await uploadFilesCall(comment_id, file_submit, uploader.value.file_get)
+  const msg = await uploadFilesCall(current_comment, file_submit, uploader.value.file_get)
   if(msg.code!==200) {
     ElMessage({
       message: 'Assignment submit network error',
@@ -225,6 +236,8 @@ async function submit(comment_id: number) {
     })
     return
   }
+  console.log('load_comments')
+  attach_visibility.value = false
   await load_comments()
 }
 

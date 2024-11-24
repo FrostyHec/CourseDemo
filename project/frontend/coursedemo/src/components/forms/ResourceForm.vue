@@ -3,7 +3,7 @@
     v-model="form_store.resource_visibility" 
     :title="form_store.mode+(form_store.resource_mode=='init' ? '' : ' a new version of ')+' the resource'" 
     width="600"
-    @closed="() => { formRef?.resetFields(); uploader?.clear() }">
+    @closed="() => { formRef?.resetFields(); uploader?.clear(); video_len=undefined; }">
     
     <el-form
       ref="formRef"
@@ -124,13 +124,13 @@ const formRef = ref<FormInstance>()
 const submitForm = async (formIn: FormInstance | undefined) => {
   if (!formIn) return
   await formIn.validate(async (valid) => {
-    if(!valid || uploader.value?.file_get===undefined) {
+    if(!valid || (uploader.value?.file_get===undefined && form_store.mode=='Add')) {
       console.log('error submit!')
       return
     }
-    form_store.resource_form.suffix = uploader.value.file_get.type+':'+uploader.value.file_get.name
-    console.log(form_store.resource_form.suffix)
-    const id = await form_store.modify_resource(uploader.value.file_get)
+    if(uploader.value?.file_get!==undefined)
+      form_store.resource_form.suffix = uploader.value.file_get.type+':'+uploader.value.file_get.name
+    const id = await form_store.modify_resource(uploader.value?.file_get)
     if(id==undefined) {
       ElMessage({
         message: 'Network error',

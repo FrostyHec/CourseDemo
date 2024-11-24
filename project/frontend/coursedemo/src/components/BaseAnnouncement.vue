@@ -10,17 +10,19 @@
     </div>
 
     <div v-if="course_store.current_course_teacher()===auth_store.user.user_id" style="width: 100%; margin-top: 18px;">
+      <el-input v-model="new_title" placeholder="Announcement title"/>
       <el-input
         v-model="new_announcement"
         :autosize="{ minRows: 4 }"
         type="textarea"
         placeholder="Add an announcement ..."
+        style="margin-top: 10px;"
       />
       <div style="margin: 10px;"></div>
       <el-button type="primary" @click="send_announcement">
         Send
       </el-button>
-      <el-button @click="new_announcement = ''">
+      <el-button @click="new_announcement=''; new_title=''">
         Reset
       </el-button>
       <el-button @click="dialog_visibility = true">
@@ -33,9 +35,11 @@
         <div style="overflow: hidden; display: flex; align-items: center; gap: 8px;">
           <div i="ep-bell"/>
           <span style="line-height: 1.5; white-space-collapse: break-spaces; font-weight: 600;">
-            {{ c.message }}
+            {{ c.title }}
           </span>
         </div>
+
+        <div style="margin: 15px; margin-top: 5px; color: var(--ep-color-primary);">{{ c.message }}</div>
 
         <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
           <div style="color: var(--ep-text-color-placeholder); width: 130px;">  
@@ -69,12 +73,12 @@
       <el-table :data="student_list" height="400">
         <el-table-column label="Name">
           <template #default="scope: {row: {student: StudentInfoWithEnrollStatus, select: boolean}}">
-            {{ scope.row.student.first_name+' '+scope.row.student.last_name }}
+            {{ scope.row.student.student.first_name+' '+scope.row.student.student.last_name }}
           </template>
         </el-table-column>
         <el-table-column label="Email">
           <template #default="scope: {row: {student: StudentInfoWithEnrollStatus, select: boolean}}">
-            {{ scope.row.student.email }}
+            {{ scope.row.student.student.email }}
           </template>
         </el-table-column>
         <el-table-column label="">
@@ -112,14 +116,7 @@ const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const is_course = ref(false)
 let current_course_id = -1
-const announcements = ref<AnnouncementEntity[]>([{
-  notification_id: 0, course_id: 0, receiver_ids: [], message: 'enjoy!!!',
-  created_at: new Date(), updated_at: new Date()
-}, {
-  notification_id: 1, course_id: 0, receiver_ids: [], message: 'OOAD',
-  created_at: new Date(), updated_at: new Date()
-},
-])
+const announcements = ref<AnnouncementEntity[]>([])
 
 async function load_announcements() {
   announcements.value = []
@@ -148,16 +145,18 @@ const watch_current_data = watch(() => course_store.current_data?.data,
 )
 
 const new_announcement = ref('')
+const new_title = ref('')
 const student_list = ref<{student: StudentInfoWithEnrollStatus, select: boolean}[]>([])
 async function send_announcement() {
-  if(new_announcement.value==='')
+  if(new_announcement.value==='' || new_title.value==='')
     return
   const msg = await createAnnouncementCall(current_course_id, {
+    title: new_title.value,
     notification_id: 0, course_id: current_course_id, 
     receiver_ids: student_list.value.reduce<number[]>(
     (pre, cur) => {
       if(cur.select)
-        pre.push(cur.student.user_id)
+        pre.push(cur.student.student.user_id)
       return pre
     }
     , []),
@@ -172,6 +171,7 @@ async function send_announcement() {
     return
   }
   new_announcement.value = ''
+  new_title.value = ''
   await load_announcements()
 }
 

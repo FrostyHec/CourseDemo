@@ -109,8 +109,8 @@ export async function get_all(course_id: number): Promise<AllInOneEntity|undefin
       .map(unpack_resource)
       .sort((a, b) => {
         if(a.resource_order===b.resource_order)
-          return b.resource_version_order - a.resource_version_order
-        return b.resource_order - a.resource_order
+          return a.resource_version_order - b.resource_version_order
+        return a.resource_order - b.resource_order
       })
     const resource_all_list: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]}[] = []
     let current: {top: ResourceEntityPlus, vers: ResourceEntityPlus[]} | undefined = undefined

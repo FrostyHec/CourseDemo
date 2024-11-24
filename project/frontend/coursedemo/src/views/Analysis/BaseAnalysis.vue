@@ -27,7 +27,10 @@
         {{ data?.assignment.total_chapter_count }}
       </p>
     </div>
-    <el-button style="float: right; margin-top: -12px;">
+    <el-button 
+      style="float: right; margin-top: -12px;"
+      @click="router.push('')"
+    >
       View details<span style="margin-right: -12px; margin-left: 5px;" i="ep-arrow-right"/>
     </el-button>
     Completed

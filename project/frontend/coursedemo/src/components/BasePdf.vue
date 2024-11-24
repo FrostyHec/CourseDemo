@@ -19,20 +19,21 @@ const p = defineProps({
 })
 const props = toRef(p)
 
-const watch_pdf = props.value.resource_id===undefined ? undefined : setInterval(async () => {
-  const app = pdf_ref.value?.contentWindow?.PDFViewerApplication
-  if(app===undefined)
-    return
-  if(props.value.resource_id && app.page===app.pagesCount)  {
-    // await completeResourceCall(props.value.resource_id)
-  }
-}, 500)
+// const watch_pdf = props.value.resource_id===undefined ? undefined : setInterval(async () => {
+//   const app = pdf_ref.value?.contentWindow?.PDFViewerApplication
+//   if(app===undefined)
+//     return
+//   if(props.value.resource_id && app.page===app.pagesCount)  {
+//     // await completeResourceCall(props.value.resource_id)
+//   }
+// }, 500)
 
 let last_link = ''
 const watch_page = setInterval(() => {
     const app = pdf_ref.value?.contentWindow?.PDFViewerApplication
     if(last_link!=props.value.link) {
       last_link = props.value.link
+      console.log(last_link)
       const save = Cookies.get('pdf-save: '+last_link)
       if(save!==undefined && app!==undefined)
         app.page = Number(save)
@@ -44,8 +45,8 @@ const watch_page = setInterval(() => {
 
 onUnmounted(() => {
   clearInterval(watch_page)
-  if(watch_pdf!==undefined)
-    clearInterval(watch_pdf)
+  // if(watch_pdf!==undefined)
+  //   clearInterval(watch_pdf)
 })
 
 </script>
