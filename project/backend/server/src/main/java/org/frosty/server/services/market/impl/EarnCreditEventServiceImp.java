@@ -1,5 +1,7 @@
 package org.frosty.server.services.market.impl;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.server.controller.course.CommentController;
@@ -15,6 +17,8 @@ import org.frosty.server.services.course.CourseService;
 import org.frosty.server.services.market.EarnCreditEventService;
 import org.frosty.server.services.market.MarketHistoryService;
 import org.frosty.server.services.market.MarketService;
+import org.frosty.sse.constant.MessageBodyType;
+import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -33,7 +37,6 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
 
     @Override
     public void handleCourseComplete(CompleteCourseEvent event) {
-        // TODO: 补全消息通知
         // 获取用户ID和课程ID
         Long userId = event.getStudentId();
         Long courseId = event.getCourseId();
@@ -63,6 +66,20 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
         marketHistoryService.insertCourseCompleteHistory(consumeRecord);
         marketService.addUserMarketScore(userId, EarnCreditEventHandler.ScoreRule.COMPLETE_COURSE.getScore());
 
+
+        // 构建消息通知
+        ObjectNode body = JsonNodeFactory.instance.objectNode();
+        body.put("type", "complete-course");
+        body.put("count", changedScore);
+
+        SiteMessage message = SiteMessage.getSimpleSystemNewMessage(
+                userId,
+                MessageBodyType.receive_credits,
+                body
+        );
+
+        // 推送消息
+        messagePushService.pushSite(message);
     }
 
     @Override
@@ -80,7 +97,6 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
                 .map(earliestTime -> earliestTime.equals(resourceComment.getCreatedAt()))
                 .orElse(false);
 
-        // TODO: 补全消息通知
         // 如果是最早评论，则处理积分逻辑
         if (isEarliestComment) {
             Long userId = resourceComment.getUserId();
@@ -105,14 +121,27 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
                     .setActionType(ConsumeRecord.ConsumeActionType.daily_comment)
                     .setActionParam(actionParam)
                     .setChangedScore(changedScore)
-                    .setRemainScore(remainScore)
-                    .setCreatedAt(OffsetDateTime.now());
+                    .setRemainScore(remainScore);
 
             marketHistoryService.insertDailyCommentHistory(consumeRecord);
             marketService.addUserMarketScore(
                     userId,
                     EarnCreditEventHandler.ScoreRule.DAILY_COMMENT.getScore()
             );
+
+            // 构建消息通知
+            ObjectNode body = JsonNodeFactory.instance.objectNode();
+            body.put("type", "daily-comment");
+            body.put("count", changedScore);
+
+            SiteMessage message = SiteMessage.getSimpleSystemNewMessage(
+                    userId,
+                    MessageBodyType.receive_credits,
+                    body
+            );
+
+            // 推送消息
+            messagePushService.pushSite(message);
         }
 
     }
