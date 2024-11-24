@@ -28,7 +28,7 @@ const router = createRouter({
       component: () => import('@/views/Analysis/OverallScore.vue')
     },
     {
-      path: '/analysis/warning/:course_id(\\d+)',
+      path: '/analysis/warnings/:course_id(\\d+)',
       component: () => import('@/views/Analysis/StudentWarning.vue')
     },
     {
@@ -49,8 +49,12 @@ const router = createRouter({
       component: () => import('@/views/MyAnalysis/OverallScore.vue')
     },
     {
-      path: '/my-analysis/progresses/:course_id(\\d+)',
+      path: '/my-analysis/progress/:course_id(\\d+)',
       component: () => import('@/views/MyAnalysis/BaseCompleted.vue')
+    },
+    {
+      path: '/my-analysis/warnings/:course_id(\\d+)',
+      component: () => import('@/views/MyAnalysis/StudentWarning.vue')
     },
 
     {

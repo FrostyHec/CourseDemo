@@ -120,16 +120,17 @@ export const useFormStore = defineStore('form', () => {
       msg = await updateChapterCall(chapter_form.value.chapter_id, chapter_form.value)
     return msg.code==200
   }
-  async function modify_resource(file?: File): Promise<boolean> {
-    let msg
+  async function modify_resource(file?: File): Promise<number|undefined> {
     if(mode.value=='Add') {
       if(!file)
-        return false
-      msg = await uploadResourceCall(resource_form.value.chapter_id, resource_form.value, file)
+        return undefined
+      const msg = await uploadResourceCall(resource_form.value.chapter_id, resource_form.value, file)
+      return msg.code==200 ? msg.data.resource_id : undefined
     }
-    else
-      msg = await updateResourceMetadataCall(resource_form.value.resource_id, resource_form.value)
-    return msg.code==200
+    else {
+      const msg = await updateResourceMetadataCall(resource_form.value.resource_id, resource_form.value)
+      return msg.code==200 ? 1 : undefined
+    }
   }
   async function modify_assignment(): Promise<boolean> {
     let msg

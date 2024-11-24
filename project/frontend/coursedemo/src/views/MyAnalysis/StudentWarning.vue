@@ -25,11 +25,17 @@
           {{ (new Date(scope.row.date)).toLocaleString() }}
         </template>
       </el-table-column>
+      <el-table-column label="Assignment">
+        <template #default="scope: {row: WarningInfoWithName}">
+          {{ (scope.row.description as AssignmentEntity).assignment_name }}
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 <script setup lang="ts">
 import { get_all_students_score_call, get_all_students_warning_call, get_my_warning_call, WarningType, type StudentsScoreTable, type WarningInfo } from '@/api/course/analysis/StudyAnalysisAPI';
+import type { AssignmentEntity } from '@/api/course/AssignmentAPI';
 import { getCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
 import { getUserPublicInfoCall, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 import { ElMessage, type TableColumnCtx } from 'element-plus';

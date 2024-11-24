@@ -22,7 +22,10 @@
     
   <div v-for="c in list" :key="c.chapter.chapter.chapter_id" style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px; overflow: hidden;">
 
-    <el-button style="float: right;" @click="table_visibility=true; table_data=c.detail.completed_status_list">View details</el-button>
+    <el-button 
+      style="float: right;" @click="
+      table_visibility=true; table_data=c.detail.completed_status_list; new_announcement=`Please do the homework of chapter ${c.chapter.chapter.chapter_title}`"
+    >View details</el-button>
     <el-button
       style="float: right; margin-right: 20px;"
       @click="router.push('/course' + '/' + course_data?.course_id + '/' + c.chapter.chapter.chapter_title.replace(/ /g, '-'))">
@@ -90,10 +93,26 @@
     </el-table-column>
   </el-table>
 
+  <el-input
+    v-model="new_announcement"
+    :autosize="{ minRows: 3 }"
+    type="textarea"
+    placeholder="Add an announcement ..."
+    style="margin-top: 10px;"
+  />
+  <template #footer>
+    <el-button 
+    @click="send_announcement(
+      table_data
+        .filter((v)=>!v.is_completed)
+        .map((v)=>v.student.user_id)
+    )">Send announcement to uncompleted students</el-button>
+  </template>
 </el-dialog>
 </template>
 <script setup lang="ts">
 import { get_all_students_score_call, get_all_students_warning_call, teacher_check_chapter_study_situation_call, teacher_check_course_study_situation_call, WarningType, type CourseStudySituation, type ScoreChapter, type ScoreCompletedStatus, type SingleChapterInfo, type StudentsScoreTable, type WarningInfo } from '@/api/course/analysis/StudyAnalysisAPI';
+import { createAnnouncementCall } from '@/api/course/AnnouncementAPI';
 import { getCourseCall, type CourseEntity } from '@/api/course/CourseAPI';
 import { getUserPublicInfoCall, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 import { ElMessage, type TableColumnCtx } from 'element-plus';
@@ -108,7 +127,7 @@ const course_data = ref<CourseEntity>()
 const list = ref<{ chapter: SingleChapterInfo, detail: ScoreChapter }[]>([])
 
 const table_visibility = ref(false)
-const table_data = ref<ScoreCompletedStatus[]>()
+const table_data = ref<ScoreCompletedStatus[]>([])
 
 async function load() {
   const msg = await teacher_check_course_study_situation_call(course_id)
@@ -146,5 +165,30 @@ const watch_id = watch(() => route.params.course_id,
   },
   {immediate: true}
 )
+
+const new_announcement = ref('')
+async function send_announcement(student_list: number[]) {
+  if(new_announcement.value==='')
+    return
+  const msg = await createAnnouncementCall(course_id, {
+    notification_id: 0, course_id: course_id, 
+    receiver_ids: student_list,
+    message: new_announcement.value, 
+    created_at: new Date(), updated_at: new Date(),
+  })
+  if(msg.code!=200) {
+    ElMessage({
+      message: 'send announcement network error',
+      type: 'error',
+    })
+    return
+  }
+  else {
+    ElMessage({
+      message: 'success',
+      type: 'success',
+    })
+  }
+}
 
 </script>
