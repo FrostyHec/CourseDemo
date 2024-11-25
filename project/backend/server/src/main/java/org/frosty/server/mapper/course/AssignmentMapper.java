@@ -1,10 +1,7 @@
 package org.frosty.server.mapper.course;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.frosty.server.entity.bo.Assignment;
 
 import java.util.List;
@@ -37,4 +34,13 @@ public interface AssignmentMapper extends BaseMapper<Assignment> {
 
     @Select("SELECT * FROM assignments where assignments.chapter_id =#{id}")
     List<Assignment> selectAssignmentsByChapterId(Long id);
+
+
+
+
+
+    @Select("SELECT a.* FROM assignments a " +
+            "JOIN chapters c ON a.chapter_id = c.chapter_id " +
+            "WHERE c.course_id = #{cid}")
+    List<Assignment> getAssignmentsByCourseId(Long cid);
 }

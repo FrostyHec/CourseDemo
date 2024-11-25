@@ -26,6 +26,10 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id = #{id}")
     UserPublicInfo findPublicInfoById(Long id);
 
+    // 查询多个用户的公开信息
+    @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id IN (#{ids})")
+    List<UserPublicInfo> findPublicInfoByIds(List<Long> ids);
+
     /**
      * 根据输入的关键词在用户的姓名（first_name 和 last_name）中进行搜索，
      * 查找包含所有指定关键词的用户。

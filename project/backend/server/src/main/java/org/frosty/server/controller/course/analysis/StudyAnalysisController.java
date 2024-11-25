@@ -7,6 +7,7 @@ import org.frosty.common.constant.PathConstant;
 import org.frosty.server.entity.bo.Assignment;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.po.UserPublicInfo;
+import org.frosty.server.services.course.analysis.StudyAnalysisService;
 import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,48 +18,65 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(PathConstant.API+ "/course/{cid}/study/analysis")
+@RequestMapping(PathConstant.API + "/course/{cid}/study/analysis")
 @RequiredArgsConstructor
 public class StudyAnalysisController {
+    private final StudyAnalysisService studyAnalysisService;
+
     @GetMapping("/students-warning")
-    public WarningInfoList getAllStudentsWarning(@GetPassedToken AuthInfo auth, @PathVariable Long cid){
-        FrameworkUtils.notImplemented();
-        return null;
+    public WarningInfoList getAllStudentsWarning(@GetPassedToken AuthInfo auth, @PathVariable Long cid) {
+        //教师获取被预警学生与预警信息
+        return studyAnalysisService.getAllStudentsWarning(cid);
     }
 
     @GetMapping("/my-warning")
-    public WarningInfoList getMyWarning(@GetPassedToken AuthInfo auth, @PathVariable Long cid){
-        FrameworkUtils.notImplemented();
-        return null;
+    public WarningInfoList getMyWarning(@GetPassedToken AuthInfo auth, @PathVariable Long cid) {
+        //学生获取自己的预警信息
+        Long userId = auth.getUserID();
+        return studyAnalysisService.getMyWarning(cid, userId);
     }
+
     @GetMapping("/students-score")
-    public StudentsScoreTable getAllStudentsScore(@GetPassedToken AuthInfo auth, @PathVariable Long cid){
-        FrameworkUtils.notImplemented();
-        return null;
+    public StudentsScoreTable getAllStudentsScore(@GetPassedToken AuthInfo auth, @PathVariable Long cid) {
+        //教师获取所有学生的成绩表
+        Long userId = auth.getUserID();
+        return studyAnalysisService.getAllStudentsScore(cid, userId);
     }
+
     @GetMapping("/my-score")
-    public AssignmentChapterSituationList getMyScore(@GetPassedToken AuthInfo auth,@PathVariable Long cid){
-        FrameworkUtils.notImplemented();
-        return null;
+    public AssignmentChapterSituationList getMyScore(@GetPassedToken AuthInfo auth, @PathVariable Long cid) {
+        //学生获取自己的成绩表
+        Long userId = auth.getUserID();
+        return studyAnalysisService.getMyScore(cid, userId);
     }
+
     @GetMapping("/teacher/chapter/{cpid}")
     public ChapterStudySituation teacherCheckChapterStudySituation(@GetPassedToken AuthInfo auth,
-                                                                       @PathVariable Long cid, @PathVariable Long cpid){
-        FrameworkUtils.notImplemented();
-        return null;
+                                                                   @PathVariable Long cid, @PathVariable Long cpid) {
+        //教师查看章节学习情况
+        Long userId = auth.getUserID();
+
+        return studyAnalysisService.teacherCheckChapterStudySituation(cid, userId, cpid);
     }
 
     @GetMapping("/teacher/course")
     public CourseStudySituation teacherCheckCourseStudySituation(@GetPassedToken AuthInfo auth,
-                                                                            @PathVariable Long cid, @PathVariable Long cpid){
-        FrameworkUtils.notImplemented();
-        return null;
+                                                                 @PathVariable Long cid) {
+        //教师查看课程学习情况
+        Long userId = auth.getUserID();
+        return studyAnalysisService.teacherCheckCourseStudySituation(cid, userId);
+    }
+
+    public interface ChapterStudySituationData {
+    }
+
+    public interface WarningInfoContent {
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CourseStudySituation{
+    public static class CourseStudySituation {
         private TeachingChapterInfo teaching;
         private ScoringChapterInfo assignment;//注意这里面章节信息都只是assignment类型的
         private ScoringChapterInfo project;//注意这里面章节信息一定都只是project类型的
@@ -67,7 +85,7 @@ public class StudyAnalysisController {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class TeachingChapterInfo{
+        public static class TeachingChapterInfo {
             private Integer totalChapterCount;
             private Integer completedCount;
             private Integer maxPossibleCompletedCount;//stuCnt*chapters
@@ -76,7 +94,7 @@ public class StudyAnalysisController {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class ScoringChapterInfo{
+        public static class ScoringChapterInfo {
             private Integer totalChapterCount;
             private Integer completedCount;
             private Integer maxPossibleCompletedCount;//stuCnt*chapters
@@ -85,7 +103,7 @@ public class StudyAnalysisController {
             @Data
             @AllArgsConstructor
             @NoArgsConstructor
-            private static class SingleChapterInfo{
+            public static class SingleChapterInfo {
                 private Chapter chapter;
                 private Integer averageScore;
                 private Integer maxScore;
@@ -97,38 +115,39 @@ public class StudyAnalysisController {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class DifficultChapter{
+        public static class DifficultChapter {
             private Chapter chapter;
             private DifficultWarnInfo warningInfo;
+
             @Data
             @AllArgsConstructor
             @NoArgsConstructor
-            public static class DifficultWarnInfo{
+            public static class DifficultWarnInfo {
                 private WarningInfo.WarningType type;
                 private Double description;//完成百分比
             }
         }
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ChapterStudySituation{
+    public static class ChapterStudySituation {
         private Chapter.ChapterType chapterType;
         private ChapterStudySituationData data;
     }
 
-    public interface ChapterStudySituationData{
-    }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TeachingChapter implements ChapterStudySituationData {
         private Integer uncompletedCount;
         private List<CompletedStatus> completedStatusList;
+
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class CompletedStatus{
+        public static class CompletedStatus {
             private UserPublicInfo student;
             private Boolean isCompleted;
         }
@@ -142,10 +161,11 @@ public class StudyAnalysisController {
         private Integer ungradedCount;
         private Integer uncompletedCount;
         private List<CompletedStatus> completedStatusList;
+
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class CompletedStatus{
+        public static class CompletedStatus {
             private UserPublicInfo student;
             private Boolean isCompleted;
             private Boolean isGraded;
@@ -155,14 +175,14 @@ public class StudyAnalysisController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AssignmentChapterSituationList{
+    public static class AssignmentChapterSituationList {
         private List<AssignmentChapterSituation> content;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AssignmentChapterSituation{
+    public static class AssignmentChapterSituation {
         private Long chapterId;
         private Chapter.ChapterType chapterType;
         private String chapterName;
@@ -173,18 +193,17 @@ public class StudyAnalysisController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AssignmentSituation{
+    public static class AssignmentSituation {
         private Assignment assignment;
         private Boolean hasSubmission;
         private Boolean isGraded;
         private Integer receivedScores;
     }
 
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class StudentsScoreTable{
+    public static class StudentsScoreTable {
         private List<Assignment> column;//第M次作业，按照createdTime排序
         private List<UserPublicInfo> row;//student N
         private List<List<Integer>> data; // data[N][M]
@@ -192,12 +211,14 @@ public class StudyAnalysisController {
         private List<Integer> averageScore; // M column, each assignment 1
         private Integer averageTotalScore;
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class WarningInfoList{
+    public static class WarningInfoList {
         private List<WarningInfo> content;
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -206,21 +227,20 @@ public class StudyAnalysisController {
         private Long warningStudent;
         private WarningInfoContent description;
         private OffsetDateTime date;
+
         @Getter
         @AllArgsConstructor
-        public enum WarningType{
+        public enum WarningType {
             homework_uncompleted(AssignmentContent.class),
             low_score(AssignmentContent.class);
             private final Class<?> clazz;
         }
     }
 
-    public interface WarningInfoContent{
-    }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AssignmentContent implements WarningInfoContent{
+    public static class AssignmentContent implements WarningInfoContent {
         private Assignment assignmentEntity;
     }
 }
