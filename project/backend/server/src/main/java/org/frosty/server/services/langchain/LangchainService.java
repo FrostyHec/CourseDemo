@@ -1,6 +1,7 @@
 package org.frosty.server.services.langchain;
 
 import org.frosty.server.controller.langchain.LangchainController;
+import org.frosty.server.entity.bo.langchain.ChatHistory;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface LangchainService {
     LangchainController.ChatEntity getChatEntityById(Long id);
 
     List<LangchainController.ChatEntity> getAllMyChatMetadata(long userID);
+
+    void createNewChat(ChatHistory chatHistory);
 }

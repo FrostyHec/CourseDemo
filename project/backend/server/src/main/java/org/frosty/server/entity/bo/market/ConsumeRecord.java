@@ -28,8 +28,7 @@ public class ConsumeRecord {
     private Long recordId;
     private Long userId;
     private ConsumeActionType actionType;
-
-    @TableField(typeHandler = ActionParamTypeHandler.class)
+//    @TableField(typeHandler = ActionParamTypeHandler.class)
     private ActionParam actionParam;
 
     private Integer changedScore;

@@ -2,6 +2,7 @@ package org.frosty.server.services.langchain.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.frosty.server.controller.langchain.LangchainController;
+import org.frosty.server.entity.bo.langchain.ChatHistory;
 import org.frosty.server.mapper.langchain.LangchainMapper;
 import org.frosty.server.services.langchain.LangchainService;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,10 @@ public class LangchainServiceImpl implements LangchainService {
     @Override
     public List<LangchainController.ChatEntity> getAllMyChatMetadata(long userID) {
         return langchainMapper.selectChatListByUserId(userID);
+    }
+
+    @Override
+    public void createNewChat(ChatHistory chatHistory) {
+        langchainMapper.insert(chatHistory);
     }
 }
