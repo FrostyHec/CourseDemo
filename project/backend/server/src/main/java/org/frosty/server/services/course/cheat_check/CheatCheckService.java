@@ -1,17 +1,23 @@
 package org.frosty.server.services.course.cheat_check;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
+import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.server.controller.course.cheat_check.CheatCheckController;
 import org.frosty.server.entity.bo.cheat_check.VideoRequiredSeconds;
 import org.frosty.server.entity.bo.cheat_check.VideoWatchRecord;
 import org.frosty.server.mapper.course.cheat_check.VideoRequiredSecondsMapper;
 import org.frosty.server.mapper.course.cheat_check.VideoWatchedRecordMapper;
+import org.frosty.sse.constant.MessageBodyType;
+import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -21,6 +27,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,10 +35,12 @@ public class CheatCheckService {
     private final VideoRequiredSecondsMapper videoRequiredSecondsMapper;
     private final VideoWatchedRecordMapper videoWatchedRecordMapper;
     private final CheatCheckTransactionalService cheatCheckTransactionalService;
+    private final MessagePushService messagePushService;
+    private final ObjectMapper objectMapper;
     private final Map<Long, WatchingEntity> userEstablishedWatchingRecord = new ConcurrentHashMap<>();
     // let testing can modify by reflection(instead of being a constant)
-    private static final int RECORD_ALIVE_SECONDS =Integer.valueOf(5 * 60);
-    private static final int HEART_BEAT_INTERVAL_SECONDS =Integer.valueOf(60);
+    private static final int RECORD_ALIVE_SECONDS = Integer.valueOf(5 * 60);
+    private static final int HEART_BEAT_INTERVAL_SECONDS = Integer.valueOf(60);
     private static final double EACH_BEAT_DOWN_TOLERANT = 0.8;
 
     public void setMinRequiredTime(VideoRequiredSeconds videoRequiredSeconds) {
@@ -49,7 +58,7 @@ public class CheatCheckService {
     public void startWatchAlive(Long rid, AuthInfo auth) {
         //开始观看某个视频
         //如果之前存在某个视频则保存那个记录后重新开启一个新的记录
-        if(!videoRequiredSecondsMapper.hasWatchRequirement(rid)){
+        if (!videoRequiredSecondsMapper.hasWatchRequirement(rid)) {
             throw new ExternalException(Response.getBadRequest("no-watch-requirement"));
         }
         Long uid = auth.getUserID();
@@ -60,6 +69,10 @@ public class CheatCheckService {
         }
         userEstablishedWatchingRecord.put(uid, we);
         we.startTimer(this, uid, RECORD_ALIVE_SECONDS);
+        messagePushService.pushSite(SiteMessage.getSimpleSystemNewMessage(uid,
+                MessageBodyType.new_video_playing,
+                objectMapper.valueToTree(new NewVideoPlayingMessage(rid))
+                ));
     }
 
     public void keepWatchAlive(Long rid, AuthInfo auth) {
@@ -111,7 +124,7 @@ public class CheatCheckService {
         userEstablishedWatchingRecord.remove(uid);
     }
 
-    private  int getMinWatchedSeconds(WatchingEntity we){
+    private int getMinWatchedSeconds(WatchingEntity we) {
         int cnt = we.getHeartBeatCount() - 1;
         return cnt * HEART_BEAT_INTERVAL_SECONDS;
     }
@@ -120,7 +133,7 @@ public class CheatCheckService {
         // 检查1. 当前时间-开始时间 >=已观看seconds
         // 检查2. 当前时间-上次时间 >= 80% * Interval
         int watchedSeconds = getMinWatchedSeconds(we);
-        long secondsSinceStartHeartBeat = Duration.between(we.getFirstHeartBeatTime(),OffsetDateTime.now()).getSeconds();
+        long secondsSinceStartHeartBeat = Duration.between(we.getFirstHeartBeatTime(), OffsetDateTime.now()).getSeconds();
         if (secondsSinceStartHeartBeat < watchedSeconds) {
             return false;
         }
@@ -133,11 +146,11 @@ public class CheatCheckService {
         // 检查2. (cnt-1+1)*TimeInterval >= seconds
         int watchedSeconds = watchedInfo.getWatchedSeconds();
         long secondsSinceStartHeartBeat = Duration.between(we.getFirstHeartBeatTime(), OffsetDateTime.now()).getSeconds();
-        if (secondsSinceStartHeartBeat+1 < watchedSeconds) {
-            log.warn("secondsSinceStartHeartBeat is "+secondsSinceStartHeartBeat+"but watchedSeconds is "+watchedSeconds);
+        if (secondsSinceStartHeartBeat + 1 < watchedSeconds) {
+            log.warn("secondsSinceStartHeartBeat is " + secondsSinceStartHeartBeat + "but watchedSeconds is " + watchedSeconds);
             return false;
         }
-        int maxWatchedSeconds = getMinWatchedSeconds(we)+HEART_BEAT_INTERVAL_SECONDS;
+        int maxWatchedSeconds = getMinWatchedSeconds(we) + HEART_BEAT_INTERVAL_SECONDS;
         return maxWatchedSeconds >= watchedSeconds;
     }
 
@@ -183,5 +196,12 @@ public class CheatCheckService {
             heartBeatCount++;
             lastHeartBeatTime = OffsetDateTime.now();
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class NewVideoPlayingMessage {
+        Long resource_id;
     }
 }
