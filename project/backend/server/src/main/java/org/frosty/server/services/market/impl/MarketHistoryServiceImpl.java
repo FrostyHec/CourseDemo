@@ -8,8 +8,10 @@ import org.frosty.server.mapper.market.MarketHistoryMapper;
 import org.frosty.server.services.market.MarketHistoryService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +23,23 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
     // TODO: 检测 JSON 是否成功反序列化
     @Override
     public List<ConsumeRecord> getHistoryByUserId(Long userId) {
-//        return marketHistoryMapper.getHistoryByUserId(userId).stream()
-//                .map(this::deserializeActionParam)
-//                .collect(Collectors.toList());
-        return null;
+        // 分别获取三种历史记录
+        List<ConsumeRecord> badgeBuyRecords = marketHistoryMapper.getBadgeBuyHistoryByUserId(userId);
+        List<ConsumeRecord> dailyCommentRecords = marketHistoryMapper.getDailyCommentHistoryByUserId(userId);
+        List<ConsumeRecord> completeCourseRecords = marketHistoryMapper.getCompleteCourseHistoryByUserId(userId);
+
+        // 合并所有记录
+        List<ConsumeRecord> allRecords = Stream.concat(
+                        Stream.concat(badgeBuyRecords.stream(), dailyCommentRecords.stream()),
+                        completeCourseRecords.stream()
+                )
+                .sorted(Comparator.comparing(ConsumeRecord::getCreatedAt).reversed()) // 按创建时间降序排序
+                .collect(Collectors.toList());
+
+        return allRecords;
     }
+
+
 
     @Override
     public void insertCourseCompleteHistory(ConsumeRecord consumeRecord) {
@@ -41,14 +55,4 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
     public void insertConsumeRecord(ConsumeRecord consumeRecord) {
         marketHistoryMapper.insert(consumeRecord);
     }
-
-//    private ConsumeRecord deserializeActionParam(ConsumeRecord record) {
-//        try {
-//            Class<?> paramType = record.getActionType().getActionParamType();
-//            ActionParam actionParam = (ActionParam) objectMapper.readValue(record.getActionParam().toString(), paramType);
-//            return record.setActionParam(actionParam);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to deserialize actionParam for recordId: " + record.getRecordId(), e);
-//        }
-//    }
 }

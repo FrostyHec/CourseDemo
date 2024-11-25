@@ -48,9 +48,14 @@ public class BadgeBySmokeTest {
         assert myMarketScore.getMarketScore() == 500; // Assuming initial score is 500
 
         badgeByAPI.buyBadgeSuccess(token, badgeInfo);
-//        var History = marketHistoryAPI.getMyHistorySuccess(token);
-//        assert History.size() == 1;
-//        assert History.get(0).getActionType().equals(buy_badge);
+        var History = marketHistoryAPI.getMyHistorySuccess(token);
+
+        System.out.println("-----------------------");
+        System.out.println(History);
+        System.out.println("-----------------------");
+
+        assert History.size() == 1;
+        assert History.get(0).getActionType().equals(buy_badge);
 
         // Get my badges - should include the bought badge
         var myBadges = badgeByAPI.getMyBadgeSuccess(token);

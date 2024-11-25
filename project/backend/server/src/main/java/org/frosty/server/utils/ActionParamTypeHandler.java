@@ -1,17 +1,20 @@
 package org.frosty.server.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
 import org.frosty.common.exception.InternalException;
+import org.frosty.server.entity.bo.market.ConsumeRecord;
 import org.frosty.server.entity.bo.market.action_type.ActionParam;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 
+@MappedJdbcTypes(JdbcType.VARCHAR)
+@MappedTypes(ActionParam.class)
 public class ActionParamTypeHandler extends BaseTypeHandler<ActionParam> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -51,6 +54,18 @@ public class ActionParamTypeHandler extends BaseTypeHandler<ActionParam> {
             return json == null ? null : objectMapper.readValue(json, ActionParam.class);
         } catch (JsonProcessingException e) {
             throw new InternalException("",e);
+        }
+    }
+
+
+    private ActionParam deserialize(String json) {
+        try {
+            JsonNode node = objectMapper.readTree(json);
+            String actionType = node.get("actionType").asText(); // 获取 actionType
+            ConsumeRecord.ConsumeActionType type = ConsumeRecord.ConsumeActionType.valueOf(actionType);
+            return (ActionParam) objectMapper.readValue(json, type.getActionParamType());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize actionParam JSON", e);
         }
     }
 }

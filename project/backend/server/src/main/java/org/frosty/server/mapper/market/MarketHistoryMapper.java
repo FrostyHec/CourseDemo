@@ -26,4 +26,13 @@ public interface MarketHistoryMapper extends BaseMapper<ConsumeRecord>{
     @Select("SELECT * FROM consume_record WHERE user_id = #{userId} ORDER BY created_at DESC")
     List<ConsumeRecord> getHistoryByUserId(@Param("userId") Long userId);
 
+    @Select("SELECT * FROM consume_record WHERE user_id = #{userId} AND action_type = 'buy_badge' ORDER BY created_at DESC")
+    List<ConsumeRecord> getBadgeBuyHistoryByUserId(@Param("userId") Long userId);
+
+    @Select("SELECT * FROM consume_record WHERE user_id = #{userId} AND action_type = 'daily_comment' ORDER BY created_at DESC")
+    List<ConsumeRecord> getDailyCommentHistoryByUserId(@Param("userId") Long userId);
+
+    @Select("SELECT * FROM consume_record WHERE user_id = #{userId} AND action_type = 'complete_course' ORDER BY created_at DESC")
+    List<ConsumeRecord> getCompleteCourseHistoryByUserId(@Param("userId") Long userId);
+
 }
