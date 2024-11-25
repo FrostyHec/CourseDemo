@@ -29,10 +29,9 @@
                 </el-table-column>
               </el-table>
               <el-pagination
-                @current-change="handlePageChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="prev, pager, next">
+                @current-change="handleCurrentChange"
+                layout="prev, pager, next"
+                :total="50">
               </el-pagination>
             </el-main>
           </el-container>
@@ -63,7 +62,7 @@
             label-position="right"
             size="default"
           >
-            <el-form-item label="课程名称" prop="course_name" @blur="checkNameAvailability">
+            <el-form-item label="课程名称" prop="course_name">
               <el-input v-model="courseForm.course_name"/>
             </el-form-item>
             <el-form-item label="描述" prop="description">
@@ -77,7 +76,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="课程类型" prop="evaluationType">
-              <el-radio-group v-model="courseForm.evaluationType">
+              <el-radio-group v-model="courseForm.evaluation_type">
                 <el-radio :label="EvaluationType.practice">实践</el-radio>
                 <el-radio :label="EvaluationType.theory">理论</el-radio>
               </el-radio-group>
@@ -111,12 +110,18 @@ const tableData = ref<CourseEntity[]>([
   evaluation_type: EvaluationType.practice
 }
 ]);
-const courseId = ref(1);
-const currentPage = ref(1);
-const pageSize = ref(10);
+
+let currentPage = 1;
+const pageSize = 10;
+
+const handleCurrentChange = (newPage:number) =>{
+  currentPage = newPage;
+  fetchCourses();
+}
 const dialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const currentCourseToDelete = ref<CourseEntity | null>(null);
+
 const courseForm = ref<CourseEntity>({
   course_id: 0,
   course_name: '',
@@ -167,12 +172,13 @@ const isCourseNameExist = (name: string) => {
   return tableData.value.some(course => course.course_name.toLowerCase() === name.toLowerCase());
 };
 
-const saveCourse = () => {
+const saveCourse = async () => {
     dialogVisible.value = false;
     const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
     if (index !== -1) {
       tableData.value.splice(index, 1);
     }
+    await createCourseCall(courseForm.value);
     tableData.value.push(courseForm.value);
     fetchCourses(); 
 };
@@ -224,14 +230,9 @@ const handleDelete = () => {
   }
 };
 
-const handlePageChange = (newPage: number) => {
-  currentPage.value = newPage;
-  fetchCourses();
-};
-
 const fetchCourses = async () => {
   try {
-      const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
+      const response = await getAllTeachingCourseList(authStore.user.user_id, currentPage, pageSize);
       tableData.value = response.data.content;
   } catch (error) {
       console.error('获取课程列表失败:', error);

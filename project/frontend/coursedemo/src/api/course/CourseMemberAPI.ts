@@ -38,6 +38,11 @@ export async function getAllPendingApprovedCourse(adminId: number, pageNum: numb
   return AxiosAPI.authGet<{ content: CourseEntity[] }>(url, { page_size: pageSize, page_num: pageNum })
 }
 
+export async function getAdminIdCourseHandle(adminId: number, pageNum: number, pageSize: number) {
+  const url = service_backend_base + '/admin/' + adminId + '/courses/handle'
+  return AxiosAPI.authGet<{ content: CourseEntity[] }>(url, { page_size: pageSize, page_num: pageNum })
+}
+
 export async function updateStudentEnrollmentStatus(courseId: number, studentId: number, status: StudentEnrollType) {
   const url = service_backend_base + '/course/' + courseId + '/student/' + studentId + '/status'
   return AxiosAPI.authPut<null>(url, { status: status })
@@ -54,6 +59,6 @@ export interface StudentInfoWithEnrollStatus {
 }
 
 export enum StudentEnrollType {
-  publik = 'publik',
+  public = 'public',
   invited = 'invited'
 }

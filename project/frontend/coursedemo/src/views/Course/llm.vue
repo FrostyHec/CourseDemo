@@ -22,7 +22,7 @@
           <el-button type="primary" @click="sendMessage" class="send-button">Send</el-button>
         </div>
       </el-dialog>
-      <el-dialog v-model="historyDialogVisible" title="历史对话" width="50%">
+      <el-dialog v-model="historyDialogVisible" title="历史对话" width="50%" @click="getChatHistory">
         <div v-for="chat in chatHistories.chatHistory" :key="chat.id" class="history-item" @click="selectChatHistory(chat)">
           {{ chat.title }}
         </div>
@@ -31,7 +31,7 @@
   </template>
   
   <script setup lang="ts">
-  import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity } from '@/api/langchain/langchainAPI';
+  import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall, sendChatCall, getChatContentCall } from '@/api/langchain/langchainAPI';
 import { ref } from 'vue';
   
   const chatWindowVisible = ref(false);
@@ -67,24 +67,36 @@ import { ref } from 'vue';
     }
   );
   
+  const getChatHistory = async () => {
+    chatHistories.value = (await getAllMyChatMetadataCall()).data
+  }
+
+  let isFirstMessage = true; // 新增变量，用于跟踪是否是第一次发送消息
+
   const toggleChatWindow = () => {
-    createNewChatCall(title.value)
-    chatWindowVisible.value = !chatWindowVisible.value;
-  };
+  if (isFirstMessage) {
+    createNewChatCall(title.value);
+    isFirstMessage = false;
+  }
+  chatWindowVisible.value = !chatWindowVisible.value;
+};
   
   const viewHistory = () => {
     historyDialogVisible.value = true;
+    getChatHistory;
   };
   
   const sendMessage = () => {
     if (inputMessage.value.content !== '') {
       context.value.messages.push(inputMessage.value);
+      sendChatCall(context.value);
       inputMessage.value ={role: '', content: ''};
     }
   };
   
-  const selectChatHistory = (selectedChat: { id: number; title: string, createdAt: Date,updatedAt:Date}) => {
+  const selectChatHistory = async (selectedChat: { id: number; title: string, createdAt: Date,updatedAt:Date}) => {
     currentChat.value = selectedChat;
+    context.value = (await getChatContentCall(currentChat.value.id)).data;
     historyDialogVisible.value = false;
     chatWindowVisible.value = true;
   };

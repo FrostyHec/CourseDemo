@@ -6,7 +6,6 @@ import { UserType, type UserEntity } from '@/api/user/UserAPI'
 import { createUserCall } from '@/api/user/UserAPI'
 import { useRouter } from 'vue-router' 
 import { useAuthStore } from '@/stores/auth';
-import { User, Lock } from '@element-plus/icons-vue'
 
 const authStore = useAuthStore()
 // 控制注册与登录表单的显示， 默认显示注册
@@ -25,10 +24,8 @@ const registerData = ref({
   role:UserType.STUDENT,
   email:'',
   password: '',
-  rePassword: ''
-})
+});
 
-// 校验二次输入密码是否相同
 const checkRePassword = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请再次确认密码'))
@@ -37,7 +34,7 @@ const checkRePassword = (rule, value, callback) => {
   } else {
     callback()
   }
-}
+};
 
 // 登录校验规则
 const loginRule = ref({
@@ -71,7 +68,7 @@ const handleLogin = async () => {
     console.log('happy')
     if (result.code == 200) {
       ElMessage.success('登录成功!')
-      if(authStore.user.role==UserType.STUDENT)router.push('/MainPage/student');
+      if(authStore.user.role==UserType.STUDENT)router.push('/MainPage');
       else if(authStore.user.role==UserType.TEACHER)router.push('/MainPage/teacher')
       else router.push('/manager')
     } else {

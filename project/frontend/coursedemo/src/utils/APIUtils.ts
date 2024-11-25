@@ -55,6 +55,13 @@ export class AxiosAPI {
         return config;
     }
 
+    public static getAuthHeaderJson(){
+        const {token} = useAuthStore();
+        return {
+            'Authorization': 'Bearer ' + token,
+        }
+    }
+
     private static async request<T>(
         method: 'get' | 'post' | 'put' | 'delete' | 'patch',
         url: string,

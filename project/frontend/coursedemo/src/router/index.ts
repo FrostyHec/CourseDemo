@@ -82,14 +82,6 @@ const router = createRouter({
       component: () => import('@/views/MainPage/login.vue'),
     },
     {
-      path: '/courseEvaluation',
-      component: () => import('@/views/Course/CourseEvaluate.vue'),
-    },
-    {
-      path: '/MainPage/allCourse',
-      component: () => import('@/views/MainPage/allCourse.vue'),
-    },
-    {
       path: '/MainPage',
       component: () => import('@/views/MainPage/MainPage.vue'),
     },
@@ -110,11 +102,11 @@ const router = createRouter({
       component: () => import('@/views/Course/liveStream.vue'),
     },       
     {
-      path: '/course/practiceSurvey',
+      path: '/course/practiceSurvey/:course_id(\\d+)',
       component: () => import('@/views/Course/PracticeSurvey.vue'),
     },
     {
-      path: '/course/theorySurvey',
+      path: '/course/theorySurvey/:course_id(\\d+)',
       component: () => import('@/views/Course/TheorySurvey.vue'),
     },           
     {

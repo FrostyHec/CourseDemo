@@ -31,7 +31,11 @@ import { ElButton } from 'element-plus';
 import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
+
+const authStore = useAuthStore()
+const user_id = authStore.user.user_id;
 const route = useRoute()
 const courseId = Number(route.params.course_id);
 const baseUrl = 'http://localhost:9977';
@@ -49,7 +53,7 @@ const handleBarrageMessage = (message: ReceivedMessage) => {
 
 // 连接 WebSocket
 const connectWebSocket = () => {
-    chatRoomAPI.connectWebSocket('liveStream', 1, handleBarrageMessage);
+    chatRoomAPI.connectWebSocket('liveStream', user_id, handleBarrageMessage);
 };
 
 const getStreamName = async () => {

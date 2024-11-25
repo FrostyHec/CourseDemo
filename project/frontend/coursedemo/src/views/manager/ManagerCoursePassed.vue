@@ -25,8 +25,14 @@
             </el-table>
           </el-main>
         </el-container>
+        <el-pagination
+          @current-change="handleCurrentChange"
+          layout="prev, pager, next"
+          :total="50">
+        </el-pagination>
       </el-main>
     </el-container>
+
   </el-config-provider>
 </template>
 
@@ -35,18 +41,30 @@ import { onMounted, ref } from 'vue';
 const activeIndex = ref('2');
 import BaseHeader from '../../layouts/BaseHeader.vue';
 import router from '@/router';
-import { CourseStatus, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
+import { CourseEntity, CourseStatus, EvaluationType, Publication } from '@/api/course/CourseAPI';
+import { getAdminIdCourseHandle, getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 onMounted(async () => {
     fetchCourses();
 });
 
+let currentPage = 1;
+const pageSize = 10;
+
+const handleCurrentChange = (newPage:number) =>{
+  currentPage = newPage;
+  fetchCourses();
+}
+
 const courses = ref<CourseEntity[]>([
 {
-    course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
-    status: CourseStatus.published,
-    publication: Publication.open
+  course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
+  status: CourseStatus.published,
+  publication: Publication.open,
+  evaluation_type: EvaluationType.practice
 }
 ]);
 const navigateTo = (path: string) => {
@@ -54,7 +72,7 @@ const navigateTo = (path: string) => {
 };
 const fetchCourses = async () => {
 try {
-    const response = await getAllPendingApprovedCourse(authStore.user.user_id, currentPage.value, pageSize.value);
+    const response = await getAdminIdCourseHandle(authStore.user.user_id, currentPage, pageSize);
     courses.value = response.data.content;
 } catch (error) {
     console.error('获取课程列表失败:', error);

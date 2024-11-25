@@ -6,7 +6,7 @@
       <p>1. 实践课教学中，您是否得到了满足？</p>
       <div class="options">
         <label v-for="option in question1Options" :key="option">
-          <input type="radio" :value="option" @change="question1Result = option" />{{ option }}
+          <input type="radio" :value="option" v-model="question1Result" />{{ option }}
         </label>
       </div>
     </div>
@@ -15,7 +15,7 @@
       <p>2. 您在实践课中的学习体验如何？</p>
       <div class="options">
         <label v-for="option in question2Options" :key="option">
-          <input type="radio" :value="option" @change="question2Result = option" />{{ option }}
+          <input type="radio" :value="option" v-model="question2Result" />{{ option }}
         </label>
       </div>
     </div>
@@ -24,7 +24,7 @@
       <p>3. 您对实践课教师的教学质量感到满意吗？</p>
       <div class="options">
         <label v-for="option in question3Options" :key="option">
-          <input type="radio" :value="option" @change="question3Result = option" />{{ option }}
+          <input type="radio" :value="option" v-model="question3Result" />{{ option }}
         </label>
       </div>
     </div>
@@ -55,6 +55,7 @@ import { evaluationType, updateEvaluationCall, type answer, type CourseEvaluatio
 import router from '@/router';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useRoute } from 'vue-router';
 
 // 存储单选问题的结果
 const question1Result = ref('');
@@ -79,7 +80,7 @@ const evaluation_form_answer = ref<answer[]>([
   },
 ]);
 
-const course_id = 0;
+let course_id = 0;
 const student_id = 0;
 
 const course = ref<CourseEntity[]>([
@@ -106,9 +107,10 @@ const evaluationForm = ref<CourseEvaluationEntity>({
   updated_at: new Date(),
 });
 
-
 onMounted(async () => {
-  const course_id = router.currentRoute.value.params.course_id;
+  const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
+  const courseId = Number(route.query.course_id); // 从查询参数中获取 course_id 并转换为数字
+  course_id = Number(courseId);
   await fetchCourses();
 });
 
@@ -146,14 +148,13 @@ const question3Options = [
   "非常满意"
 ];
 
-
 const submitForm = () => {
   evaluation_form_answer.value[0].result = question1Result.value;
   evaluation_form_answer.value[1].result = question2Result.value;
   evaluation_form_answer.value[2].result = question3Result.value;
 
   console.log(evaluationForm.value);
-  updateEvaluationCall(course_id,evaluationForm.value);
+  updateEvaluationCall(course_id, evaluationForm.value);
   ElMessage.success('评价提交成功！');
 };
 </script>
