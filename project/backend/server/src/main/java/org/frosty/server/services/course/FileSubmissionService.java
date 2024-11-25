@@ -72,7 +72,7 @@ public class FileSubmissionService {
     }
 
     private String getFileSubmissionCaseName(Long uid) {
-        return "file-submission-"+uid;
+        return "resource-"+uid;
     }
 
     public void updateScore(Long id, Integer gainedScore) {

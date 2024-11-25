@@ -222,6 +222,9 @@ public class CourseMemberService {
                     .toList();
         }
         // 返回分页课程信息
+        if(courseIds.isEmpty()){
+            return  List.of();
+        }
         return courseMapper.selectBatchIds(courseIds);
     }
 

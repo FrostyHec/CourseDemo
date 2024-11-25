@@ -18,6 +18,6 @@ public interface ChapterService {
 
     List<Chapter> getAllChaptersByCourseId(Long courseId);
 
-    List<Chapter> getAllChaptersForStudentByCourseId(Long id);
+    List<Chapter> getAllChaptersForStudentByCourseId(Long uid,Long id);
 //List<Chapter> getAll();
 }

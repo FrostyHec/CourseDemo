@@ -24,7 +24,7 @@ public interface CourseMapper extends BaseMapper<Course> {
             "FROM courses c " +
             "JOIN users u ON c.teacher_id = u.user_id " +
             "WHERE c.status = 'published' " +
-            "AND c.publication = 'open' " +
+            "AND (c.publication = 'open' OR c.publication = 'semi_open') " +
             "AND (" +
             "c.course_name LIKE CONCAT('%', #{keyword}, '%') " +
             "OR c.description LIKE CONCAT('%', #{keyword}, '%') " +
