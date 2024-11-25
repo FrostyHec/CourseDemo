@@ -59,7 +59,7 @@ import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const joinDialogVisible = ref(false);
-const showJoinButton = ref(false); 
+let showJoinButton = ref(false); 
 const activeIndex = ref('1');
 const authStore = useAuthStore();
 const course = ref<CourseEntity>(
@@ -88,6 +88,7 @@ const joinClass = () =>{
 
 const handleJoin = async () => {
   await studentEnrollCourseCall(course.value.course_id);
+  showJoinButton.value = false;
   fetchCourses();
 };
 

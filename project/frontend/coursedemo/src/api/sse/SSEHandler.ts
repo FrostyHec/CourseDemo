@@ -106,7 +106,7 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
   };
 
 
-  const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
+const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
   const authStore = useAuthStore();
   const router = useRouter();
 
