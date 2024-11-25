@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.frosty.server.controller.market.MarketHistoryController;
 import org.frosty.server.entity.bo.market.ConsumeRecord;
 
 import java.util.List;

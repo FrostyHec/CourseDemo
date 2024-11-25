@@ -2,6 +2,7 @@ package org.frosty.server.services.market.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.frosty.server.controller.market.MarketHistoryController;
 import org.frosty.server.entity.bo.market.ConsumeRecord;
 import org.frosty.server.entity.bo.market.action_type.ActionParam;
 import org.frosty.server.mapper.market.MarketHistoryMapper;
@@ -44,12 +45,12 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
 
     @Override
     public void insertCourseCompleteHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insertHistory(consumeRecord);
+        marketHistoryMapper.insert(consumeRecord);
     }
 
     @Override
     public void insertDailyCommentHistory(ConsumeRecord consumeRecord) {
-        marketHistoryMapper.insertHistory(consumeRecord);
+        marketHistoryMapper.insert(consumeRecord);
     }
 
     @Override
