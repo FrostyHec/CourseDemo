@@ -151,7 +151,7 @@ public class StudyAnalysisService {
     // 学生获取自己的成绩表
     public StudyAnalysisController.AssignmentChapterSituationList getMyScore(Long cid, Long userId) {
         // 找到课程的所有章节
-        List<Chapter> chapters = chapterMapper.getChaptersByCourseId(cid);
+        List<Chapter> chapters = chapterMapper.getAllChaptersByCourseId(cid);
         List<Assignment> assignments = assignmentMapper.getAssignmentsByCourseId(cid); // 获取所有作业
 
         // 创建章节映射，将章节 ID 映射到章节信息
@@ -268,7 +268,7 @@ public class StudyAnalysisService {
 
     // 教师查看课程学习情况
     public StudyAnalysisController.CourseStudySituation teacherCheckCourseStudySituation(Long cid, Long userId) {
-        List<Chapter> chapters = chapterMapper.getChaptersByCourseId(cid);
+        List<Chapter> chapters = chapterMapper.getAllChaptersByCourseId(cid);
         CourseStudySituation situation = new CourseStudySituation();
 
         CourseStudySituation.TeachingChapterInfo teachingInfo = new TeachingChapterInfo();

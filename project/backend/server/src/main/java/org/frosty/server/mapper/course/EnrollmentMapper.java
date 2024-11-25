@@ -24,4 +24,7 @@ public interface EnrollmentMapper extends BaseMapper<Enrollment> {
 
     @Select("select status='invited' from enrollments where student_id=#{uid} and course_id = #{courseId} ;")
     Boolean isInvitedStudent(Long uid,Long courseId);
+
+    @Select("select * from enrollments where course_id=#{cid} ;")
+    List<Enrollment> getEnrollmentsByCourseId(Long cid);
 }
