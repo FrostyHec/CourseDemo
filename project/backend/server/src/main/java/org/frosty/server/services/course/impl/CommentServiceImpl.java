@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,13 +34,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void addCommentToResource(Long resourceId, ResourceComment comment) {
         commentMapper.insert(comment);
-        applicationEventPublisher.publishEvent(new CreateCommentEvent(this,comment.getCommentId()));
+        applicationEventPublisher.publishEvent(new CreateCommentEvent(this, comment.getCommentId()));
     }
 
     @Override
     public void addReplyToComment(Long parentCommentId, ResourceComment reply) {
         commentMapper.insert(reply);
-        applicationEventPublisher.publishEvent(new CreateCommentEvent(this,reply.getCommentId()));
+        applicationEventPublisher.publishEvent(new CreateCommentEvent(this, reply.getCommentId()));
     }
 
     @Override
@@ -59,16 +60,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentController.CommentWithUserAndFileAndAccessKey> findAllByResourceId(AuthInfo auth,Long resourceId) {
+    public List<CommentController.CommentWithUserAndFileAndAccessKey> findAllByResourceId(AuthInfo auth, Long resourceId) {
         long uid = auth.getUserID();
         var comments = commentMapper.getAllPublicByResourceId(resourceId);
         List<CommentController.CommentWithUserAndFileAndAccessKey> result = new ArrayList<>(comments.size());
-        for(var comment : comments) {
+        for (var comment : comments) {
             var cid = comment.getCommentId();
             List<CommentResource> resources = commentResourceMapper.getAllByCommentId(cid);
             List<CommentController.CommentResourceWithAccessKey> resourceWithAccessKeys = new ArrayList<>(resources.size());
-            for(var resource : resources) {
-                var accessKey = objectStorageService.getAccessKey(resource.getFileName(),getCommentFileCaseName(uid));
+            for (var resource : resources) {
+                var accessKey = objectStorageService.getAccessKey(getCommentFileCaseName(uid), resource.getFileName());
                 resourceWithAccessKeys.add(new CommentController.CommentResourceWithAccessKey(resource, accessKey));
             }
             result.add(new CommentController.CommentWithUserAndFileAndAccessKey(comment, resourceWithAccessKeys));
@@ -80,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void uploadFileForComment(CommentResource commentResource, MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + file.getSize() + "." + commentResource.getSuffix();
-        fileName = fileName.replace("/","."); // TODO 防止注入漏洞
+        fileName = fileName.replace("/", "."); // TODO 防止注入漏洞
         commentResource.setFileName(fileName);
         commentResourceMapper.insert(commentResource);
         objectStorageService.save(commentResource.getFileName(), file.getBytes());
@@ -96,5 +97,17 @@ public class CommentServiceImpl implements CommentService {
         CommentResource commentResource = commentResourceMapper.selectById(fid);
         commentResourceMapper.deleteById(fid);
         objectStorageService.delete(commentResource.getFileName());
+    }
+
+    @Override
+    public List<ResourceComment> findByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt) {
+        return commentMapper.selcetByUserIdAndCreatedTime(userId, createdAt);
+    }
+
+
+
+    @Override
+    public Long findCourseIdByComment(Long commentId) {
+        return commentMapper.findCourseIdByComment(commentId);
     }
 }

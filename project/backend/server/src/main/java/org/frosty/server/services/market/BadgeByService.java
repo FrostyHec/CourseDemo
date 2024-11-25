@@ -3,10 +3,12 @@ package org.frosty.server.services.market;
 import org.frosty.server.controller.market.BadgeByController;
 import org.frosty.server.entity.bo.market.BadgeInfo;
 
+import java.util.List;
+
 public interface BadgeByService {
-    BadgeByController.BadgeList getMyBadge(long userID);
+    List<BadgeInfo> getMyBadge(Long userID);
 
-    void buyBadge(BadgeInfo badgeInfo);
+    void buyBadge(Long userId, BadgeInfo badgeInfo);
 
-    BadgeByController.BadgeList getMyCanByBadge(long userID);
+    List<BadgeInfo> getMyCanByBadge(Long userID);
 }
