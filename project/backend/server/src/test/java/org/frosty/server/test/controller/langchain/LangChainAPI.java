@@ -54,18 +54,18 @@ public class LangChainAPI {
     }
 
 
-    public ResultActions saveChatHistory(String token, LangchainController.ChatContext chatContext) throws Exception {
-        String url = langchainBaseUrl + "/";
+    public ResultActions saveChatHistory(String token, LangchainController.ChatContext chatContext, Long id) throws Exception {
+        String url = langchainBaseUrl + "/" + id;
         String json = objectMapper.writeValueAsString(chatContext);
-        return mockMvc.perform(MockMvcRequestBuilders.post(url)
+        return mockMvc.perform(MockMvcRequestBuilders.put(url)
                 .headers(authUtil.setAuthHeader(token))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON));
     }
 
-    public void saveChatHistorySuccess(String token, LangchainController.ChatContext chatContext) throws Exception {
-        saveChatHistory(token, chatContext)
+    public void saveChatHistorySuccess(String token, LangchainController.ChatContext chatContext, Long id) throws Exception {
+        saveChatHistory(token, chatContext,id)
                 .andExpect(RespChecker.success());
     }
 

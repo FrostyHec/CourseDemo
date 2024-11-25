@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ChatService {
@@ -19,7 +18,14 @@ public class ChatService {
 
     private static final String API_KEY = "ZeFCBlc7al4pC3vgEzDx9DGV";
     private static final String SECRET_KEY = "00XhKtdc4hxWAO3pkPQiONh3NetC43yL";
-    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().build();
+
+    // 增加超时设置
+    // 单段的传输会比较长？可能设置一个长一点的时间会比较好
+    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)   // 设置连接超时为 30 秒
+            .readTimeout(60, TimeUnit.SECONDS)      // 设置读取超时为 60 秒
+            .writeTimeout(60, TimeUnit.SECONDS)     // 设置写入超时为 60 秒
+            .build();
 
     public LangchainController.ChatContext chatWithModel(LangchainController.ChatContext chatContext) throws IOException {
         String accessToken = getAccessToken();
@@ -44,7 +50,7 @@ public class ChatService {
 
         // 将 result 封装到新的消息对象
         LangchainController.SingleChatMessage replyMessage =
-                new LangchainController.SingleChatMessage(LangchainController.SingleChatMessage.Role.assistant,result);
+                new LangchainController.SingleChatMessage(LangchainController.SingleChatMessage.Role.assistant, result);
 
         // 添加到 chatContext 的消息列表中
         chatContext.getMessages().add(replyMessage);
@@ -79,22 +85,6 @@ public class ChatService {
         }
     }
 
-//    private LangchainController.ChatContext constructChatContext(List<LangchainController.SingleChatMessage> chatHistory, String inputMessage) {
-//        LangchainController.ChatContext context = new LangchainController.ChatContext();
-//        List<LangchainController.SingleChatMessage> messages = new ArrayList<>();
-//
-//        // Convert existing chat history to messages
-//        for (LangchainController.SingleChatMessage entity : chatHistory) {
-//            messages.add(new LangchainController.SingleChatMessage("user", entity.getTitle())); // Example: "title" as message content
-//        }
-//
-//        // Append new user input message
-//        messages.add(new LangchainController.SingleChatMessage("user", inputMessage));
-//
-//        context.setMessages(messages);
-//        return context;
-//    }
-
     private String getAccessToken() throws IOException {
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY
@@ -108,4 +98,3 @@ public class ChatService {
         return new JSONObject(response.body().string()).getString("access_token");
     }
 }
-

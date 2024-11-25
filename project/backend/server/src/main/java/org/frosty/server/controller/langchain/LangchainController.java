@@ -70,9 +70,10 @@ public class LangchainController {
         chatEntity.setTitle(titleEntity.getTitle());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode emptyContext = objectMapper.valueToTree(Map.of());// 创建一个空的 JSON 对象
+//        JsonNode emptyContext = objectMapper.valueToTree(Map.of());// 创建一个空的 JSON 对象
+        ChatContext emptyContext = new ChatContext();
 
-        ChatHistory chatHistory = new ChatHistory()
+                ChatHistory chatHistory = new ChatHistory()
                 .setUserId(tokenInfo.getAuthInfo().getUserID())
                 .setTitle(titleEntity.getTitle())
                 .setContext(emptyContext);
@@ -97,8 +98,7 @@ public class LangchainController {
     @GetMapping("/{id}")
     public ChatContext getChatContent(@GetToken TokenInfo tokenInfo, @PathVariable Long id) {
         // 返回该id下所有chat的历史记录
-        ChatContext context = new ChatContext();
-        context.messages = langchainService.getChatContentById(id);
+        ChatContext context = langchainService.getChatContentById(id);
         return context;
     }
 

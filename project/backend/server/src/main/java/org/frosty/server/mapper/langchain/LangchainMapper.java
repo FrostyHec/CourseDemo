@@ -21,8 +21,8 @@ public interface LangchainMapper extends BaseMapper<ChatHistory> {
     @Update("UPDATE chat_history SET title = #{title} WHERE id = #{id}")
     void setChatTitle(String title, Long id);
 
-    @Select("SELECT context FROM chat_history WHERE id = #{id}")
-    List<LangchainController.SingleChatMessage> selectChatContentByChatId(Long id);
+    @Select("SELECT * FROM chat_history WHERE id = #{id}")
+    ChatHistory selectChatContentByChatId(Long id);
 
     @Select("SELECT id, title, context, created_at, updated_at FROM chat_history WHERE id = #{id}")
     LangchainController.ChatEntity selectChatEntityByChatId(Long id);

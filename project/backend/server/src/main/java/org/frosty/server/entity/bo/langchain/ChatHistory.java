@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.frosty.server.controller.langchain.LangchainController;
 import org.frosty.server.entity.handler.JsonNodeTypeHandler;
 
 import java.time.OffsetDateTime;
@@ -23,8 +24,8 @@ public class ChatHistory {
     private Long id;
     private Long userId;
     private String title;
-    @TableField(typeHandler = JsonNodeTypeHandler.class)
-    private JsonNode context;
+//    @TableField(typeHandler = JsonNodeTypeHandler.class)
+    private LangchainController.ChatContext context;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }
