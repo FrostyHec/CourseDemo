@@ -45,18 +45,29 @@
       ></el-input>
     </div>
   
-    <el-button @click="submitForm">提交评价</el-button>
+    <el-button @click="submitJudge = true">提交评价</el-button>
   </div>
+  <el-dialog
+          title="加入课程"
+          v-model="submitJudge"
+        >
+          <span>确定要提交课程评价吗？</span>
+          <template #footer>
+            <el-button @click="submitJudge = false">取消</el-button>
+            <el-button type="primary" @click="submitForm(); submitJudge=false;">确认</el-button>
+          </template>
+        </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { CourseStatus, EvaluationType, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { evaluationType, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
-import router from '@/router';
+import { createEvaluationCall, evaluationType, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
+import router from '@/router';
 
+const submitJudge = ref(false)
 // 存储单选问题的结果
 const question1Result = ref('');
 const question2Result = ref('');
@@ -114,6 +125,7 @@ onMounted(async () => {
   await fetchCourses();
 });
 
+
 const fetchCourses = async () => {
   try {
     const response = await getCourseCall(course_id);
@@ -154,8 +166,9 @@ const submitForm = () => {
   evaluation_form_answer.value[2].result = question3Result.value;
 
   console.log(evaluationForm.value);
-  updateEvaluationCall(course_id, evaluationForm.value);
+  createEvaluationCall(course_id, evaluationForm.value);
   ElMessage.success('评价提交成功！');
+  router.push('/MainPage/student')
 };
 </script>
 

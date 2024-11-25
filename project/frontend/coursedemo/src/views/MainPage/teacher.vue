@@ -24,6 +24,11 @@
                   <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                 </template>
               </el-table-column>
+              <el-table-column prop="checkJudge" label="">
+                  <template v-slot="{ row }">
+                    <el-button @click="navigateToCheckJudge(row)">课程评价</el-button>
+                  </template>
+                </el-table-column>
             </el-table>
             <el-pagination
               @current-change="handlePageChange"
@@ -81,6 +86,10 @@ onMounted(async () => {
     console.error('获取课程列表失败:', error);
   }
 });
+
+const navigateToCheckJudge = (row:CourseEntity) =>{
+  router.push({ path: '/course/CheckEvaluation', query: { course_id: row.course_id } });
+}
 
 const navigateTo = (path: string) => {
   router.push(path); // 使用 router.push 进行路由跳转

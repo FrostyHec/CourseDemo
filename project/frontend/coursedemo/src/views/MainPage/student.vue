@@ -34,6 +34,11 @@
                     <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
                 </el-table-column>
+                <el-table-column prop="judge" label="">
+                  <template v-slot="{ row }">
+                    <el-button @click="navigateToJudge(row)">课程评价</el-button>
+                  </template>
+                </el-table-column>                
               </el-table>
             </el-main>
           </el-container>
@@ -61,6 +66,14 @@ const tableData = ref<CourseEntity[]>([
     evaluation_type: EvaluationType.practice
   }
 ]);
+
+const navigateToJudge = (row:CourseEntity) => {
+  if(row.evaluation_type==EvaluationType.practice)
+  router.push({ path: '/course/practiceSurvey', query: { course_id: row.course_id } });
+  else{
+    router.push({ path: '/course/theorySurvey', query: { course_id: row.course_id } });
+  }
+};
 
 onMounted(async () => {
     fetchCourses();
