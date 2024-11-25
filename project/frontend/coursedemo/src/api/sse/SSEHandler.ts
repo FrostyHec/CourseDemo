@@ -59,6 +59,7 @@ export enum SSEBodyType {
     announcement = 'announcement',
     new_login = 'new_login',
     receive_credits = 'receive_credits',
+    new_video_playing = 'new_video_playing'
 }
 
 export interface EventHandler {
@@ -103,6 +104,9 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         const receiveCreditsBody = message.body as ReceiveCreditsBody;
         handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
     },
+    [SSEBodyType.new_video_playing]: (message: { body: SSEBody; }) => {
+        // TODO hlh把消息注册在这里
+    }
 };
 
 
@@ -110,19 +114,13 @@ const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
     packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
         const body = message.body;
         switch (message.body_type) {
-            case SSEBodyType.new_login: {
-                break;
-            }
-            case SSEBodyType.receive_credits: {
-                break;
-            }
             case SSEBodyType.announcement: {
                 const announcementBody = body as AnnouncementBody;
                 handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
                 break;
             }
             default:
-                console.error('未知的消息类型:', message.type);
+                console.error('其它消息类型:', message.type);
         }
     });
 };
