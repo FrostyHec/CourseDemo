@@ -11,6 +11,7 @@ import org.frosty.server.entity.bo.market.ConsumeRecord;
 
 import java.util.List;
 
+
 @Mapper
 public interface MarketHistoryMapper extends BaseMapper<ConsumeRecord>{
     @Insert("""

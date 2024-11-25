@@ -50,6 +50,7 @@ public class BadgeBySmokeTest {
         badgeByAPI.buyBadgeSuccess(token, badgeInfo);
         var History = marketHistoryAPI.getMyHistorySuccess(token);
 
+
         System.out.println("-----------------------");
         System.out.println(History);
         System.out.println("-----------------------");

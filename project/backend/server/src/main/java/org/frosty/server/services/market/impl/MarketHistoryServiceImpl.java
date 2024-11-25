@@ -41,6 +41,7 @@ public class MarketHistoryServiceImpl implements MarketHistoryService {
 
 
 
+
     @Override
     public void insertCourseCompleteHistory(ConsumeRecord consumeRecord) {
         marketHistoryMapper.insertHistory(consumeRecord);
