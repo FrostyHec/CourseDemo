@@ -81,7 +81,7 @@ const handleSearch = () => {
 
 const fetchCourses = async () => {
 try {
-    const response = await getAllJoinedCourseList(authStore.user.user_id, currentPage.value, pageSize.value);
+    const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 100);
     tableData.value = response.data.content;
 } catch (error) {
     console.error('获取课程列表失败:', error);

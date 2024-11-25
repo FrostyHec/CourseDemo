@@ -41,7 +41,7 @@
 
         <div style="margin: 15px; margin-top: 5px; color: var(--ep-color-primary);">{{ c.message }}</div>
 
-        <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
+          <div style="display: flex; gap: 10px; flex-direction: row; align-items: center; margin-top: 12px; font-size: small;">
           <div style="color: var(--ep-text-color-placeholder); width: 130px;">  
             {{ (new Date(c.updated_at)).toLocaleString() }}
           </div>
@@ -58,7 +58,7 @@
               </el-button>
             </div>
           </el-popover>
-          <el-link v-if="course_store.current_course_teacher()===auth_store.user.user_id" type="danger" :underline="false" style="font-size: small;" @click="do_something(c.notification_id, deleteAnnouncementCall)">Delete</el-link>
+          <el-link v-if="course_store.current_course_teacher()===auth_store.user.user_id" type="danger" :underline="false" style="font-size: small;" @click="do_something(c.notification_id, deleteAnnouncementCall, true)">Delete</el-link>
         </div>
         
     </div>
@@ -128,7 +128,9 @@ async function load_announcements() {
     })
     return
   }
+  console.log(msg.data.content)
   announcements.value = msg.data.content
+  announcements.value.sort((a,b)=>b.notification_id-a.notification_id)
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {

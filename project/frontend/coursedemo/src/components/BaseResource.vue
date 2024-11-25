@@ -6,6 +6,7 @@
       :access_key="current_resource?.access_key"
       :is_attachment="current_resource?.resource_type===ResourceType.attachment"
       :resource_id="current_resource?.resource_id"
+      :downloadable="current_resource?.student_can_download"
     />
   </div>
 </template>
@@ -27,11 +28,9 @@ const watch_current_data = watch(() => course_store.current_data?.data,
     is_resource.value = !!new_data && 'resource_name' in new_data
     if(!new_data || !('resource_name' in new_data))
       return
-    if(new_data.resource_id===current_resource.value?.resource_id)
-      return
     current_resource.value = new_data
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
 </script>

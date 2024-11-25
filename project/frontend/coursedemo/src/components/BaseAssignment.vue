@@ -2,7 +2,7 @@
   <div v-if="is_assignment_chapter">
     <div style="display: flex; align-items: baseline;">
       <h1 style="font-size: large; margin-bottom: 0;">
-        Assignments
+        {{ is_project ? "Project assignments" : "Assignment" }}
       </h1>
       <p style="font-size: medium; margin-left: 8px; color: var(--ep-color-primary); margin-bottom: 0;">
         {{ assignments.length }}
@@ -144,6 +144,7 @@ const course_store = useCourseStore()
 const auth_store = useAuthStore()
 const form_store = useFormStore()
 const is_assignment_chapter = ref(false)
+const is_project = ref(false)
 let current_chapter_id = -1
 const assignments = ref<{data: AssignmentEntity, submitted?: number}[]>([])
 
@@ -182,10 +183,13 @@ async function load_assignment() {
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {
-    is_assignment_chapter.value = !!new_data && 'chapter_title' in new_data && new_data.chapter_type===ChapterType.assignment
-    if(!new_data || !('chapter_title' in new_data) || !(new_data.chapter_type===ChapterType.assignment))
+    is_assignment_chapter.value = false
+    is_project.value = false
+    if(!new_data || !('chapter_title' in new_data))
       return
-    if(new_data.chapter_id==current_chapter_id)
+    is_assignment_chapter.value = new_data.chapter_type==ChapterType.assignment || new_data.chapter_type==ChapterType.project
+    is_project.value = new_data.chapter_type==ChapterType.project
+    if(!is_assignment_chapter.value || new_data.chapter_id==current_chapter_id)
       return
     current_chapter_id = new_data.chapter_id
     await load_assignment()
@@ -230,6 +234,7 @@ async function submit() {
     })
     return
   }
+  submit_visibility.value = false
   await load_assignment()
 }
 

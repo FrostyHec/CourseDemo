@@ -16,7 +16,7 @@
       </el-form-item>
 
       <el-form-item label="Type" prop="resource_type">
-        <el-segmented v-model="form_store.resource_form.resource_type" :options="['description', 'courseware', 'video', 'attachment']" />
+        <el-segmented v-model="form_store.resource_form.resource_type" :options="['courseware', 'video', 'attachment']" />
       </el-form-item>
 
       <el-form-item label="Downloadable" prop="student_can_download">

@@ -140,7 +140,6 @@ const is_resource = ref(false)
 let current_resource_id = -1
 const comments = ref<CommentWithUserAndFileAndAccessKey[]>([])
 let comment_map = new Map<number, CommentWithUserAndFileAndAccessKey>()
-comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 
 async function load_comments() {
   // //!!!!!!!!!!!!!!!!!!!!
@@ -157,13 +156,13 @@ async function load_comments() {
     return
   }
   comments.value = msg.data.content
+  comments.value.sort((a,b)=>b.comment_id-a.comment_id)
   comment_map.clear()
   comments.value.forEach((comment) => {if(comment.comment_id) comment_map.set(comment.comment_id, comment)})
 }
 const watch_current_data = watch(() => course_store.current_data?.data,
   async (new_data: CourseEntity|ChapterEntity|ResourceEntityPlus|undefined) => {
     is_resource.value = !!new_data && 'resource_name' in new_data
-    console.log(is_resource)
     if(!new_data || !('resource_name' in new_data))
       return
     if(new_data.resource_id==current_resource_id)

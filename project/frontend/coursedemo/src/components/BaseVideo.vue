@@ -12,6 +12,7 @@
   >
     <source :src=link :type="file_type">
   </video>
+  <div v-if="timer_open" style="margin-top: 10px;">Watch time remains: <span style="color: var(--ep-color-primary); font-weight: bold;">{{ remain_second }}</span> seconds</div>
 </template>
 <script setup lang="ts">
 import { getLastWatchedCall, keepWatchAliveCall, startWatchAliveCall, stopWatchAliveCall } from '@/api/course/CheatCheckAPI';
@@ -25,7 +26,9 @@ const open = ref(false)
 const course_store = useCourseStore()
 let check = true
 
-console.log('video')
+let remain_second = ref(0)
+let timer: NodeJS.Timeout|undefined = undefined
+let timer_open = ref(false)
 
 async function load(resource_id: number|undefined) {
   if(props.value.resource_id!==undefined && check) {
@@ -36,6 +39,9 @@ async function load(resource_id: number|undefined) {
       last_watch_video = msg.data.last_watched_seconds
       if(msg.data.remain_required_seconds<=0) {
         course_store.complete_resource(props.value.resource_id)
+      }
+      else {
+        remain_second.value = msg.data.remain_required_seconds
       }
     }
     // open.value = true
@@ -52,7 +58,7 @@ const p = defineProps({
 })
 const props = toRef(p)
 
-let watch_video: number|undefined = undefined
+let watch_video: NodeJS.Timeout|undefined = undefined
 
 let start_time: number = 0
 async function set_watch_video(time: number) {
@@ -60,6 +66,20 @@ async function set_watch_video(time: number) {
     return
   if(watch_video!==undefined)
     clearInterval(watch_video)
+  if(timer!==undefined)
+    clearInterval(timer)
+  if(remain_second.value>0) {
+    timer = setInterval(() => {
+      remain_second.value-=1; 
+      if(remain_second.value<0) {
+        if(timer!==undefined) {    
+          clearInterval(timer)
+          timer_open.value = false
+        }
+      }
+    }, 1000)
+    timer_open.value = true
+  }
   await startWatchAliveCall(props.value.resource_id)
   start_time = time
   watch_video = setInterval(async () => {
@@ -78,6 +98,10 @@ async function clear_watch_video(time: number) {
   })
   if(watch_video!==undefined)
     clearInterval(watch_video)
+  if(timer!==undefined) {    
+    clearInterval(timer)
+    timer_open.value = false
+  }
 }
 
 

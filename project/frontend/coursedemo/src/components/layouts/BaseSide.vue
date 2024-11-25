@@ -79,10 +79,11 @@ const student_enroll_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
   const children = (node.data as UnifyTree).children
-  const cnt = children[children.length-1].order + 1
+  const cnt = children.length==0 ? 0 : children[children.length-1].order + 1
   const data = (node.data as UnifyTree).data
   if(mode=='Edit') {
     const parent = node.parent.data as UnifyTree
+    console.log(parent)
     form_store.check_name = []
     for(const i of parent.children) {
       if(i.id!==(node.data as UnifyTree).id)
