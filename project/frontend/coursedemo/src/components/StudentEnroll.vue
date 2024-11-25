@@ -19,7 +19,7 @@
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
         <el-radio-group v-model="scope.row.status" style="padding: 0;" @change="update_status(scope.row)">
           <el-radio-button :label="StudentEnrollType.invited" :value="StudentEnrollType.invited"/>
-          <el-radio-button :label="StudentEnrollType.publik" :value="StudentEnrollType.publik"/>
+          <el-radio-button :label="StudentEnrollType.public" :value="StudentEnrollType.public"/>
         </el-radio-group>
       </template>
     </el-table-column>

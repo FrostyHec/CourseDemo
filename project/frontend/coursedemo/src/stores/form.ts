@@ -78,6 +78,7 @@ export const useFormStore = defineStore('form', () => {
 
   let data_save: CourseEntity|ChapterEntity|ResourceEntityPlus|AssignmentEntity|undefined = undefined 
   function open_form(data: CourseEntity|ChapterEntity|ResourceEntityPlus|AssignmentEntity, set_mode?: 'Add'|'Edit') {
+    console.log(check_name.value)
     if(set_mode) {
       data_save = {...data}
       mode.value = set_mode
@@ -104,6 +105,7 @@ export const useFormStore = defineStore('form', () => {
       open_form(data_save)
   }
 
+  const check_name = ref<string[]>([])
   async function modify_course(): Promise<boolean> {
     let msg
     if(mode.value=='Add')
@@ -147,6 +149,6 @@ export const useFormStore = defineStore('form', () => {
     course_null, chapter_null, resource_null, assignment_null,
     modify_course, modify_chapter, modify_resource, modify_assignment,
     open_form, reset_form,
-    node, mode, resource_mode,
+    node, mode, resource_mode, check_name,
   }
 })

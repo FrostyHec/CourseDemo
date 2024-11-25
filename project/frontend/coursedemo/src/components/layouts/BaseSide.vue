@@ -81,9 +81,19 @@ const open_form = (node: Node, mode: 'Add'|'Edit') => {
   const children = (node.data as UnifyTree).children
   const cnt = children[children.length-1].order + 1
   const data = (node.data as UnifyTree).data
-  if(mode=='Edit')
+  if(mode=='Edit') {
+    const parent = node.parent.data as UnifyTree
+    form_store.check_name = []
+    for(const i of parent.children) {
+      if(i.id!==(node.data as UnifyTree).id)
+        form_store.check_name.push(i.label)
+    }
+    if('resource_name' in parent.data)
+      form_store.check_name.push(parent.data.resource_version_name)
     form_store.open_form(data, mode)
+  }
   else {
+    form_store.check_name = children.map((v)=>v.label)
     if('course_name' in data) {
       let temp: ChapterEntity = {...form_store.chapter_null}
       temp.course_id = data.course_id
@@ -101,6 +111,7 @@ const open_form = (node: Node, mode: 'Add'|'Edit') => {
       let temp: ResourceEntityPlus = {...data}
       temp.resource_version_order -= 1
       form_store.resource_mode = 'new_version'
+      form_store.check_name.push(data.resource_version_name)
       form_store.open_form(temp, mode)
     }
   }
@@ -161,7 +172,7 @@ const handleDelete = async (node: Node) => {
   handleClick(null, node.parent)
 }
 
-import type Node from 'element-plus/es/components/tree/src/model/node'
+import Node from 'element-plus/es/components/tree/src/model/node'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
 import type {
   AllowDropType,

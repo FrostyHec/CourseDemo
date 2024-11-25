@@ -61,6 +61,10 @@ const course_store = useCourseStore()
 const chapter_rules = reactive<FormRules<ChapterEntity>>({
   chapter_title: [
     { required: true, message: 'Please enter the title', trigger: 'blur', },
+    { 
+      validator: (r, v) => form_store.check_name.find((n)=>v==n)===undefined, 
+      message: 'This title is already exist', trigger: 'blur',
+    }
   ],
   chapter_type: [
     { required: true, message: 'Please select a type', trigger: 'blur', },

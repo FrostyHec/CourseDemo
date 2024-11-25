@@ -99,6 +99,10 @@ function change(file: File|undefined) {
 const resource_rules = reactive<FormRules<ResourceEntity>>({
   resource_name: [
     { required: true, message: 'Please enter the name', trigger: 'blur', },
+    { 
+      validator: (r, v) => form_store.resource_mode!='init' || form_store.check_name.find((n)=>v==n)===undefined,
+      message: 'This name is already exist', trigger: 'blur',
+    }
   ],
   resource_type: [
     { required: true, message: 'Please select a type', trigger: 'blur', },
@@ -117,6 +121,10 @@ const resource_rules = reactive<FormRules<ResourceEntity>>({
   ],
   resource_version_name: [
     { required: true, message: 'Please enter a version name', trigger: 'blur', },
+    { 
+      validator: (r, v) => form_store.resource_mode!='new_version' || form_store.check_name.find((n)=>v==n)===undefined,
+      message: 'This version name is already exist', trigger: 'blur',
+    }
   ],
 })
 
