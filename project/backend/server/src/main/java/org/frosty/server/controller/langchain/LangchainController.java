@@ -1,6 +1,5 @@
 package org.frosty.server.controller.langchain;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -107,6 +106,12 @@ public class LangchainController {
         // 设置chat标题并返回更新后的chat
         langchainService.setChatTitle(titleEntity.getTitle(), id);
         return langchainService.getChatEntityById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void setChatTitle(@PathVariable Long id) {
+        // 设置chat标题并返回更新后的chat
+        langchainService.deleteChat(id);
     }
 
     @Data

@@ -17,4 +17,6 @@ public interface LangchainService {
     List<LangchainController.ChatEntity> getAllMyChatMetadata(long userID);
 
     void createNewChat(ChatHistory chatHistory);
+
+    void deleteChat(Long id);
 }

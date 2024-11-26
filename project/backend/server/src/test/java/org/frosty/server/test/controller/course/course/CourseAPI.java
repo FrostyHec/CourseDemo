@@ -46,8 +46,9 @@ public class CourseAPI {
                 .setTeacherId(teacherId)
                 .setCourseName(name)
                 .setDescription("Course Description")
-                .setStatus(Course.CourseStatus.published) // it was "approved"
+                .setStatus(Course.CourseStatus.published)
                 .setPublication(publicationType)
+                .setEvaluationType(Course.CourseEvaluationType.theory)
                 ;
     }
 

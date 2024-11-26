@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.fasterxml.jackson.databind.JsonNode;
 import org.frosty.server.controller.langchain.LangchainController;
 import org.frosty.server.entity.bo.market.action_type.ActionParam;
+import org.frosty.server.entity.handler.JsonNodeTypeHandler;
 import org.frosty.server.utils.ActionParamTypeHandler;
 import org.frosty.server.utils.ChatContextTypeHandler;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +26,9 @@ public class MyBatisPlusConfig {
     @Bean
     public ConfigurationCustomizer mybatisConfigurationCustomizer() {
         return configuration -> {
-            // 注册自定义的 TypeHandler
             configuration.getTypeHandlerRegistry().register(ActionParam.class, new ActionParamTypeHandler());
+            configuration.getTypeHandlerRegistry().register(JsonNode.class, new JsonNodeTypeHandler());
             configuration.getTypeHandlerRegistry().register(LangchainController.ChatContext.class, new ChatContextTypeHandler());
         };
     }
-
 }
