@@ -86,9 +86,22 @@ public class CourseEvaluationController {
         return new CourseEvaluationList(courseEvaluationService.getAllEvaluationsByCourse(id, page_size, page_num));
     }
 
+    /**
+     * 查看评价元数据
+     *
+     * @param id 课程ID
+     * @return 返回课程的评价元数据 : 评价平均分
+     */
     @GetMapping("/evaluations/metadata")
     public CourseEvaluationMetadata getEvaluationsMetadata(@PathVariable Long id) {
-        FrameworkUtils.notImplemented();// TODO @hlh
+        CourseEvaluationList courseEvaluationList =  getEvaluations(id, -1, 0);
+        if (courseEvaluationList != null) {
+            List<CourseEvaluation> evaluations = courseEvaluationList.getContent();
+            if (evaluations != null && !evaluations.isEmpty()) {
+                int sum = evaluations.stream().mapToInt(CourseEvaluation::getScore).sum();
+                return new CourseEvaluationMetadata(sum / evaluations.size());
+            }
+        }
         return null;
     }
     @Data

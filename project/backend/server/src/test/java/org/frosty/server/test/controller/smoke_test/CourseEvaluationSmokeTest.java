@@ -3,6 +3,7 @@ package org.frosty.server.test.controller.smoke_test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.frosty.server.controller.course.CourseEvaluationController;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.CourseEvaluation;
 import org.frosty.server.entity.bo.User;
@@ -146,5 +147,54 @@ public class CourseEvaluationSmokeTest {
         assertEquals(2, evaluationsPage2.size());
         assertEquals("Comment 4", evaluationsPage2.get(0).getComment());
         assertEquals("Comment 5", evaluationsPage2.get(1).getComment());
+    }
+
+    @Test
+    public void testGetEvaluationMetaData() throws Exception {
+        // create a course
+        var pair = authAPI.quickAddUserAndLogin("teacher", User.Role.teacher);
+        var teacherToken = pair.first;
+        var teacher = pair.second;
+
+        var course = courseAPI.getTemplatePublishedCourse(
+                teacher.getUserId(), "testCourse", Course.PublicationType.open);
+        courseAPI.quickCreateCourse(course);
+
+
+        // create 2 students
+        var studentPair = authAPI.quickAddUserAndLogin("student", User.Role.student);
+        var studentToken = studentPair.first;
+        var student = studentPair.second;
+
+        var studentPair2 = authAPI.quickAddUserAndLogin("student2", User.Role.student);
+        var studentToken2 = studentPair2.first;
+        var student2 = studentPair2.second;
+
+        var courseId = courseAPI.
+                searchPublicCourseSuccess(studentToken, 1, -1, "testCourse")
+                .get(0).getCourseId();
+        course.setCourseId(courseId);
+
+        String jsonString = "{\"name\":\"John\", \"age\":30}";
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // insert evaluation for 2 times
+        CourseEvaluation courseEvaluation = new CourseEvaluation()
+                .setCourseId(course.getCourseId())
+                .setStudentId(student.getUserId())
+                .setComment("Great course!")
+                .setEvaluationFormAnswer(jsonNode)
+                .setScore(5);
+        CourseEvaluation courseEvaluation1 = new CourseEvaluation()
+                .setCourseId(course.getCourseId())
+                .setStudentId(student2.getUserId())
+                .setComment("Bad course!")
+                .setEvaluationFormAnswer(jsonNode)
+                .setScore(1);
+        courseEvaluationAPI.createEvaluationSuccess(studentToken, course.getCourseId(), courseEvaluation);
+        courseEvaluationAPI.createEvaluationSuccess(studentToken2, course.getCourseId(), courseEvaluation1);
+
+        CourseEvaluationController.CourseEvaluationMetadata metadata = courseEvaluationAPI.getEvaluationMetadataSuccess(studentToken, course.getCourseId());
+        assertEquals(3, metadata.getAverageScore());
     }
 }

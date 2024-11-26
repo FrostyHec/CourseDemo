@@ -1,6 +1,7 @@
 package org.frosty.server.test.controller.smoke_test;
 
 import lombok.extern.slf4j.Slf4j;
+import org.frosty.server.controller.course.CourseMemberController;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
 import org.frosty.server.entity.bo.User;
@@ -139,5 +140,34 @@ public class CourseMemberSmokeTest {
         var submittedCourses = courseMemberAPI.getSubmittedCoursesSuccess(adminToken, admin.getUserId(), 1, -1);
         var createdCourse = CommonCheck.checkSingleAndGet(submittedCourses);
         assert createdCourse.getCourseId().equals(course.getCourseId());
+    }
+
+    @Test void testUpdateStudentStatusAndDeleteStudent() throws Exception {
+        var pair = authAPI.quickAddUserAndLogin("teacher", User.Role.teacher);
+        var teacherToken = pair.first;
+        var teacher = pair.second;
+
+        var course = courseAPI.getTemplatePublishedCourse(
+                teacher.getUserId(), "test", Course.PublicationType.open);
+        courseAPI.quickCreateCourse(course);
+
+        pair = authAPI.quickAddUserAndLogin("student", User.Role.student);
+        var studentToken = pair.first;
+        var student = pair.second;
+
+        courseMemberAPI.enrollStudentToCourse(studentToken, course.getCourseId());
+
+        // Update student status
+        courseMemberAPI.updateStudentEnrollStatusSuccess(teacherToken, course.getCourseId(),
+                student.getUserId(), new CourseMemberController.StudentStatusDTO(Enrollment.EnrollmentType.invited));
+        var studentStatus = courseMemberAPI.getStudentStatusSuccess(studentToken, course.getCourseId(), student.getUserId());
+        assert studentStatus == Enrollment.EnrollmentType.invited;
+
+        // Remove student from course
+        courseMemberAPI.deleteStudentFromCourseSuccess(teacherToken, course.getCourseId(), student.getUserId());
+        var studentListAfterRemove = courseMemberAPI.getStudentListSuccess(teacherToken, course.getCourseId(), 1, -1);
+
+        // Check if the student is removed, given that the list does not contain this student
+        assert studentListAfterRemove.stream().noneMatch(s -> s.getStudent().getUserId().equals(student.getUserId()));
     }
 }
