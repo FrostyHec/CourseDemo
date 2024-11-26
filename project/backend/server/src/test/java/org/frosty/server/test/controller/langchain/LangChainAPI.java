@@ -9,10 +9,13 @@ import org.frosty.server.test.controller.auth.AuthUtil;
 import org.frosty.test_common.utils.JsonUtils;
 import org.frosty.test_common.utils.RespChecker;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -32,8 +35,25 @@ public class LangChainAPI {
         chatEntity.setCreatedAt(OffsetDateTime.now());
         chatEntity.setUpdatedAt(OffsetDateTime.now());
         return chatEntity;
-
     }
+
+
+    public MockHttpServletResponse sendChatFlowSuccess(String token, LangchainController.ChatContext chatContext) throws Exception {
+        String url = langchainBaseUrl + "/chat/flow";
+        String json = objectMapper.writeValueAsString(chatContext);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(url)
+                        .headers(authUtil.setAuthHeader(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        return result.getResponse();
+    }
+
+
 
     public ResultActions sendChat(String token, LangchainController.ChatContext chatContext) throws Exception {
         String url = langchainBaseUrl + "/chat";

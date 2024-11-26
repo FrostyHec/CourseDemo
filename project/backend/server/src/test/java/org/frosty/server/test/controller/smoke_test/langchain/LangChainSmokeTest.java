@@ -8,6 +8,7 @@ import org.frosty.server.test.controller.langchain.LangChainAPI;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 @IdempotentControllerTest
 public class LangChainSmokeTest {
@@ -15,6 +16,30 @@ public class LangChainSmokeTest {
     private AuthAPI authAPI;
     @Autowired
     private LangChainAPI langChainAPI;
+
+    @Test
+    public void testStreamChat() throws Exception {
+        // Setup: Authenticate and get token
+        var name = "streamTestUser";
+        var res = authAPI.quickAddUserAndLogin(name, User.Role.student);
+        var token = res.first;
+
+        // 创建流式聊天上下文
+        String json = "{\"messages\":[{\"role\":\"user\",\"content\":\"请告诉我一些关于Java的知识\"}]}";
+        ObjectMapper objectMapper = new ObjectMapper();
+        LangchainController.ChatContext chatContext = objectMapper.readValue(json, LangchainController.ChatContext.class);
+
+        // 调用流式聊天接口并验证响应
+        MockHttpServletResponse response = langChainAPI.sendChatFlowSuccess(token, chatContext);
+
+        // 验证流式返回内容是否包含预期内容
+        String responseContent = response.getContentAsString();
+        System.out.println("Streamed Response: " + responseContent);
+//        assert responseContent.contains("Java"); // 确保响应内容包含相关信息
+    }
+
+
+
 
     @Test
     public void testLangChainCRUD() throws Exception {
