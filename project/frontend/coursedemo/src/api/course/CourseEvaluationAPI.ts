@@ -8,7 +8,7 @@ export interface CourseEvaluationEntity {
     student_id: number
     comment: string
     score: number
-    evaluation_form_answer: Object,//某个{ xxxxx的json}，只要是可转成json的实体就可以
+    evaluation_form_answer: answer[],//某个{ xxxxx的json}，只要是可转成json的实体就可以
     created_at: Date
     updated_at: Date
 }

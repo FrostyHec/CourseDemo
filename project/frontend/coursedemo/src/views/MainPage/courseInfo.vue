@@ -107,7 +107,7 @@ const evaluation = ref<CourseEvaluationEntity[]>([
     student_id: 1,
     comment: 'pretty good',
     score: 4,
-    evaluation_form_answer: '',
+    evaluation_form_answer: [],
     created_at: new Date(),
     updated_at: new Date()
   }

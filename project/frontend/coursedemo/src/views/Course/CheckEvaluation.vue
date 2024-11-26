@@ -27,7 +27,10 @@
           <p>学生ID: {{ selectedEvaluation.student_id }}</p>
           <p>评分: {{ selectedEvaluation.score }}</p>
           <p>评论: {{ selectedEvaluation.comment }}</p>
-          <p>回答: {{ selectedEvaluation.evaluation_form_answer }}</p>
+          <p>回答:</p>
+          <p>问题一: {{ selectedEvaluation.evaluation_form_answer[0].result }}</p>
+          <p>问题二: {{ selectedEvaluation.evaluation_form_answer[1].result }}</p>
+          <p>问题三: {{ selectedEvaluation.evaluation_form_answer[2].result }}</p>
       </div>
   </el-drawer>
 </template>
@@ -38,6 +41,7 @@ import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getEvaluationMetadataCall, getEvaluationsCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
+
 
 const router = useRouter();
 const course = ref<CourseEntity>(
@@ -65,14 +69,22 @@ const evaluation = ref<CourseEvaluationEntity[]>([
     student_id: 1,
     comment: 'pretty good',
     score: 4,
-    evaluation_form_answer: '',
+    evaluation_form_answer: [],
     created_at: new Date(),
     updated_at: new Date()
   }
 ]);
 
 let course_id = 0;
-const selectedEvaluation = ref<CourseEvaluationEntity | null>(null);
+const selectedEvaluation = ref<CourseEvaluationEntity>({
+  course_id: 0,
+  student_id: 0,
+  comment: '',
+  score: 0,
+  evaluation_form_answer: [],
+  created_at: new Date(),
+  updated_at: new Date()
+});
 const isSidebarVisible = ref(false);
 
 onMounted(async () => {
