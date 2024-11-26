@@ -88,16 +88,14 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
     },
     [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
+        const {emitEvent} = useEventStore()
+        emitEvent(EventType.quitEvent,message)
         const authStore = useAuthStore();
         const newLoginBody = message.body as NewLoginBody;
         // 校验 token 是否一致
         if (authStore.token !== newLoginBody.Token) {
             handleAnnouncement("另一个用户登录，您将被登出");
-            // 执行登出操作
-            authStore.logout({user_id: authStore.user.user_id});
-            // 跳转到登录页面
-            const router = useRouter();
-            router.push('/MainPage/login');
+            handleQuit();
         }
     },
     [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
@@ -108,6 +106,10 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         // TODO hlh把消息注册在这里
     }
 };
+
+export function registerSSEHandler(type:SSEBodyType,handler:EventHandler){
+    EventHandlerMaps[type] = handler;
+}
 
 
 const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {

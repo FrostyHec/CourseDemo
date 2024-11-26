@@ -3,8 +3,7 @@
     <div class="header">
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
-        <el-button type="primary" @click="getStreamName">Get Stream</el-button>
-        <el-button type="success" @click="playVideo">Play Video</el-button>
+        <el-button type="primary" @click="getStreamName" v-show="showStream">Get Stream</el-button>
       </div>
     </div>
     <div class="main-content">
@@ -25,26 +24,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import flvjs from 'flv.js';
+import { onMounted, ref } from 'vue';
 import { ElButton } from 'element-plus';
 import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { getUserPublicInfoCall, UserType } from '@/api/user/UserAPI';
 
 
+const showStream = ref(true)
 const authStore = useAuthStore()
 const user_id = authStore.user.user_id;
 const route = useRoute()
 const courseId = Number(route.params.course_id);
 const baseUrl = 'http://localhost:9977';
-const videoUrl = 'http://localhost:8088'; // 流媒体服务器的url
 let streamName = '';
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 const messages = ref<string[]>([]);
 const newMessage = ref('');
+
+onMounted(async () => {
+    if(authStore.user.role == UserType.STUDENT){
+      showStream.value = false;
+    }
+});
 
 // 弹幕消息处理函数
 const handleBarrageMessage = (message: ReceivedMessage) => {
@@ -79,33 +84,6 @@ const getStreamName = async () => {
     }
   } catch (error) {
     console.error('Error fetching stream name:', error);
-  }
-};
-
-const playVideo = async () => {
-  try {
-    if (flvjs.isSupported()) {
-      const flvPlayer = flvjs.createPlayer({
-        type: 'flv',
-        url: `${videoUrl}/live?app=course&stream=${streamName}`,
-        cors: true,
-        requestModifier: (request: { headers: { [x: string]: string; }; }, _flv: any) => {
-          request.headers['X-Forwarded-User'] = JSON.stringify({
-            authStatus: 'PASS',
-            authInfo: {
-              userID: 1,
-            },
-          });
-        },
-      });
-      flvPlayer.attachMediaElement(videoElement.value);
-      flvPlayer.load();
-      flvPlayer.play();
-    } else {
-      console.error('FLV format is not supported in this browser.');
-    }
-  } catch (error) {
-    console.error('Error playing video:', error);
   }
 };
 

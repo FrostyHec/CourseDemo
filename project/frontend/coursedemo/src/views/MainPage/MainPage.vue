@@ -41,8 +41,9 @@
        </div> 
         <!-- 热门教师列表 -->
         <div v-if="activeIndex2 === 'teacher'">
-          <el-card class="box-card" v-for="teacher in hotTeachers" :key="teacher.teacher.user_id">
+          <el-card class="box-card" v-for="(teacher, index) in hotTeachers" :key="teacher.teacher.user_id">
             <div class="clearfix">
+              <span style="float: left;">名次：{{ index + 1 }}</span>
               <span>{{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}</span>
             </div>
             <div>
@@ -52,6 +53,16 @@
           </el-card>
         </div>
       </el-main>
+      <el-dialog
+          title="退出登录"
+          v-model="quitVisible"
+          @close="router.push('/login')"
+        >
+          <span>另一个用户登录，您将被登出</span>
+          <template #footer>
+            <el-button type="primary" @click="router.push('/login')">确认</el-button>
+          </template>
+        </el-dialog>
     </el-container>
     <div class="messages" v-if="announcementMessages.length > 0">
       <div v-for="(msg, index) in announcementMessages" :key="index">
@@ -67,13 +78,17 @@ import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
-import { getUserPublicInfoCall, UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
+import { UserType, type UserPublicInfoEntity } from '@/api/user/UserAPI';
 import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
+import { useEventStore } from '@/stores/event';
+import { EventType } from '@/utils/EventBus';
+import type { SSEBody } from '@/api/sse/SSEHandler';
 
 const router = useRouter();
 const activeIndex = ref('1');
 const activeIndex2 = ref('course');
 const searchQuery = ref('');
+const quitVisible = ref(false);
 
 onMounted(async () => {
     getHotCourses();
@@ -145,8 +160,18 @@ const announcementMessages = ref<string[]>([
   'this is an example','this is an example','this is an example'
 ]);
 
+const {registerEvent} = useEventStore();
+
+registerEvent(EventType.quitEvent,(message: { body: SSEBody; })=>{
+  handleQuit()
+})
+function handleQuit() {
+  quitVisible.value = true;
+}
+
 watch(() => getAnnouncementMessages(), (newMessages) => {
   announcementMessages.value = newMessages;
+  console.log(announcementMessages.value);
 }, { immediate: true });
 
 ;
