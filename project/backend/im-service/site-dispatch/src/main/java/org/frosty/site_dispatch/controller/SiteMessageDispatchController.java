@@ -1,6 +1,7 @@
 package org.frosty.site_dispatch.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
@@ -9,7 +10,7 @@ import org.frosty.sse.entity.SiteMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping(PathConstant.INTERNAL_API + "/msg/site")
 @RequiredArgsConstructor

@@ -2,6 +2,7 @@ package org.frosty.site_dispatch.service;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.site_dispatch.mapper.SSEIPMapper;
 import org.frosty.site_dispatch.mapper.UnackedMapper;
 import org.frosty.site_dispatch.mapper.UnposedMapper;
@@ -10,6 +11,7 @@ import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageDispatchService {
@@ -22,7 +24,14 @@ public class MessageDispatchService {
     @Transactional
     public long push(SiteMessage msg) {
         var ips = sseipMapper.findSSEIP(msg);
-        if (ips==null||ips.isEmpty()) {
+        boolean requiredSave = ips == null || ips.isEmpty();
+        if (requiredSave) {
+            log.info("no sse connection, save message: {}", msg);
+        } else {
+            log.info("found sse connection, push message: {}", msg);
+        }
+
+        if (requiredSave) {
             //没有这个sse连接
             switch (msg.getType()) {
                 case NEW -> {
@@ -42,7 +51,7 @@ public class MessageDispatchService {
             }
         } else {
             // 存在sse连接
-            for(var ip:ips) {
+            for (var ip : ips) {
                 switch (msg.getType()) {
                     case NEW -> {
                         msg.setMessageId(IdWorker.getId());

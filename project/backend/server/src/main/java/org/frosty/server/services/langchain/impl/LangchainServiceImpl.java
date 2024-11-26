@@ -59,4 +59,9 @@ public class LangchainServiceImpl implements LangchainService {
     public void createNewChat(ChatHistory chatHistory) {
         langchainMapper.insert(chatHistory);
     }
+
+    @Override
+    public void deleteChat(Long id) {
+        langchainMapper.deleteById(id);
+    }
 }
