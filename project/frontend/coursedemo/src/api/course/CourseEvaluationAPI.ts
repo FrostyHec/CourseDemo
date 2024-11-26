@@ -51,6 +51,6 @@ export async function getEvaluationsCall(courseId: number, pageSize: number, pag
 
 
 export async function getEvaluationMetadataCall(courseId: number) {
-    const url = service_backend_base + `/course/${courseId}/evaluations/metadata'`
+    const url = service_backend_base + `/course/${courseId}/evaluations/metadata`
     return AxiosAPI.authGet<{ average_score:number }>(url, {})
 }

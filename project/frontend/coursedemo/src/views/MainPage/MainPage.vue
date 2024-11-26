@@ -21,32 +21,36 @@
     <el-container class="container">
       <el-aside width="200px">
         <el-menu>
-          <el-menu-item index="1-1" @click="showHotCourses">热门课程</el-menu-item>
-          <el-menu-item index="1-2" @click="showHotTeachers">热门教师</el-menu-item>
+          <el-menu-item index="1-1" @click="activeIndex2 = 'course';getHotCourses()">热门课程</el-menu-item>
+          <el-menu-item index="1-2" @click="activeIndex2 = 'teacher';getHotTeachers()">热门教师</el-menu-item>
         </el-menu>
       </el-aside>
       <el-main class="main">
         <!-- 热门课程列表 -->
-        <el-card class="box-card" v-for="repo in repositories" :key="repo.course.course_id" v-show="showCourses">
-          <div class="clearfix">
-            <span>{{ repo.course.course_name }}</span>
-          </div>
-          <div>
-            <p>Description: {{ repo.course.description }}</p>
-            <p>Teacher: {{ repo.course.teacher_id }}</p>
-          </div>
-          <el-button style="float: none;" type="primary" @click="enterCourse(repo.course.course_id)">查看课程信息</el-button>
-        </el-card>
+        <div v-if="activeIndex2 === 'course'">
+          <el-card class="box-card" v-for="repo in repositories" :key="repo.course.course_id">
+            <div class="clearfix">
+              <span>{{ repo.course.course_name }}</span>
+            </div>
+            <div>
+              <p>Description: {{ repo.course.description }}</p>
+              <p>Teacher: {{ repo.course.teacher_id }}</p>
+            </div>
+            <el-button style="float: none;" type="primary" @click="enterCourse(repo.course.course_id)">查看课程信息</el-button>
+          </el-card>
+       </div> 
         <!-- 热门教师列表 -->
-        <el-card class="box-card" v-for="teacher in hotTeachers" :key="teacher.teacher.user_id" v-show="showTeachers">
-          <div class="clearfix">
-            <span>{{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}</span>
-          </div>
-          <div>
-            <p>Role: {{ teacher.teacher.role }}</p>
-            <p>Email: {{ teacher.teacher.email }}</p>
-          </div>
-        </el-card>
+        <div v-if="activeIndex2 === 'teacher'">
+          <el-card class="box-card" v-for="teacher in hotTeachers" :key="teacher.teacher.user_id">
+            <div class="clearfix">
+              <span>{{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}</span>
+            </div>
+            <div>
+              <p>Student Number: {{ teacher.student_num }}</p>
+              <p>Email: {{ teacher.teacher.email }}</p>
+            </div>
+          </el-card>
+        </div>
       </el-main>
     </el-container>
     <div class="messages" v-if="announcementMessages.length > 0">
@@ -68,6 +72,8 @@ import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
 
 const router = useRouter();
 const activeIndex = ref('1');
+const activeIndex2 = ref('course');
+const searchQuery = ref('');
 
 onMounted(async () => {
     getHotCourses();
@@ -94,36 +100,20 @@ const repositories = ref<CourseWithStudentCount[]>([
     studentNum: 100
   }
 ]);
-const hotTeachers = ref<TeacherWithStudentCount[]>([
+let hotTeachers = ref<TeacherWithStudentCount[]>([
   {
     teacher: teacher1.value,
-    studentNum: 0
+    student_num: 0
   }
 ])
-
-const searchQuery = ref('');
-let showCourses = true;
-let showTeachers = false;
-
-const getTeacherName = async (teacher_id: number) => {
-  try {
-    const result = await getUserPublicInfoCall(teacher_id); 
-    return `${result.data.first_name} ${result.data.last_name}`;
-  } catch (error) {
-    console.error('获取老师名字失败:', error);
-    return '';
-  }
-};
 
 const pageSize = 10;
 const pageNum = 1;
 
 const getHotCourses = async () => {
   try {
-    const response = await getHotCoursesCall(pageNum, pageSize);
+    const response = await getHotCoursesCall(pageSize,pageNum);
     repositories.value = response.data.content;
-    showCourses = true;
-    showTeachers = false;
   } catch (error) {
     console.error('获取热门课程失败:', error);
   }
@@ -131,14 +121,8 @@ const getHotCourses = async () => {
 
 const getHotTeachers = async () => {
   try {
-    const response = await getHotTeachersCall(1, 10);
-    const hotTeachers = response.data.content.map((teacher: { studentNum: number; }) => ({
-      teacher,
-      studentNum: teacher.studentNum
-    }));
-    showCourses = false;
-    showTeachers = true;
-    return hotTeachers;
+    const response = await getHotTeachersCall(pageSize,pageNum);
+    hotTeachers.value = response.data.content;
   } catch (error) {
     console.error('获取热门教师失败:', error);
     return [];
@@ -155,18 +139,6 @@ const handleSearch = () => {
 
 const navigateTo = (path: string) => {
   router.push(path);
-};
-
-const showHotCourses = () => {
-  getHotCourses();
-  showCourses = true;
-  showTeachers = false;
-};
-
-const showHotTeachers = () => {
-  getHotTeachers();
-  showCourses = false;
-  showTeachers = true;
 };
 
 const announcementMessages = ref<string[]>([
