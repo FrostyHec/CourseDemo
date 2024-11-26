@@ -53,7 +53,22 @@ public class LangChainAPI {
         return result.getResponse();
     }
 
+    public ResultActions generateTitle(String token, LangchainController.ChatContext chatContext) throws Exception {
+        String url = langchainBaseUrl + "/title";
+        String json = objectMapper.writeValueAsString(chatContext);
+        return mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .headers(authUtil.setAuthHeader(token))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON));
+    }
 
+    public LangchainController.TitleEntity generateTitleSuccess(String token, LangchainController.ChatContext chatContext) throws Exception {
+        var resp = generateTitle(token, chatContext)
+                .andExpect(RespChecker.success())
+                .andReturn();
+        return JsonUtils.toObject(resp, LangchainController.TitleEntity.class);
+    }
 
     public ResultActions sendChat(String token, LangchainController.ChatContext chatContext) throws Exception {
         String url = langchainBaseUrl + "/chat";
@@ -70,7 +85,6 @@ public class LangChainAPI {
                 .andExpect(RespChecker.success())
                 .andReturn();
         return JsonUtils.toObject(resp, LangchainController.ChatContext.class);
-
     }
 
 

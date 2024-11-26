@@ -66,9 +66,10 @@ public class LangChainSmokeTest {
 
         //  STEP2: 发送消息
         // 原始JSON字符串
-        String json = "{\"messages\":[{\"role\":\"user\",\"content\":\"你好\"},"
-                + "{\"role\":\"assistant\",\"content\":\"你好，请问有什么我可以帮助你的吗？无论是回答问题、提供建议，还是其他任何需求，我都会尽力提供帮助。请告诉我你的具体需求或问题。\"}," +
-                "{\"role\":\"user\",\"content\":\"自我介绍\"}]}";
+//        String json = "{\"messages\":[{\"role\":\"user\",\"content\":\"你好\"},"
+//                + "{\"role\":\"assistant\",\"content\":\"你好，请问有什么我可以帮助你的吗？无论是回答问题、提供建议，还是其他任何需求，我都会尽力提供帮助。请告诉我你的具体需求或问题。\"}," +
+//                "{\"role\":\"user\",\"content\":\"自我介绍\"}]}";
+        String json = "{\"messages\":[{\"role\":\"user\",\"content\":\"请告诉我一些关于Java的知识\"}]}";
 
         // 将JSON字符串转为ChatContext对象
         ObjectMapper objectMapper = new ObjectMapper();
@@ -90,6 +91,13 @@ public class LangChainSmokeTest {
 //        System.out.println("---------------------");
         assert chatContext2.getMessages().equals(chatContext1.getMessages());
 
+
+        var title = langChainAPI.generateTitleSuccess(token,chatContext2);
+        System.out.println("---------------------");
+        System.out.println(title.getTitle());
+        System.out.println("---------------------");
+
+        
         //  STEP5: 获取我的全部聊天记录
 
         // Test: Update chat title

@@ -22,9 +22,9 @@ public class ChatService {
     // 增加超时设置
     // 单段的传输会比较长？可能设置一个长一点的时间会比较好
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)   // 设置连接超时为 30 秒
-            .readTimeout(60, TimeUnit.SECONDS)      // 设置读取超时为 60 秒
-            .writeTimeout(60, TimeUnit.SECONDS)     // 设置写入超时为 60 秒
+            .connectTimeout(300, TimeUnit.SECONDS)   // 设置连接超时为 30 秒
+            .readTimeout(600, TimeUnit.SECONDS)      // 设置读取超时为 60 秒
+            .writeTimeout(600, TimeUnit.SECONDS)     // 设置写入超时为 60 秒
             .build();
 
     public LangchainController.ChatContext chatWithModel(LangchainController.ChatContext chatContext) throws IOException {
