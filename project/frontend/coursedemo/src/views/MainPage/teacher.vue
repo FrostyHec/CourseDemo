@@ -95,33 +95,6 @@ const navigateTo = (path: string) => {
   router.push(path); // 使用 router.push 进行路由跳转
 };
 
-const createNewCourse = () => {
-  courseForm.value = {
-    course_id: 0,
-    course_name: '',
-    description: '',
-    teacher_id: authStore.user.user_id,
-    status: CourseStatus.submitted,
-    publication: Publication.open,
-    evaluation_type: EvaluationType.practice,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-  dialogVisible.value = true;
-};
-
-const AddCourse = async () => {
-  await createCourseCall(courseForm.value);
-  dialogVisible.value = false;
-  tableData.value.push(courseForm.value);
-  fetchCourses(); // Refresh the course list after adding a new course
-};
-
-const confirmDelete = (row: CourseEntity) => {
-  currentCourseToDelete.value = row;
-  deleteDialogVisible.value = true;
-};
-
 const handlePageChange = (newPage: number) => {
   currentPage.value = newPage;
   fetchCourses();
