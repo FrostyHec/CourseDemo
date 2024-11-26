@@ -78,7 +78,7 @@ const router = createRouter({
       component: () => import('@/views/MainPage/teacher.vue'),
     },
     {
-      path: '/MainPage/login',
+      path: '/login',
       component: () => import('@/views/MainPage/login.vue'),
     },
     {

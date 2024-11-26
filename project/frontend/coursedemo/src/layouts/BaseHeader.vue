@@ -67,7 +67,7 @@ function logout() {
     type: 'success',
   });
   // 跳转到登录页面
-  router.push('/MainPage/login');
+  router.push('/login');
 }
 </script>
 
