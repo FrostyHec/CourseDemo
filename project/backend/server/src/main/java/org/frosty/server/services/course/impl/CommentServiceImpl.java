@@ -101,7 +101,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<ResourceComment> findByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt) {
-        return commentMapper.selcetByUserIdAndCreatedTime(userId, createdAt);
+        OffsetDateTime startTime = createdAt.toLocalDate().atStartOfDay().atOffset(createdAt.getOffset());
+        OffsetDateTime endTime = startTime.plusDays(1);
+        return commentMapper.selectByUserIdAndCreatedTime(userId, startTime, endTime);
     }
 
 

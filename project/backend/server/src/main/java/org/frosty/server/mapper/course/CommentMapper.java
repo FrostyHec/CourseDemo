@@ -46,13 +46,17 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
 
 
     @Select("""
-                SELECT * 
-                FROM resource_comments
-                WHERE user_id = #{userId} 
-                  AND created_at >= #{createdAt.atStartOfDay()} 
-                  AND created_at < #{createdAt.plusDays(1).atStartOfDay()}
-            """)
-    List<ResourceComment> selcetByUserIdAndCreatedTime(Long userId, OffsetDateTime createdAt);
+    SELECT * 
+    FROM resource_comments
+    WHERE user_id = #{userId} 
+      AND created_at >= #{startTime} 
+      AND created_at < #{endTime}
+""")
+    List<ResourceComment> selectByUserIdAndCreatedTime(
+            @Param("userId") Long userId,
+            @Param("startTime") OffsetDateTime startTime,
+            @Param("endTime") OffsetDateTime endTime);
+
 
 
     @Select("""
