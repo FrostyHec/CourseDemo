@@ -1,7 +1,7 @@
 # 使用 Ubuntu 作为基础镜像
 FROM ubuntu:22.04
 
-LABEL authors = "hlh"
+LABEL authors ="hlh"
 
 # 安装 openjdk-21
 RUN apt-get update && \
@@ -19,10 +19,10 @@ RUN java -version
 WORKDIR /app
 
 # 将可执行的 JAR 文件复制到容器中
-COPY target/server-1.0-SNAPSHOT.jar /app/app.jar
+COPY target/object-storage-1.0-SNAPSHOT.jar /app/app.jar
 
-# 暴露端口 9977
-EXPOSE 9977
+# 暴露端口 9976
+EXPOSE 9976
 
 # 设置容器启动时执行的命令
 ENTRYPOINT ["java", "-jar", "app.jar"]
