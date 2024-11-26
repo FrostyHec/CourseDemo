@@ -11,6 +11,7 @@ import org.frosty.server.test.controller.course.cheat_check.CheatCheckAPI;
 import org.frosty.server.test.controller.course.course.CourseAPI;
 import org.frosty.server.test.controller.course.progress.CourseProgressAPI;
 import org.frosty.server.test.controller.course.resource.ResourceAPI;
+import org.frosty.server.test.controller.market.MarketHistoryAPI;
 import org.frosty.server.test.tools.CommonCheck;
 import org.frosty.test_common.annotation.IdempotentControllerTest;
 import org.frosty.test_common.utils.RespChecker;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
+
+import static org.frosty.server.entity.bo.market.ConsumeRecord.ConsumeActionType.complete_course;
+import static org.frosty.server.entity.bo.market.ConsumeRecord.ConsumeActionType.daily_comment;
 
 @IdempotentControllerTest
 public class CourseProgressSmokeTest {
@@ -35,6 +39,8 @@ public class CourseProgressSmokeTest {
     private CourseAPI courseAPI;
     @Autowired
     private ResourceAPI resourceAPI;
+    @Autowired
+    private MarketHistoryAPI marketHistoryAPI;
 
     @Test
     public void testCompleteResource() throws Exception {
@@ -84,6 +90,16 @@ public class CourseProgressSmokeTest {
         courseProgressAPI.completeResourceSuccess(studentToken, videoId2);
         courseProgressAPI.completeChapterSuccess(studentToken, courseId);
         courseProgressAPI.completeCourseSuccess(studentToken, courseId);
+
+
+        var History = marketHistoryAPI.getMyHistorySuccess(studentToken);
+        System.out.println("-----------------------");
+        System.out.println(History);
+        System.out.println("-----------------------");
+        assert History.size() == 1;
+        assert History.get(0).getActionType().equals(complete_course);
+
+
 
         var progress = courseProgressAPI.checkCourseProgressSuccess(studentToken, courseId);
         assert progress.getCourseId().equals(courseId);

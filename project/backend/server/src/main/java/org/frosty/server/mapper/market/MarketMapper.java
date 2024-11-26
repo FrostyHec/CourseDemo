@@ -6,7 +6,7 @@ import org.frosty.server.entity.bo.market.MyMarketScore;
 
 @Mapper
 public interface MarketMapper {
-    @Update("UPDATE market_score_record SET market_score = #{score} WHERE user_id = #{userId}")
+    @Update("UPDATE market_score_record SET market_score = market_score + #{score} WHERE user_id = #{userId}")
     void addUserMarketScore(@Param("userId") Long userId, @Param("score") int score);
 
 
