@@ -1,5 +1,7 @@
 package org.frosty.server.controller.course.analysis;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.entity.AuthInfo;
@@ -8,7 +10,6 @@ import org.frosty.server.entity.bo.Assignment;
 import org.frosty.server.entity.bo.Chapter;
 import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.course.analysis.StudyAnalysisService;
-import org.frosty.server.utils.FrameworkUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,9 +68,19 @@ public class StudyAnalysisController {
         return studyAnalysisService.teacherCheckCourseStudySituation(cid, userId);
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = TeachingChapter.class, name = "teaching"),
+            @JsonSubTypes.Type(value = ScoreChapter.class, name = "score")
+    })
     public interface ChapterStudySituationData {
     }
 
+    // 添加 JsonTypeInfo 和 JsonSubTypes 注解
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = AssignmentContent.class, name = "assignment_content")
+    })
     public interface WarningInfoContent {
     }
 
@@ -86,8 +97,8 @@ public class StudyAnalysisController {
         @AllArgsConstructor
         @NoArgsConstructor
         public static class TeachingChapterInfo {
-            private Integer totalChapterCount;
-            private Integer completedCount;
+            private Integer totalChapterCount; // 教学章节数
+            private Integer completedCount; // 已完成的学生数
             private Integer maxPossibleCompletedCount;//stuCnt*chapters
         }
 
@@ -95,20 +106,20 @@ public class StudyAnalysisController {
         @AllArgsConstructor
         @NoArgsConstructor
         public static class ScoringChapterInfo {
-            private Integer totalChapterCount;
-            private Integer completedCount;
+            private Integer totalChapterCount; // 作业/项目章节数
+            private Integer completedCount; // 已完成的学生数
             private Integer maxPossibleCompletedCount;//stuCnt*chapters
-            private List<SingleChapterInfo> changingRate;
+            private List<SingleChapterInfo> changingRate; //章节完成率变化
 
             @Data
             @AllArgsConstructor
             @NoArgsConstructor
             public static class SingleChapterInfo {
-                private Chapter chapter;
-                private Integer averageScore;
-                private Integer maxScore;
-                private Integer completedCount;
-                private Integer maxCompletedCount;//stuCnt*cpters
+                private Chapter chapter; // 章节信息
+                private Integer averageScore; // 平均分
+                private Integer maxScore; // 最高分
+                private Integer completedCount; // 已完成的学生数
+                private Integer maxCompletedCount; // stuCnt*cpters
             }
         }
 
@@ -116,15 +127,15 @@ public class StudyAnalysisController {
         @AllArgsConstructor
         @NoArgsConstructor
         public static class DifficultChapter {
-            private Chapter chapter;
-            private DifficultWarnInfo warningInfo;
+            private Chapter chapter; // 章节信息
+            private DifficultWarnInfo warningInfo; // 预警信息
 
             @Data
             @AllArgsConstructor
             @NoArgsConstructor
             public static class DifficultWarnInfo {
-                private WarningInfo.WarningType type;
-                private Double description;//完成百分比
+                private WarningInfo.WarningType type; // 预警类型
+                private Double description; //完成百分比
             }
         }
     }
@@ -141,34 +152,34 @@ public class StudyAnalysisController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TeachingChapter implements ChapterStudySituationData {
-        private Integer uncompletedCount;
-        private List<CompletedStatus> completedStatusList;
+        private Integer uncompletedCount; // 未完成的学生数
+        private List<CompletedStatus> completedStatusList; //学生完成情况
 
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
         public static class CompletedStatus {
-            private UserPublicInfo student;
-            private Boolean isCompleted;
+            private UserPublicInfo student; //学生信息
+            private Boolean isCompleted; //是否完成
         }
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ScoreChapter implements ChapterStudySituationData {
-        private Integer averageScore;
-        private Integer ungradedCount;
-        private Integer uncompletedCount;
-        private List<CompletedStatus> completedStatusList;
+    public static class ScoreChapter implements ChapterStudySituationData { //assignment or project
+        private Integer averageScore; // 平均分
+        private Integer ungradedCount; // 未打分的学生数
+        private Integer uncompletedCount; // 未完成的学生数
+        private List<CompletedStatus> completedStatusList; // 学生完成情况
 
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
         public static class CompletedStatus {
-            private UserPublicInfo student;
-            private Boolean isCompleted;
-            private Boolean isGraded;
+            private UserPublicInfo student; // 学生信息
+            private Boolean isCompleted; // 是否完成
+            private Boolean isGraded; // 是否打分
         }
     }
 
@@ -176,28 +187,28 @@ public class StudyAnalysisController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AssignmentChapterSituationList {
-        private List<AssignmentChapterSituation> content;
+        private List<AssignmentChapterSituation> content; //章节列表
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AssignmentChapterSituation {
-        private Long chapterId;
-        private Chapter.ChapterType chapterType;
-        private String chapterName;
-        private Boolean isAllGraded;
-        private List<AssignmentSituation> assignments;
+        private Long chapterId; //章节ID
+        private Chapter.ChapterType chapterType; //章节类型
+        private String chapterName; //章节名称
+        private Boolean isAllGraded; //是否全部打分
+        private List<AssignmentSituation> assignments; //作业列表
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AssignmentSituation {
-        private Assignment assignment;
-        private Boolean hasSubmission;
-        private Boolean isGraded;
-        private Integer receivedScores;
+        private Assignment assignment; //作业信息
+        private Boolean hasSubmission; //是否有提交
+        private Boolean isGraded; //是否打分
+        private Integer receivedScores; //得分
     }
 
     @Data
@@ -224,7 +235,7 @@ public class StudyAnalysisController {
     @NoArgsConstructor
     public static class WarningInfo {
         private WarningType warningType;
-        private Long warningStudent;
+        private UserPublicInfo warningStudent;
         private WarningInfoContent description;
         private OffsetDateTime date;
 

@@ -22,7 +22,6 @@ import java.util.Map;
 @RequestMapping(PathConstant.API + "/recommend")
 @RequiredArgsConstructor
 public class RecommendController {
-    // TODO HLH
 
     private final RecommendService recommendService;
 

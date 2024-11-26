@@ -35,6 +35,7 @@ public class CourseAPI {
                 .setDescription("Course Description")
                 .setStatus(Course.CourseStatus.creating) // it was "approved"
                 .setPublication(Course.PublicationType.open)
+                .setEvaluationType(Course.CourseEvaluationType.theory)
                 ;
     }
 

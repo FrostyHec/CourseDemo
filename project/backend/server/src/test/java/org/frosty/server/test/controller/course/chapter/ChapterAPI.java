@@ -41,6 +41,17 @@ public class ChapterAPI {
                 .setVisible(Boolean.TRUE)
                 .setPublication(Boolean.TRUE);
     }
+    public Chapter getTemplateAssignmentChapter(Long courseId, ChapterType chapterType) {
+        return new Chapter()
+                .setCourseId(courseId)
+                .setChapterTitle("Chapter Title")
+                .setChapterType(chapterType)
+                .setContent("Chapter Content")
+                .setChapterOrder(1)
+                .setVisible(Boolean.TRUE)
+                .setPublication(Boolean.TRUE);
+    }
+
 
     public ResultActions create(String token, Long courseId, Chapter chapter) throws Exception {
         String url = courseBaseUrl + "/" + courseId + "/chapter";
@@ -125,4 +136,11 @@ public class ChapterAPI {
         assert e.getChapterId() != null;
         return e.getChapterId();
     }
+    public Long addTestChapterAndGetId(Long coId, ChapterType chapterType) {
+        var e = getTemplateAssignmentChapter(coId, chapterType);
+        chapterMapper.insert(e);
+        assert e.getChapterId() != null;
+        return e.getChapterId();
+    }
+
 }

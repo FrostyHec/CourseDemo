@@ -32,6 +32,9 @@ public class Resource implements ChapterContent {
     private OffsetDateTime updatedAt; // 更新时间
 
     public enum ResourceType {
-        description, courseware, video, attachment
+        description,
+        courseware,
+        video,
+        attachment
     }
 }
