@@ -1,5 +1,6 @@
 package org.frosty.server.controller.langchain;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.server.entity.bo.langchain.ChatHistory;
 import org.frosty.server.services.langchain.ChatService;
 import org.frosty.server.services.langchain.LangchainService;
 import org.frosty.server.utils.FrameworkUtils;
@@ -17,6 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(PathConstant.API + "/langchain")
@@ -63,6 +68,16 @@ public class LangchainController {
         // 依据输入的chatEntity返回title
         ChatEntity chatEntity = new ChatEntity();
         chatEntity.setTitle(titleEntity.getTitle());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode emptyContext = objectMapper.valueToTree(Map.of());// 创建一个空的 JSON 对象
+        ChatContext emptyContext = new ChatContext();
+
+                ChatHistory chatHistory = new ChatHistory()
+                .setUserId(tokenInfo.getAuthInfo().getUserID())
+                .setTitle(titleEntity.getTitle())
+                .setContext(emptyContext);
+        langchainService.createNewChat(chatHistory);
         return chatEntity;
     }
 
@@ -83,8 +98,7 @@ public class LangchainController {
     @GetMapping("/{id}")
     public ChatContext getChatContent(@GetToken TokenInfo tokenInfo, @PathVariable Long id) {
         // 返回该id下所有chat的历史记录
-        ChatContext context = new ChatContext();
-        context.messages = langchainService.getChatContentById(id);
+        ChatContext context = langchainService.getChatContentById(id);
         return context;
     }
 

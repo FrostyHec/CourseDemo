@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.frosty.server.controller.langchain.LangchainController;
 import org.frosty.server.entity.bo.market.action_type.ActionParam;
 import org.frosty.server.entity.handler.JsonNodeTypeHandler;
 import org.frosty.server.utils.ActionParamTypeHandler;
@@ -26,6 +27,7 @@ public class MyBatisPlusConfig {
         return configuration -> {
             configuration.getTypeHandlerRegistry().register(ActionParam.class, new ActionParamTypeHandler());
         configuration.getTypeHandlerRegistry().register(JsonNode.class, new JsonNodeTypeHandler());
+            configuration.getTypeHandlerRegistry().register(LangchainController.ChatContext.class, new ChatContextTypeHandler());
         };
     }
 }

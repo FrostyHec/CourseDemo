@@ -48,7 +48,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
         actionParam.setCourseName(courseName);
 
         // 获取变动积分值
-        int changedScore = EarnCreditEventHandler.ScoreRule.COMPLETE_COURSE.ordinal();
+        int changedScore = EarnCreditEventHandler.ScoreRule.COMPLETE_COURSE.getScore();
 
         // 获取当前用户的剩余积分
         int currentScore = marketService.getMyMarketScore(userId).getMarketScore();
@@ -58,7 +58,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
         ConsumeRecord consumeRecord = new ConsumeRecord()
                 .setUserId(userId)
                 .setActionType(ConsumeRecord.ConsumeActionType.complete_course)
-//                .setActionParam(actionParam)
+                .setActionParam(actionParam)
                 .setChangedScore(changedScore)
                 .setRemainScore(remainScore);
 
@@ -109,7 +109,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
             actionParam.setCourseName(courseName);
 
             // 获取变动积分值
-            int changedScore = EarnCreditEventHandler.ScoreRule.DAILY_COMMENT.ordinal();
+            int changedScore = EarnCreditEventHandler.ScoreRule.DAILY_COMMENT.getScore();
 
             // 获取当前用户的剩余积分
             int currentScore = marketService.getMyMarketScore(userId).getMarketScore();
@@ -119,7 +119,7 @@ public class EarnCreditEventServiceImp implements EarnCreditEventService {
             ConsumeRecord consumeRecord = new ConsumeRecord()
                     .setUserId(userId)
                     .setActionType(ConsumeRecord.ConsumeActionType.daily_comment)
-//                    .setActionParam(actionParam)
+                    .setActionParam(actionParam)
                     .setChangedScore(changedScore)
                     .setRemainScore(remainScore);
 
