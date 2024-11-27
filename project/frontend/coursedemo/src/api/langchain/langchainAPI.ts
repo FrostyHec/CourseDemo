@@ -11,8 +11,13 @@ export interface TitleEntity {
 }
 
 export interface SingleChatMessage {
-    role: string;
+    role: Role;
     content: string;
+}
+
+export enum Role{
+    user = 'user',
+    assistant = 'assistant'
 }
 
 export interface ChatContext {
@@ -20,7 +25,7 @@ export interface ChatContext {
 }
 
 export interface ChatMetadataList {
-    chatHistory: ChatEntity[];
+    chat_history: ChatEntity[];
 }
 import { service_backend_base } from '@/utils/Constant';
 import { AxiosAPI } from '@/utils/APIUtils';
@@ -65,4 +70,9 @@ export async function getChatContentCall(id: number) {
 export async function setChatTitleCall(titleEntity: TitleEntity, id: number) {
     const url = service_backend_base + `/langchain/${id}/title`;
     return AxiosAPI.authPatch<ChatEntity>(url, titleEntity);
+}
+
+export async function deleteChatCall(id: number) {
+    const url = service_backend_base + `/langchain/${id}`;
+    return AxiosAPI.authDelete<ChatEntity>(url);
 }

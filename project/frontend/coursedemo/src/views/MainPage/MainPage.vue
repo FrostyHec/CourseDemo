@@ -69,12 +69,14 @@
         {{ msg }}
       </div>
     </div>
+    <llm />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
+import llm from '@/views/Course/llm.vue'
 import { useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getHotCoursesCall, getHotTeachersCall, type CourseWithStudentCount, type TeacherWithStudentCount } from '@/api/course/HotCourseAPI';
