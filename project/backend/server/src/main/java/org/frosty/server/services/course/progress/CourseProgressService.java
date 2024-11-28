@@ -1,6 +1,7 @@
 package org.frosty.server.services.course.progress;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.frosty.auth.entity.AuthInfo;
 import org.frosty.common.response.Response;
 import org.frosty.common.utils.Ex;
@@ -24,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CourseProgressService {
@@ -50,10 +51,8 @@ public class CourseProgressService {
                 Response.getBadRequest("cannot-complete-nonvideo"));
         checkStudentCompleteResource(rid, uid);
         // add complete
-        try {
+        if(!resourceCompleteMapper.contains(rid,uid)) {
             resourceCompleteMapper.insert(new ResourceCompleteRecord(rid, uid));
-        } catch (Exception e) {
-            if (!resourceCompleteMapper.contains(rid, uid)) throw e;
         }
     }
 
@@ -81,10 +80,8 @@ public class CourseProgressService {
                     Response.getBadRequest("resource-" + r.getResourceId() + "-not-complete"));
         }
         // add complete
-        try {
+        if(!chapterCompleteMapper.contains(cid, uid)){
             chapterCompleteMapper.insert(new ChapterCompleteRecord(cid, uid));
-        } catch (Exception e) {
-            if (!chapterCompleteMapper.contains(cid, uid)) throw e;
         }
     }
 
@@ -104,10 +101,8 @@ public class CourseProgressService {
                     Response.getBadRequest("chapter-" + c.getChapterId() + "-not-complete"));
         }
         // add complete
-        try {
+        if (!courseCompleteMapper.contains(csid, uid)) {
             courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
-        } catch (Exception e) {
-            if (!courseCompleteMapper.contains(csid, uid)) throw e;
         }
         applicationEventPublisher.publishEvent(new CompleteCourseEvent(this, csid, uid));
     }

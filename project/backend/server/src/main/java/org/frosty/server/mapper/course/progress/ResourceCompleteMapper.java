@@ -30,4 +30,6 @@ public interface ResourceCompleteMapper extends BaseMapper<ResourceCompleteRecor
             """
     )
     List<ResourceCompleteRecord> getCompletionStatuses(@Param("resourceIds") List<Long> resourceIds, @Param("studentIds") List<Long> studentIds);
+
+
 }

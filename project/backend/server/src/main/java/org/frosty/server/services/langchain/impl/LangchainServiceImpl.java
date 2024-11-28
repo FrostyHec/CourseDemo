@@ -3,6 +3,8 @@ package org.frosty.server.services.langchain.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.frosty.common.response.Response;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.controller.langchain.LangchainController;
 import org.frosty.server.entity.bo.langchain.ChatHistory;
 import org.frosty.server.mapper.langchain.LangchainMapper;
@@ -20,7 +22,7 @@ public class LangchainServiceImpl implements LangchainService {
     @Override
     public void saveChatHistory(LangchainController.ChatContext context, Long id) {
         ChatHistory chatHistory = langchainMapper.selectById(id);
-
+        Ex.check(chatHistory!=null,Response.getNotFound("id-not-found"));
 
 //        // 将 ChatContext 转换为 JsonNode
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -34,9 +36,8 @@ public class LangchainServiceImpl implements LangchainService {
 
     @Override
     public LangchainController.ChatContext getChatContentById(Long id) {
-
         ChatHistory chatHistory= langchainMapper.selectChatContentByChatId(id);
-
+        Ex.check(chatHistory!=null, Response.getNotFound("id-not-found"));
         return chatHistory.getContext();
     }
 

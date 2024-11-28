@@ -10,6 +10,7 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.exception.InternalException;
 import org.frosty.server.entity.bo.langchain.ChatHistory;
+import org.frosty.server.entity.converter.ChatHistoryEntityConverter;
 import org.frosty.server.services.langchain.ChatService;
 import org.frosty.server.services.langchain.LangchainService;
 import org.frosty.server.utils.FrameworkUtils;
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class LangchainController {
     private final LangchainService langchainService;
-
+    private final ChatHistoryEntityConverter chatHistoryEntityConverter;
     private final ChatService chatService;
     
     @PostMapping("/chat")
@@ -76,11 +77,6 @@ public class LangchainController {
 
     @PostMapping("/")
     public ChatEntity createNewChat(@GetToken TokenInfo tokenInfo, @RequestBody TitleEntity titleEntity) {
-        // 依据输入的chatEntity返回title
-        ChatEntity chatEntity = new ChatEntity();
-        chatEntity.setTitle(titleEntity.getTitle());
-
-        ObjectMapper objectMapper = new ObjectMapper();
 //        JsonNode emptyContext = objectMapper.valueToTree(Map.of());// 创建一个空的 JSON 对象
         ChatContext emptyContext = new ChatContext();
 
@@ -89,7 +85,7 @@ public class LangchainController {
                 .setTitle(titleEntity.getTitle())
                 .setContext(emptyContext);
         langchainService.createNewChat(chatHistory);
-        return chatEntity;
+        return chatHistoryEntityConverter.toChatEntity(chatHistory);
     }
 
     @PutMapping("/{id}")
