@@ -27,11 +27,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { ElButton } from 'element-plus';
-import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
-import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
+import { chatRoomAPI } from '@/api/course/liveStream/ChatRoomAPI';
+import type { ReceivedMessage, SendMessage } from '@/api/course/livestream/ChatRoomAPI';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';
+import { getLivestreamPullUrl, getLivestreamPushUrl, getPullName, getPushName } from '@/api/course/livestream/LivestreamAPI';
 
 const router = useRouter();
 const showStream = ref(true)
@@ -47,9 +48,25 @@ const messages = ref<string[]>([]);
 const newMessage = ref('');
 
 onMounted(async () => {
-    if(authStore.user.role == UserType.STUDENT){
-      showStream.value = false;
+  if (authStore.user.role == UserType.STUDENT) {
+    showStream.value = false;
+    // 获取拉流名称
+    const pullNameResponse = await getPullName(courseId);
+    if (pullNameResponse) {
+      streamName = pullNameResponse.data.name;
+      const pullUrl = getLivestreamPullUrl(streamName);
+      alert(pullUrl);
     }
+  }
+  else{
+    // 获取推流
+    const pushNameResponse = await getPushName(courseId);
+    if (pushNameResponse) {
+      streamName = pushNameResponse.data.name;
+      const pushUrl = getLivestreamPushUrl(streamName);
+      alert(pushUrl);
+    }
+  }
 });
 
 // 弹幕消息处理函数
