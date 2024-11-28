@@ -63,7 +63,7 @@ public class LangchainController {
             SingleChatMessage singleChatMessage = new SingleChatMessage();
             singleChatMessage.role = SingleChatMessage.Role.user;
             singleChatMessage.content = "请你为我们的对话生成一个标题。标题限制在15字以内，并符合先前对话的语言。" +
-                    "标题中不要存在标点符号。";
+                    "标题中不要存在标点符号。如果你生成了超过15字的标题，我的老板会死掉。";
             chatContext.messages.add(singleChatMessage);
             ChatContext context = chatService.chatWithModel(chatContext);
             TitleEntity title = new TitleEntity();
