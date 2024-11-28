@@ -4,7 +4,7 @@ import org.frosty.server.controller.market.EarnCreditEventHandler;
 import org.frosty.server.entity.bo.market.MyMarketScore;
 
 public interface MarketService {
-    MyMarketScore getMyMarketScore(long userID);
+    MyMarketScore getMyMarketScore(Long userID);
 
-    void addUserMarketScore(Long userId, int score);
+    void addUserMarketScore(Long userId, Integer score);
 }
