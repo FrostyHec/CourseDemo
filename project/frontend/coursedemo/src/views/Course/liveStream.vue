@@ -3,6 +3,7 @@
     <div class="header">
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
+        <el-button type="primary" @click="router.back()">返回课程页面</el-button>
         <el-button type="primary" @click="getStreamName" v-show="showStream">Get Stream</el-button>
       </div>
     </div>
@@ -28,11 +29,11 @@ import { onMounted, ref } from 'vue';
 import { ElButton } from 'element-plus';
 import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';
 
-
+const router = useRouter();
 const showStream = ref(true)
 const authStore = useAuthStore()
 const user_id = authStore.user.user_id;

@@ -24,10 +24,12 @@
             </el-card>
           </div>
           <div v-if="activeIndex === 'mall'" class="mall-container">
-          <el-menu :default-active="activeTab" class="mall-menu" mode="horizontal">
-            <el-menu-item index="1" @click="activeTab = '1'">兑换勋章</el-menu-item>
-            <el-menu-item index="2" @click="activeTab = '2'">兑换chat使用</el-menu-item>
-          </el-menu>
+            <div>当前积分：{{ currentMarketScore.market_score}}</div>
+            <div>chat 可用次数：{{ currentMarketScore.market_score}}</div>
+            <el-menu :default-active="activeTab" class="mall-menu" mode="horizontal">
+              <el-menu-item index="1" @click="activeTab = '1'">兑换勋章</el-menu-item>
+              <el-menu-item index="2" @click="activeTab = '2'">兑换chat使用</el-menu-item>
+            </el-menu>
             <div class="mall-body">
               <el-card v-for="(item, index) in mallItems" :key="index" class="mall-item-card">
                 <img :src="item.image" class="mall-item-image">
@@ -61,13 +63,19 @@
 import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
-import { buyBadgeCall, ConsumeActionType, getMyCanBuyBadgeCall, getMyHistoryCall, type BadgeInfo, type ConsumeRecord } from '@/api/market/MarketAPI';
+import { buyBadgeCall, ConsumeActionType, getMyCanBuyBadgeCall, getMyHistoryCall, getMyMarketScoreCall, type BadgeInfo, type ConsumeRecord, type MyMarketScore } from '@/api/market/MarketAPI';
 
 const router = useRouter();
 const activeIndex = ref('3');
 const activeTab = ref('1'); 
 const exchangeMetalVisible = ref(false);
 const medalIndex = 1;
+const currentMarketScore = ref<MyMarketScore>(
+  {
+    user_id: 1,
+    market_score: 100
+  }
+);
 
 const getMedalIndex = (index:number)=>{
   const medalIndex = index;
@@ -113,10 +121,11 @@ const navigateTo = (path: string) => {
   router.push(path); 
 };
 
-onMounted(() => {
+onMounted(async () => {
   getMyMedal;
   getScoreMall;
   getScoreHistory;
+  currentMarketScore.value = (await getMyMarketScoreCall()).data;
 });
 
 const getMyMedal = async () => {
