@@ -19,10 +19,10 @@ RUN java -version
 WORKDIR /app
 
 # 将可执行的 JAR 文件复制到容器中
-COPY target/server-1.0-SNAPSHOT.jar /app/app.jar
+COPY target/site-push-1.0-SNAPSHOT.jar /app/app.jar
 
-# 暴露端口 9977
-EXPOSE 9977
+# 暴露端口 9973
+EXPOSE 9973
 
 # 设置容器启动时执行的命令
 ENTRYPOINT ["java", "-jar", "app.jar"]

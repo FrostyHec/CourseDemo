@@ -1,10 +1,7 @@
 package org.frosty.server.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.frosty.server.controller.course.RecommendController;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.UserPublicInfo;
@@ -26,9 +23,20 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id = #{id}")
     UserPublicInfo findPublicInfoById(Long id);
 
-    // 查询多个用户的公开信息
-    @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE user_id IN (#{ids})")
-    List<UserPublicInfo> findPublicInfoByIds(List<Long> ids);
+    @Select(
+            """
+            <script>
+            SELECT user_id, first_name, last_name, role, email
+            FROM users
+            WHERE user_id IN
+            <foreach collection='ids' item='id' open='(' separator=',' close=')'>
+            #{id}
+            </foreach>
+            </script>
+"""
+    )
+    List<UserPublicInfo> findPublicInfoByIds(@Param("ids") List<Long> ids);
+
 
     /**
      * 根据输入的关键词在用户的姓名（first_name 和 last_name）中进行搜索，
