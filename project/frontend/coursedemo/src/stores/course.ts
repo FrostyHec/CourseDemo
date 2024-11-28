@@ -38,30 +38,35 @@ export interface UnifyTree {
 
   order: number,
   description: string,
+  complete: boolean,
 
   data: CourseEntity|ChapterEntity|ResourceEntityPlus,
 }
 
+let course_complete = false
+const chapter_complete = new Set<number>()
+const no_video_chapter = new Set<number>()
+const resource_complete = new Set<number>()
 function unify(data: CourseEntity|ChapterEntity|ResourceEntityPlus, key: number, is_top: boolean = true): UnifyTree {
   if('course_name' in data) {
     return {
       label: data.course_name, children: [], id: key,
       order: 0, description: data.description,
-      data: data,
+      data: data, complete: course_complete
     }
   }
   if('chapter_title' in data) {
     return {  
       label: data.chapter_title, children: [], id: key,
       order: data.chapter_order, description: data.content,
-      data: data,
+      data: data, complete: chapter_complete.has(data.chapter_id)
     }
   }
   if('resource_name' in data) {
     return {
       label: is_top ? data.resource_name : data.resource_version_name, children: [], id: key,
       order: is_top ? data.resource_order : data.resource_version_order, description: '',
-      data: data,
+      data: data, complete: resource_complete.has(data.resource_id)
     }
   }
   return data //never
@@ -172,6 +177,33 @@ export const useCourseStore = defineStore('course', () => {
     }, unify(course.course_info, cnt++))
   }
 
+  async function load_complete() {
+    const id = current_course_id()
+    if(id===undefined) return
+    const msg = await checkCourseProgressCall(id)
+    if(msg.code!==200) {
+      ElMessage({
+        message: 'Get progress network error',
+        type: 'error',
+      })
+    }
+    console.log('check progress', msg.data)
+    const course_pro = msg.data
+    course_complete = course_pro.is_completed
+    chapter_complete.clear()
+    resource_complete.clear()
+    no_video_chapter.clear()
+    for(const c of course_pro.chapter_progress) {
+      if(c.is_completed)
+        chapter_complete.add(c.chapter_id)
+      if(c.video_resources.length==0)
+        no_video_chapter.add(c.chapter_id)
+      for(const r of c.video_resources)
+        if(r.is_completed)
+          resource_complete.add(r.resource_id)
+    }
+  }
+
   async function load(course_id: number, l: string[], reload: boolean) {
     if(reload || current_course_id()!==course_id)
       course_data = await get_all(course_id)
@@ -180,6 +212,7 @@ export const useCourseStore = defineStore('course', () => {
       current_data.value = undefined
       return
     }
+    await load_complete()
     unify_course_data.value = [build(course_data)]
     current_data.value = unify_course_data.value[0]
 
@@ -207,8 +240,23 @@ export const useCourseStore = defineStore('course', () => {
         return
       }
     }
-    if(current_data.value)
+    if(current_data.value) {
       default_open.value.push(father_id)
+      if('chapter_title' in current_data.value.data && 
+         no_video_chapter.has(current_data.value.data.chapter_id)) {
+        await completeChapterCall(current_data.value.data.chapter_id)
+        current_data.value.complete = true
+        let course_complete = true
+        for(const c of unify_course_data.value[0].children)
+          if(!c.complete) {
+            course_complete = false
+            return
+          }
+        const course_id = current_course_id()
+        if(course_complete && course_id!==undefined)
+          await completeCourseCall(course_id)
+      }
+    }
   }
 
   const breadcrumb = ref<{key: number, label: string, link?: string}[]>([])
@@ -298,6 +346,7 @@ export const useCourseStore = defineStore('course', () => {
           course_complete = false
     if(course_complete)
       await completeCourseCall(course_pro.course_id)
+    await load_from_route(true)
   }
 
   return {

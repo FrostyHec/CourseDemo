@@ -88,6 +88,11 @@ async function invite(row: UserPublicInfoEntity) {
       message: 'Student invite network error',
       type: 'error',
     })
+  } else {
+    ElMessage({
+      message: 'Success',
+      type: 'success',
+    })
   }
   return
 }

@@ -37,7 +37,7 @@
           style="margin-left: 6px;"
           @change="update_score(submission_data.file_submission)"
         />
-        <div v-else style="font-weight: bold; margin-left: 6px;">{{ submission_data.file_submission.gained_score }}</div>
+        <div v-else style="font-weight: bold; margin-left: 6px;">{{ submission_data.file_submission.gained_score===null ? "Not scored" : submission_data.file_submission.gained_score }}</div>
         <div style="margin-left: 4px; margin-right: 4px;">/</div>
         <div style="font-weight: bold; color: var(--ep-color-primary);">{{ assignment_data?.maximum_score }}</div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-<div v-if="course_data?.teacher_id===auth_store.user.user_id" style="margin: 40px;">
+<div style="margin: 40px;">
 
   <AssignmentForm @after-submit="load"/>
   <div style="width: 100%; margin-top: 20px; overflow: hidden;">
@@ -96,7 +96,6 @@
   </div>
   <div style="width: 100%; margin-top: 20px; border-top: solid 1px var(--ep-border-color); padding-top: 18px;"/>
 </div>
-<div v-else>You are not the teacher of this assignment</div>
 </template>
 <script setup lang="ts">
 import { deleteAssignmentCall, getAssignmentCall, type AssignmentEntity } from '@/api/course/AssignmentAPI';
@@ -107,7 +106,7 @@ import { getUserPublicInfoCall, type UserEntity, type UserPublicInfoEntity } fro
 import { useAuthStore } from '@/stores/auth';
 import { useCourseStore } from '@/stores/course';
 import { useFormStore } from '@/stores/form';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElScrollbar } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -125,12 +124,14 @@ async function load() {
   assignment_data.value = (await getAssignmentCall(assignment_id)).data
   chapter_data.value = (await getChapterCall(assignment_data.value.chapter_id)).data
   course_data.value = (await getCourseCall(chapter_data.value.course_id)).data
-  const submission_list = (await getAllSubmissionCall(assignment_id)).data.content
-  for(const sub of submission_list) {
-    list_with_student.push({
-      submission: sub,
-      student: (await getUserPublicInfoCall(sub.student_id)).data
-    })
+  if(course_data.value?.teacher_id===auth_store.user.user_id) {
+    const submission_list = (await getAllSubmissionCall(assignment_id)).data.content
+    for(const sub of submission_list) {
+      list_with_student.push({
+        submission: sub,
+        student: (await getUserPublicInfoCall(sub.student_id)).data
+      })
+    }
   }
 }
 load()

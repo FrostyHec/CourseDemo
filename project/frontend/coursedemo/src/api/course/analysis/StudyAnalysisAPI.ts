@@ -12,7 +12,7 @@ export interface WarningInfoList {
 
 export interface WarningInfo {
     warning_type: WarningType;
-    warning_student: number;
+    warning_student: UserPublicInfoEntity;
     description: WarningInfoContent;
     date: Date;
 }
@@ -22,7 +22,9 @@ export enum WarningType {
     low_score = 'low_score'
 }
 
-export interface WarningInfoContent {}
+export interface WarningInfoContent {
+    assignment_entity: AssignmentEntity
+}
 
 export interface AssignmentWarningInfoContent extends WarningInfoContent{
     //两个type都是只有这个content

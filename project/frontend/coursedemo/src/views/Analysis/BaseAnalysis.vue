@@ -2,7 +2,7 @@
   <div style="margin: 40px;">
     <el-button
       style="float: right; margin-right: 20px;"
-      @click="router.push('/course' + '/' + course_data?.course_id)">
+      @click="router.push('/course/' + course_id)">
       <span style="margin-left: -12px; margin-right: 5px;" i="ep-arrow-left"/>Back to course
     </el-button>
     <div style="margin-bottom: 20px; font-size: x-large; font-weight: bold;">
@@ -29,7 +29,7 @@
     </div>
     <el-button 
       style="float: right; margin-top: -12px;"
-      @click="router.push('')"
+      @click="router.push('/analysis/' + course_id + '/assignments')"
     >
       View details<span style="margin-right: -12px; margin-left: 5px;" i="ep-arrow-right"/>
     </el-button>
@@ -50,7 +50,7 @@
         {{ data?.project.total_chapter_count }}
       </p>
     </div>
-    <el-button style="float: right; margin-top: -12px;">
+    <el-button style="float: right; margin-top: -12px;" @click="router.push('/analysis/' + course_id + '/projects')">
       View details<span style="margin-right: -12px; margin-left: 5px;" i="ep-arrow-right"/>
     </el-button>
     Completed

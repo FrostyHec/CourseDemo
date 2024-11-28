@@ -7,6 +7,7 @@ const toggleDark = useToggle(isDark);
 import { ArrowRight } from '@element-plus/icons-vue'
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { UserType } from "@/api/user/UserAPI";
 
 const course_store = useCourseStore()
 const auth_store = useAuthStore()
@@ -17,7 +18,8 @@ const auth_store = useAuthStore()
   <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-border-color);" px="5" py="1">
 
     <template #title>
-      <span style="font-weight: 600; font-size: large; margin: 0%;" @click="$router.push('/')">
+      <span style="font-weight: 600; font-size: large; margin: 0%;" 
+        @click="auth_store.user.role==UserType.STUDENT ? $router.push('/Mainpage/student') : $router.push('/Mainpage/teacher') ">
         Course Demo
       </span>
     </template>
@@ -59,9 +61,11 @@ const auth_store = useAuthStore()
                   </p>
                 </div>
               </div>
-
-              <el-button>Settings</el-button>
-              <el-button type="primary" style="margin: 0%;">Sign out</el-button>
+              <el-button type="primary" style="margin: 0%;" 
+                @click="auth_store.logout({user_id: auth_store.user.user_id}); $router.push('/Mainpage/login')
+              ">
+                Sign out
+              </el-button>
             </div>
           </template>
         </el-popover>
