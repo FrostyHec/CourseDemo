@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.exception.InternalException;
 import org.frosty.server.entity.bo.langchain.ChatHistory;
 import org.frosty.server.services.langchain.ChatService;
 import org.frosty.server.services.langchain.LangchainService;
@@ -36,8 +37,7 @@ public class LangchainController {
             // 调用服务层进行处理
             return chatService.chatWithModel(context);
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new InternalException("文心一言调用错误",e);
         }
     }
 
@@ -51,15 +51,27 @@ public class LangchainController {
             OutputStream outputStream = response.getOutputStream();
             chatService.streamChatWithModel(context, outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new InternalException("文心一言流式传输调用错误",e);
         }
     }
 
     @PostMapping("/title")
     public TitleEntity generateTitle(@RequestBody ChatContext chatContext) {
-        // TODO 依据输入的chatContext生成title
-        FrameworkUtils.notImplemented();
-        return null;
+        // TODO 依据输入的chatContext生成title，可以研究一下怎么生成一个好的提示词
+        try {
+            // 调用服务层进行处理
+            SingleChatMessage singleChatMessage = new SingleChatMessage();
+            singleChatMessage.role = SingleChatMessage.Role.user;
+            singleChatMessage.content = "请你为我们的对话生成一个标题。标题限制在15字以内，并符合先前对话的语言。" +
+                    "标题中不要存在标点符号。";
+            chatContext.messages.add(singleChatMessage);
+            ChatContext context = chatService.chatWithModel(chatContext);
+            TitleEntity title = new TitleEntity();
+            title.title = context.messages.get(context.messages.size()-1).content;
+            return title;
+        } catch (IOException e) {
+            throw new InternalException("文心一言标题生成调用错误",e);
+        }
     }
 
     @PostMapping("/")
