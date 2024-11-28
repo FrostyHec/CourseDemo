@@ -39,7 +39,7 @@ const authStore = useAuthStore()
 const user_id = authStore.user.user_id;
 const route = useRoute()
 const courseId = Number(route.params.course_id);
-const baseUrl = 'http://localhost:9977';
+const baseUrl = 'http://10.27.96.162:9977';
 let streamName = '';
 
 const videoElement = ref<HTMLVideoElement | null>(null);
@@ -78,7 +78,7 @@ const getStreamName = async () => {
     const data = await response.json();
     if (response.ok && data.code === 200) {
       streamName = data.data.name;
-      alert(`streamName is: ${streamName}`);
+      console.log(`streamName is: ${streamName}`);
       connectWebSocket(); // 获取流名称后连接 WebSocket
     } else {
       alert(`Failed to get info: ${response}`);
