@@ -30,7 +30,7 @@ import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
 import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { getUserPublicInfoCall, UserType } from '@/api/user/UserAPI';
+import { UserType } from '@/api/user/UserAPI';
 
 
 const showStream = ref(true)
@@ -69,7 +69,7 @@ const getStreamName = async () => {
         'X-Forwarded-User': JSON.stringify({
           authStatus: 'PASS',
           authInfo: {
-            userID: 1,
+            userID: user_id,
           },
          }),
       },

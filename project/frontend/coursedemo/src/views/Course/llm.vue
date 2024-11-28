@@ -3,8 +3,8 @@
     <el-button id="chatButton" type="primary" circle @click="toggleChatWindow">
       <el-icon>chat</el-icon>
     </el-button>
-    <el-dialog v-model="chatWindowVisible" title="Chat with Kimi" width="50%" custom-class="kimi-chat-dialog" @close="saveChat()">
-      <el-button type="text" @click="saveChat();viewHistory">查看历史对话</el-button>
+    <el-dialog v-model="chatWindowVisible" :title="title.title" width="50%" custom-class="kimi-chat-dialog" @close="saveChat();Refresh()">
+      <el-button type="text" @click="saveChat();viewHistory()">查看历史对话</el-button>
       <div class="chat-messages">
         <!-- 使用 v-for 渲染 context.messages -->
         <div v-for="(message, index) in context.messages" :key="index" class="chat-message"
@@ -36,13 +36,14 @@
       </div>
       <div v-for="chat in paginatedChatHistory" :key="chat.id" class="history-item" @click="selectChatHistory(chat)">
         {{ chat.title }}
+        <el-button type="danger" icon="el-icon-delete" @click="deleteChatHistory(chat.id)" class="delete-button">删除记录</el-button> <!-- 阻止点击事件冒泡 -->
       </div>
     </el-dialog>
   </div>
 </template>
   
 <script setup lang="ts">
-import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall, sendChatCall, getChatContentCall, Role, saveChatHistoryCall, setChatTitleCall, generateTitleCall } from '@/api/langchain/langchainAPI';
+import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall, sendChatCall, getChatContentCall, Role, saveChatHistoryCall, setChatTitleCall, generateTitleCall, deleteChatCall } from '@/api/langchain/langchainAPI';
 import { computed, onMounted, ref } from 'vue';
 
 const chatWindowVisible = ref(false);
@@ -73,7 +74,7 @@ const inputMessage = ref<SingleChatMessage>({
   content: ''
 });
 
-const currentChat = ref<ChatEntity>({
+let currentChat = ref<ChatEntity>({
   id: 1,
   title: 'New Chat',
   createdAt: new Date(),
@@ -88,11 +89,29 @@ const context = ref<ChatContext>({
   messages: []
 });
 
+const deleteChatHistory = async (id:number) => {
+  await deleteChatCall(id);
+  if(id==currentChat.value.id){
+    Refresh;
+    const response = await createNewChatCall(title.value);
+    currentChat.value = response.data;
+    historyDialogVisible.value = false;
+  }
+  getChatHistory();
+}
+
 const chatHistories = ref<ChatMetadataList>(
   {
     chat_history: []
   }
 );
+
+const Refresh = () =>{
+  title.value = {title: 'new chat'};
+  inputMessage.value = { role: Role.user, content: '' };
+  context.value = {messages:[]};
+  isFirstMessage = true;
+}
 
 const getChatHistory = async () => {
   const response = await getAllMyChatMetadataCall()
@@ -101,13 +120,16 @@ const getChatHistory = async () => {
 
 let isFirstMessage = true;
 let isFirstTitle = true;
+
 const saveChat = async () =>{
+  await setChatTitleCall(title.value,currentChat.value.id);
   await saveChatHistoryCall(context.value,currentChat.value.id);
 }
 
-const toggleChatWindow = () => {
+const toggleChatWindow = async () => {
   if (isFirstMessage) {
-    createNewChatCall(title.value);
+    const response = await createNewChatCall(title.value);
+    currentChat.value = response.data;
     isFirstMessage = false;
   }
   chatWindowVisible.value = !chatWindowVisible.value;
@@ -121,18 +143,20 @@ const viewHistory = () => {
 const sendMessage = async () => {
   if (inputMessage.value.content !== '') {
     context.value.messages.push(inputMessage.value);
+    inputMessage.value = { role: Role.user, content: '' }; // 重置输入消息
     if(isFirstTitle){
       isFirstTitle = false;
       title.value = (await generateTitleCall(context.value)).data;
+      currentChat.value.title = title.value.title;
     }
-    inputMessage.value = { role: Role.user, content: '' }; // 重置输入消息
     const response = await sendChatCall(context.value);
     context.value.messages.push(response.data.messages[response.data.messages.length - 1]);
   }
 };
 
-const selectChatHistory = async (selectedChat: { id: number; title: string, createdAt: Date, updatedAt: Date }) => {
+const selectChatHistory = async (selectedChat: ChatEntity) => {
   currentChat.value = selectedChat;
+  title.value.title = selectedChat.title;
   context.value = (await getChatContentCall(currentChat.value.id)).data;
   historyDialogVisible.value = false;
   chatWindowVisible.value = true;
@@ -179,21 +203,22 @@ const selectChatHistory = async (selectedChat: { id: number; title: string, crea
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
-  max-width: 70%; /* 确保消息不会超过容器的70%宽度 */
+  max-width: 70%;
   word-wrap: break-word;
   display: flex;
-  align-items: center; /* 垂直居中对齐文本 */
+  align-items: center;
 }
 
 .self {
-  margin-left: auto; /* 将用户消息推向右侧 */
+  margin-left: auto;
   background-color: #e0f7fa;
 }
 
 .other {
-  margin-right: auto; /* 将助理消息推向左侧 */
+  margin-right: auto;
   background-color: #fff;
 }
+
 .chat-input-area {
   display: flex;
   align-items: center;
@@ -210,14 +235,27 @@ const selectChatHistory = async (selectedChat: { id: number; title: string, crea
 }
 
 .kimi-chat-dialog {
-  /* ... 其他样式 ... */
-  max-height: 60vh; /* 设置对话框的最大高度为视窗高度的60% */
-  overflow-y: auto; /* 当内容超出时显示滚动条 */
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .history-item {
-  cursor: pointer;
+  display: flex;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ccc;
+  position: relative; /* 为删除按钮定位做准备 */
+}
+
+.delete-button {
+  position: absolute;
+  right: 10px; /* 紧贴右侧 */
+  top: 0;
+  bottom: 0;
+  width: 100px; /* 按钮宽度 */
+  display: flex; /* 使用Flexbox布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  height: 100%; /* 按钮高度填满父元素 */
 }
 </style>
