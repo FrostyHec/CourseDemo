@@ -14,7 +14,7 @@ public class MarketServiceImpl implements MarketService {
     private final MarketMapper marketMapper;
 
     @Override
-    public MyMarketScore getMyMarketScore(long userID) {
+    public MyMarketScore getMyMarketScore(Long userID) {
         MyMarketScore myMarketScore = marketMapper.selectByUserId(userID);
         if (myMarketScore == null) {
             marketMapper.initialize(userID);
@@ -24,7 +24,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public void addUserMarketScore(Long userId, int score) {
+    public void addUserMarketScore(Long userId, Integer score) {
         marketMapper.addUserMarketScore(userId, score);
     }
 }

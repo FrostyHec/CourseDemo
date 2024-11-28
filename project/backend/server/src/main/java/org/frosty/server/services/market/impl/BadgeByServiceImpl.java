@@ -58,7 +58,7 @@ public class BadgeByServiceImpl implements BadgeByService {
         marketHistoryService.insertConsumeRecord(consumeRecord);
 
         // 更新用户市场积分
-        marketService.addUserMarketScore(userId, remainingScore);  // 减去消费的积分
+        marketService.addUserMarketScore(userId, -badgeInfo.getMarketScore());  // 减去消费的积分
 
     }
 
