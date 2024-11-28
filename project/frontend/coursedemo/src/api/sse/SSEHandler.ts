@@ -7,6 +7,8 @@ import {useAuthStore} from "@/stores/auth";
 import {AxiosAPI} from "@/utils/APIUtils";
 import {useRouter} from "vue-router";
 import {handleAnnouncement} from "./SSEEventHandle";
+import { useVideoStore } from "@/stores/video";
+import { ElMessage } from "element-plus";
 
 let eventSource: EventSource | null = null;
 
@@ -103,7 +105,9 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
     },
     [SSEBodyType.new_video_playing]: (message: { body: SSEBody; }) => {
-        // TODO hlh把消息注册在这里
+        const receive_new_watch = message.body as {resource_id: number}
+        const video_store = useVideoStore()
+        video_store.current_video = receive_new_watch.resource_id
     }
 };
 

@@ -1,6 +1,6 @@
 <template>
   <file-uploader ref="uploader"/>
-  <el-button @click="func">func</el-button>
+  <el-button @click="open1">func</el-button>
   <!-- <embed :src="link" style="width:100%; height:500px;" type="application/pdf"/> -->
   <div/>
   <!-- <iframe
@@ -33,7 +33,16 @@
   </video> -->
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ElNotification } from 'element-plus';
+import { h, ref, watch } from 'vue';
+
+const open1 = () => {
+  ElNotification({
+    title: 'Title',
+    message: 'happy',
+    duration: 0,
+  })
+}
 
 const link = ref('')
 const uploader = ref()

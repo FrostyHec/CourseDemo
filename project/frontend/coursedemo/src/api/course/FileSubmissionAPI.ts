@@ -10,7 +10,7 @@ export interface FileSubmissionEntity {
   student_id: number
   suffix: string
   file_name: string
-  gained_score: number
+  gained_score: number|null
   created_at: Date
   updated_at: Date
 }

@@ -58,9 +58,10 @@ async function load() {
       total: data.total_score[i]
     } as any
     for(let j=0; j<data.column.length; j++)
-      o[`${j}`] = data.data[i][j]
+      o[`${j}`] = data.data[j][i]
     table.value.push(o)
   }
+  console.log(table.value)
   const msg_ = await getCourseCall(course_id)
   if(msg_.code!==200) {
     ElMessage({

@@ -38,7 +38,7 @@
                   <template v-slot="{ row }">
                     <el-button @click="navigateToJudge(row)">课程评价</el-button>
                   </template>
-                </el-table-column>                
+                </el-table-column>
               </el-table>
             </el-main>
           </el-container>

@@ -78,11 +78,23 @@ const student_table_ref = ref()
 const student_enroll_ref = ref()
 
 const open_form = (node: Node, mode: 'Add'|'Edit') => {
-  const cnt = (node.data as UnifyTree).children.length
+  const children = (node.data as UnifyTree).children
+  const cnt = children.length==0 ? 0 : children[children.length-1].order + 1
   const data = (node.data as UnifyTree).data
-  if(mode=='Edit')
+  if(mode=='Edit') {
+    const parent = node.parent.data as UnifyTree
+    console.log(parent)
+    form_store.check_name = []
+    for(const i of parent.children) {
+      if(i.id!==(node.data as UnifyTree).id)
+        form_store.check_name.push(i.label)
+    }
+    if('resource_name' in parent.data)
+      form_store.check_name.push(parent.data.resource_version_name)
     form_store.open_form(data, mode)
+  }
   else {
+    form_store.check_name = children.map((v)=>v.label)
     if('course_name' in data) {
       let temp: ChapterEntity = {...form_store.chapter_null}
       temp.course_id = data.course_id
@@ -100,6 +112,7 @@ const open_form = (node: Node, mode: 'Add'|'Edit') => {
       let temp: ResourceEntityPlus = {...data}
       temp.resource_version_order -= 1
       form_store.resource_mode = 'new_version'
+      form_store.check_name.push(data.resource_version_name)
       form_store.open_form(temp, mode)
     }
   }
@@ -116,9 +129,10 @@ async function to_top(node: Node) {
   form_store.resource_form.resource_name = parent.resource_name
   form_store.resource_form.resource_order = parent.resource_order
   form_store.resource_form.resource_version_order = parent.resource_version_order - 1
-  if(await form_store.modify_resource())
+  if(await form_store.modify_resource()) {
     handleClick(null, node.parent)
-  else {
+    course_store.load_from_route(true)
+  } else {
     ElMessage({
       message: 'To top network error',
       type: 'error',
@@ -159,7 +173,7 @@ const handleDelete = async (node: Node) => {
   handleClick(null, node.parent)
 }
 
-import type Node from 'element-plus/es/components/tree/src/model/node'
+import Node from 'element-plus/es/components/tree/src/model/node'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
 import type {
   AllowDropType,
@@ -181,19 +195,23 @@ const allowDrag = (draggingNode: Node) => {
 }
 const handleDrop = async (
   draggingNode: Node,
+  p: Node,
 ) => {
-  const parent = draggingNode.parent.data as UnifyTree
+  const parent = p.parent.data as UnifyTree
   let min = (draggingNode.level==4 && ('resource_name' in parent.data)) 
             ? parent.data.resource_version_order : -1
+  console.log(parent.children)
   for(const sub of parent.children) {
     if(sub.order<=min) {
       min += 1
       let msg
       if('chapter_title' in sub.data) {
+        console.log(min)
         sub.data.chapter_order = min
         msg = await updateChapterCall(sub.data.chapter_id, sub.data)
       }
       if('resource_name' in sub.data) {
+        console.log(min)
         if(draggingNode.level!=4) {
           sub.data.resource_order = min
           for(const subsub of sub.children)

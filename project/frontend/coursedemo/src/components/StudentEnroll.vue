@@ -7,19 +7,19 @@
   <el-table :data="list" height="400">
     <el-table-column label="Name">
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
-        {{ scope.row.first_name+' '+scope.row.last_name }}
+        {{ scope.row.student.first_name+' '+scope.row.student.last_name }}
       </template>
     </el-table-column>
     <el-table-column label="Email">
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
-        {{ scope.row.email }}
+        {{ scope.row.student.email }}
       </template>
     </el-table-column>
     <el-table-column label="Status" width="250">
       <template #default="scope: {row: StudentInfoWithEnrollStatus}">
         <el-radio-group v-model="scope.row.status" style="padding: 0;" @change="update_status(scope.row)">
           <el-radio-button :label="StudentEnrollType.invited" :value="StudentEnrollType.invited"/>
-          <el-radio-button :label="StudentEnrollType.publik" :value="StudentEnrollType.publik"/>
+          <el-radio-button :label="StudentEnrollType.public" :value="StudentEnrollType.public"/>
         </el-radio-group>
       </template>
     </el-table-column>
@@ -56,6 +56,7 @@ async function load_list(id: number) {
     return
   }
   list.value = msg.data.content
+  console.log(list.value)
 }
 async function open_enroll() {
   const id = course_store.current_course_id()
@@ -83,7 +84,7 @@ async function update_status(row: StudentInfoWithEnrollStatus) {
   const id = course_store.current_course_id()
   if(id===undefined)
     return
-  const msg = await updateStudentEnrollmentStatus(id, row.user_id, row.status)
+  const msg = await updateStudentEnrollmentStatus(id, row.student.user_id, row.status)
   if(msg.code!==200) {
     ElMessage({
       message: 'Update status network error',
@@ -96,7 +97,7 @@ async function remove_student(row: StudentInfoWithEnrollStatus) {
   const id = course_store.current_course_id()
   if(id===undefined)
     return
-  const msg = await removeStudentFromCourse(id, row.user_id)
+  const msg = await removeStudentFromCourse(id, row.student.user_id)
   if(msg.code!==200) {
     ElMessage({
       message: 'Remove student network error',
