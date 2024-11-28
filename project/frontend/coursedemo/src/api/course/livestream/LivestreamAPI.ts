@@ -21,10 +21,10 @@ export function getLivestreamPullUrl(streamName:string){
     return `${live_pull_url}/live?app=course&stream=${streamName}`
 }
 
-export function getFlvConfig(streamName:string){
+export function getFlvConfig(url:string){
     return {
         type: 'flv',
-        url:getLivestreamPullUrl(streamName),
+        url:url,
         cors: true,
         headers: AxiosAPI.getAuthHeaderJson()
     }
