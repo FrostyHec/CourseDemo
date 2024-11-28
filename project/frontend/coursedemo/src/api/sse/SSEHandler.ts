@@ -5,8 +5,8 @@ import {sse_backend_base} from "@/utils/Constant";
 import {useAuthStore} from "@/stores/auth";
 // import { EventSourcePolyfill } from 'event-source-polyfill';
 import {AxiosAPI} from "@/utils/APIUtils";
-import { useRouter } from "vue-router";
-import { handleAnnouncement } from "./SSEEventHandle";
+import {useRouter} from "vue-router";
+import {handleAnnouncement} from "./SSEEventHandle";
 
 let eventSource: EventSource | null = null;
 
@@ -25,7 +25,7 @@ export interface SSEBody {
 
 }
 
-export interface AnnouncementBody extends SSEBody{
+export interface AnnouncementBody extends SSEBody {
     BodyType: SSEBodyType.announcement
     course_id: number;
     course_name: string,
@@ -33,15 +33,15 @@ export interface AnnouncementBody extends SSEBody{
     Title: string;
 }
 
-export interface NewLoginBody extends SSEBody{
+export interface NewLoginBody extends SSEBody {
     BodyType: SSEBodyType.new_login
     Token: string;
 }
 
-export interface ReceiveCreditsBody extends SSEBody{
+export interface ReceiveCreditsBody extends SSEBody {
     BodyType: SSEBodyType.receive_credits
     type: CreditType
-    count:  number
+    count: number
 }
 
 export enum CreditType {
@@ -59,6 +59,7 @@ export enum SSEBodyType {
     announcement = 'announcement',
     new_login = 'new_login',
     receive_credits = 'receive_credits',
+    new_video_playing = 'new_video_playing'
 }
 
 export interface EventHandler {
@@ -83,71 +84,45 @@ export interface MessagePacket {
 
 const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
     [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
-      const announcementBody = message.body as AnnouncementBody;
-      handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+        const announcementBody = message.body as AnnouncementBody;
+        handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
     },
     [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
-      const authStore = useAuthStore();
-      const newLoginBody = message.body as NewLoginBody;
-      // 校验 token 是否一致
-      if (authStore.token !== newLoginBody.Token) {
-        handleAnnouncement("另一个用户登录，您将被登出");
-        // 执行登出操作
-        authStore.logout({user_id:authStore.user.user_id});
-        // 跳转到登录页面
-        const router = useRouter();
-        router.push('/MainPage/login');
-      }
+        const authStore = useAuthStore();
+        const newLoginBody = message.body as NewLoginBody;
+        // 校验 token 是否一致
+        if (authStore.token !== newLoginBody.Token) {
+            handleAnnouncement("另一个用户登录，您将被登出");
+            // 执行登出操作
+            authStore.logout({user_id: authStore.user.user_id});
+            // 跳转到登录页面
+            const router = useRouter();
+            router.push('/MainPage/login');
+        }
     },
     [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
-      const receiveCreditsBody = message.body as ReceiveCreditsBody;
-      handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
+        const receiveCreditsBody = message.body as ReceiveCreditsBody;
+        handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
     },
-  };
+    [SSEBodyType.new_video_playing]: (message: { body: SSEBody; }) => {
+        // TODO hlh把消息注册在这里
+    }
+};
 
 
-  const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
-  const authStore = useAuthStore();
-  const router = useRouter();
-
-  packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
-    switch (message.type) {
-      case SSEMessageType.NEW: {
+const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
+    packet.unposed.forEach((message: { type: SSEMessageType; body: SSEBody; body_type: SSEBodyType; }) => {
         const body = message.body;
         switch (message.body_type) {
-          case SSEBodyType.new_login: {
-            const newLoginBody = body as NewLoginBody;
-            if (authStore.token !== newLoginBody.Token) {
-                handleAnnouncement("另一个用户登录，您将被登出");
-                authStore.logout({ user_id: authStore.user.user_id });
-                router.push('/login');
+            case SSEBodyType.announcement: {
+                const announcementBody = body as AnnouncementBody;
+                handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+                break;
             }
-            break;
-          }
-          case SSEBodyType.receive_credits: {
-            const receiveCreditsBody = message.body as ReceiveCreditsBody;
-            handleAnnouncement(`${receiveCreditsBody.type}，积分+${receiveCreditsBody.count}`);
-            break;
-          }
-          case SSEBodyType.announcement: {
-            const announcementBody = body as AnnouncementBody;
-            handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
-            break;
-          }
-          default:
-            console.error('未知的消息类型:', message.type);
+            default:
+                console.error('其它消息类型:', message.type);
         }
-        break;
-      }
-      case SSEMessageType.UPDATE:
-        break;
-      case SSEMessageType.DELETE:
-        break;
-      default:
-        // 处理未知类型的消息
-        console.error('未知的消息类型:', message.type);
-    }
-  });
+    });
 };
 
 export function subscribeToSSE(uid: number) {
@@ -165,7 +140,7 @@ export function subscribeToSSE(uid: number) {
     //     headers: AxiosAPI.getAuthHeaderJson()
     // });
     eventSource = new EventSource(sse_backend_base + "/msg/site/user/" + uid)
-    if(!eventSource){
+    if (!eventSource) {
         throw new InternalException('unexpected event source', eventSource)
     }
     eventSource.onmessage = (event) => {
