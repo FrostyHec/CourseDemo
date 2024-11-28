@@ -11,7 +11,7 @@ export interface ReceivedMessage {
     content: string,
 }
 export interface SendMessage {
-    target: string,
+    target: number,
     content: string,
 }
 class ChatRoomAPI {

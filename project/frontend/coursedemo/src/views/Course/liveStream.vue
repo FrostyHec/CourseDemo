@@ -4,14 +4,19 @@
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
         <el-button type="primary" @click="router.back()">返回课程页面</el-button>
-        <el-button type="primary"  v-show="showStream">Get Stream</el-button>
+        <el-button type="primary" v-show="showStream">Get Stream</el-button>
       </div>
     </div>
     <div class="main-content">
       <div class="video-container">
         <video ref="videoElement" controls autoplay></video>
+        <vue-danmaku
+          v-model:danmus="danmus"
+          :speeds="50"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 50%;"
+        ></vue-danmaku>
         <!-- 当前无直播的提示 -->
-        <div v-if="!isLive" class="no-live-stream" >当前无直播</div>
+        <div v-if="!isLive" class="no-live-stream">当前无直播</div>
       </div>
       <div class="chat-room">
         <div class="chat-messages">
@@ -36,51 +41,61 @@ import { useAuthStore } from '@/stores/auth';
 import { UserType } from '@/api/user/UserAPI';
 import { getFlvConfig, getLivestreamPullUrl, getLivestreamPushUrl, getPullName, getPushName } from '@/api/course/livestream/LivestreamAPI';
 import flvjs from 'flv.js';
+import vueDanmaku from 'vue3-danmaku'
 
 const router = useRouter();
-const showStream = ref(true)
-const authStore = useAuthStore()
+const showStream = ref(true);
+const authStore = useAuthStore();
 const user_id = authStore.user.user_id;
-const route = useRoute()
+const route = useRoute();
 const courseId = Number(route.params.course_id);
 let streamName = '';
-
-let videoElement = ref<HTMLVideoElement>();
+const videoElement = ref<HTMLVideoElement | null>(null);
 const messages = ref<string[]>([]);
 const newMessage = ref('');
-const isLive = ref(true); // 用于跟踪是否有直播
+const isLive = ref(true);
 let intervalId: NodeJS.Timeout | null = null;
 
+const danmus = ref<string[]>([]);
+
 onMounted(async () => {
-  intervalId = setInterval(async () => {
-    if (authStore.user.role !== UserType.STUDENT) return; // 只有学生需要请求拉流
-    const pullNameResponse = await getPullName(courseId);
-    if (pullNameResponse && pullNameResponse.data) {
-      streamName = pullNameResponse.data.name;
-      const pullUrl = getLivestreamPullUrl(streamName);
-      if(!isLive)setupFlvPlayer(pullUrl);
-      isLive.value = true; // 有直播
-    } else {
-      isLive.value = false; // 无直播
-    }
-  }, 5000);
-  if (authStore.user.role == UserType.TEACHER) {
-    // 获取推流
-    const pushNameResponse = await getPushName(courseId);
-    if (pushNameResponse && pushNameResponse.data) {
-      streamName = pushNameResponse.data.name;
-      const pushUrl = getLivestreamPushUrl(streamName);
-      alert(pushUrl); // 推流URL，供主播使用
-      const pullUrl = getLivestreamPullUrl(streamName);
-      setupFlvPlayer(pullUrl);
+  connectWebSocket();
+
+  if (videoElement.value) {
+    intervalId = setInterval(async () => {
+      if (authStore.user.role == UserType.STUDENT) {
+        showStream.value = false;
+      };
+      const pullNameResponse = await getPullName(courseId);
+      if (pullNameResponse && pullNameResponse.data) {
+        streamName = pullNameResponse.data.name;
+        try {
+          const pullUrl = getLivestreamPullUrl(streamName);
+          if (!isLive.value) setupFlvPlayer(pullUrl);
+          isLive.value = true;
+        } catch (error) {}
+      } else {
+        isLive.value = false;
+      }
+    }, 5000);
+
+    if (authStore.user.role == UserType.TEACHER) {
+      const pushNameResponse = await getPushName(courseId);
+      if (pushNameResponse && pushNameResponse.data) {
+        streamName = pushNameResponse.data.name;
+        const pushUrl = getLivestreamPushUrl(streamName);
+        alert(pushUrl);
+        const pullUrl = getLivestreamPullUrl(streamName);
+        setupFlvPlayer(pullUrl);
+      }
     }
   }
-
 });
+
 
 onUnmounted(() => {
   if (intervalId) {
-    clearInterval(intervalId); // 清除定时器
+    clearInterval(intervalId);
   }
 });
 
@@ -90,8 +105,14 @@ function setupFlvPlayer(url: string) {
     flvPlayer.attachMediaElement(videoElement.value);
     flvPlayer.on(flvjs.Events.ERROR, () => {
       console.error('Error playing FLV stream.');
+      flvPlayer.destroy();
       isLive.value = false;
     });
+    flvPlayer.on(flvjs.Events.LOADING_COMPLETE,()=>{
+      console.log('liveStream Complete!')
+      flvPlayer.destroy();
+      isLive.value = false;
+    })
     flvPlayer.load();
     flvPlayer.play();
     isLive.value = true;
@@ -101,46 +122,19 @@ function setupFlvPlayer(url: string) {
   }
 }
 
-// 弹幕消息处理函数
 const handleBarrageMessage = (message: ReceivedMessage) => {
-    messages.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
+  messages.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
+  danmus.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
 };
 
-// 连接 WebSocket
 const connectWebSocket = () => {
-    chatRoomAPI.connectWebSocket('liveStream', user_id, handleBarrageMessage);
+  chatRoomAPI.connectWebSocket(String(courseId), user_id, handleBarrageMessage);
 };
-
-// const getStreamName = async () => {
-//   try {
-//     const response = await fetch(`${baseUrl}/api/v1/course/${courseId}/live-stream/push`, {
-//       method: 'GET',
-//       headers: {
-//         'X-Forwarded-User': JSON.stringify({
-//           authStatus: 'PASS',
-//           authInfo: {
-//             userID: user_id,
-//           },
-//          }),
-//       },
-//     });
-//     const data = await response.json();
-//     if (response.ok && data.code === 200) {
-//       streamName = data.data.name;
-//       console.log(`streamName is: ${streamName}`);
-//       connectWebSocket(); // 获取流名称后连接 WebSocket
-//     } else {
-//       alert(`Failed to get info: ${response}`);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching stream name:', error);
-//   }
-// };
 
 const sendMessage = () => {
   if (newMessage.value.trim() !== '') {
     const sendMessageData: SendMessage = {
-      target: 'liveStream',
+      target: -1,
       content: newMessage.value,
     };
     chatRoomAPI.sendMessage(sendMessageData);
@@ -215,26 +209,6 @@ body, html {
   transform: translateY(-1px);
 }
 
-/* Style for the Get Stream button specifically */
-.el-button.get-stream-button {
-  background-image: linear-gradient(45deg, #9e9eff 0%, #c4c4ff 99%);
-  box-shadow: 0 5px 15px rgba(158, 158, 255, 0.4);
-}
-
-.el-button.get-stream-button:hover {
-  background-image: linear-gradient(45deg, #c4c4ff 0%, #9e9eff 99%);
-}
-
-/* Style for the Play Video button specifically */
-.el-button.play-video-button {
-  background-image: linear-gradient(45deg, #9effa5 0%, #c4ffda 99%);
-  box-shadow: 0 5px 15px rgba(158, 255, 158, 0.4);
-}
-
-.el-button.play-video-button:hover {
-  background-image: linear-gradient(45deg, #c4ffda 0%, #9effa5 99%);
-}
-
 .main-content {
   display: flex;
   flex-grow: 1;
@@ -254,6 +228,17 @@ body, html {
   object-fit: cover;
 }
 
+.danmu-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-color: transparent;
+  z-index: 5;
+}
+
 .chat-room {
   width: 300px;
   background-color: #20232a;
@@ -264,8 +249,9 @@ body, html {
 .chat-messages {
   flex-grow: 1;
   padding: 1rem;
-  overflow-y: auto;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  overflow-y: auto; /* 允许垂直滚动 */
+  max-height: 760px; /* 设置最大高度，根据需要调整 */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .chat-messages div {
@@ -311,11 +297,17 @@ body, html {
   color: #fff;
   font-size: 24px;
   text-align: center;
-  z-index: 10; /* 增加z-index属性，确保提示显示在最顶层 */
+  z-index: 10;
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
-  /* Responsive adjustments */
+  .live-stream-viewer {
+    flex-direction: column;
+  }
+
+  .chat-room {
+    width: 100%;
+  }
 }
 </style>

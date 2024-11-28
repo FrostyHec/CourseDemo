@@ -18,10 +18,12 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "danmu.js": "^1.1.13",
     "echarts": "^5.5.1",
     "element-plus": "^2.8.7",
     "event-source-polyfill": "^1.0.31",
     "flv.js": "^1.6.2",
+    "fly-barrage": "^2.3.0",
     "js-cookie": "^3.0.5",
     "markdown-it": "^14.1.0",
     "markdown-it-highlightjs": "^4.2.0",
@@ -30,8 +32,10 @@
     "pinia": "^2.1.7",
     "unocss": "^0.62.4",
     "vue": "^3.4.29",
+    "vue-danmaku": "^1.7.2",
     "vue-echarts": "^7.0.3",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue3-danmaku": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.0",

@@ -30,6 +30,7 @@ export function getFlvConfig(url:string){
     }
 }
 
-export function getLivestreamPushUrl(streamName:string){
-    return `${live_push_url}/course/${streamName}`
+export function getLivestreamPushUrl(){
+    return `${live_push_url}/course`
 }
+
