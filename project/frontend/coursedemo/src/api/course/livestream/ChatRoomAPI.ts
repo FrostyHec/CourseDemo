@@ -1,5 +1,6 @@
 import {InternalException} from "@/utils/Exceptions";
 import type {UserPublicInfoEntity} from "@/api/user/UserAPI";
+import {websocket_backend_base} from "@/utils/Constant";
 
 export interface OnMessageFunc {
     (message:ReceivedMessage):void
@@ -20,7 +21,7 @@ class ChatRoomAPI {
     }
 
     connectWebSocket(roomId: string, userId: number, onMessageFunc:OnMessageFunc) {
-        const url = `ws://localhost:9977/websocket/livestream/${roomId}/${userId}`;
+        const url = `${websocket_backend_base}/websocket/livestream/${roomId}/${userId}`;
         if(this.socket){
             this.socket.close()
         }
