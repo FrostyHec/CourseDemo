@@ -3,14 +3,14 @@
     <el-button id="chatButton" type="primary" circle @click="toggleChatWindow">
       <el-icon>chat</el-icon>
     </el-button>
-    <el-dialog v-model="chatWindowVisible" title="Chat with Kimi" width="50%" custom-class="kimi-chat-dialog">
-      <el-button type="text" @click="viewHistory">查看历史对话</el-button>
+    <el-dialog v-model="chatWindowVisible" title="Chat with Kimi" width="50%" custom-class="kimi-chat-dialog" @close="saveChat()">
+      <el-button type="text" @click="saveChat();viewHistory">查看历史对话</el-button>
       <div class="chat-messages">
         <!-- 使用 v-for 渲染 context.messages -->
-        <div v-for="message in context.messages" class="chat-message"
+        <div v-for="(message, index) in context.messages" :key="index" class="chat-message"
           :class="{'self': message.role === Role.user, 'other': message.role === Role.assistant}">
-          {{ message.content }}
-        </div>
+        {{ message.content }}
+      </div>
       </div>
       <div class="chat-input-area">
         <el-input
@@ -42,7 +42,7 @@
 </template>
   
 <script setup lang="ts">
-import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall, sendChatCall, getChatContentCall, Role } from '@/api/langchain/langchainAPI';
+import { createNewChatCall, type SingleChatMessage, type ChatContext, type ChatEntity, type ChatMetadataList, type TitleEntity, getAllMyChatMetadataCall, sendChatCall, getChatContentCall, Role, saveChatHistoryCall, setChatTitleCall, generateTitleCall } from '@/api/langchain/langchainAPI';
 import { computed, onMounted, ref } from 'vue';
 
 const chatWindowVisible = ref(false);
@@ -80,7 +80,7 @@ const currentChat = ref<ChatEntity>({
   updatedAt: new Date()
 });
 
-const title = ref<TitleEntity>({
+let title = ref<TitleEntity>({
   title: 'new chat'
 });
 
@@ -100,6 +100,10 @@ const getChatHistory = async () => {
 }
 
 let isFirstMessage = true;
+let isFirstTitle = true;
+const saveChat = async () =>{
+  await saveChatHistoryCall(context.value,currentChat.value.id);
+}
 
 const toggleChatWindow = () => {
   if (isFirstMessage) {
@@ -111,13 +115,16 @@ const toggleChatWindow = () => {
 
 const viewHistory = () => {
   getChatHistory();
-  console.log(chatHistories);
   historyDialogVisible.value = true;
 };
 
 const sendMessage = async () => {
   if (inputMessage.value.content !== '') {
     context.value.messages.push(inputMessage.value);
+    if(isFirstTitle){
+      isFirstTitle = false;
+      title.value = (await generateTitleCall(context.value)).data;
+    }
     inputMessage.value = { role: Role.user, content: '' }; // 重置输入消息
     const response = await sendChatCall(context.value);
     context.value.messages.push(response.data.messages[response.data.messages.length - 1]);
@@ -161,6 +168,8 @@ const selectChatHistory = async (selectedChat: { id: number; title: string, crea
 }
 
 .chat-messages {
+  display: flex;
+  flex-direction: column;
   height: 400px;
   overflow-y: auto;
   margin-bottom: 10px;
@@ -170,20 +179,21 @@ const selectChatHistory = async (selectedChat: { id: number; title: string, crea
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
-  max-width: 70%;
+  max-width: 70%; /* 确保消息不会超过容器的70%宽度 */
   word-wrap: break-word;
+  display: flex;
+  align-items: center; /* 垂直居中对齐文本 */
 }
 
 .self {
-  align-self: flex-end;
+  margin-left: auto; /* 将用户消息推向右侧 */
   background-color: #e0f7fa;
 }
 
 .other {
-  align-self: flex-start;
+  margin-right: auto; /* 将助理消息推向左侧 */
   background-color: #fff;
 }
-
 .chat-input-area {
   display: flex;
   align-items: center;

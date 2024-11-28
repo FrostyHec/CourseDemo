@@ -36,11 +36,7 @@ export async function sendChatCall(context: ChatContext) {
     const url = service_backend_base + '/langchain/chat';
     return AxiosAPI.authPost<ChatContext>(url, context);
 }
-
-// export async function sendChatAndGetFlowCall(context: ChatContext) { //TODO
-//     const url = service_backend_base + '/langchain/chat/flow';
-//     return AxiosAPI.authPost<void>(url, context, { responseType: 'stream' });
-// }
+ 
 
 export async function generateTitleCall(chatContext: ChatContext) {
     const url = service_backend_base + '/langchain/title';

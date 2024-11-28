@@ -6,8 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HelloWorld,
+      redirect: '/login'
     },
     {
       path: '/course/:course_id(\\d+)/:labels*',

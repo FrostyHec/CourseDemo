@@ -44,7 +44,9 @@
           <el-card class="box-card" v-for="(teacher, index) in hotTeachers" :key="teacher.teacher.user_id">
             <div class="clearfix">
               <span style="float: left;">名次：{{ index + 1 }}</span>
-              <span>{{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}</span>
+            </div>
+            <div class="teacher-name">
+              {{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}
             </div>
             <div>
               <p>Student Number: {{ teacher.student_num }}</p>
@@ -179,17 +181,16 @@ watch(() => getAnnouncementMessages(), (newMessages) => {
 ;
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #0f151b;
   margin-top: 0px;
 }
 
-.main{
+.main {
   margin-top: auto;
 }
 
@@ -208,6 +209,11 @@ watch(() => getAnnouncementMessages(), (newMessages) => {
 
 .box-card {
   margin: 10px;
+}
+
+.teacher-name {
+  text-align: center; /* 居中对齐教师名字 */
+  margin-top: 10px; /* 与名次之间的间距 */
 }
 
 .search-box {
@@ -232,6 +238,7 @@ watch(() => getAnnouncementMessages(), (newMessages) => {
 .search-button {
   margin-left: 0; /* 调整按钮样式 */
 }
+
 .messages {
   position: fixed;
   bottom: 20px;
@@ -245,5 +252,16 @@ watch(() => getAnnouncementMessages(), (newMessages) => {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.clearfix {
+  clear: both;
+}
+
+/* 兼容不同浏览器的clearfix实现 */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 </style>
