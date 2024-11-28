@@ -5,7 +5,6 @@
     @loadeddata="video_ref.currentTime=last_watch_video;"
     @play="(event) => {set_watch_video((event.target as any)?.currentTime)}"
     @pause="async (event) => {
-      console.log('pause');
       await clear_watch_video((event.target as any)?.currentTime); 
       await load(resource_id);
     }"
@@ -18,7 +17,8 @@
 import { getLastWatchedCall, keepWatchAliveCall, startWatchAliveCall, stopWatchAliveCall } from '@/api/course/CheatCheckAPI';
 import { completeResourceCall } from '@/api/course/CourseProgressAPI';
 import { useCourseStore } from '@/stores/course';
-import { onBeforeUnmount, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
+import { useVideoStore } from '@/stores/video';
+import { onBeforeUnmount, onMounted, onUnmounted, ref, toRef, watch, type VideoHTMLAttributes } from 'vue';
 
 const video_ref = ref()
 let last_watch_video: number = 0
@@ -113,5 +113,14 @@ const watch_prop = watch(() => props, async (new_data, old_data) => {
   }
   await load(new_data.value.resource_id)
 }, {immediate: true, deep: true})
+
+const video_store = useVideoStore()
+const watch_id = watch(() => video_store.current_video, (new_id) => {
+  if(props.value.resource_id===new_id && new_id!==undefined) {
+    video_ref.value.pause()
+    
+  }
+})
+video_ref.value.pause()
 
 </script>
