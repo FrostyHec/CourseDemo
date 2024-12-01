@@ -12,7 +12,7 @@
       <el-input v-model="last_name_input" placeholder="Last Name" clearable/>
     </el-col>
     <el-col :span="6">
-      <el-button type="primary" style="margin-bottom: 10px; width: 0;" @click="load_list">Search</el-button>
+      <el-button type="primary" style="margin-bottom: 10px;" @click="load_list">Search</el-button>
     </el-col>
   </el-row>
 
@@ -31,8 +31,7 @@
       <template #default="scope: {row: UserPublicInfoEntity}">
         <el-button 
           type="primary"
-          @click="invite(scope.row)"
-          style="width: 0;" 
+          @click="invite(scope.row)" 
         >
           Invite
         </el-button>
@@ -88,6 +87,11 @@ async function invite(row: UserPublicInfoEntity) {
     ElMessage({
       message: 'Student invite network error',
       type: 'error',
+    })
+  } else {
+    ElMessage({
+      message: 'Success',
+      type: 'success',
     })
   }
   return

@@ -39,7 +39,7 @@
       Total score: <div style="color: var(--ep-color-primary); width: 40px;">
         {{ c.assignments.map((v) => v.received_scores).reduce((a,b)=>a+b, 0) }}
       </div>
-      Chapter type: <div style="color: var(--ep-color-primary); width: 80px;">{{ c.chapter_type }}</div>
+      Chapter type: <div style="color: var(--ep-color-primary); width: 100px;">{{ c.chapter_type }}</div>
       All graded: <div style="color: var(--ep-color-primary); width: 40px;">{{ c.is_all_graded }}</div>
     </div>
     <el-table 

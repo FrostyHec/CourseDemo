@@ -53,7 +53,8 @@ export async function removeStudentFromCourse(courseId: number, studentId: numbe
   return AxiosAPI.authDelete<null>(url, {})
 }
 
-export interface StudentInfoWithEnrollStatus extends UserPublicInfoEntity {
+export interface StudentInfoWithEnrollStatus {
+  student: UserPublicInfoEntity
   status: StudentEnrollType
 }
 

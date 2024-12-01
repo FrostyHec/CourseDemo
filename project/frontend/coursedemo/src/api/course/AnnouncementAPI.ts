@@ -4,6 +4,7 @@ import { AxiosAPI } from '@/utils/APIUtils'
 /////////////////////   ANNOUNCEMENT   ///////////////////////////////
 
 export interface AnnouncementEntity {
+  title: string
   notification_id: number
   course_id: number
   receiver_ids: number[]

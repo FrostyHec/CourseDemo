@@ -9,6 +9,10 @@
       <h1 style="font-size: x-large; margin: 0%;">
         {{ course_store.current_data?.label }}
       </h1>
+      
+      <div v-if="course_store.current_data?.complete && auth_store.user.user_id!==course_store.current_course_teacher()" style="color: var(--ep-color-success)">
+        Completed
+      </div>
 
       <div v-if="'course_name' in course_store.current_data.data" style="margin-top: 10px;">
         <div v-if="course_store.current_course_teacher()==auth_store.user.user_id">

@@ -3,7 +3,7 @@
     v-model="form_store.resource_visibility" 
     :title="form_store.mode+(form_store.resource_mode=='init' ? '' : ' a new version of ')+' the resource'" 
     width="600"
-    @closed="() => { formRef?.resetFields(); uploader?.clear() }">
+    @closed="() => { formRef?.resetFields(); uploader?.clear(); video_len=undefined; }">
     
     <el-form
       ref="formRef"
@@ -16,7 +16,7 @@
       </el-form-item>
 
       <el-form-item label="Type" prop="resource_type">
-        <el-segmented v-model="form_store.resource_form.resource_type" :options="['description', 'courseware', 'video', 'attachment']" />
+        <el-segmented v-model="form_store.resource_form.resource_type" :options="['courseware', 'video', 'attachment']" />
       </el-form-item>
 
       <el-form-item label="Downloadable" prop="student_can_download">
@@ -99,6 +99,10 @@ function change(file: File|undefined) {
 const resource_rules = reactive<FormRules<ResourceEntity>>({
   resource_name: [
     { required: true, message: 'Please enter the name', trigger: 'blur', },
+    { 
+      validator: (r, v) => form_store.resource_mode!='init' || form_store.check_name.find((n)=>v==n)===undefined,
+      message: 'This name is already exist', trigger: 'blur',
+    }
   ],
   resource_type: [
     { required: true, message: 'Please select a type', trigger: 'blur', },
@@ -117,6 +121,10 @@ const resource_rules = reactive<FormRules<ResourceEntity>>({
   ],
   resource_version_name: [
     { required: true, message: 'Please enter a version name', trigger: 'blur', },
+    { 
+      validator: (r, v) => form_store.resource_mode!='new_version' || form_store.check_name.find((n)=>v==n)===undefined,
+      message: 'This version name is already exist', trigger: 'blur',
+    }
   ],
 })
 
@@ -124,13 +132,13 @@ const formRef = ref<FormInstance>()
 const submitForm = async (formIn: FormInstance | undefined) => {
   if (!formIn) return
   await formIn.validate(async (valid) => {
-    if(!valid || uploader.value?.file_get===undefined) {
+    if(!valid || (uploader.value?.file_get===undefined && form_store.mode=='Add')) {
       console.log('error submit!')
       return
     }
-    form_store.resource_form.suffix = uploader.value.file_get.type+':'+uploader.value.file_get.name
-    console.log(form_store.resource_form.suffix)
-    const id = await form_store.modify_resource(uploader.value.file_get)
+    if(uploader.value?.file_get!==undefined)
+      form_store.resource_form.suffix = uploader.value.file_get.type+':'+uploader.value.file_get.name
+    const id = await form_store.modify_resource(uploader.value?.file_get)
     if(id==undefined) {
       ElMessage({
         message: 'Network error',
