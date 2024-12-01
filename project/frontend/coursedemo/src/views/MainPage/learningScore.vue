@@ -32,7 +32,7 @@
               <el-card v-for="(item, index) in mallItems" :key="index" class="mall-item-card">
                 <img :src="item.image" class="mall-item-image">
                 <div>{{ item.badge_name }}</div>
-                <el-button type="primary" @click="getMedalIndex(index);exchangeMetalVisible = true">兑换</el-button>
+                <el-button type="primary" @click="medalIndex = item.badge_id;exchangeMetalVisible = true">兑换</el-button>
               </el-card>
             </div>
           </div>
@@ -50,7 +50,7 @@
           <span>确定要兑换这个勋章吗？</span>
           <template #footer>
             <el-button @click="exchangeMetalVisible = false">取消</el-button>
-            <el-button type="primary" @click="exchangeMetalVisible=false;exchangeItem(medalIndex);">确认加入</el-button>
+            <el-button type="primary" @click="exchangeMetalVisible=false;exchangeItem(medalIndex);">确认</el-button>
           </template>
         </el-dialog>
       </el-container>
@@ -77,9 +77,6 @@ const currentMarketScore = ref<MyMarketScore>(
   }
 );
 
-const getMedalIndex = (index:number)=>{
-  const medalIndex = index;
-}
 
 
 const allMedals = ref<BadgeInfo[]>([
@@ -157,7 +154,7 @@ const getScoreMall = async () => {
     // 调用API获取用户的勋章ID列表
     const response = await getMyCanBuyBadgeCall();
     const userBadges = response.data.content;
-
+    currentMarketScore.value = (await getMyMarketScoreCall()).data;
     // 根据用户勋章ID列表，从allMedals中筛选出对应的勋章信息
     const userMedals = allMedals.value.filter((medal) => {
       return userBadges.some((userBadge: { badge_id: number; }) => userBadge.badge_id === medal.badge_id);
@@ -179,10 +176,10 @@ const getScoreHistory = async () => {
   }
 };
 
-const exchangeItem = (index: number) => {
-  buyBadgeCall(mallItems.value[index]);
-  medals.value.push(mallItems.value[index]);
-  mallItems.value.splice(index, 1);
+const exchangeItem = async (index: number) => {
+  await buyBadgeCall(allMedals.value[index-1]);
+  await getMyBadgeCall();
+  await getScoreMall();
 };
 
 const scoreHistory = ref<ConsumeRecord[]>([

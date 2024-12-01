@@ -4,7 +4,7 @@
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
         <el-button type="primary" @click="router.back()">返回课程页面</el-button>
-        <el-button type="primary" v-show="showStream">Get Stream</el-button>
+        <el-button type="primary" v-show="showStream" @click="HandleGetPushName()">Get Stream</el-button>
       </div>
     </div>
     <div class="main-content">
@@ -28,6 +28,14 @@
         </div>
       </div>
     </div>
+    <el-dialog
+          title=""
+          v-model="pushVisible"
+          @close="pushVisible = false"
+        >
+          <span>推流地址: {{ pushUrl }}</span>
+          <span>密钥: {{ pushName }}</span>
+    </el-dialog>
   </div>
 </template>
 
@@ -54,6 +62,7 @@ const videoElement = ref<HTMLVideoElement | null>(null);
 const messages = ref<string[]>([]);
 const newMessage = ref('');
 const isLive = ref(true);
+const pushVisible = ref(false);
 let intervalId: NodeJS.Timeout | null = null;
 
 const danmus = ref<string[]>([]);
@@ -78,20 +87,17 @@ onMounted(async () => {
         isLive.value = false;
       }
     }, 5000);
-
-    if (authStore.user.role == UserType.TEACHER) {
-      const pushNameResponse = await getPushName(courseId);
-      if (pushNameResponse && pushNameResponse.data) {
-        streamName = pushNameResponse.data.name;
-        const pushUrl = getLivestreamPushUrl(streamName);
-        alert(pushUrl);
-        const pullUrl = getLivestreamPullUrl(streamName);
-        setupFlvPlayer(pullUrl);
-      }
-    }
   }
 });
 
+let pushUrl = ref('');
+let pushName = ref('');
+
+const HandleGetPushName = async () =>{
+  pushUrl.value = getLivestreamPushUrl();
+  pushName.value = (await getPushName(courseId)).data.name;
+  pushVisible.value = true;
+}
 
 onUnmounted(() => {
   if (intervalId) {
