@@ -49,8 +49,8 @@
           <el-form-item label="课程名称" prop="course_name">
             <el-input v-model="courseForm.course_name"/>
           </el-form-item>
-          <el-form-item label="授课老师id" prop="teacher_id">
-            {{getTeacherName(courseForm.teacher_id)}}
+          <el-form-item label="授课老师" prop="teacher_id">
+            {{teachersMap[courseForm.teacher_id]}}
           </el-form-item>          
           <el-form-item label="描述" prop="description">
             <el-input v-model="courseForm.description"/>
@@ -94,8 +94,32 @@ import { getUserPublicInfoCall } from '@/api/user/UserAPI';
 
 onMounted(async () => {
     fetchCourses();
+    fetchTeacherNames();
 });
 
+const teachers = ref<string[]>([]);
+const teachersMap = ref<{ [key: number]: string }>({});
+
+
+const getTeacherName = async (id: number) => {
+  try {
+    const response = await getUserPublicInfoCall(id);
+    return response.data.first_name + ' ' + response.data.last_name;
+  } catch (error) {
+    console.error('获取老师信息失败:', error);
+    return '';
+  }
+}
+
+
+const fetchTeacherNames = async () => {
+  const studentIds = courses.value.map(review => review.teacher_id);
+  for (const id of studentIds) {
+    const name = await getTeacherName(id);
+    teachersMap.value[id] = name;
+  }
+  teachers.value = Object.values(teachersMap.value);
+}
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -173,12 +197,6 @@ try {
     console.error('获取课程列表失败:', error);
 }
 };
-
-const getTeacherName = async (teacher_id:number) =>{
-  const response = await getUserPublicInfoCall(teacher_id);
-  return response.data.first_name+response.data.last_name;
-}
-
 </script>
 
 <style scoped>
