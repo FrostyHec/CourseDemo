@@ -77,7 +77,7 @@ export function setMockFunc(url: string, req_type: RequestType, request: APIPara
 export async function enableTempMock() {
     try {
         // 动态导入模块
-        const module = await import('@/mock/nonpublic-TempMock')
+        const module = await import('@/mock/__tests__/TestLogin.test')
         console.log(module)
         // 遍历模块的所有导出
         Object.keys(module).forEach((key) => {
