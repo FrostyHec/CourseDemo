@@ -34,6 +34,7 @@
           @close="pushVisible = false"
         >
           <span>推流地址: {{ pushUrl }}</span>
+          <p></p>
           <span>密钥: {{ pushName }}</span>
     </el-dialog>
   </div>

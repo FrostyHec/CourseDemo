@@ -29,15 +29,45 @@
       </div>
     </div>
   
+    <!-- 作业的合理性 -->
+    <div class="question">
+      <p>4. 您认为作业量是否合理？</p>
+      <div class="options">
+        <label v-for="option in homeworkReasonableOptions" :key="option">
+          <input type="radio" :value="option" v-model="homeworkReasonableResult" />{{ option }}
+        </label>
+      </div>
+    </div>
+    
+    <!-- 教师的教学能力 -->
+    <div class="question">
+      <p>5. 您如何评价教师的教学能力？</p>
+      <div class="options">
+        <label v-for="option in teachingAbilityOptions" :key="option">
+          <input type="radio" :value="option" v-model="teachingAbilityResult" />{{ option }}
+        </label>
+      </div>
+    </div>
+    
+    <!-- 考试难度 -->
+    <div class="question">
+      <p>6. 您认为考试难度是否适中？</p>
+      <div class="options">
+        <label v-for="option in examDifficultyOptions" :key="option">
+          <input type="radio" :value="option" v-model="examDifficultyResult" />{{ option }}
+        </label>
+      </div>
+    </div>
+
     <!-- 添加课程评分 -->
     <div class="question">
-      <p>4. 请为这门课程打分（1-5分）：</p>
+      <p>7. 请为这门课程打分（1-5分）：</p>
       <el-rate v-model="evaluationForm.score" show-text></el-rate>
     </div>
   
     <!-- 添加评论框 -->
     <div class="question">
-      <p>5. 对这门课程，您有什么建议或评论？</p>
+      <p>8. 对这门课程，您有什么建议或评论？</p>
       <el-input
         type="textarea"
         v-model="evaluationForm.comment"
@@ -61,7 +91,7 @@
 
 <script setup lang="ts">
 import { CourseStatus, EvaluationType, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { createEvaluationCall, evaluationType, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
+import { createEvaluationCall, evaluationType, getMyEvaluationCall, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
@@ -72,6 +102,9 @@ const submitJudge = ref(false)
 const question1Result = ref('');
 const question2Result = ref('');
 const question3Result = ref('');
+const homeworkReasonableResult = ref('');
+const teachingAbilityResult = ref('');
+const examDifficultyResult = ref('');
 
 const evaluation_form_answer = ref<answer[]>([
   {
@@ -86,6 +119,21 @@ const evaluation_form_answer = ref<answer[]>([
   },
   {
     id: 3,
+    type: evaluationType.rating,
+    result: '',
+  },
+  {
+    id: 4,
+    type: evaluationType.rating,
+    result: '',
+  },
+  {
+    id: 5,
+    type: evaluationType.rating,
+    result: '',
+  },
+  {
+    id: 6,
     type: evaluationType.rating,
     result: '',
   },
@@ -108,15 +156,17 @@ const course = ref<CourseEntity[]>([
   },
 ]);
 
-const evaluationForm = ref<CourseEvaluationEntity>({
-  course_id: course_id,
-  student_id: student_id,
-  comment: '',
-  score: 0,
-  evaluation_form_answer: evaluation_form_answer,
-  created_at: new Date(),
-  updated_at: new Date(),
-});
+const evaluationForm = ref<CourseEvaluationEntity>(
+  {
+    course_id: 0,
+    student_id: 0,
+    comment: '',
+    score: 0,
+    evaluation_form_answer: evaluation_form_answer.value,
+    created_at: new Date(),
+    updated_at: new Date()
+  }
+);
 
 onMounted(async () => {
   const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
@@ -160,13 +210,46 @@ const question3Options = [
   "非常满意"
 ];
 
-const submitForm = () => {
+const homeworkReasonableOptions = [
+  "非常不合理",
+  "不合理",
+  "一般",
+  "合理",
+  "非常合理"
+];
+
+const teachingAbilityOptions = [
+  "非常差",
+  "差",
+  "一般",
+  "好",
+  "非常好"
+];
+
+const examDifficultyOptions = [
+  "过于简单",
+  "简单",
+  "适中",
+  "难",
+  "过于难"
+];
+
+const submitForm = async () => {
   evaluation_form_answer.value[0].result = question1Result.value;
   evaluation_form_answer.value[1].result = question2Result.value;
   evaluation_form_answer.value[2].result = question3Result.value;
+  evaluation_form_answer.value[3].result = homeworkReasonableResult.value;
+  evaluation_form_answer.value[4].result = teachingAbilityResult.value;
+  evaluation_form_answer.value[5].result = examDifficultyResult.value;
 
   console.log(evaluationForm.value);
-  createEvaluationCall(course_id, evaluationForm.value);
+  const response=await getMyEvaluationCall(course_id);
+  if(response.data==null){
+    await createEvaluationCall(course_id, evaluationForm.value);
+  }
+  else{
+    await updateEvaluationCall(course_id, evaluationForm.value);
+  }
   ElMessage.success('评价提交成功！');
   router.push('/MainPage/student')
 };

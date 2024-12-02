@@ -74,7 +74,6 @@ gen/
 .profiler/
 
 # hugo ignore
-public/
 .hugo_build.lock
 *.html-e
 
