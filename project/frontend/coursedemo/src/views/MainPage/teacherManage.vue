@@ -96,7 +96,7 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
-import { CourseStatus, EvaluationType ,createCourseCall, deleteCourseCall, Publication, type CourseEntity, updateCourseInfoCall } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType ,createCourseCall, deleteCourseCall, Publication, type CourseEntity, updateCourseInfoCall, updateCourseStatusCall } from '@/api/course/CourseAPI';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
 
@@ -176,6 +176,7 @@ const saveCourse = async () => {
     if (isCourseNameExist(courseForm.value.course_name)) {
         await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
         dialogVisible.value = false;
+        fetchCourses(); 
         return;
     }
     dialogVisible.value = false;
@@ -185,9 +186,8 @@ const saveCourse = async () => {
 };
 
 const AddCourse = async () => {
-    if(courseForm.value.status==CourseStatus.creating){
-      courseForm.value.status = CourseStatus.submitted;
-      await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
+    if(courseForm.value.course_id!=0){
+      await updateCourseStatusCall(courseForm.value.course_id,{status:CourseStatus.submitted});
       dialogVisible.value = false;
       return;
     }
@@ -198,7 +198,6 @@ const AddCourse = async () => {
     courseForm.value.status = CourseStatus.submitted;
     await createCourseCall(courseForm.value);
     dialogVisible.value = false;
-    tableData.value.push(courseForm.value);
     fetchCourses(); 
 };
 
