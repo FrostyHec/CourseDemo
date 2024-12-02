@@ -96,7 +96,7 @@ import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useAuthStore } from '@/stores/auth';
 import { getAllTeachingCourseList } from '@/api/course/CourseMemberAPI';
-import { CourseStatus, EvaluationType ,createCourseCall, deleteCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType ,createCourseCall, deleteCourseCall, Publication, type CourseEntity, updateCourseInfoCall } from '@/api/course/CourseAPI';
 import router from '@/router';
 import { ElMessage } from 'element-plus';
 
@@ -173,11 +173,12 @@ const isCourseNameExist = (name: string) => {
 };
 
 const saveCourse = async () => {
-    dialogVisible.value = false;
-    const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
-    if (index !== -1) {
-      tableData.value.splice(index, 1);
+    if (isCourseNameExist(courseForm.value.course_name)) {
+        await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
+        dialogVisible.value = false;
+        return;
     }
+    dialogVisible.value = false;
     await createCourseCall(courseForm.value);
     tableData.value.push(courseForm.value);
     fetchCourses(); 
@@ -185,10 +186,10 @@ const saveCourse = async () => {
 
 const AddCourse = async () => {
     if(courseForm.value.status==CourseStatus.creating){
-      const index = tableData.value.findIndex(course => course.course_name === courseForm.value.course_name);
-      if (index !== -1) {
-        tableData.value.splice(index, 1);
-      }
+      courseForm.value.status = CourseStatus.submitted;
+      await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
+      dialogVisible.value = false;
+      return;
     }
     if (isCourseNameExist(courseForm.value.course_name)) {
       ElMessage.error('课程名称已存在');
