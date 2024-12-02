@@ -175,8 +175,8 @@ const isCourseNameExist = (name: string) => {
 const saveCourse = async () => {
     if (isCourseNameExist(courseForm.value.course_name)) {
         await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
-        dialogVisible.value = false;
         fetchCourses(); 
+        dialogVisible.value = false;
         return;
     }
     dialogVisible.value = false;
