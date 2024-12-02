@@ -22,7 +22,7 @@ public interface FileSubmissionMapper extends BaseMapper<FileSubmission> {
     @Select("SELECT COUNT(1) > 0 FROM file_submission WHERE assignment_id = #{assignmentId} AND student_id = #{userId}")
     boolean getSubmissionByAssignmentIdAndStudentId(Long assignmentId, Long userId);
 
-    @Select("SELECT AVG(gained_score) FROM file_submission WHERE assignment_id = #{assignmentId}")
+    @Select("SELECT AVG(gained_score) FROM file_submission WHERE assignment_id = #{assignmentId} and gained_score is not null")
     double getAverageScoreByAssignmentId(Long assignmentId);
 
     @Select("SELECT fs.* FROM file_submission fs JOIN assignments a ON fs.assignment_id = a.assignment_id WHERE a.chapter_id = #{cpid}")

@@ -16,6 +16,7 @@ import org.frosty.server.entity.bo.cheat_check.VideoRequiredSeconds;
 import org.frosty.server.entity.bo.cheat_check.VideoWatchRecord;
 import org.frosty.server.mapper.course.cheat_check.VideoRequiredSecondsMapper;
 import org.frosty.server.mapper.course.cheat_check.VideoWatchedRecordMapper;
+import org.frosty.server.mapper.course.progress.ResourceCompleteMapper;
 import org.frosty.sse.constant.MessageBodyType;
 import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class CheatCheckService {
+    private final ResourceCompleteMapper resourceCompleteMapper;
     private final VideoRequiredSecondsMapper videoRequiredSecondsMapper;
     private final VideoWatchedRecordMapper videoWatchedRecordMapper;
     private final CheatCheckTransactionalService cheatCheckTransactionalService;
@@ -55,13 +57,15 @@ public class CheatCheckService {
         return cheatCheckTransactionalService.getWatchedRecord(rid, auth.getUserID());
     }
 
-    public void startWatchAlive(Long rid, AuthInfo auth) {
+    public void startWatchAlive(Long rid, Long uid) {
         //开始观看某个视频
         //如果之前存在某个视频则保存那个记录后重新开启一个新的记录
         if (!videoRequiredSecondsMapper.hasWatchRequirement(rid)) {
             throw new ExternalException(Response.getBadRequest("no-watch-requirement"));
         }
-        Long uid = auth.getUserID();
+        if(resourceCompleteMapper.contains(rid,uid)){
+            throw new ExternalException(Response.getBadRequest("resource-completed"));
+        }
         WatchingEntity we = new WatchingEntity(rid, OffsetDateTime.now());
         var previous = userEstablishedWatchingRecord.get(uid);
         if (previous != null) {

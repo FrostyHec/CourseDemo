@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.frosty.auth.annotation.GetPassedToken;
 import org.frosty.auth.annotation.GetToken;
+import org.frosty.auth.entity.AuthInfo;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.auth.utils.AuthEx;
 import org.frosty.common.constant.PathConstant;
@@ -44,9 +46,8 @@ public class CheatCheckController {
 
     @PutMapping("/start")
     public void startWatchAlive(@PathVariable Long id,
-                                @GetToken TokenInfo tokenInfo) {
-        var auth = AuthEx.checkPass(tokenInfo);
-        cheatCheckService.startWatchAlive(id, auth);
+                                @GetPassedToken AuthInfo auth) {
+        cheatCheckService.startWatchAlive(id, auth.getUserID());
     }
 
     @GetMapping("/alive")

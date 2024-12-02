@@ -1,5 +1,6 @@
 package org.frosty.server.controller.course.livestream;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,10 @@ public class InternalLiveStreamAuthController {
     // TODO 比较懒直接在controller里写了
     private final SharedBiMapService sharedBiMapService;
 
+    @PostConstruct
+    public void init(){
+        sharedBiMapService.init("course.livestream");
+    }
 
     @PostMapping("/push")
     public ResponseEntity<String> pushAuth(@ModelAttribute PushAuthEntity pushAuthEntity) {

@@ -71,12 +71,14 @@ public class StudyAnalysisService {
                     });
             // 获取所有提交作业的平均分
             double averageScore = fileSubmissions.stream()
+                    .filter(fileSubmission -> fileSubmission.getGainedScore() != null)
                     .mapToDouble(FileSubmission::getGainedScore)
                     .average()
                     .orElse(0);
             // 获取所有低分学生
             fileSubmissions.stream()
-                    .filter(fileSubmission -> fileSubmission.getGainedScore() < averageScore * 0.5)
+                    .filter(fileSubmission -> fileSubmission.getGainedScore() != null &&
+                            fileSubmission.getGainedScore() < averageScore * 0.5)
                     .forEach(fileSubmission -> {
                         StudyAnalysisController.WarningInfo warning = new StudyAnalysisController.WarningInfo();
                         warning.setWarningType(WarningInfo.WarningType.low_score);
@@ -109,7 +111,9 @@ public class StudyAnalysisService {
             } else {
                 // 检查自己的作业得分是否低于平均分的50%
                 double averageScore = fileSubmissionMapper.getAverageScoreByAssignmentId(assignment.getAssignmentId());
-                if (averageScore != 0 && fileSubmission.getGainedScore() < averageScore * 0.5) {
+                if (averageScore != 0 &&
+                        fileSubmission.getGainedScore() != null &&
+                        fileSubmission.getGainedScore() < averageScore * 0.5) {
                     StudyAnalysisController.WarningInfo warning = new StudyAnalysisController.WarningInfo();
                     warning.setWarningType(WarningInfo.WarningType.low_score);
                     warning.setWarningStudent(user);
@@ -465,31 +469,38 @@ public class StudyAnalysisService {
                                         int totalStudents, int[] counts) {
         counts[0]++; // totalTeachingChapters
         // 检查学生是否完成了该章节下的资源
-        List<Resource> resources = resourceMapper.getAll(chapter.getChapterId());
-        List<Resource> videoResource = resources.parallelStream().filter(r -> r.getResourceType() == Resource.ResourceType.video).toList();
-        // 获取所有资源并过滤出视频资源
-        List<Long> resourceIds = resourceMapper.getAll(chapter.getChapterId()).parallelStream()
-                .filter(r -> r.getResourceType() == Resource.ResourceType.video)
-                .map(Resource::getResourceId)
-                .collect(Collectors.toList());
-
-        // 获取完成状态
-        List<ResourceCompleteRecord> completionStatuses = resourceCompleteMapper.getCompletionStatuses(resourceIds, students);
-
-        // 将完成状态映射到学生资源完成情况的 Map 中
-        Map<Long, Set<Long>> studentResourceCompletionMap = completionStatuses.parallelStream()
-                .collect(Collectors.groupingBy(
-                        ResourceCompleteRecord::getStudentId,
-                        Collectors.mapping(ResourceCompleteRecord::getResourceId, Collectors.toSet())
-                ));
-
-        // 检查每个学生是否完成了所有视频资源
-        long completedCount = students.parallelStream()
-                .filter(studentId -> videoResource.parallelStream()
-                        .allMatch(r -> studentResourceCompletionMap.getOrDefault(studentId, Collections.emptySet()).contains(r.getResourceId()))
-                )
-                .count();
-
+//        List<Resource> resources = resourceMapper.getAll(chapter.getChapterId());
+//        List<Resource> videoResource = resources.parallelStream().filter(r ->
+//                r.getResourceType() == Resource.ResourceType.video).toList();
+//        // 获取所有资源并过滤出视频资源
+//        List<Long> resourceIds = resourceMapper.getAll(chapter.getChapterId()).parallelStream()
+//                .filter(r -> r.getResourceType() == Resource.ResourceType.video)
+//                .map(Resource::getResourceId)
+//                .collect(Collectors.toList());
+//        if (resourceIds.isEmpty()) return;
+//
+//        // 获取完成状态
+//        List<ResourceCompleteRecord> completionStatuses = resourceCompleteMapper.getCompletionStatuses(resourceIds, students);
+//
+//        // 将完成状态映射到学生资源完成情况的 Map 中
+//        Map<Long, Set<Long>> studentResourceCompletionMap = completionStatuses.parallelStream()
+//                .collect(Collectors.groupingBy(
+//                        ResourceCompleteRecord::getStudentId,
+//                        Collectors.mapping(ResourceCompleteRecord::getResourceId, Collectors.toSet())
+//                ));
+//
+//        // 检查每个学生是否完成了所有视频资源
+//        long completedCount = students.parallelStream()
+//                .filter(studentId -> videoResource.parallelStream()
+//                        .allMatch(r -> studentResourceCompletionMap.getOrDefault(studentId, Collections.emptySet()).contains(r.getResourceId()))
+//                )
+//                .count();
+        int completedCount = 0;
+        for (var uid:students){
+            if(chapterCompleteMapper.contains(chapter.getChapterId(),uid)){
+                completedCount++;
+            }
+        }
         // 更新计数
         counts[1] += (int) completedCount; // completedTeachingChapters
     }

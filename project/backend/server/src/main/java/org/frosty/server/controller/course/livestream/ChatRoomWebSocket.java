@@ -11,6 +11,7 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.frosty.common.constant.PathConstant;
 import org.frosty.common.exception.InternalException;
 import org.frosty.server.entity.po.UserPublicInfo;
 import org.frosty.server.services.course.livestream.ChatRoomService;
@@ -21,7 +22,7 @@ import org.springframework.web.context.ContextLoader;
 
 @Slf4j
 @Component
-@ServerEndpoint("/websocket/livestream/{roomId}/{userId}")
+@ServerEndpoint(PathConstant.API+"/websocket/livestream/{roomId}/{userId}")
 public class ChatRoomWebSocket {
     private ChatRoomService chatRoomService;
     private ObjectMapper objectMapper;

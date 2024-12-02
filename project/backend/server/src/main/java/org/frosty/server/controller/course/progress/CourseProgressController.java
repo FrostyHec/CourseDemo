@@ -23,7 +23,7 @@ public class CourseProgressController {
 
     @PutMapping("/resource/{rid}/study/complete")
     public void completeResource(@GetPassedToken AuthInfo auth, @PathVariable Long rid) {
-        courseProgressService.completeResource(rid,auth);
+        courseProgressService.completeResource(rid,auth.getUserID());
     }
 
     @PutMapping("/chapter/{cid}/study/complete")

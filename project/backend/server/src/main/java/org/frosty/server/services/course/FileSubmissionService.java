@@ -35,7 +35,7 @@ public class FileSubmissionService {
     public void submitFile(FileSubmission fileSubmission, MultipartFile file) throws IOException {
         // TODO ONLY STUDENT CAN SUBMIT
 
-        // check if have previous submission, if does, check if multiple submission valid.
+        // check if have previous submission, if it does, check if multiple submission valid.
         Long assignmentId = fileSubmission.getAssignmentId(),studentId = fileSubmission.getStudentId();
         FileSubmission prevSubmission= mapper.selectSubmissionByAssignmentIdAndStudentId(assignmentId,studentId);
         if(prevSubmission!=null) { // has previous

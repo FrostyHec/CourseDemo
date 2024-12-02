@@ -41,11 +41,13 @@ public class CourseProgressService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public void completeResource(Long rid, AuthInfo auth) {
+    public void completeResource(Long rid, Long uid) {
         // if has min required play time check if complete&remove metadata
         // if no, simply complete
         // only complete video resource
-        var uid = auth.getUserID();
+        if(resourceCompleteMapper.contains(rid,uid)){
+            return;
+        }
         var resource = resourceMapper.selectById(rid);
         Ex.check(resource.getResourceType() == Resource.ResourceType.video,
                 Response.getBadRequest("cannot-complete-nonvideo"));
@@ -133,9 +135,9 @@ public class CourseProgressService {
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
         List<CourseProgressController.ChapterProgress> chapterProgresses = new ArrayList<>(chapters.size());
         for (var c : chapters) {
-            var cid = c.getCourseId();
+            var cid = c.getChapterId();
             var videoResources = getVideoResources(cid);
-            List<CourseProgressController.ResourceProgress> resourceProgresses = new ArrayList<>(chapters.size());
+            List<CourseProgressController.ResourceProgress> resourceProgresses = new ArrayList<>(videoResources.size());
             for (var r : videoResources) {
                 var rid = r.getResourceId();
                 var complete = resourceCompleteMapper.contains(rid, uid);

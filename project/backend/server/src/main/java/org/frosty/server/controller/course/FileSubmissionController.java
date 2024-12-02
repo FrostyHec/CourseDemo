@@ -28,6 +28,7 @@ public class FileSubmissionController {
                            @RequestPart("data") FileSubmission fileSubmission,
                            @RequestPart("file") MultipartFile file) throws IOException {
         fileSubmission.setFileSubmissionId(null);
+        fileSubmission.setGainedScore(null);
         Ex.idCheck(id,fileSubmission.getAssignmentId());
         fileSubmissionService.submitFile(fileSubmission, file);
     }

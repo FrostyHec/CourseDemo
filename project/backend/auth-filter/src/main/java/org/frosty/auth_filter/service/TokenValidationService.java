@@ -47,6 +47,5 @@ public class TokenValidationService {
     }
     private boolean isTokenInPool(String token) {
         return true;// TODO using redis for token pool sharing
-//        return sharedBiMapService.valueExist(token);
     }
 }
