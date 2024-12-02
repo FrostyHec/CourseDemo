@@ -15,8 +15,8 @@ spec:
         app: course # Pod 标签
     spec:
       containers:
-        - name: user-container
-          image: frosky/server:latest  # 容器镜像
+        - name: course-container
+          image: frosky/ooad-server:latest  # 容器镜像
           ports:
             - containerPort: 9977  # 容器端口
 ---
@@ -24,26 +24,27 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-svc
+  name: course-svc
+  namespace: default
 spec:
   selector:
-    app: user  # 选择与 Deployment 中匹配的 Pod
+    app: course  # 选择与 Deployment 中匹配的 Pod
   ports:
     - protocol: TCP
-      port: 80  # Service 端口
-      targetPort: 7073  # Pod 的目标端口
+      port: 9977  # Service 端口
+      targetPort: 9977  # Pod 的目标端口
   type: ClusterIP  # 内部集群 IP
 ---
 # User Horizontal Pod Autoscaler 配置
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: user-deployment-hpa
+  name: course-deployment-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: user-deployment  # 目标 Deployment
+    name: course-deployment  # 目标 Deployment
   minReplicas: 1  # 最小副本数量
   maxReplicas: 10  # 最大副本数量
   metrics:

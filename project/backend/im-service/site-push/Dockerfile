@@ -1,7 +1,5 @@
 # 使用 Ubuntu 作为基础镜像
-FROM ubuntu:22.04
-
-LABEL authors = "hlh"
+FROM ubuntu:20.04
 
 # 安装 openjdk-21
 RUN apt-get update && \

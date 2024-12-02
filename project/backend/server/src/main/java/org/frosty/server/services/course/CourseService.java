@@ -2,6 +2,8 @@ package org.frosty.server.services.course;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.RequiredArgsConstructor;
+import org.frosty.common.response.Response;
+import org.frosty.common.utils.Ex;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.mapper.course.CourseMapper;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class CourseService {
 
     public void updateCourseStatus(Long id, String status) {
         Course course = courseMapper.selectById(id);
+        Ex.check(course!=null, Response.getBadRequest("course-not-found"));
         //检查非法状态转换
         if (course.getStatus().equals(Course.CourseStatus.deleted)) {
             throw new IllegalArgumentException("Invalid status change");
