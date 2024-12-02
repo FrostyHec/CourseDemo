@@ -28,7 +28,7 @@
             <p>课程评分: {{ course_score }} 分</p>
           <div v-for="review in evaluation" :key="review.student_id" class="course-review">
             <el-rate v-model="review.score" disabled></el-rate>
-            <p>学生评价：{{ review.comment }}</p>
+            <p>{{getStudentName(review.student_id)}} 评价：{{ review.comment }}</p>
           </div>
         </div>
         </el-main>
@@ -53,13 +53,14 @@ import { onMounted, ref,watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { CourseStatus, EvaluationType ,getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { getEvaluationMetadataCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
+import { getEvaluationMetadataCall, getEvaluationsCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 import { getAllJoinedCourseList, studentEnrollCourseCall } from '@/api/course/CourseMemberAPI';
 import { useAuthStore } from '@/stores/auth';
+import { getUserPublicInfoCall } from '@/api/user/UserAPI';
 
 const router = useRouter();
 const joinDialogVisible = ref(false);
-const showJoinButton = ref(false); 
+let showJoinButton = ref(false); 
 const activeIndex = ref('1');
 const authStore = useAuthStore();
 const course = ref<CourseEntity>(
@@ -72,6 +73,14 @@ const course = ref<CourseEntity>(
 );
 
 const course_score = ref(4);
+
+const student_name = ref('');
+
+const getStudentName = async (id:number) =>{
+  const first_name = (await getUserPublicInfoCall(id)).data.first_name
+  const last_name = (await getUserPublicInfoCall(id)).data.last_name
+  return first_name+' '+last_name;
+}
 
 const checkJoin = async () =>{
   const response = await getAllJoinedCourseList(authStore.user.user_id,1,100);
@@ -88,6 +97,7 @@ const joinClass = () =>{
 
 const handleJoin = async () => {
   await studentEnrollCourseCall(course.value.course_id);
+  showJoinButton.value = false;
   fetchCourses();
 };
 
@@ -97,7 +107,7 @@ const evaluation = ref<CourseEvaluationEntity[]>([
     student_id: 1,
     comment: 'pretty good',
     score: 4,
-    evaluation_form_answer: '',
+    evaluation_form_answer: [],
     created_at: new Date(),
     updated_at: new Date()
   }
@@ -131,6 +141,8 @@ const fetchCourses = async () => {
   try {
     const response = await getCourseCall(course_id);
     course.value = response.data;
+    const response_evaluation = await getEvaluationsCall(course_id,10,1);
+    evaluation.value = response_evaluation.data.content;
     const evaluationResponse = await getEvaluationMetadataCall(course_id);
     course_score.value = evaluationResponse.data.average_score;
   } catch (error) {
@@ -154,7 +166,7 @@ const fetchCourses = async () => {
   top: 60px;
 }
 
-.course-info, .course-evaluation {
+.course-info {
   margin-top: 20px;
 }
 

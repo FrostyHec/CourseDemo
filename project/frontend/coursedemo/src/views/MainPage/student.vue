@@ -34,6 +34,11 @@
                     <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                   </template>
                 </el-table-column>
+                <el-table-column prop="judge" label="">
+                  <template v-slot="{ row }">
+                    <el-button @click="navigateToJudge(row)">课程评价</el-button>
+                  </template>
+                </el-table-column>
               </el-table>
             </el-main>
           </el-container>
@@ -62,6 +67,14 @@ const tableData = ref<CourseEntity[]>([
   }
 ]);
 
+const navigateToJudge = (row:CourseEntity) => {
+  if(row.evaluation_type==EvaluationType.practice)
+  router.push({ path: '/course/practiceSurvey', query: { course_id: row.course_id } });
+  else{
+    router.push({ path: '/course/theorySurvey', query: { course_id: row.course_id } });
+  }
+};
+
 onMounted(async () => {
     fetchCourses();
 });
@@ -79,9 +92,12 @@ const handleSearch = () => {
   );
 };
 
+let currentPage = 1;
+let pageSize = 10;
+
 const fetchCourses = async () => {
 try {
-    const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 100);
+    const response = await getAllJoinedCourseList(authStore.user.user_id, currentPage, pageSize);
     tableData.value = response.data.content;
 } catch (error) {
     console.error('获取课程列表失败:', error);

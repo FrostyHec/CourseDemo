@@ -6,8 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HelloWorld,
+      redirect: '/login'
     },
     {
       path: '/course/:course_id(\\d+)/:labels*',
@@ -78,7 +77,7 @@ const router = createRouter({
       component: () => import('@/views/MainPage/teacher.vue'),
     },
     {
-      path: '/MainPage/login',
+      path: '/login',
       component: () => import('@/views/MainPage/login.vue'),
     },
     {
@@ -102,11 +101,11 @@ const router = createRouter({
       component: () => import('@/views/Course/liveStream.vue'),
     },       
     {
-      path: '/course/practiceSurvey/:course_id(\\d+)',
+      path: '/course/practiceSurvey',
       component: () => import('@/views/Course/PracticeSurvey.vue'),
     },
     {
-      path: '/course/theorySurvey/:course_id(\\d+)',
+      path: '/course/theorySurvey',
       component: () => import('@/views/Course/TheorySurvey.vue'),
     },           
     {
@@ -116,7 +115,11 @@ const router = createRouter({
     {
       path: '/MainPage/learningScore',
       component: () => import('@/views/MainPage/learningScore.vue'),
-    },      
+    },    
+    {
+      path: '/course/CheckEvaluation',
+      component: () => import('@/views/Course/CheckEvaluation.vue'),
+    },       
   ],
 })
 

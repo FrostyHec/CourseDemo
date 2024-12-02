@@ -28,5 +28,6 @@ export class EventBus {
 
 export enum EventType {
 	currentlyIsLoggedIn = 'currentlyIsLoggedIn',
-	currentlyIsLoggedOut = 'currentlyIsLoggedOut'
+	currentlyIsLoggedOut = 'currentlyIsLoggedOut',
+	quitEvent = 'quitEvent'
 }

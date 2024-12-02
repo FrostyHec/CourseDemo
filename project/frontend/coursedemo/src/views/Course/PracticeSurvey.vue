@@ -45,18 +45,29 @@
       ></el-input>
     </div>
   
-    <el-button @click="submitForm">提交评价</el-button>
+    <el-button @click="submitJudge = true">提交评价</el-button>
   </div>
+  <el-dialog
+          title="加入课程"
+          v-model="submitJudge"
+        >
+          <span>确定要提交课程评价吗？</span>
+          <template #footer>
+            <el-button @click="submitJudge = false">取消</el-button>
+            <el-button type="primary" @click="submitForm(); submitJudge=false;">确认</el-button>
+          </template>
+        </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { CourseStatus, EvaluationType, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
-import { evaluationType, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
-import router from '@/router';
+import { createEvaluationCall, evaluationType, getMyEvaluationCall, updateEvaluationCall, type answer, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
+import router from '@/router';
 
+const submitJudge = ref(false)
 // 存储单选问题的结果
 const question1Result = ref('');
 const question2Result = ref('');
@@ -97,15 +108,17 @@ const course = ref<CourseEntity[]>([
   },
 ]);
 
-const evaluationForm = ref<CourseEvaluationEntity>({
-  course_id: course_id,
-  student_id: student_id,
-  comment: '',
-  score: 0,
-  evaluation_form_answer: evaluation_form_answer,
-  created_at: new Date(),
-  updated_at: new Date(),
-});
+const evaluationForm = ref<CourseEvaluationEntity>(
+  {
+    course_id: 0,
+    student_id: 0,
+    comment: '',
+    score: 0,
+    evaluation_form_answer: evaluation_form_answer.value,
+    created_at: new Date(),
+    updated_at: new Date()
+  }
+);
 
 onMounted(async () => {
   const route = useRoute(); // 使用 useRoute 钩子获取当前路由对象
@@ -113,6 +126,7 @@ onMounted(async () => {
   course_id = Number(courseId);
   await fetchCourses();
 });
+
 
 const fetchCourses = async () => {
   try {
@@ -148,14 +162,21 @@ const question3Options = [
   "非常满意"
 ];
 
-const submitForm = () => {
+const submitForm = async () => {
   evaluation_form_answer.value[0].result = question1Result.value;
   evaluation_form_answer.value[1].result = question2Result.value;
   evaluation_form_answer.value[2].result = question3Result.value;
 
   console.log(evaluationForm.value);
-  updateEvaluationCall(course_id, evaluationForm.value);
+  const response=await getMyEvaluationCall(course_id);
+  if(response.data==null){
+    await createEvaluationCall(course_id, evaluationForm.value);
+  }
+  else{
+    await updateEvaluationCall(course_id, evaluationForm.value);
+  }
   ElMessage.success('评价提交成功！');
+  router.push('/MainPage/student')
 };
 </script>
 

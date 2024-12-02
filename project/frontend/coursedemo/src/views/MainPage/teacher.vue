@@ -24,6 +24,11 @@
                   <router-link :to="`/course/${row.course_id}`" class="course-link">{{ row.course_name }}</router-link>
                 </template>
               </el-table-column>
+              <el-table-column prop="checkJudge" label="">
+                  <template v-slot="{ row }">
+                    <el-button @click="navigateToCheckJudge(row)">课程评价</el-button>
+                  </template>
+                </el-table-column>
             </el-table>
             <el-pagination
               @current-change="handlePageChange"
@@ -82,35 +87,12 @@ onMounted(async () => {
   }
 });
 
+const navigateToCheckJudge = (row:CourseEntity) =>{
+  router.push({ path: '/course/CheckEvaluation', query: { course_id: row.course_id } });
+}
+
 const navigateTo = (path: string) => {
   router.push(path); // 使用 router.push 进行路由跳转
-};
-
-const createNewCourse = () => {
-  courseForm.value = {
-    course_id: 0,
-    course_name: '',
-    description: '',
-    teacher_id: authStore.user.user_id,
-    status: CourseStatus.submitted,
-    publication: Publication.open,
-    evaluation_type: EvaluationType.practice,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-  dialogVisible.value = true;
-};
-
-const AddCourse = async () => {
-  await createCourseCall(courseForm.value);
-  dialogVisible.value = false;
-  tableData.value.push(courseForm.value);
-  fetchCourses(); // Refresh the course list after adding a new course
-};
-
-const confirmDelete = (row: CourseEntity) => {
-  currentCourseToDelete.value = row;
-  deleteDialogVisible.value = true;
 };
 
 const handlePageChange = (newPage: number) => {

@@ -3,13 +3,20 @@
     <div class="header">
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
-        <el-button type="primary" @click="getStreamName">Get Stream</el-button>
-        <el-button type="success" @click="playVideo">Play Video</el-button>
+        <el-button type="primary" @click="router.back()">返回课程页面</el-button>
+        <el-button type="primary" v-show="showStream">Get Stream</el-button>
       </div>
     </div>
     <div class="main-content">
       <div class="video-container">
         <video ref="videoElement" controls autoplay></video>
+        <vue-danmaku
+          v-model:danmus="danmus"
+          :speeds="50"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 50%;"
+        ></vue-danmaku>
+        <!-- 当前无直播的提示 -->
+        <div v-if="!isLive" class="no-live-stream">当前无直播</div>
       </div>
       <div class="chat-room">
         <div class="chat-messages">
@@ -25,94 +32,109 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import flvjs from 'flv.js';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { ElButton } from 'element-plus';
-import { chatRoomAPI } from '@/api/liveStream/ChatRoomAPI';
-import type { ReceivedMessage, SendMessage } from '@/api/livestream/ChatRoomAPI';
-import { useRoute } from 'vue-router';
+import { chatRoomAPI } from '@/api/course/liveStream/ChatRoomAPI';
+import type { ReceivedMessage, SendMessage } from '@/api/course/livestream/ChatRoomAPI';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { UserType } from '@/api/user/UserAPI';
+import { getFlvConfig, getLivestreamPullUrl, getLivestreamPushUrl, getPullName, getPushName } from '@/api/course/livestream/LivestreamAPI';
+import flvjs from 'flv.js';
+import vueDanmaku from 'vue3-danmaku'
 
-
-const authStore = useAuthStore()
+const router = useRouter();
+const showStream = ref(true);
+const authStore = useAuthStore();
 const user_id = authStore.user.user_id;
-const route = useRoute()
+const route = useRoute();
 const courseId = Number(route.params.course_id);
-const baseUrl = 'http://localhost:9977';
-const videoUrl = 'http://localhost:8088'; // 流媒体服务器的url
 let streamName = '';
-
 const videoElement = ref<HTMLVideoElement | null>(null);
 const messages = ref<string[]>([]);
 const newMessage = ref('');
+const isLive = ref(true);
+let intervalId: NodeJS.Timeout | null = null;
 
-// 弹幕消息处理函数
-const handleBarrageMessage = (message: ReceivedMessage) => {
-    messages.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
-};
+const danmus = ref<string[]>([]);
 
-// 连接 WebSocket
-const connectWebSocket = () => {
-    chatRoomAPI.connectWebSocket('liveStream', user_id, handleBarrageMessage);
-};
+onMounted(async () => {
+  connectWebSocket();
 
-const getStreamName = async () => {
-  try {
-    const response = await fetch(`${baseUrl}/api/v1/course/${courseId}/live-stream/push`, {
-      method: 'GET',
-      headers: {
-        'X-Forwarded-User': JSON.stringify({
-          authStatus: 'PASS',
-          authInfo: {
-            userID: 1,
-          },
-         }),
-      },
+  if (videoElement.value) {
+    intervalId = setInterval(async () => {
+      if (authStore.user.role == UserType.STUDENT) {
+        showStream.value = false;
+      };
+      const pullNameResponse = await getPullName(courseId);
+      if (pullNameResponse && pullNameResponse.data) {
+        streamName = pullNameResponse.data.name;
+        try {
+          const pullUrl = getLivestreamPullUrl(streamName);
+          if (!isLive.value) setupFlvPlayer(pullUrl);
+          isLive.value = true;
+        } catch (error) {}
+      } else {
+        isLive.value = false;
+      }
+    }, 5000);
+
+    if (authStore.user.role == UserType.TEACHER) {
+      const pushNameResponse = await getPushName(courseId);
+      if (pushNameResponse && pushNameResponse.data) {
+        streamName = pushNameResponse.data.name;
+        const pushUrl = getLivestreamPushUrl(streamName);
+        alert(pushUrl);
+        const pullUrl = getLivestreamPullUrl(streamName);
+        setupFlvPlayer(pullUrl);
+      }
+    }
+  }
+});
+
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+});
+
+function setupFlvPlayer(url: string) {
+  if (flvjs.isSupported() && videoElement.value) {
+    const flvPlayer = flvjs.createPlayer(getFlvConfig(url));
+    flvPlayer.attachMediaElement(videoElement.value);
+    flvPlayer.on(flvjs.Events.ERROR, () => {
+      console.error('Error playing FLV stream.');
+      flvPlayer.destroy();
+      isLive.value = false;
     });
-    const data = await response.json();
-    if (response.ok && data.code === 200) {
-      streamName = data.data.name;
-      alert(`streamName is: ${streamName}`);
-      connectWebSocket(); // 获取流名称后连接 WebSocket
-    } else {
-      alert(`Failed to get info: ${response}`);
-    }
-  } catch (error) {
-    console.error('Error fetching stream name:', error);
+    flvPlayer.on(flvjs.Events.LOADING_COMPLETE,()=>{
+      console.log('liveStream Complete!')
+      flvPlayer.destroy();
+      isLive.value = false;
+    })
+    flvPlayer.load();
+    flvPlayer.play();
+    isLive.value = true;
+  } else {
+    console.error('FLV format is not supported in this browser.');
+    isLive.value = false;
   }
+}
+
+const handleBarrageMessage = (message: ReceivedMessage) => {
+  messages.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
+  danmus.value.push(`${message.from_user.first_name} ${message.from_user.last_name}: ${message.content}`);
 };
 
-const playVideo = async () => {
-  try {
-    if (flvjs.isSupported()) {
-      const flvPlayer = flvjs.createPlayer({
-        type: 'flv',
-        url: `${videoUrl}/live?app=course&stream=${streamName}`,
-        cors: true,
-        requestModifier: (request: { headers: { [x: string]: string; }; }, _flv: any) => {
-          request.headers['X-Forwarded-User'] = JSON.stringify({
-            authStatus: 'PASS',
-            authInfo: {
-              userID: 1,
-            },
-          });
-        },
-      });
-      flvPlayer.attachMediaElement(videoElement.value);
-      flvPlayer.load();
-      flvPlayer.play();
-    } else {
-      console.error('FLV format is not supported in this browser.');
-    }
-  } catch (error) {
-    console.error('Error playing video:', error);
-  }
+const connectWebSocket = () => {
+  chatRoomAPI.connectWebSocket(String(courseId), user_id, handleBarrageMessage);
 };
 
 const sendMessage = () => {
   if (newMessage.value.trim() !== '') {
     const sendMessageData: SendMessage = {
-      target: 'liveStream',
+      target: -1,
       content: newMessage.value,
     };
     chatRoomAPI.sendMessage(sendMessageData);
@@ -187,26 +209,6 @@ body, html {
   transform: translateY(-1px);
 }
 
-/* Style for the Get Stream button specifically */
-.el-button.get-stream-button {
-  background-image: linear-gradient(45deg, #9e9eff 0%, #c4c4ff 99%);
-  box-shadow: 0 5px 15px rgba(158, 158, 255, 0.4);
-}
-
-.el-button.get-stream-button:hover {
-  background-image: linear-gradient(45deg, #c4c4ff 0%, #9e9eff 99%);
-}
-
-/* Style for the Play Video button specifically */
-.el-button.play-video-button {
-  background-image: linear-gradient(45deg, #9effa5 0%, #c4ffda 99%);
-  box-shadow: 0 5px 15px rgba(158, 255, 158, 0.4);
-}
-
-.el-button.play-video-button:hover {
-  background-image: linear-gradient(45deg, #c4ffda 0%, #9effa5 99%);
-}
-
 .main-content {
   display: flex;
   flex-grow: 1;
@@ -226,6 +228,17 @@ body, html {
   object-fit: cover;
 }
 
+.danmu-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-color: transparent;
+  z-index: 5;
+}
+
 .chat-room {
   width: 300px;
   background-color: #20232a;
@@ -236,8 +249,9 @@ body, html {
 .chat-messages {
   flex-grow: 1;
   padding: 1rem;
-  overflow-y: auto;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  overflow-y: auto; /* 允许垂直滚动 */
+  max-height: 760px; /* 设置最大高度，根据需要调整 */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .chat-messages div {
@@ -275,8 +289,25 @@ body, html {
   background-color: #85ce61;
 }
 
+.no-live-stream {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 24px;
+  text-align: center;
+  z-index: 10;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
-  /* Responsive adjustments */
+  .live-stream-viewer {
+    flex-direction: column;
+  }
+
+  .chat-room {
+    width: 100%;
+  }
 }
 </style>

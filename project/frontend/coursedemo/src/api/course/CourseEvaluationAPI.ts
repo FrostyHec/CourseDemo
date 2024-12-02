@@ -8,7 +8,7 @@ export interface CourseEvaluationEntity {
     student_id: number
     comment: string
     score: number
-    evaluation_form_answer: Object,//某个{ xxxxx的json}，只要是可转成json的实体就可以
+    evaluation_form_answer: answer[],//某个{ xxxxx的json}，只要是可转成json的实体就可以
     created_at: Date
     updated_at: Date
 }
@@ -51,6 +51,6 @@ export async function getEvaluationsCall(courseId: number, pageSize: number, pag
 
 
 export async function getEvaluationMetadataCall(courseId: number) {
-    const url = service_backend_base + `/course/${courseId}/evaluations/metadata'`
+    const url = service_backend_base + `/course/${courseId}/evaluations/metadata`
     return AxiosAPI.authGet<{ average_score:number }>(url, {})
 }

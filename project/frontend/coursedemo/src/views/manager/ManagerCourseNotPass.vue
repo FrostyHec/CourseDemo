@@ -50,7 +50,7 @@
             <el-input v-model="courseForm.course_name"/>
           </el-form-item>
           <el-form-item label="授课老师id" prop="teacher_id">
-            <el-input v-model="courseForm.teacher_id"/>
+            {{getTeacherName(courseForm.teacher_id)}}
           </el-form-item>          
           <el-form-item label="描述" prop="description">
             <el-input v-model="courseForm.description"/>
@@ -89,11 +89,13 @@ import { useAuthStore } from '@/stores/auth';
 import { getAllPendingApprovedCourse } from '@/api/course/CourseMemberAPI';
 import { type CourseEntity, EvaluationType, CourseStatus, createCourseCall, Publication, updateCourseStatusCall } from '@/api/course/CourseAPI';
 import { ElMessage } from 'element-plus';
+import { getUserPublicInfoCall } from '@/api/user/UserAPI';
 
 
 onMounted(async () => {
     fetchCourses();
 });
+
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -171,6 +173,11 @@ try {
     console.error('获取课程列表失败:', error);
 }
 };
+
+const getTeacherName = async (teacher_id:number) =>{
+  const response = await getUserPublicInfoCall(teacher_id);
+  return response.data.first_name+response.data.last_name;
+}
 
 </script>
 
