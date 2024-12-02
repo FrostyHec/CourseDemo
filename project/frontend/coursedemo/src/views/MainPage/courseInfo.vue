@@ -18,19 +18,19 @@
         </el-aside>
 
         <el-main>
-          <h2>{{course.course_name}}</h2>
+          <h2>{{ course.course_name }}</h2>
           <div v-if="activeMenu === '1'" class="course-description">
-            <p>课程简介：{{course.description}}</p>
-            <p>授课教师：{{course.teacher_id}}</p>
+            <p>课程简介：{{ course.description }}</p>
+            <p>授课教师：{{ teacher_name }}</p>
           </div>
           <div v-if="activeMenu === '2'" class="course-evaluation">
-          <el-rate v-model="course_score" disabled></el-rate>
+            <el-rate v-model="course_score" disabled></el-rate>
             <p>课程评分: {{ course_score }} 分</p>
-          <div v-for="review in evaluation" :key="review.student_id" class="course-review">
-            <el-rate v-model="review.score" disabled></el-rate>
-            <p>{{getStudentName(review.student_id)}} 评价：{{ review.comment }}</p>
+            <div v-for="review in evaluation" :key="review.student_id" class="course-review">
+              <el-rate v-model="review.score" disabled></el-rate>
+              <p>{{ studentsMap[review.student_id] }} 评价：{{ review.comment }}</p>
+            </div>
           </div>
-        </div>
         </el-main>
       </el-container>
 
@@ -48,11 +48,12 @@
     </el-container>
   </div>
 </template>
+
 <script setup lang="ts">
-import { onMounted, ref,watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { CourseStatus, EvaluationType ,getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
+import { CourseStatus, EvaluationType, getCourseCall, Publication, type CourseEntity } from '@/api/course/CourseAPI';
 import { getEvaluationMetadataCall, getEvaluationsCall, type CourseEvaluationEntity } from '@/api/course/CourseEvaluationAPI';
 import { getAllJoinedCourseList, studentEnrollCourseCall } from '@/api/course/CourseMemberAPI';
 import { useAuthStore } from '@/stores/auth';
@@ -63,7 +64,9 @@ const joinDialogVisible = ref(false);
 let showJoinButton = ref(false); 
 const activeIndex = ref('1');
 const authStore = useAuthStore();
-const course = ref<CourseEntity>(
+
+
+const course = ref<CourseEntity>(  
   {
     course_id: 1, course_name: 'CS303', description: 'xxx', teacher_id: 1, created_at: new Date(), updated_at: new Date(),
     status: CourseStatus.published,
@@ -74,24 +77,50 @@ const course = ref<CourseEntity>(
 
 const course_score = ref(4);
 
-const student_name = ref('');
+let teacher_name = ref('');
+const students = ref<string[]>([]);
+const studentsMap = ref<{ [key: number]: string }>({});
 
-const getStudentName = async (id:number) =>{
-  const first_name = (await getUserPublicInfoCall(id)).data.first_name
-  const last_name = (await getUserPublicInfoCall(id)).data.last_name
-  return first_name+' '+last_name;
+const getStudentName = async (id: number) => {
+  try {
+    const response = await getUserPublicInfoCall(id);
+    return response.data.first_name + ' ' + response.data.last_name;
+  } catch (error) {
+    console.error('获取学生信息失败:', error);
+    return '';
+  }
 }
 
-const checkJoin = async () =>{
-  const response = await getAllJoinedCourseList(authStore.user.user_id,1,100);
+const getTeacherName = async (id: number) => {
+  try {
+    const response = await getUserPublicInfoCall(id);
+    return response.data.first_name + ' ' + response.data.last_name;
+  } catch (error) {
+    console.error('获取老师信息失败:', error);
+    return '';
+  }
+}
+
+
+const fetchStudentNames = async () => {
+  const studentIds = evaluation.value.map(review => review.student_id);
+  for (const id of studentIds) {
+    const name = await getStudentName(id);
+    studentsMap.value[id] = name;
+  }
+  students.value = Object.values(studentsMap.value);
+}
+
+const checkJoin = async () => {
+  const response = await getAllJoinedCourseList(authStore.user.user_id, 1, 100);
   const courseId = course.value.course_id;
   const isJoined = response.data.content.some((course: { course_id: number; }) => course.course_id === courseId);
-  if(!isJoined){
+  if (!isJoined) {
     showJoinButton.value = true;
   }
 }
 
-const joinClass = () =>{
+const joinClass = () => {
   joinDialogVisible.value = true;
 }
 
@@ -120,7 +149,9 @@ onMounted(async () => {
   const courseId = Number(route.query.course_id); // 从查询参数中获取 course_id 并转换为数字
   course_id = Number(courseId);
   await fetchCourses();
+  teacher_name.value = await getTeacherName(course.value.teacher_id);
   checkJoin();
+  await fetchStudentNames(); // 获取所有学生的名字
 });
 
 const routerBack = () => {
@@ -141,7 +172,7 @@ const fetchCourses = async () => {
   try {
     const response = await getCourseCall(course_id);
     course.value = response.data;
-    const response_evaluation = await getEvaluationsCall(course_id,10,1);
+    const response_evaluation = await getEvaluationsCall(course_id, 10, 1);
     evaluation.value = response_evaluation.data.content;
     const evaluationResponse = await getEvaluationMetadataCall(course_id);
     course_score.value = evaluationResponse.data.average_score;
@@ -149,11 +180,9 @@ const fetchCourses = async () => {
     console.error('获取课程列表失败:', error);
   }
 };
-
 </script>
 
 <style>
-
 .back-button {
   position: absolute;
   left: 20px;
@@ -187,7 +216,7 @@ const fetchCourses = async () => {
   margin-top: 0px;
 }
 
-.main{
+.main {
   margin-top: auto;
 }
 
@@ -237,5 +266,4 @@ const fetchCourses = async () => {
   border: 1px solid #eaeaea;
   border-radius: 5px;
 }
-
 </style>

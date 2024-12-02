@@ -66,11 +66,6 @@
           </template>
         </el-dialog>
     </el-container>
-    <div class="messages" v-if="announcementMessages.length > 0">
-      <div v-for="(msg, index) in announcementMessages" :key="index">
-        {{ msg }}
-      </div>
-    </div>
     <llm />
   </div>
 </template>
@@ -160,10 +155,6 @@ const navigateTo = (path: string) => {
   router.push(path);
 };
 
-const announcementMessages = ref<string[]>([
-  'this is an example','this is an example','this is an example'
-]);
-
 const {registerEvent} = useEventStore();
 
 registerEvent(EventType.quitEvent,(message: { body: SSEBody; })=>{
@@ -173,10 +164,6 @@ function handleQuit() {
   quitVisible.value = true;
 }
 
-watch(() => getAnnouncementMessages(), (newMessages) => {
-  announcementMessages.value = newMessages;
-  console.log(announcementMessages.value);
-}, { immediate: true });
 
 ;
 </script>

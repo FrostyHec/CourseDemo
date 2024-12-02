@@ -31,6 +31,9 @@
           <p>问题一: {{ selectedEvaluation.evaluation_form_answer[0].result }}</p>
           <p>问题二: {{ selectedEvaluation.evaluation_form_answer[1].result }}</p>
           <p>问题三: {{ selectedEvaluation.evaluation_form_answer[2].result }}</p>
+          <p>问题四: {{ selectedEvaluation.evaluation_form_answer[3].result }}</p>
+          <p>问题五: {{ selectedEvaluation.evaluation_form_answer[4].result }}</p>
+          <p>问题六: {{ selectedEvaluation.evaluation_form_answer[5].result }}</p>
       </div>
   </el-drawer>
 </template>
@@ -85,6 +88,7 @@ const selectedEvaluation = ref<CourseEvaluationEntity>({
   created_at: new Date(),
   updated_at: new Date()
 });
+
 const isSidebarVisible = ref(false);
 
 onMounted(async () => {

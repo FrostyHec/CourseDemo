@@ -3,8 +3,8 @@
     <div class="header">
       <h1>Live Stream Viewer</h1>
       <div class="buttons">
-        <el-button type="primary" @click="router.back()">返回课程页面</el-button>
-        <el-button type="primary" v-show="showStream">Get Stream</el-button>
+        <el-button class = "el-button" type="primary" @click="router.back()">返回课程页面</el-button>
+        <el-button class = "el-button" type="primary" v-show="showStream" @click="HandleGetPushName()">Get Stream</el-button>
       </div>
     </div>
     <div class="main-content">
@@ -13,8 +13,15 @@
         <vue-danmaku
           v-model:danmus="danmus"
           :speeds="50"
-          style="position: absolute; top: 0; left: 0; width: 100%; height: 50%;"
-        ></vue-danmaku>
+          :use-slot="true"
+          style="position: absolute; top: 5%; left: 0; width: 100%; height: 50%;"
+        >
+          <template v-slot:dm="{ danmu }">
+            <div class="custom-danmu">
+              <span>{{ danmu }}</span>
+            </div>
+          </template>
+        </vue-danmaku>
         <!-- 当前无直播的提示 -->
         <div v-if="!isLive" class="no-live-stream">当前无直播</div>
       </div>
@@ -24,10 +31,19 @@
         </div>
         <div class="chat-input">
           <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
-          <el-button type="primary" @click="sendMessage">Send</el-button>
+          <el-button class = "el-button" type="primary" @click="sendMessage">Send</el-button>
         </div>
       </div>
     </div>
+    <el-dialog
+          title=""
+          v-model="pushVisible"
+          @close="pushVisible = false"
+        >
+          <span>推流地址: {{ pushUrl }}</span>
+          <p></p>
+          <span>密钥: {{ pushName }}</span>
+    </el-dialog>
   </div>
 </template>
 
@@ -53,14 +69,15 @@ let streamName = '';
 const videoElement = ref<HTMLVideoElement | null>(null);
 const messages = ref<string[]>([]);
 const newMessage = ref('');
-const isLive = ref(true);
+const isLive = ref(false);
+const pushVisible = ref(false);
 let intervalId: NodeJS.Timeout | null = null;
 
 const danmus = ref<string[]>([]);
 
 onMounted(async () => {
   connectWebSocket();
-
+  console.log(videoElement.value);
   if (videoElement.value) {
     intervalId = setInterval(async () => {
       if (authStore.user.role == UserType.STUDENT) {
@@ -78,20 +95,17 @@ onMounted(async () => {
         isLive.value = false;
       }
     }, 5000);
-
-    if (authStore.user.role == UserType.TEACHER) {
-      const pushNameResponse = await getPushName(courseId);
-      if (pushNameResponse && pushNameResponse.data) {
-        streamName = pushNameResponse.data.name;
-        const pushUrl = getLivestreamPushUrl(streamName);
-        alert(pushUrl);
-        const pullUrl = getLivestreamPullUrl(streamName);
-        setupFlvPlayer(pullUrl);
-      }
-    }
   }
 });
 
+let pushUrl = ref('');
+let pushName = ref('');
+
+const HandleGetPushName = async () =>{
+  pushUrl.value = getLivestreamPushUrl();
+  pushName.value = (await getPushName(courseId)).data.name;
+  pushVisible.value = true;
+}
 
 onUnmounted(() => {
   if (intervalId) {
@@ -153,8 +167,8 @@ const sendMessage = () => {
 
 body, html {
   height: 100%;
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f5;
+  font-family: 'Arial', sans-serif; /* 使用Arial字体 */
+  background-color: #ffffff; /* 亮色调背景 */
 }
 
 /* Live stream viewer styles */
@@ -162,17 +176,17 @@ body, html {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #282c34;
-  color: white;
+  background-color: #f4f4f5; /* 亮色调背景 */
+  color: #333; /* 深色文字 */
 }
 
 .header {
   padding: 1rem;
-  background-color: #20232a;
+  background-color: #e0e0e0; /* 亮色调背景 */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
 }
 
 .header h1 {
@@ -182,11 +196,15 @@ body, html {
 
 .buttons {
   display: flex;
-  gap: 10px;
+  justify-content: space-between; /* 使按钮分别靠近父容器的两侧 */
+  align-items: center;
 }
 
 .el-button {
-  padding: 12px 20px;
+  min-width: 60px; /* 设置按钮的最小宽度 */
+  height: 30px; /* 设置按钮的高度 */
+  line-height: 40px; /* 使文本垂直居中 */
+  padding: 0 20px; /* 调整按钮的内边距 */
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
@@ -195,17 +213,19 @@ body, html {
   outline: none;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-  background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%);
-  box-shadow: 0 5px 15px rgba(255, 155, 158, 0.4);
+  background-image: linear-gradient(45deg, #67c23a 0%, #85ce61 99%);
+  box-shadow: 0 5px 15px rgba(103, 194, 58, 0.4);
+  text-align: center; /* 使文本居中 */
+  margin: 5px; /* 为按钮添加外边距 */
 }
 
 .el-button:hover {
-  background-image: linear-gradient(45deg, #fad0c4 0%, #ff9a9e 99%);
+  background-image: linear-gradient(45deg, #85ce61 0%, #67c23a 99%);
   transform: translateY(-2px);
 }
 
 .el-button:active {
-  box-shadow: 0 5px 15px rgba(255, 155, 158, 0.6);
+  box-shadow: 0 5px 15px rgba(103, 194, 58, 0.6);
   transform: translateY(-1px);
 }
 
@@ -219,7 +239,7 @@ body, html {
 .video-container {
   flex-grow: 1;
   position: relative;
-  background-color: #000;
+  background-color: #fff; /* 亮色调背景 */
 }
 
 .video-container video {
@@ -228,20 +248,21 @@ body, html {
   object-fit: cover;
 }
 
-.danmu-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  background-color: transparent;
-  z-index: 5;
+.custom-danmu {
+  font-weight: bold; /* 字体加粗 */
+  color: #fff; /* 字体颜色 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 字体阴影 */
+  background-color: rgba(0, 0, 0, 0.5); /* 背景颜色 */
+  border-radius: 18px; /* 圆角 */
+  padding: 2px 10px; /* 内边距 */
+  white-space: nowrap; /* 防止换行 */
+  margin: 2px; /* 弹幕间距 */
+  display: inline-block; /* 使div像行内元素一样显示 */
 }
 
 .chat-room {
   width: 300px;
-  background-color: #20232a;
+  background-color: #e0e0e0; /* 亮色调背景 */
   display: flex;
   flex-direction: column;
 }
@@ -251,11 +272,11 @@ body, html {
   padding: 1rem;
   overflow-y: auto; /* 允许垂直滚动 */
   max-height: 760px; /* 设置最大高度，根据需要调整 */
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.8); /* 亮色调背景 */
 }
 
 .chat-messages div {
-  color: #fff;
+  color: #333;
   margin-bottom: 5px;
   font-size: 14px;
   opacity: 0.8;
@@ -265,13 +286,13 @@ body, html {
 .chat-input {
   display: flex;
   padding: 0.5rem;
-  background-color: #373c49;
+  background-color: #d9d9d9; /* 亮色调背景 */
 }
 
 .chat-input input {
   flex-grow: 1;
   padding: 0.5rem;
-  border: 1px solid #4a4e69;
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 
@@ -294,7 +315,7 @@ body, html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #fff;
+  color: #333;
   font-size: 24px;
   text-align: center;
   z-index: 10;

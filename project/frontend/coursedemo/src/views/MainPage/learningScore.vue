@@ -11,9 +11,9 @@
       <el-container class="container">
         <el-aside width="200px">
           <el-menu>
-            <el-menu-item index="1-1" @click="activeIndex = '3';getMyMedal">我的勋章</el-menu-item>
-            <el-menu-item index="1-2" @click="activeIndex = 'mall';getScoreMall">积分商城</el-menu-item>
-            <el-menu-item index="1-3" @click="activeIndex = 'history';getScoreHistory">积分变化历史</el-menu-item>
+            <el-menu-item index="1-1" @click="activeIndex = '3';getMyMedal()">我的勋章</el-menu-item>
+            <el-menu-item index="1-2" @click="activeIndex = 'mall';getScoreMall()">积分商城</el-menu-item>
+            <el-menu-item index="1-3" @click="activeIndex = 'history';getScoreHistory()">积分变化历史</el-menu-item>
           </el-menu>
         </el-aside>
         <el-main class="main">
@@ -25,16 +25,14 @@
           </div>
           <div v-if="activeIndex === 'mall'" class="mall-container">
             <div>当前积分：{{ currentMarketScore.market_score}}</div>
-            <div>chat 可用次数：{{ currentMarketScore.market_score}}</div>
             <el-menu :default-active="activeTab" class="mall-menu" mode="horizontal">
               <el-menu-item index="1" @click="activeTab = '1'">兑换勋章</el-menu-item>
-              <el-menu-item index="2" @click="activeTab = '2'">兑换chat使用</el-menu-item>
             </el-menu>
             <div class="mall-body">
               <el-card v-for="(item, index) in mallItems" :key="index" class="mall-item-card">
                 <img :src="item.image" class="mall-item-image">
                 <div>{{ item.badge_name }}</div>
-                <el-button type="primary" @click="getMedalIndex(index);exchangeMetalVisible = true">兑换</el-button>
+                <el-button type="primary" @click="medalIndex = item.badge_id;exchangeMetalVisible = true">兑换</el-button>
               </el-card>
             </div>
           </div>
@@ -52,7 +50,7 @@
           <span>确定要兑换这个勋章吗？</span>
           <template #footer>
             <el-button @click="exchangeMetalVisible = false">取消</el-button>
-            <el-button type="primary" @click="exchangeMetalVisible=false;exchangeItem(medalIndex);">确认加入</el-button>
+            <el-button type="primary" @click="exchangeMetalVisible=false;exchangeItem(medalIndex);">确认</el-button>
           </template>
         </el-dialog>
       </el-container>
@@ -63,8 +61,10 @@
 import { ref, onMounted } from 'vue';
 import BaseHeader from '@/layouts/BaseHeader.vue';
 import { useRouter } from 'vue-router';
-import { buyBadgeCall, ConsumeActionType, getMyCanBuyBadgeCall, getMyHistoryCall, getMyMarketScoreCall, type BadgeInfo, type ConsumeRecord, type MyMarketScore } from '@/api/market/MarketAPI';
+import { buyBadgeCall, ConsumeActionType, getMyBadgeCall, getMyCanBuyBadgeCall, getMyHistoryCall, getMyMarketScoreCall, type BadgeInfo, type ConsumeRecord, type MyMarketScore } from '@/api/market/MarketAPI';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore();
 const router = useRouter();
 const activeIndex = ref('3');
 const activeTab = ref('1'); 
@@ -72,68 +72,99 @@ const exchangeMetalVisible = ref(false);
 const medalIndex = 1;
 const currentMarketScore = ref<MyMarketScore>(
   {
-    user_id: 1,
+    user_id: authStore.user.user_id,
     market_score: 100
   }
 );
 
-const getMedalIndex = (index:number)=>{
-  const medalIndex = index;
-}
 
+
+const allMedals = ref<BadgeInfo[]>([
+  { user_id: authStore.user.user_id, badge_id: 1, badge_name: '勤学好问', image: '/public/Medal/medal1.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 2, badge_name: '作业达人', image: '/public/Medal/medal2.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 3, badge_name: '课堂之星', image: '/public/Medal/medal3.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 4, badge_name: '思考先锋', image: '/public/Medal/medal4.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 5, badge_name: '团队合作者', image: '/public/Medal/medal5.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 6, badge_name: '创新思维', image: '/public/Medal/medal6.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 7, badge_name: '学习领袖', image: '/public/Medal/medal7.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 8, badge_name: '知识探索者', image: '/public/Medal/medal8.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 9, badge_name: '时间管理大师', image: '/public/Medal/medal9.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 10, badge_name: '作业完美主义者', image: '/public/Medal/medal10.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 11, badge_name: '课堂参与奖', image: '/public/Medal/medal11.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 12, badge_name: '问题解决者', image: '/public/Medal/medal12.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 13, badge_name: '学习进步奖', image: '/public/Medal/medal13.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 14, badge_name: '作业创新奖', image: '/public/Medal/medal14.png', market_score: 100 },
+  { user_id: authStore.user.user_id, badge_id: 15, badge_name: '课堂贡献奖', image: '/public/Medal/medal15.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 16, badge_name: '学习毅力奖', image: '/public/Medal/medal16.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 17, badge_name: '作业勤奋奖', image: '/public/Medal/medal17.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 18, badge_name: '学习热情奖', image: '/public/Medal/medal18.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 19, badge_name: '作业创意奖', image: '/public/Medal/medal19.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 20, badge_name: '课堂互动奖', image: '/public/Medal/medal20.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 21, badge_name: '作业卓越奖', image: '/public/Medal/medal21.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 22, badge_name: '作业精确奖', image: '/public/Medal/medal22.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 23, badge_name: '课堂活力奖', image: '/public/Medal/medal23.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 24, badge_name: '课堂全勤奖', image: '/public/Medal/medal24.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 25, badge_name: '初学者', image: '/public/Medal/medal25.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 26, badge_name: '勤奋学者', image: '/public/Medal/medal26.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 27, badge_name: '努力学者', image: '/public/Medal/medal27.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 28, badge_name: '渐入佳境', image: '/public/Medal/medal28.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 29, badge_name: '一代宗师', image: '/public/Medal/medal29.png', market_score: 100 },
+  {  user_id: authStore.user.user_id, badge_id: 30, badge_name: '终极大师', image: '/public/Medal/medal30.png', market_score: 100 }
+
+])
 const medals = ref<BadgeInfo[]>([
-  { user_id: 1, badge_id: 1, badge_name: '勤学好问', image: '../../assets/Medal/medal1.png', market_score: 100 },
-  { user_id: 1, badge_id: 2, badge_name: '作业达人', image: '../../assets/Medal/medal2.png', market_score: 100 },
-  { user_id: 1, badge_id: 3, badge_name: '课堂之星', image: '../../assets/Medal/medal3.png', market_score: 100 },
-  { user_id: 1, badge_id: 4, badge_name: '思考先锋', image: '../../assets/Medal/medal4.png', market_score: 100 },
-  { user_id: 1, badge_id: 5, badge_name: '团队合作者', image: '../../assets/Medal/medal5.png', market_score: 100 },
-  { user_id: 1, badge_id: 6, badge_name: '创新思维', image: '../../assets/Medal/medal6.png', market_score: 100 },
-  { user_id: 1, badge_id: 7, badge_name: '学习领袖', image: '../../assets/Medal/medal7.png', market_score: 100 },
-  { user_id: 1, badge_id: 8, badge_name: '知识探索者', image: '../../assets/Medal/medal8.png', market_score: 100 },
-  { user_id: 1, badge_id: 9, badge_name: '时间管理大师', image: '../../assets/Medal/medal9.png', market_score: 100 },
-  { user_id: 1, badge_id: 10, badge_name: '作业完美主义者', image: '../../assets/Medal/medal10.png', market_score: 100 },
-  { user_id: 1, badge_id: 11, badge_name: '课堂参与奖', image: '../../assets/Medal/medal11.png', market_score: 100 },
-  { user_id: 1, badge_id: 12, badge_name: '问题解决者', image: '../../assets/Medal/medal12.png', market_score: 100 },
-  { user_id: 1, badge_id: 13, badge_name: '学习进步奖', image: '../../assets/Medal/medal13.png', market_score: 100 },
-  { user_id: 1, badge_id: 14, badge_name: '作业创新奖', image: '../../assets/Medal/medal14.png', market_score: 100 },
-  { user_id: 1, badge_id: 15, badge_name: '课堂贡献奖', image: '../../assets/Medal/medal15.png', market_score: 100 },
 
 ]);
 const mallItems = ref<BadgeInfo[]>([
-  {  user_id: 1, badge_id: 16, badge_name: '学习毅力奖', image: '../../assets/Medal/medal16.png', market_score: 100 },
-  {  user_id: 1, badge_id: 17, badge_name: '作业勤奋奖', image: '../../assets/Medal/medal17.png', market_score: 100 },
-  {  user_id: 1, badge_id: 18, badge_name: '学习热情奖', image: '../../assets/Medal/medal18.png', market_score: 100 },
-  {  user_id: 1, badge_id: 19, badge_name: '作业创意奖', image: '../../assets/Medal/medal19.png', market_score: 100 },
-  {  user_id: 1, badge_id: 20, badge_name: '课堂互动奖', image: '../../assets/Medal/medal20.png', market_score: 100 },
-  {  user_id: 1, badge_id: 21, badge_name: '作业卓越奖', image: '../../assets/Medal/medal21.png', market_score: 100 },
-  {  user_id: 1, badge_id: 22, badge_name: '作业精确奖', image: '../../assets/Medal/medal22.png', market_score: 100 },
-  {  user_id: 1, badge_id: 23, badge_name: '课堂活力奖', image: '../../assets/Medal/medal23.png', market_score: 100 },
-  {  user_id: 1, badge_id: 24, badge_name: '课堂全勤奖', image: '../../assets/Medal/medal24.png', market_score: 100 },
-  {  user_id: 1, badge_id: 25, badge_name: '初学者', image: '../../assets/Medal/medal25.png', market_score: 100 },
-  {  user_id: 1, badge_id: 26, badge_name: '勤奋学者', image: '../../assets/Medal/medal26.png', market_score: 100 },
-  {  user_id: 1, badge_id: 27, badge_name: '努力学者', image: '../../assets/Medal/medal27.png', market_score: 100 },
-  {  user_id: 1, badge_id: 28, badge_name: '渐入佳境', image: '../../assets/Medal/medal28.png', market_score: 100 },
-  {  user_id: 1, badge_id: 29, badge_name: '一代宗师', image: '../../assets/Medal/medal29.png', market_score: 100 },
-  {  user_id: 1, badge_id: 30, badge_name: '终极大师', image: '../../assets/Medal/medal30.png', market_score: 100 }
+
 ]);
 
 const navigateTo = (path: string) => {
   router.push(path); 
 };
 
+
 onMounted(async () => {
-  getMyMedal;
-  getScoreMall;
-  getScoreHistory;
+  getMyMedal();
+  getScoreMall();
+  getScoreHistory();
   currentMarketScore.value = (await getMyMarketScoreCall()).data;
 });
 
 const getMyMedal = async () => {
-  medals.value = (await getMyCanBuyBadgeCall()).data.content;
+  try {
+    // 调用API获取用户的勋章ID列表
+    const response = await getMyBadgeCall();
+    const userBadges = response.data.content;
+
+    // 根据用户勋章ID列表，从allMedals中筛选出对应的勋章信息
+    const userMedals = allMedals.value.filter((medal) => {
+      return userBadges.some((userBadge: { badge_id: number; }) => userBadge.badge_id === medal.badge_id);
+    });
+
+    // 更新medals响应式变量
+    medals.value = userMedals;
+  } catch (error) {
+    console.error('Error fetching user medals:', error);
+  }
 };
 
 const getScoreMall = async () => {
-  mallItems.value = (await getMyCanBuyBadgeCall()).data.content;
+  try {
+    // 调用API获取用户的勋章ID列表
+    const response = await getMyCanBuyBadgeCall();
+    const userBadges = response.data.content;
+    currentMarketScore.value = (await getMyMarketScoreCall()).data;
+    // 根据用户勋章ID列表，从allMedals中筛选出对应的勋章信息
+    const userMedals = allMedals.value.filter((medal) => {
+      return userBadges.some((userBadge: { badge_id: number; }) => userBadge.badge_id === medal.badge_id);
+    });
+
+    // 更新medals响应式变量
+    mallItems.value = userMedals;
+  } catch (error) {
+    console.error('Error fetching user medals:', error);
+  }
 };
 
 const getScoreHistory = async () => {
@@ -145,10 +176,10 @@ const getScoreHistory = async () => {
   }
 };
 
-const exchangeItem = (index: number) => {
-  buyBadgeCall(mallItems.value[index]);
-  medals.value.push(mallItems.value[index]);
-  mallItems.value.splice(index, 1);
+const exchangeItem = async (index: number) => {
+  await buyBadgeCall(allMedals.value[index-1]);
+  await getMyBadgeCall();
+  await getScoreMall();
 };
 
 const scoreHistory = ref<ConsumeRecord[]>([
