@@ -96,7 +96,7 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         const newLoginBody = message.body as NewLoginBody;
         // 校验 token 是否一致
         if (authStore.token !== newLoginBody.token) {
-            handleAnnouncement("另一个用户登录，您将被登出");
+            handleAnnouncement("另一个用户登录");
         }
     },
     [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
