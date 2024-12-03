@@ -75,7 +75,7 @@
       ></el-input>
     </div>
   
-    <el-button @click="submitJudge = true">提交评价</el-button>
+    <el-button class="el-button" @click="submitJudge = true">提交评价</el-button>
   </div>
   <el-dialog
           title="加入课程"
@@ -261,6 +261,25 @@ const submitForm = async () => {
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
+}
+
+.el-button {
+  min-width: 60px; /* 设置按钮的最小宽度 */
+  height: 30px; /* 设置按钮的高度 */
+  line-height: 40px; /* 使文本垂直居中 */
+  padding: 0 20px; /* 调整按钮的内边距 */
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  background-image: linear-gradient(45deg, #67c23a 0%, #85ce61 99%);
+  box-shadow: 0 5px 15px rgba(103, 194, 58, 0.4);
+  text-align: center; /* 使文本居中 */
+  margin: 5px; /* 为按钮添加外边距 */
 }
 
 .survey-title {
