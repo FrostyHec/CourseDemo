@@ -168,6 +168,7 @@ const {registerEvent} = useEventStore();
 registerEvent(EventType.quitEvent,(message: { body: SSEBody; })=>{
   handleQuit()
 })
+
 function handleQuit() {
   quitVisible.value = true;
 }
