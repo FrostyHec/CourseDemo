@@ -134,7 +134,7 @@ const evaluation = ref<CourseEvaluationEntity[]>([
   {
     course_id: course.value.course_id,
     student_id: 1,
-    comment: 'pretty good',
+    comment: 'no judge yet',
     score: 0,
     evaluation_form_answer: [],
     created_at: new Date(),
