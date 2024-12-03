@@ -3,7 +3,7 @@
     <el-button id="chatButton" type="primary" circle @click="toggleChatWindow">
       <el-icon>chat</el-icon>
     </el-button>
-    <el-dialog v-model="chatWindowVisible" :title="title.title" width="50%" custom-class="kimi-chat-dialog" @close="saveChat();Refresh()">
+    <el-dialog v-model="chatWindowVisible" :title="title.title" width="50%" custom-class="kimi-chat-dialog" @close="saveChat()">
       <el-button type="text" @click="saveChat();viewHistory()">查看历史对话</el-button>
       <div class="chat-messages">
         <!-- 使用 v-for 渲染 context.messages -->
@@ -124,6 +124,7 @@ let isFirstTitle = true;
 const saveChat = async () =>{
   await setChatTitleCall(title.value,currentChat.value.id);
   await saveChatHistoryCall(context.value,currentChat.value.id);
+  Refresh();
 }
 
 const toggleChatWindow = async () => {
