@@ -23,7 +23,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    vueDevTools(),
+    // vueDevTools(),
     Components({
       // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],

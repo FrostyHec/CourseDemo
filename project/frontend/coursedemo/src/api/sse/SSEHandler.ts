@@ -28,20 +28,20 @@ export interface SSEBody {
 }
 
 export interface AnnouncementBody extends SSEBody {
-    BodyType: SSEBodyType.announcement
+    body_type: SSEBodyType.announcement
     course_id: number;
     course_name: string,
     announcement_id: number
-    Title: string;
+    title: string;
 }
 
 export interface NewLoginBody extends SSEBody {
-    BodyType: SSEBodyType.new_login
-    Token: string;
+    body_type: SSEBodyType.new_login
+    token: string;
 }
 
 export interface ReceiveCreditsBody extends SSEBody {
-    BodyType: SSEBodyType.receive_credits
+    body_type: SSEBodyType.receive_credits
     type: CreditType
     count: number
 }
@@ -87,7 +87,7 @@ export interface MessagePacket {
 const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
     [SSEBodyType.announcement]: (message: { body: SSEBody; }) => {
         const announcementBody = message.body as AnnouncementBody;
-        handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+        handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.title}`);
     },
     [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
         const {emitEvent} = useEventStore()
@@ -95,9 +95,8 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         const authStore = useAuthStore();
         const newLoginBody = message.body as NewLoginBody;
         // 校验 token 是否一致
-        if (authStore.token !== newLoginBody.Token) {
+        if (authStore.token !== newLoginBody.token) {
             handleAnnouncement("另一个用户登录，您将被登出");
-            handleQuit();
         }
     },
     [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
@@ -122,7 +121,7 @@ const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
         switch (message.body_type) {
             case SSEBodyType.announcement: {
                 const announcementBody = body as AnnouncementBody;
-                handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+                handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.title}`);
                 break;
             }
             default:

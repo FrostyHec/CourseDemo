@@ -82,6 +82,8 @@ async function set_watch_video(time: number) {
         if(timer!==undefined) {    
           clearInterval(timer)
           complete.value = true
+          video_ref.value.pause()
+          video_ref.value.play()
           load(props.value.resource_id)
         }
       }
@@ -139,7 +141,7 @@ const watch_id = watch(() => video_store.current_video, (new_id) => {
   if(new_id!==undefined && props.value.resource_id!==undefined && props.value.resource_id!==new_id) {
     video_ref.value.pause()
     ElMessage({
-      message: 'Pause because of multiple watch'+props.value.resource_id,
+      message: 'Pause because of multiple watch',
       type: 'warning',
       duration: 0,
       showClose: true,

@@ -10,7 +10,11 @@
         {{ course_store.current_data?.label }}
       </h1>
       
-      <div v-if="course_store.current_data?.complete && auth_store.user.user_id!==course_store.current_course_teacher()" style="color: var(--ep-color-success)">
+      <div 
+      v-if="course_store.current_data?.complete && 
+      auth_store.user.user_id!==course_store.current_course_teacher() &&
+      !('chapter_type' in course_store.current_data?.data && course_store.current_data?.data.chapter_type===ChapterType.teaching)
+      " style="color: var(--ep-color-success)">
         Completed
       </div>
 
@@ -82,6 +86,7 @@
   <div v-else style="font-size: large;">404</div>
 </template>
 <script setup lang="ts">
+import { ChapterType } from '@/api/course/ChapterAPI';
 import { cancelCourseLikeCall, createCourseLikeCall, getCourseLikeCall } from '@/api/course/CourseLikeAPI';
 import { useAuthStore } from '@/stores/auth';
 import { useCourseStore } from '@/stores/course';
