@@ -32,12 +32,12 @@ export interface AnnouncementBody extends SSEBody {
     course_id: number;
     course_name: string,
     announcement_id: number
-    Title: string;
+    title: string;
 }
 
 export interface NewLoginBody extends SSEBody {
     BodyType: SSEBodyType.new_login
-    Token: string;
+    token: string;
 }
 
 export interface ReceiveCreditsBody extends SSEBody {
@@ -95,9 +95,8 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         const authStore = useAuthStore();
         const newLoginBody = message.body as NewLoginBody;
         // 校验 token 是否一致
-        if (authStore.token !== newLoginBody.Token) {
+        if (authStore.token !== newLoginBody.token) {
             handleAnnouncement("另一个用户登录，您将被登出");
-            handleQuit();
         }
     },
     [SSEBodyType.receive_credits]: (message: { body: SSEBody; }) => {
@@ -122,7 +121,7 @@ const multipleMessageHandler: ((message: MessagePacket) => void) = (packet) => {
         switch (message.body_type) {
             case SSEBodyType.announcement: {
                 const announcementBody = body as AnnouncementBody;
-                handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
+                handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.title}`);
                 break;
             }
             default:
