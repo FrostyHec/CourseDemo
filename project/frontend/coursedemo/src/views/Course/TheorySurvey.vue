@@ -76,6 +76,7 @@
     </div>
   
     <el-button class="el-button" @click="submitJudge = true">提交评价</el-button>
+    <el-button class="el-button" @click="router.push('/MainPage/student')">返回主页</el-button>
   </div>
   <el-dialog
           title="加入课程"
