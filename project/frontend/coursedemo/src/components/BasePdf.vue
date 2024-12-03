@@ -34,6 +34,7 @@ const save_pro = () => {
   const app = pdf_ref.value?.contentWindow?.PDFViewerApplication
   if(app!==undefined) {
     app.appConfig.toolbar.download.hidden = true
+    app.appConfig.toolbar.print.hidden = true
   }
   if(last_link!=props.value.real_link) {
     last_link = props.value.real_link

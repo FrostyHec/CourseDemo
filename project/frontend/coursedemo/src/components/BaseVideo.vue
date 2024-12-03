@@ -76,14 +76,15 @@ async function set_watch_video(time: number) {
   if(min15_timer!==undefined)
     clearTimeout(min15_timer)
   if(remain_second.value>0) {
-    timer = setInterval(() => {
+    timer = setInterval(async () => {
       remain_second.value-=1; 
       if(remain_second.value<0) {
         if(timer!==undefined) {    
           clearInterval(timer)
           complete.value = true
-          video_ref.value.pause()
-          video_ref.value.play()
+          console.log('complete')
+          await clear_watch_video(video_ref.value.currentTime)
+          await set_watch_video(video_ref.value.currentTime)
           load(props.value.resource_id)
         }
       }
@@ -106,7 +107,7 @@ async function set_watch_video(time: number) {
       duration: 0,
       showClose: true,
     })
-  }, 15*60*1000)
+  }, 60*1000)
 }
 async function clear_watch_video(time: number) {
   if(props.value.resource_id===undefined || !check)

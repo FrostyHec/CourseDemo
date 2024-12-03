@@ -171,6 +171,7 @@ async function send_announcement(student_list: number[]) {
   if(new_announcement.value==='')
     return
   const msg = await createAnnouncementCall(course_id, {
+    title: 'Assignment announcement',
     notification_id: 0, course_id: course_id, 
     receiver_ids: student_list,
     message: new_announcement.value, 

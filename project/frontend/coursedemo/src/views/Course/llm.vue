@@ -111,6 +111,7 @@ const Refresh = () =>{
   inputMessage.value = { role: Role.user, content: '' };
   context.value = {messages:[]};
   isFirstMessage = true;
+  isFirstTitle = true;
 }
 
 const getChatHistory = async () => {
@@ -132,7 +133,6 @@ const toggleChatWindow = async () => {
     const response = await createNewChatCall(title.value);
     currentChat.value = response.data;
     isFirstMessage = false;
-    isFirstTitle = false;
   }
   chatWindowVisible.value = !chatWindowVisible.value;
 };
