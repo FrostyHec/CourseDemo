@@ -132,6 +132,7 @@ const toggleChatWindow = async () => {
     const response = await createNewChatCall(title.value);
     currentChat.value = response.data;
     isFirstMessage = false;
+    isFirstTitle = false;
   }
   chatWindowVisible.value = !chatWindowVisible.value;
 };
