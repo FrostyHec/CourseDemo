@@ -20,7 +20,7 @@
     </div>  
     <el-container class="container">
       <el-aside width="200px">
-        
+
         <el-menu>
           <el-menu-item index="1-1" @click="activeIndex2 = 'course';getHotCourses()">热门课程</el-menu-item>
           <el-menu-item index="1-2" @click="activeIndex2 = 'teacher';getHotTeachers()">热门教师</el-menu-item>
@@ -63,7 +63,7 @@
         >
           <span>另一个用户登录，您将被登出</span>
           <template #footer>
-            <el-button type="primary" @click="router.push('/login')">确认</el-button>
+            <el-button type="primary" @click="handleLogout()">确认</el-button>
           </template>
         </el-dialog>
     </el-container>
@@ -83,6 +83,7 @@ import { getAnnouncementMessages } from '@/api/sse/SSEEventHandle';
 import { useEventStore } from '@/stores/event';
 import { EventType } from '@/utils/EventBus';
 import type { SSEBody } from '@/api/sse/SSEHandler';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const activeIndex = ref('1');
@@ -109,6 +110,12 @@ const teacher1 = ref<UserPublicInfoEntity>({
   email: ''
 })
 
+const {emitEvent} = useEventStore();
+
+const handleLogout = () =>{
+  emitEvent(EventType.currentlyIsLoggedOut);
+  router.push('/login');
+}
 const repositories = ref<CourseWithStudentCount[]>([
   {
     course: cs303.value,
