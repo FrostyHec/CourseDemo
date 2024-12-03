@@ -80,7 +80,6 @@ onMounted(async () => {
   if (authStore.user.role == UserType.STUDENT) {
         showStream.value = false;
   };
-  console.log(videoElement.value);
   if (videoElement.value) {
     intervalId = setInterval(async () => {
       const pullNameResponse = await getPullName(courseId);
