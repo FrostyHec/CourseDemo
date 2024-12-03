@@ -5,11 +5,11 @@
   <el-dialog
       title="退出登录"
       v-model="quitVisible"
-      @close="router.push('/login')"
+      @close="handleLogout()"
     >
       <span>另一个用户登录，您将被登出</span>
       <template #footer>
-        <el-button type="primary" @click="quitVisible = false">确认</el-button>
+        <el-button type="primary" @click="handleLogout">确认</el-button>
       </template>
     </el-dialog>
 </template>
@@ -26,6 +26,7 @@ const {emitEvent} = useEventStore();
 const handleLogout = () =>{
   emitEvent(EventType.currentlyIsLoggedOut);
   router.push('/login');
+  quitVisible.value = false
 }
 const {registerEvent} = useEventStore();
 

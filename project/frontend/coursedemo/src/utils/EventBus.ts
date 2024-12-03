@@ -12,6 +12,13 @@ export class EventBus {
 
 	// 发布
 	emit(name:EventType, param:any = null) {
+		if(name==EventType.currentlyIsLoggedIn)
+			console.log("emitting event:"+'login');
+		if(name==EventType.currentlyIsLoggedOut)
+			console.log("emitting event:"+'logout');
+		
+		if(name==EventType.quitEvent)
+			console.log("emitting event:"+'quit');
 		if (this.list[name]) {
 			this.list[name].forEach((fn) => {
 				fn(param);
