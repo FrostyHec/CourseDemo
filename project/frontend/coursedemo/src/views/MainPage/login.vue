@@ -26,13 +26,15 @@ const registerData = ref({
   password: '',
 });
 
-const checkRePassword = (rule, value, callback) => {
-  if (value === '') {
-    callback(new Error('请再次确认密码'))
-  } else if (value !== registerData.value.password) {
-    callback(new Error('二次确认密码不相同，请重新输入'))
+const checkRePassword = () => {
+  if (registerData.value.password === '') {
+    ElMessage.error('请再次确认密码');
+    return false;
+  } else if (registerData.value.password !== rePassword.value) {
+    ElMessage.error('二次确认密码不相同，请重新输入');
+    return false;
   } else {
-    callback()
+    return true;
   }
 };
 
@@ -55,7 +57,6 @@ const registerRule = ref({
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 5, max: 16, message: '请输入长度5~16非空字符', trigger: 'blur' }
   ],
-  rePassword: [{ validator: checkRePassword, trigger: 'blur' }]
 })
 
 const auth_store = useAuthStore()
@@ -82,6 +83,9 @@ const handleLogin = async () => {
 // 注册函数
 const handleRegister = async () => {
   try {
+    if(!checkRePassword()){
+      return;
+    }
     let result = await createUserCall({
       email: registerData.value.email,
       password: registerData.value.password,
@@ -110,10 +114,14 @@ const clearRegisterData = () => {
     role:UserType.STUDENT,
     email:'',
     password: '',
-    rePassword: ''
   }
 }
+
+const rePassword = ref('');
+
 </script>
+
+
 
 <template>
   <el-row class="login-page">
@@ -144,7 +152,7 @@ const clearRegisterData = () => {
           <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="registerData.password"></el-input>
         </el-form-item>
         <el-form-item prop="rePassword">
-          <el-input :prefix-icon="Lock" type="password" placeholder="请再次输入密码" v-model="registerData.rePassword"></el-input>
+          <el-input :prefix-icon="Lock" type="password" placeholder="请再次输入密码" v-model="rePassword"></el-input>
         </el-form-item>
         <!-- 注册按钮 -->
         <el-form-item>
