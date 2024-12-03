@@ -20,6 +20,7 @@
     </div>  
     <el-container class="container">
       <el-aside width="200px">
+        
         <el-menu>
           <el-menu-item index="1-1" @click="activeIndex2 = 'course';getHotCourses()">热门课程</el-menu-item>
           <el-menu-item index="1-2" @click="activeIndex2 = 'teacher';getHotTeachers()">热门教师</el-menu-item>
