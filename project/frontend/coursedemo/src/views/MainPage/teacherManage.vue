@@ -176,7 +176,7 @@ const saveCourse = async () => {
     if (isCourseNameExist(courseForm.value.course_name)) {
         await updateCourseInfoCall(courseForm.value.course_id,courseForm.value);
         dialogVisible.value = false;
-        fetchCourses(); 
+        fetchCourses();
         return;
     }
     dialogVisible.value = false;
@@ -189,6 +189,7 @@ const AddCourse = async () => {
     if(courseForm.value.course_id!=0){
       await updateCourseStatusCall(courseForm.value.course_id,{status:CourseStatus.submitted});
       dialogVisible.value = false;
+      fetchCourses(); 
       return;
     }
     if (isCourseNameExist(courseForm.value.course_name)) {
