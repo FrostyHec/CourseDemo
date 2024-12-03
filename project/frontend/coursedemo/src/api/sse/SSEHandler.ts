@@ -90,6 +90,7 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
         handleAnnouncement(`您收到了一条来自课程 ${announcementBody.course_name} 的公告：${announcementBody.Title}`);
     },
     [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
+        console.log('new message:'+message);
         const {emitEvent} = useEventStore()
         emitEvent(EventType.quitEvent,message)
         const authStore = useAuthStore();
