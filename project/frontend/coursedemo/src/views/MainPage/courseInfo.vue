@@ -75,7 +75,7 @@ const course = ref<CourseEntity>(
   }
 );
 
-const course_score = ref(4);
+const course_score = ref(0);
 
 let teacher_name = ref('');
 const students = ref<string[]>([]);
@@ -135,7 +135,7 @@ const evaluation = ref<CourseEvaluationEntity[]>([
     course_id: course.value.course_id,
     student_id: 1,
     comment: 'pretty good',
-    score: 4,
+    score: 0,
     evaluation_form_answer: [],
     created_at: new Date(),
     updated_at: new Date()
@@ -175,7 +175,13 @@ const fetchCourses = async () => {
     const response_evaluation = await getEvaluationsCall(course_id, 10, 1);
     evaluation.value = response_evaluation.data.content;
     const evaluationResponse = await getEvaluationMetadataCall(course_id);
-    course_score.value = evaluationResponse.data.average_score;
+    if(evaluationResponse.data==null){
+      course_score.value = 0;
+    }
+    else{
+      course_score.value = evaluationResponse.data.average_score;
+    }
+
   } catch (error) {
     console.error('获取课程列表失败:', error);
   }
