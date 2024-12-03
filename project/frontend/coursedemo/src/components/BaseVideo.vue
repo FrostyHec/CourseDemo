@@ -9,7 +9,7 @@
       await clear_watch_video((event.target as any)?.currentTime); 
       await load(resource_id);
     }"
-    style="width: 100%;"
+    style="width: 100%; aspect-ratio: 16/9;"
   >
     <source :src=link :type="file_type">
   </video>

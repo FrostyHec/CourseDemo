@@ -9,8 +9,8 @@
     :src="`/pdfjs-4.8.69-legacy-dist/web/viewer.html?file=${link}#toolbar=0`"
     frameborder="0"
   /> -->
-  <ProgressBar :top="131" :bot="512" style="margin: 100px;"/>
-  <base-chart :labels="['A', 'C', 'B']" :values="[2, 4, 1]" :title="'Happy'" style="width: 100%; height: 400px;"/>
+  <!-- <ProgressBar :top="131" :bot="512" style="margin: 100px;"/>
+  <base-chart :labels="['A', 'C', 'B']" :values="[2, 4, 1]" :title="'Happy'" style="width: 100%; height: 400px;"/> -->
   <!-- <div style="margin: 100px;">
     <div style="margin-bottom: 5px; float: right;">
       <span style="color: var(--ep-color-primary);">1203</span> / 7481
@@ -22,15 +22,19 @@
       <div style="background-color: var(--ep-color-primary); width: 30%; height: 100%; border-radius: 4px;"></div>
     </div>
   </div> -->
-  <!-- <video 
-    v-if="open" ref="videoPlayer" controls 
-    @loadeddata="videoPlayer.currentTime = 4"
-    @timeupdate="updateProgress" 
-    @play="(event) => console.log('start', (event.target as any)?.currentTime)" 
-    @pause="(event) => console.log('end', (event.target as any)?.currentTime)">
-    <source :src="link" type="video/mp4">
-    Your browser does not support the video tag.
-  </video> -->
+  <div style="margin: 20px;">
+    <video 
+      v-if="open" ref="videoPlayer" controls 
+      @loadeddata="videoPlayer.currentTime = 4"
+      @timeupdate="updateProgress" 
+      @play="(event) => console.log('start', (event.target as any)?.currentTime)" 
+      @pause="(event) => console.log('end', (event.target as any)?.currentTime)"
+      style="width: 100%; aspect-ratio: 16/9;"
+    >
+      <source :src="link" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 </template>
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
