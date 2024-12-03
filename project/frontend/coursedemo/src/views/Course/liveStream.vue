@@ -77,12 +77,12 @@ const danmus = ref<string[]>([]);
 
 onMounted(async () => {
   connectWebSocket();
+  if (authStore.user.role == UserType.STUDENT) {
+        showStream.value = false;
+  };
   console.log(videoElement.value);
   if (videoElement.value) {
     intervalId = setInterval(async () => {
-      if (authStore.user.role == UserType.STUDENT) {
-        showStream.value = false;
-      };
       const pullNameResponse = await getPullName(courseId);
       if (pullNameResponse && pullNameResponse.data) {
         streamName = pullNameResponse.data.name;
