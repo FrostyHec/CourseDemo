@@ -113,9 +113,6 @@ function logout() {
           </template>
         </el-popover>
         <span class="text-large font-600 mr-3">{{ userInfo.first_name + ' ' + userInfo.last_name }}</span>
-        <el-button>
-          Calendar
-        </el-button>
         <el-button
           circle
           class="bg-transparent cursor-pointer"

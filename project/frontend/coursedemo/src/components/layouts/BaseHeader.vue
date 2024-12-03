@@ -70,9 +70,6 @@ const auth_store = useAuthStore()
           </template>
         </el-popover>
         <span class="text-large font-600 mr-3"> {{ `${auth_store.user.first_name} ${auth_store.user.last_name}` }} </span>
-        <el-button>
-          Calendar
-        </el-button>
         <el-button
           circle
           class="bg-transparent cursor-pointer"

@@ -92,11 +92,12 @@ const EventHandlerMaps: { [key in SSEBodyType]: EventHandler } = {
     [SSEBodyType.new_login]: (message: { body: SSEBody; }) => {
         console.log('new message:'+message);
         const {emitEvent} = useEventStore()
-        emitEvent(EventType.quitEvent,message)
         const authStore = useAuthStore();
         const newLoginBody = message.body as NewLoginBody;
         // 校验 token 是否一致
+        console.log('token', 'auth', authStore.token, 'new', newLoginBody.token)
         if (authStore.token !== newLoginBody.token) {
+            emitEvent(EventType.quitEvent,message)
             handleAnnouncement("另一个用户登录，您将被登出");
         }
     },

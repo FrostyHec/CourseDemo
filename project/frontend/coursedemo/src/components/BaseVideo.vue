@@ -107,7 +107,7 @@ async function set_watch_video(time: number) {
       duration: 0,
       showClose: true,
     })
-  }, 60*1000)
+  }, 15*1000)
 }
 async function clear_watch_video(time: number) {
   if(props.value.resource_id===undefined || !check)
