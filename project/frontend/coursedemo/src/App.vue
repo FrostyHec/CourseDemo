@@ -19,11 +19,21 @@ import { ref } from "vue";
 import { useEventStore } from "./stores/event";
 import { EventType } from "./utils/EventBus";
 import router from "./router";
+import type { SSEBody } from "./api/sse/SSEHandler";
 const quitVisible = ref(false);
 const {emitEvent} = useEventStore();
 
 const handleLogout = () =>{
   emitEvent(EventType.currentlyIsLoggedOut);
   router.push('/login');
+}
+const {registerEvent} = useEventStore();
+
+registerEvent(EventType.quitEvent,(message: { body: SSEBody; })=>{
+  handleQuit()
+})
+
+function handleQuit() {
+  quitVisible.value = true;
 }
 </script>
