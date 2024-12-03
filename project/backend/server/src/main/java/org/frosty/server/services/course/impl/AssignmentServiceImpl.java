@@ -20,7 +20,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public void updateAssignment(Assignment assignment) {
-        assignmentMapper.updateAssById(assignment);
+        assignmentMapper.updateById(assignment);
     }
 
     @Override

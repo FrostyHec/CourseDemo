@@ -19,6 +19,7 @@ import org.frosty.server.mapper.course.cheat_check.VideoWatchedRecordMapper;
 import org.frosty.server.mapper.course.progress.ChapterCompleteMapper;
 import org.frosty.server.mapper.course.progress.CourseCompleteMapper;
 import org.frosty.server.mapper.course.progress.ResourceCompleteMapper;
+import org.frosty.server.mapper.user.UserMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CourseProgressService {
+    private final UserMapper userMapper;
     private final ResourceCompleteMapper resourceCompleteMapper;
     private final ChapterCompleteMapper chapterCompleteMapper;
     private final CourseCompleteMapper courseCompleteMapper;
@@ -97,6 +99,10 @@ public class CourseProgressService {
     public void completeCourse(Long csid, AuthInfo auth) {
         // check if all chapter complete and add complete
         var uid = auth.getUserID();
+        var isStudent = userMapper.checkIsStudent(uid);
+        if(isStudent){return;}
+
+
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
         for (var c : chapters) {
             Ex.check(chapterCompleteMapper.contains(c.getChapterId(), uid),
@@ -105,8 +111,8 @@ public class CourseProgressService {
         // add complete
         if (!courseCompleteMapper.contains(csid, uid)) {
             courseCompleteMapper.insert(new CourseCompleteRecord(csid, uid));
+            applicationEventPublisher.publishEvent(new CompleteCourseEvent(this, csid, uid));
         }
-        applicationEventPublisher.publishEvent(new CompleteCourseEvent(this, csid, uid));
     }
 
 

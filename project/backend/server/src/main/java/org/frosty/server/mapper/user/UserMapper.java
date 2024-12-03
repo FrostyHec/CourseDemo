@@ -91,5 +91,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT user_id, first_name, last_name, role, email FROM users WHERE email = #{email}")
     UserPublicInfo findPublicInfoByEmail(String email);
+    @Select("SELECT (SELECT TRUE FROM users WHERE user_id = 3 AND role = 'student') IS NOT NULL")
+    boolean checkIsStudent(long uid);
 }
 

@@ -16,16 +16,16 @@ public interface AssignmentMapper extends BaseMapper<Assignment> {
     Assignment selectAssById(Long assId);
 
 
-    @Update("UPDATE assignments SET " +
-            "chapter_id = #{chapterId}, " +
-            "description = #{description}, " +
-            "assignment_type = #{assignmentType}, " +
-            "allow_update_submission = #{allowUpdateSubmission}, " +
-            "latest_submission_time = #{latestSubmissionTime}, " +
-            "maximum_score = #{maximumScore}, " +
-            "allow_student_to_view_score = #{allowStudentToViewScore} " +
-            "WHERE assignment_id = #{assignmentId}")
-    void updateAssById(Assignment assignment);
+//    @Update("UPDATE assignments SET " +
+//            "chapter_id = #{chapterId}, " +
+//            "description = #{description}, " +
+//            "assignment_type = #{assignmentType}, " +
+//            "allow_update_submission = #{allowUpdateSubmission}, " +
+//            "latest_submission_time = #{latestSubmissionTime}, " +
+//            "maximum_score = #{maximumScore}, " +
+//            "allow_student_to_view_score = #{allowStudentToViewScore} " +
+//            "WHERE assignment_id = #{assignmentId}")
+//    void updateAssById(Assignment assignment);
 
 
     @Delete("DELETE FROM assignments WHERE assignment_id = #{id}")

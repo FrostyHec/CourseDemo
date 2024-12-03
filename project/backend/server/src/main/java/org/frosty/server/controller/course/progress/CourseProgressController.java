@@ -33,8 +33,7 @@ public class CourseProgressController {
     }
 
     @PutMapping("/course/{csid}/study/complete")
-    public void completeCourse(@GetToken TokenInfo tokenInfo, @PathVariable Long csid) {
-        AuthInfo auth = AuthEx.checkPass(tokenInfo);
+    public void completeCourse(@GetPassedToken AuthInfo auth, @PathVariable Long csid) {
         courseProgressService.completeCourse(csid,auth);
     }
 

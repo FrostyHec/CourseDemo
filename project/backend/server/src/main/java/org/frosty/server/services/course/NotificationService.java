@@ -107,7 +107,7 @@ public class NotificationService {
 
         // 获取教师id（发送者id）
         QueryWrapper<Course> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("teacher_id", notification.getCourseId());
+        queryWrapper2.eq("course_id", notification.getCourseId());
         Course course = courseMapper.selectOne(queryWrapper2);
 
         JsonNode message = objectMapper.valueToTree(Map.of(
@@ -158,8 +158,12 @@ public class NotificationService {
         }
 
         // 获取教师邮箱（发送者邮箱）
+        QueryWrapper<Course> queryWrapper3 = new QueryWrapper<>();
+        queryWrapper3.eq("course_id", notification.getCourseId());
+        Course course = courseMapper.selectOne(queryWrapper3);
+
         QueryWrapper<User> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("user_id", notification.getCourseId());
+        queryWrapper2.eq("user_id",course.getTeacherId());
         User teacher = userMapper.selectOne(queryWrapper2);
         if (teacher == null) {
             return;
