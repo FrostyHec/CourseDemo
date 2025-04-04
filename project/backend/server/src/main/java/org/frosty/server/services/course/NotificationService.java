@@ -2,11 +2,11 @@ package org.frosty.server.services.course;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.RequiredArgsConstructor;
 import org.frosty.common_service.im.api.MessagePushService;
 import org.frosty.common_service.im.entity.Email;
-import org.frosty.common_service.im.entity.SiteMessage;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Notification;
 import org.frosty.server.entity.bo.NotificationReceiver;
@@ -16,9 +16,12 @@ import org.frosty.server.mapper.course.CourseMapper;
 import org.frosty.server.mapper.course.NotificationMapper;
 import org.frosty.server.mapper.course.NotificationReceiverMapper;
 import org.frosty.server.mapper.user.UserMapper;
+import org.frosty.sse.constant.MessageBodyType;
+import org.frosty.sse.entity.SiteMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class NotificationService {
     private final MessagePushService messagePushService;
     private final CourseMapper courseMapper;
     private final UserMapper userMapper;
+    private final ObjectMapper objectMapper;
 
     // 创建公告
     public void createNotification(Long courseId, NotificationWithReceiver notificationWithReceiver) {
@@ -99,19 +103,26 @@ public class NotificationService {
         QueryWrapper<Notification> queryWrapper1 = new QueryWrapper<>();
         queryWrapper1.eq("notification_id", id);
         Notification notification = notificationMapper.selectOne(queryWrapper1);
-        JsonNode message = new TextNode(notification.getTitle() + "\n" + notification.getMessage());
+
 
         // 获取教师id（发送者id）
         QueryWrapper<Course> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("teacher_id", notification.getCourseId());
+        queryWrapper2.eq("course_id", notification.getCourseId());
         Course course = courseMapper.selectOne(queryWrapper2);
+
+        JsonNode message = objectMapper.valueToTree(Map.of(
+                "course_id",course.getCourseId(),
+                "course_name",course.getCourseName(),
+                "announcement_id",notification.getNotificationId(),
+                "title", notification.getTitle()));
 
         // 设置消息格式
         SiteMessage siteMessage = new SiteMessage();
+        siteMessage.setBodyType(MessageBodyType.announcement);
         siteMessage.setBody(message);
         siteMessage.setFromId(course.getTeacherId());
         siteMessage.setType(SiteMessage.MessageType.NEW);
-        siteMessage.setRequiredAck(false); // not sure
+        siteMessage.setRequiredAck(false);
 
         // todo：并行化以下部分
         for (Long receiverId : receiverIds) {
@@ -147,8 +158,12 @@ public class NotificationService {
         }
 
         // 获取教师邮箱（发送者邮箱）
+        QueryWrapper<Course> queryWrapper3 = new QueryWrapper<>();
+        queryWrapper3.eq("course_id", notification.getCourseId());
+        Course course = courseMapper.selectOne(queryWrapper3);
+
         QueryWrapper<User> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("user_id", notification.getCourseId());
+        queryWrapper2.eq("user_id",course.getTeacherId());
         User teacher = userMapper.selectOne(queryWrapper2);
         if (teacher == null) {
             return;

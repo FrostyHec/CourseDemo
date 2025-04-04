@@ -1,0 +1,56 @@
+# User Deployment 配置
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langchain-deployment
+spec:
+  replicas: 2  # 初始副本数量
+  selector:
+    matchLabels:
+      app: langchain  # Pod 选择器标签
+  template:
+    metadata:
+      labels:
+        app: langchain # Pod 标签
+    spec:
+      containers:
+        - name: langchain-container
+          image: frosky/ooad-server:latest  # 容器镜像
+          ports:
+            - containerPort: 9977  # 容器端口
+---
+# User Service 配置
+apiVersion: v1
+kind: Service
+metadata:
+  name: langchain-svc
+  namespace: default
+spec:
+  selector:
+    app: langchain  # 选择与 Deployment 中匹配的 Pod
+  ports:
+    - protocol: TCP
+      port: 9977  # Service 端口
+      targetPort: 9977  # Pod 的目标端口
+  type: ClusterIP  # 内部集群 IP
+---
+# User Horizontal Pod Autoscaler 配置
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: langchain-deployment-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: langchain-deployment  # 目标 Deployment
+  minReplicas: 1  # 最小副本数量
+  maxReplicas: 10  # 最大副本数量
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50  # CPU 使用率阈值

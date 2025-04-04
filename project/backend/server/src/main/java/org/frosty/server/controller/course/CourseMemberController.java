@@ -1,12 +1,10 @@
 package org.frosty.server.controller.course;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.frosty.auth.annotation.GetToken;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
+import org.frosty.common.exception.ExternalException;
 import org.frosty.common.response.Response;
 import org.frosty.server.entity.bo.Course;
 import org.frosty.server.entity.bo.Enrollment;
@@ -41,15 +39,15 @@ public class CourseMemberController {
 
     // 获取课程中的学生列表
     @GetMapping("/course/{id}/student")
-    public Response getStudentList(@PathVariable Long id,
+    public StudentStatusList getStudentList(@PathVariable Long id,
                                    @RequestParam int page_num,
                                    @RequestParam int page_size) {
         if (page_size < -1 || page_num < 0) {
-            return Response.getBadRequest("Page parameter error");
+            throw new ExternalException(Response.getBadRequest("Page parameter error"));
         }
 
-        return Response.getSuccess(new StudentStatusList(
-                courseMemberService.getStudentList(id, page_num, page_size)));
+        return new StudentStatusList(
+                courseMemberService.getStudentList(id, page_num, page_size));
     }
 
     // 获取学生加入的课程列表
@@ -67,15 +65,14 @@ public class CourseMemberController {
 
     // 获取教师教授的课程列表
     @GetMapping("/teacher/{id}/courses")
-    public Response getTeacherCourses(@PathVariable Long id,
+    public CourseList getTeacherCourses(@PathVariable Long id,
                                       @RequestParam int page_num,
                                       @RequestParam int page_size) {
         if (page_size < -1 || page_num < 0) {
-            return Response.getBadRequest("Page parameter error");
+            throw new ExternalException(Response.getBadRequest("Page parameter error"));//TODO
         }
-
-        return Response.getSuccess(new CourseList(
-                courseMemberService.getTeacherCourses(id, page_num, page_size)));
+        var li = courseMemberService.getTeacherCourses(id, page_num, page_size);
+        return new CourseList(li);
     }
 
     // 获取某个学生的入课状态
@@ -97,17 +94,36 @@ public class CourseMemberController {
         return Response.getSuccess(new CourseList(
                 courseMemberService.getSubmittedCourses(page_num, page_size)));
     }
-    @PutMapping("/course/{id}/student/{studentId}/status")
-    public void updateStudentEnrollStatus(@PathVariable String id,
-                                          @PathVariable String studentId,
-                                          @RequestBody StudentStatusDTO studentStatusDTO) {
-        FrameworkUtils.notImplemented();// TODO
+
+    // 管理员获取已审核的课程列表
+    @GetMapping("/admin/{id}/courses/handle")
+    public Response getPublicCourses(@PathVariable Long id,
+                                        @RequestParam int page_num,
+                                        @RequestParam int page_size) {
+        if (page_size < -1 || page_num < 0) {
+            return Response.getBadRequest("Page parameter error");
+        }
+
+        return Response.getSuccess(new CourseList(
+                courseMemberService.getHandledCourse(page_num, page_size)));
     }
 
+    // 修改学生在课程中的状态
+    @PutMapping("/course/{id}/student/{studentId}/status")
+    public void updateStudentEnrollStatus(@PathVariable Long id,
+                                          @PathVariable Long studentId,
+                                          @RequestBody StudentStatusDTO studentStatusDTO) {
+        if(studentStatusDTO.getStatus() == null) {
+            throw new ExternalException(Response.getBadRequest("Status is null"));
+        }
+        courseMemberService.updateStudentEnrollStatus(id, studentId, studentStatusDTO.getStatus());
+    }
+
+    // 教师删除课程中的学生
     @DeleteMapping("/course/{id}/student/{studentId}")
     public void removeStudentFromCourse(@PathVariable Long id,
                                         @PathVariable Long studentId) {
-        FrameworkUtils.notImplemented();// TODO
+        courseMemberService.removeStudentFromCourse(id, studentId);
     }
 
 
@@ -121,8 +137,9 @@ public class CourseMemberController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Getter
     public static class StudentStatusList {
-        private List<StudentWithEnrollStatus> studentList;
+        private List<StudentWithEnrollStatus> content;
     }
 
     @Data

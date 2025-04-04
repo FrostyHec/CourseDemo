@@ -40,9 +40,8 @@ public class NotificationController {
 
     // 获取公告详情
     @GetMapping("/announcement/{id}")
-    public Response getAnnouncementById(@PathVariable Long id) {
-        Notification notification = notificationService.getNotificationById(id);
-        return Response.getSuccess(notification);
+    public Notification getAnnouncementById(@PathVariable Long id) {
+        return notificationService.getNotificationById(id);
     }
 
     // 获取课程下的公告

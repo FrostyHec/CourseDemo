@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 import java.util.Map;
 
+import static org.frosty.server.entity.bo.Course.CourseEvaluationType.practice;
+
 @Component
 @RequiredArgsConstructor
 public class CourseAPI {
@@ -35,6 +37,7 @@ public class CourseAPI {
                 .setDescription("Course Description")
                 .setStatus(Course.CourseStatus.creating) // it was "approved"
                 .setPublication(Course.PublicationType.open)
+                .setEvaluationType(practice)
                 ;
     }
 
@@ -43,8 +46,9 @@ public class CourseAPI {
                 .setTeacherId(teacherId)
                 .setCourseName(name)
                 .setDescription("Course Description")
-                .setStatus(Course.CourseStatus.published) // it was "approved"
+                .setStatus(Course.CourseStatus.published)
                 .setPublication(publicationType)
+                .setEvaluationType(Course.CourseEvaluationType.theory)
                 ;
     }
 
@@ -169,6 +173,6 @@ public class CourseAPI {
 
 
     public void quickCreateCourse(Course course) {
-        mapper.insertCourse(course);
+        mapper.insert(course);
     }
 }

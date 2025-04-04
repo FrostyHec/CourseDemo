@@ -24,7 +24,7 @@ public class ResourceController {
     private final ResourceService resourceService;
 
     @PostMapping("/chapter/{chapterId}/resource")
-    public void uploadResource(
+    public Resource uploadResource(
             @GetToken TokenInfo tokenInfo,
             @RequestPart("data") Resource resource,
             @RequestPart("file") MultipartFile file
@@ -32,6 +32,7 @@ public class ResourceController {
         Ex.check(tokenInfo.getAuthStatus() == AuthStatus.PASS, Response.getUnauthorized("unauthorized"));
         resource.setResourceId(null);
         resourceService.createResource(tokenInfo.getAuthInfo(), resource, file);
+        return resource;
     }
 
     @GetMapping("resource/{id}")

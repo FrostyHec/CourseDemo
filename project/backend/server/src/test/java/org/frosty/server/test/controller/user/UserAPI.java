@@ -91,14 +91,14 @@ public class UserAPI {
         String url = courseBaseUrl + "/user/search";
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(url)
-                .param("firstName", firstName)
-                .param("lastName", lastName)
-                .param("pageNum", String.valueOf(pageNum))
-                .param("pageSize", String.valueOf(pageSize));
+                .param("first_name", firstName)
+                .param("last_name", lastName)
+                .param("page_num", String.valueOf(pageNum))
+                .param("page_size", String.valueOf(pageSize));
         return performRequest(requestBuilder, token, null);
     }
 
-    public List<User> searchByNameSuccess(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
+    public List<UserPublicInfo> searchByNameSuccess(String token, String firstName, String lastName, int pageNum, int pageSize) throws Exception {
         return getSuccessResponse(
                 searchByName(token, firstName, lastName, pageNum, pageSize),
                 UserController.UserList.class).getContent();

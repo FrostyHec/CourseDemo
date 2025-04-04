@@ -67,7 +67,7 @@ public class ChapterController {
         // TODO 对于入课状态为 pending-approved的学生不得返回 non-public
         // 这样子写可以吗？
         if (userService.findById(userID).getRole().equals(student)) {
-            chapters = chapterService.getAllChaptersForStudentByCourseId(id);
+            chapters = chapterService.getAllChaptersForStudentByCourseId(userID,id);
         } else {
             chapters = chapterService.getAllChaptersByCourseId(id);
         }

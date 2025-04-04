@@ -35,8 +35,8 @@ public class CourseLikeController {
 
     // 检查用户是否点赞了课程
     @GetMapping("/{courseId}/like")
-    public Map<String,Boolean> checkCourseLike(@GetToken TokenInfo tokenInfo, @PathVariable Long courseId) {
+    public Map<String, Boolean> checkCourseLike(@GetToken TokenInfo tokenInfo, @PathVariable Long courseId) {
         long userId = tokenInfo.getAuthInfo().getUserID();
-        return Map.of("is_like",courseLikeService.checkCourseLike(courseId, userId));
+        return Map.of("is_like", courseLikeService.checkCourseLike(courseId, userId));
     }
 }

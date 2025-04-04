@@ -3,7 +3,7 @@ package org.frosty.server.services.user;
 
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.po.UserPublicInfo;
-import org.frosty.server.event.delete_event.UserDeleteEvent;
+import org.frosty.server.event.delete.UserDeleteEvent;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    User findPublicInfoById(Long id);
+    UserPublicInfo findPublicInfoById(Long id);
 
 
     List<User> searchByRealName(String firstName, String lastName,int pageNum, int pageSize);
@@ -36,4 +36,6 @@ public interface UserService {
     void insertUser(User user);//
 
     List<UserPublicInfo> searchUser(String firstName, String lastName, int pageNum, int pageSize);
+
+    UserPublicInfo findPublicInfoByEmail(String email);
 }

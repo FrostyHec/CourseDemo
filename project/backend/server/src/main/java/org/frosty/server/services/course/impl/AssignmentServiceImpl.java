@@ -6,6 +6,8 @@ import org.frosty.server.mapper.course.AssignmentMapper;
 import org.frosty.server.services.course.AssignmentService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AssignmentServiceImpl implements AssignmentService {
@@ -18,7 +20,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public void updateAssignment(Assignment assignment) {
-        assignmentMapper.updateAssById(assignment);
+        assignmentMapper.updateById(assignment);
     }
 
     @Override
@@ -29,5 +31,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Assignment getAssignment(Long assId) {
         return assignmentMapper.selectAssById(assId);
+    }
+
+    @Override
+    public List<Assignment> getAssignmentsByChapterId(Long id) {
+        return assignmentMapper.selectAssignmentsByChapterId(id);
     }
 }

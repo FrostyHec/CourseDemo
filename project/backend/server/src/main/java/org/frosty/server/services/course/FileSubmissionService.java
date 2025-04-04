@@ -35,7 +35,7 @@ public class FileSubmissionService {
     public void submitFile(FileSubmission fileSubmission, MultipartFile file) throws IOException {
         // TODO ONLY STUDENT CAN SUBMIT
 
-        // check if have previous submission, if does, check if multiple submission valid.
+        // check if have previous submission, if it does, check if multiple submission valid.
         Long assignmentId = fileSubmission.getAssignmentId(),studentId = fileSubmission.getStudentId();
         FileSubmission prevSubmission= mapper.selectSubmissionByAssignmentIdAndStudentId(assignmentId,studentId);
         if(prevSubmission!=null) { // has previous
@@ -72,7 +72,7 @@ public class FileSubmissionService {
     }
 
     private String getFileSubmissionCaseName(Long uid) {
-        return "file-submission-"+uid;
+        return "resource-"+uid;
     }
 
     public void updateScore(Long id, Integer gainedScore) {
@@ -83,6 +83,9 @@ public class FileSubmissionService {
     public FileSubmissionController.FileSubmissionWithAccessKey getStudentSubmission(long uid, Long assignmentId) {
         // TODO ONLY STUDENT CAN ACCESS
         FileSubmission fileSubmission =  mapper.selectSubmissionByAssignmentIdAndStudentId(assignmentId,uid);
+        if(fileSubmission==null){
+            throw new ExternalException(Response.getNotFound("no-submission"));
+        }
         var accessKey = objectStorageService.getAccessKey(fileSubmission.getFileName(),
                 getFileSubmissionCaseName(uid));
         return new FileSubmissionController.FileSubmissionWithAccessKey(fileSubmission, accessKey);

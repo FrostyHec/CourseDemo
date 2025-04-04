@@ -25,8 +25,8 @@ public class ResourceService {
     @Transactional
     public void createResource(AuthInfo tokenInfo, Resource resource, MultipartFile file) throws IOException {
         // TODO check called by teacher & course owner
-        String fileName = UUID.randomUUID().toString() + file.getSize() + "." + resource.getSuffix();
-        fileName = fileName.replace("/","."); // TODO 防止注入漏洞
+        String fileName = UUID.randomUUID().toString() + file.getSize();
+        fileName = fileName.replace("/","-"); // TODO 防止注入漏洞
         resource.setFileName(fileName);
 
         resourceMapper.insert(resource);

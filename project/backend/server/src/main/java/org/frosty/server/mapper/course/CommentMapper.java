@@ -8,24 +8,11 @@ import org.apache.ibatis.annotations.Select;
 import org.frosty.server.controller.course.CommentController;
 import org.frosty.server.entity.bo.ResourceComment;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Mapper
 public interface CommentMapper extends BaseMapper<ResourceComment> {
-//    // 给指定的资源添加一个评论
-//    @Insert("")
-//    void insertCommentToResource(Long resourceId, ResourceComment comment);
-//
-//
-//    // 给指定的评论添加一个评论
-//    @Insert("")
-//    void insertReplyToComment(Long parentCommentId, ResourceComment reply);
-//
-//
-//    // 更新指定评论
-//    @Update("")
-//    void updateCommentById(Long commentId, ResourceComment updatedComment);
-
     // 获取指定资源的全部评论
     @Select("SELECT * FROM resource_comments WHERE resource_id =#{resourceId}")
     List<ResourceComment> getAllByResourceId(Long resourceId);
@@ -57,4 +44,28 @@ public interface CommentMapper extends BaseMapper<ResourceComment> {
 //    @Select("SELECT * FROM resource_comments WHERE resource_id = #{resourceId}")
     List<CommentController.CommentWithUser> getAllPublicByResourceId(@Param("resourceId") long resourceId);
 
+
+    @Select("""
+    SELECT * 
+    FROM resource_comments
+    WHERE user_id = #{userId} 
+      AND created_at >= #{startTime} 
+      AND created_at < #{endTime}
+""")
+    List<ResourceComment> selectByUserIdAndCreatedTime(
+            @Param("userId") Long userId,
+            @Param("startTime") OffsetDateTime startTime,
+            @Param("endTime") OffsetDateTime endTime);
+
+
+
+    @Select("""
+                SELECT c.course_id
+                FROM resource_comments rc
+                JOIN resources r ON rc.resource_id = r.resource_id
+                JOIN chapters ch ON r.chapter_id = ch.chapter_id
+                JOIN courses c ON ch.course_id = c.course_id
+                WHERE rc.comment_id = #{commentId}
+            """)
+    Long findCourseIdByComment(@Param("commentId") Long commentId);
 }

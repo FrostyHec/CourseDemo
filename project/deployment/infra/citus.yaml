@@ -1,0 +1,134 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp2
+  fsType: ext4
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: citus-coordinator
+  namespace: citus
+spec:
+  serviceName: citus-coordinator-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: citus-coordinator
+  template:
+    metadata:
+      labels:
+        app: citus-coordinator
+    spec:
+      containers:
+        - name: coordinator
+          image: citusdata/citus:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-database-secret
+                  key: db-password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: citus-storage
+      initContainers:
+        - name: init-db
+          image: dylanstarkliu/init-db:latest
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-database-secret
+                  key: db-password
+            - name: POSTGRES_DB
+              value: postgres
+          command: ['sh', '-c', 'until pg_isready -h citus-coordinator -p 5432; do echo waiting for postgres; sleep 2; done; psql -U $POSTGRES_USER -d $POSTGRES_DB -f /docker-entrypoint-initdb.d/init_db.sql']
+  volumeClaimTemplates:
+    - metadata:
+        name: citus-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: ebs-sc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: citus-worker
+  namespace: citus
+spec:
+  serviceName: "citus-worker-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: citus-worker
+  template:
+    metadata:
+      labels:
+        app: citus-worker
+    spec:
+      containers:
+        - name: worker
+          image: citusdata/citus:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-database-secret
+                  key: db-password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: citus-storage
+  volumeClaimTemplates:
+    - metadata:
+        name: citus-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: ebs-sc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citus-coordinator-service
+  namespace: citus
+spec:
+  selector:
+    app: citus-coordinator
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citus-worker-service
+  namespace: citus
+spec:
+  selector:
+    app: citus-worker
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  clusterIP: None

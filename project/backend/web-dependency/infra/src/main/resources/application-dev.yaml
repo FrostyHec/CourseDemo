@@ -16,8 +16,8 @@ api:
     redis:
       url: todo
   message:
-    type: mock
-#    type: remote
+#    type: mock
+    type: remote
     site:
       url: http://localhost:9972
     email:

@@ -18,6 +18,7 @@
         <module>../common</module>
         <module>../auth-common</module>
         <module>../test-common</module>
+        <module>../sse-common</module>
     </modules>
 
     <build>

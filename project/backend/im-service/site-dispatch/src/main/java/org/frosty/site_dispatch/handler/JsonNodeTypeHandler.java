@@ -6,7 +6,7 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
 import java.sql.*;
-
+// TODO may remove duplication
 public class JsonNodeTypeHandler extends BaseTypeHandler<JsonNode> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

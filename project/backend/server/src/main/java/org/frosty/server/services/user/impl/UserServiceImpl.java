@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.frosty.server.entity.bo.User;
 import org.frosty.server.entity.converter.CommonConverter;
 import org.frosty.server.entity.po.UserPublicInfo;
-import org.frosty.server.event.delete_event.UserDeleteEvent;
+import org.frosty.server.event.delete.UserDeleteEvent;
 import org.frosty.server.mapper.user.UserMapper;
 import org.frosty.server.services.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findPublicInfoById(Long id) {
+    public UserPublicInfo findPublicInfoById(Long id) {
         return userMapper.findPublicInfoById(id);
     }
 
@@ -80,6 +80,11 @@ public class UserServiceImpl implements UserService {
         }
         List<User> userList = userMapper.selectList(queryWrapper);
         return userList.stream().map(converter::toUserPublicInfo).toList();
+    }
+
+    @Override
+    public UserPublicInfo findPublicInfoByEmail(String email) {
+        return userMapper.findPublicInfoByEmail(email);
     }
 
     // TODO

@@ -86,7 +86,7 @@ public class CourseMemberService {
         List<Long> studentIds = enrollments.stream()
                 .map(Enrollment::getStudentId)
                 .collect(Collectors.toList());
-        if(studentIds.isEmpty()){
+        if (studentIds.isEmpty()) {
             return List.of();
         }
         List<User> users = userMapper.selectBatchIds(studentIds);  // 批量查询
@@ -163,9 +163,7 @@ public class CourseMemberService {
      * @return 课程列表。
      */
     public List<Course> getTeacherCourses(Long teacherId, int pageNum, int pageSize) {
-        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("teacher_id", teacherId);
-        return courseMapper.selectList(queryWrapper);
+        return courseMapper.selectTeacherCourses(teacherId, pageNum, pageSize);
     }
 
     /**
@@ -224,6 +222,31 @@ public class CourseMemberService {
                     .toList();
         }
         // 返回分页课程信息
+        if(courseIds.isEmpty()){
+            return  List.of();
+        }
         return courseMapper.selectBatchIds(courseIds);
+    }
+
+    public List<Course> getHandledCourse(int pageNum, int pageSize) {
+        return courseMapper.selectHandledCourse(pageNum, pageSize);
+    }
+
+    public void updateStudentEnrollStatus(Long id, Long studentId, Enrollment.EnrollmentType status) {
+        QueryWrapper<Enrollment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("course_id", id);
+        queryWrapper.eq("student_id", studentId);
+        Enrollment enrollment = enrollmentMapper.selectOne(queryWrapper);
+        if (enrollment != null) {
+            enrollment.setStatus(status);
+            enrollmentMapper.update(enrollment, queryWrapper);
+        }
+    }
+
+    public void removeStudentFromCourse(Long id, Long studentId) {
+        QueryWrapper<Enrollment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("course_id", id);
+        queryWrapper.eq("student_id", studentId);
+        enrollmentMapper.delete(queryWrapper);
     }
 }
