@@ -1,6 +1,6 @@
 <div align=center>
 
-# CourseDemo-Online learning platform : CS309 Project
+# CourseDemo : CS309 Project
 
 [中文](#项目介绍) /
 [English](#project-introduction)
