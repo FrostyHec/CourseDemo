@@ -1,23 +1,40 @@
 <template>
   <el-config-provider namespace="ep">
-    <el-container style="height: 100vh;">
-      <el-header style="padding: 0%; height: auto;">
-        <BaseHeader />
-      </el-header>
-      <el-container>
-        <el-aside width="auto">
-          <BaseSide/>
-        </el-aside>
-        <el-main>
-          <div class="flex main-container">
-            <div w="full" py="4">
-              <Logos my="4" />
-              <RouterView/>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
+    <RouterView></RouterView>
   </el-config-provider>
+  <el-dialog
+      title="退出登录"
+      v-model="quitVisible"
+      @close="handleLogout()"
+    >
+      <span>另一个用户登录，您将被登出</span>
+      <template #footer>
+        <el-button type="primary" @click="handleLogout">确认</el-button>
+      </template>
+    </el-dialog>
 </template>
 
+<script setup lang="ts">
+import { ref } from "vue";
+import { useEventStore } from "./stores/event";
+import { EventType } from "./utils/EventBus";
+import router from "./router";
+import type { SSEBody } from "./api/sse/SSEHandler";
+const quitVisible = ref(false);
+const {emitEvent} = useEventStore();
+
+const handleLogout = () =>{
+  emitEvent(EventType.currentlyIsLoggedOut);
+  router.push('/login');
+  quitVisible.value = false
+}
+const {registerEvent} = useEventStore();
+
+registerEvent(EventType.quitEvent,(message: { body: SSEBody; })=>{
+  handleQuit()
+})
+
+function handleQuit() {
+  quitVisible.value = true;
+}
+</script>

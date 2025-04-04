@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class HelloWorldService {
     private final DatabaseInitializer databaseInitializer;
     private final HelloWorldMapper helloWorldMapper;
+
     public String getHelloMessage() {
         return helloWorldMapper.getHelloMessage();
     }

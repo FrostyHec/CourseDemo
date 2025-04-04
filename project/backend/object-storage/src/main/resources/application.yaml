@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: object-storage
+  profiles:
+    active: dev, resource-nonpublic-dev, self-nonpublic-dev
+
+server:
+  port: 9976

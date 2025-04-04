@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Test</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<input type="text" id="roomId" placeholder="Enter Room ID">
+<input type="text" id="userId" placeholder="Enter User ID">
+<button onclick="connectWebSocket()">Connect</button>
+<br>
+<input type="text" id="messageInput" placeholder="Enter message">
+<button onclick="sendMessage()">Send Message</button>
+<br>
+<div id="messages"></div>
+
+<script>
+  let socket;
+
+  function connectWebSocket() {
+    const roomId = document.getElementById('roomId').value;
+    const userId = document.getElementById('userId').value;
+    const url = `ws://localhost:9977/websocket/livestream/${roomId}/${userId}`;
+
+    socket = new WebSocket(url);
+
+    socket.onopen = function(event) {
+      console.log("WebSocket is open now.");
+    };
+
+    socket.onmessage = function(event) {
+      const message = event.data;
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.innerHTML += `<p>${message}</p>`;
+    };
+
+    socket.onclose = function(event) {
+      console.log("WebSocket is closed now.");
+    };
+
+    socket.onerror = function(event) {
+      console.error("WebSocket error observed:", event);
+    };
+  }
+
+  function sendMessage() {
+    const messageInput = document.getElementById('messageInput').value;
+    const message = JSON.stringify({
+      target: -1, // -1 means to all
+      content: messageInput
+    });
+    socket.send(message);
+  }
+</script>
+</body>
+</html>

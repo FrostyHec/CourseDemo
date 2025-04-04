@@ -12,9 +12,13 @@ public class Ex {
         Ex.check(condition, new ExternalException(response));
     }
 
-    public static void check(boolean condition, RuntimeException e){
+    public static void check(boolean condition, RuntimeException e) {
         if (!condition) {
             throw e;
         }
+    }
+
+    public static void idCheck(Long id, Long resourceId) {
+        Ex.check(id.equals(resourceId), Response.getBadRequest("unmatched-id"));
     }
 }

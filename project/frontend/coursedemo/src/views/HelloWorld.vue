@@ -1,103 +1,79 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { ElMessage } from "element-plus";
-
-defineProps<{ msg: string }>();
-
-const count = ref(0);
-const input = ref("element-plus");
-
-const curDate = ref("");
-
-const toast = () => {
-  ElMessage.success("Hello");
-};
-
-const value1 = ref(true);
-</script>
-
 <template>
-  <h1 color="$ep-color-primary">{{ msg }}</h1>
-
-  <p>
-    See
-    <a href="https://element-plus.org" target="_blank">element-plus</a> for more
-    information.
-  </p>
-
-  <!-- example components -->
-  <div class="mb-4">
-    <el-button size="large" @click="toast">El Message</el-button>
-  </div>
-
-  <div class="my-2 text-center flex flex-wrap justify-center items-center">
-    <el-button @click="count++">count is: {{ count }}</el-button>
-    <el-button type="primary" @click="count++">count is: {{ count }}</el-button>
-    <el-button type="success" @click="count++">count is: {{ count }}</el-button>
-    <el-button type="warning" @click="count++">count is: {{ count }}</el-button>
-    <el-button type="danger" @click="count++">count is: {{ count }}</el-button>
-    <el-button type="info" @click="count++">count is: {{ count }}</el-button>
-  </div>
-
-  <div>
-    <el-tag type="success" class="m-1">Tag 1</el-tag>
-    <el-tag type="warning" class="m-1">Tag 1</el-tag>
-    <el-tag type="danger" class="m-1">Tag 1</el-tag>
-    <el-tag type="info" class="m-1">Tag 1</el-tag>
-  </div>
-
-  <div>
-    <el-switch v-model="value1" />
-    <el-switch
-      v-model="value1"
-      class="m-2"
-      style="--ep-switch-on-color: black; --ep-switch-off-color: gray;"
-    />
-  </div>
-
-  <div class="my-2">
-    <el-input class="m-2" v-model="input" style="width: 200px" />
-    <el-date-picker
-      class="m-2"
-      v-model="curDate"
-      type="date"
-      placeholder="Pick a day"
-    ></el-date-picker>
-  </div>
-
-  <p>For example, we can custom primary color to 'green'.</p>
-
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test components.
-  </p>
-  <p>
-    Edit
-    <code>styles/element/var.scss</code> to test scss variables.
-  </p>
-
-  <p>
-    Full Example:
-    <a
-      href="https://github.com/element-plus/element-plus-vite-starter"
-      target="_blank"
-      >element-plus-vite-starter</a
+  <file-uploader ref="uploader"/>
+  <el-button @click="open1">func</el-button>
+  <!-- <embed :src="link" style="width:100%; height:500px;" type="application/pdf"/> -->
+  <div/>
+  <!-- <iframe
+    ref="pdf"
+    style="width: 100%; height: 1000pX;"
+    :src="`/pdfjs-4.8.69-legacy-dist/web/viewer.html?file=${link}#toolbar=0`"
+    frameborder="0"
+  /> -->
+  <!-- <ProgressBar :top="131" :bot="512" style="margin: 100px;"/>
+  <base-chart :labels="['A', 'C', 'B']" :values="[2, 4, 1]" :title="'Happy'" style="width: 100%; height: 400px;"/> -->
+  <!-- <div style="margin: 100px;">
+    <div style="margin-bottom: 5px; float: right;">
+      <span style="color: var(--ep-color-primary);">1203</span> / 7481
+    </div>
+    <div style="font-weight: bold; font-size: large; margin-bottom: 5px;">
+      50%
+    </div>
+    <div style="width: 100%; height: 25px; border-radius: 4px; background-color: var(--ep-border-color);">
+      <div style="background-color: var(--ep-color-primary); width: 30%; height: 100%; border-radius: 4px;"></div>
+    </div>
+  </div> -->
+  <div style="margin: 20px;">
+    <video 
+      v-if="open" ref="videoPlayer" controls 
+      @loadeddata="videoPlayer.currentTime = 4"
+      @timeupdate="updateProgress" 
+      @play="(event) => console.log('start', (event.target as any)?.currentTime)" 
+      @pause="(event) => console.log('end', (event.target as any)?.currentTime)"
+      style="width: 100%; aspect-ratio: 16/9;"
     >
-    | On demand Example:
-    <a
-      href="https://github.com/element-plus/unplugin-element-plus"
-      target="_blank"
-      >unplugin-element-plus/examples/vite</a
-    >
-  </p>
+      <source :src="link" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 </template>
+<script setup lang="ts">
+import { ElNotification } from 'element-plus';
+import { h, ref, watch } from 'vue';
 
-<style>
-.ep-button {
-  margin: 4px;
+const open1 = () => {
+  ElNotification({
+    title: 'Title',
+    message: 'happy',
+    duration: 0,
+  })
 }
-.ep-button + .ep-button {
-  margin-left: 0;
-  margin: 4px;
+
+const link = ref('')
+const uploader = ref()
+const videoPlayer = ref()
+const open = ref(false)
+const pdf = ref()
+function func() {
+  const file = uploader.value.file_get as File
+  console.log(file.type) 
+  link.value = URL.createObjectURL(file)
+  // const video = document.createElement('video')
+  // video.addEventListener("loadedmetadata", function() {
+  //   console.log(video.duration);
+  // });
+  // video.src = link.value
+  open.value = true
 }
-</style>
+
+function updateProgress(event: Event) {
+  const video = event.target as any;
+  console.log(video.currentTime);
+}
+// const watch_page = setInterval(() => {
+//     const app = pdf.value?.contentWindow?.PDFViewerApplication
+//     if(app)
+//       app.page = 23
+//   }, 1000
+// )
+
+</script>

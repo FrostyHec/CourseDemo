@@ -1,26 +1,39 @@
 <script lang="ts" setup>
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, useToggle } from "@vueuse/core"
+import { useCourseStore, path_convert } from "@/stores/course";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 import { ArrowRight } from '@element-plus/icons-vue'
+import { useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { UserType } from "@/api/user/UserAPI";
+
+const course_store = useCourseStore()
+const auth_store = useAuthStore()
+
 </script>
 
 <template>
-  <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-menu-border-color);" px="5" py="1">
+  <el-page-header icon="" title=" " style="border-bottom: solid 1px var(--ep-border-color);" px="5" py="1">
 
     <template #title>
-      <p style="font-weight: 600; font-size: large; margin: 0%;">
+      <span style="font-weight: 600; font-size: large; margin: 0%;" 
+        @click="auth_store.user.role==UserType.STUDENT ? $router.push('/Mainpage/student') : $router.push('/Mainpage/teacher') ">
         Course Demo
-      </p>
+      </span>
     </template>
 
     <template #content>
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+        <el-breadcrumb-item></el-breadcrumb-item>
+        <el-breadcrumb-item v-for="it in course_store.breadcrumb" :key="it.key" :to="it.link">
+          {{ it.label }}
+        </el-breadcrumb-item>
+        <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
         <el-breadcrumb-item>promotion management</el-breadcrumb-item>
         <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ $route.params.labels }}</el-breadcrumb-item> -->
       </el-breadcrumb>
     </template>
 
@@ -31,38 +44,32 @@ import { ArrowRight } from '@element-plus/icons-vue'
           :width="300"
         >
           <template #reference>
-            <el-avatar :size="36" style="border: solid 1px var(--ep-menu-border-color); margin-right: 10px;"
+            <el-avatar :size="36" style="border: solid 1px var(--ep-border-color); margin-right: 10px;"
             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
           </template>
           <template #default>
             <div
-              class="demo-rich-conent"
               style="display: flex; gap: 5px; flex-direction: column"
             >
               <div style="display: flex; gap: 10px; align-items: center;">
-                <el-avatar :size="64" style="border: solid 1px var(--ep-menu-border-color); margin-left: 5px;"
+                <el-avatar :size="64" style="border: solid 1px var(--ep-border-color); margin-left: 5px;"
                 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
                 <div>
-                  <h2 style="margin: 0%;">Alice Bob</h2>
+                  <h2 style="margin: 0%;">{{ `${auth_store.user.first_name} ${auth_store.user.last_name}` }}</h2>
                   <p style="margin: 0%; font-size: 14px; color: var(--el-color-info)">
-                    alice_bob@sustech.edu.cn
+                    {{ auth_store.user.email }}
                   </p>
                 </div>
               </div>
-              
-              <div>
-                
-              </div>
-
-              <el-button>Settings</el-button>
-              <el-button type="primary">Sign out</el-button>
+              <el-button type="primary" style="margin: 0%;" 
+                @click="auth_store.logout({user_id: auth_store.user.user_id}); $router.push('/Mainpage/login')
+              ">
+                Sign out
+              </el-button>
             </div>
           </template>
         </el-popover>
-        <span class="text-large font-600 mr-3"> Alice Bob </span>
-        <el-button>
-          Calendar
-        </el-button>
+        <span class="text-large font-600 mr-3"> {{ `${auth_store.user.first_name} ${auth_store.user.last_name}` }} </span>
         <el-button
           circle
           class="bg-transparent cursor-pointer"

@@ -2,6 +2,7 @@ package org.frosty.auth.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.frosty.auth.entity.AuthInfo;
+import org.frosty.auth.entity.AuthStatus;
 import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.exception.InternalException;
 
@@ -20,7 +21,7 @@ public class TokenUtils {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(subject, TokenInfo.class);
         } catch (Exception e) {
-            throw new InternalException("Failed to convert string to tokenInfo", e);
+            throw new InternalException("Failed to convert string to tokenInfo subject:" + subject, e);
         }
     }
 

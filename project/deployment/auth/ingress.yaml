@@ -1,0 +1,30 @@
+# ingress-auth.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-auth
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: "http://auth-svc.default.svc.cluster.local:9983/internal-api/v1/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://www.baidu.com"
+    nginx.ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
+spec:
+  ingressClassName: nginx
+  rules:
+#    - host: 10.27.96.162  # 你的域名
+    - http:
+        paths:
+#          - path: /api/v1/msg-push
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: msg-svc  # 指向 msg-svc
+#                port:
+#                  number: 80
+          - path: /api/v1/
+            pathType: Prefix
+            backend:
+              service:
+                name: course-svc  # 指向 survey-svc
+                port:
+                  number: 9977
+

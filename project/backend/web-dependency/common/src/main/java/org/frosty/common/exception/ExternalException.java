@@ -9,6 +9,6 @@ import org.frosty.common.response.Response;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ExternalException extends RuntimeException{
+public class ExternalException extends RuntimeException { // TODO may merge with externalexceptionwithresp
     private Response response;
 }

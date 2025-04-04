@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Stream Viewer</title>
+  <style>
+      #video {
+          width: 100%;
+          height: auto;
+      }
+  </style>
+  <!-- 引入flv.js库 -->
+  <script src="https://cdn.jsdelivr.net/npm/flv.js@latest"></script>
+</head>
+<body>
+<h1>Live Stream Viewer</h1>
+<div>
+  <button id="startStream">Get Stream</button>
+  <button id="getVideo">Get Video</button>
+</div>
+<video id="video" controls autoplay></video>
+
+<script>
+  //直播的完整流程：
+  // 1. 老师通过${baseUrl}/api/v1/course/${courseId}/live-stream/push的GET请求拿到推流的流名字
+  // 2. （老师在外边使用OBS推流）
+  // 3. 学生通过课程进入直播间，应该发起GET请求（请看API文档）拿到这个课程下直播间的流名字，
+  // 然后通过`${videoUrl}/live?app=course&stream=${streamName}`拿到视频
+  // 4. 具体的FLV代码可参考如下，具体的业务流程参考飞书
+  const courseId = '1'
+  const baseUrl = 'http://localhost:9977'
+  const videoUrl = 'http://localhost:8088' // 流媒体服务器的url
+  let streamName = 'd05951ad-dfd6-4f09-a395-79296f02f6a1'
+  // hello
+  document.getElementById('startStream').addEventListener('click', async () => {
+    try {
+      // Request the pull stream name
+      const response = await fetch(`${baseUrl}/api/v1/course/${courseId}/live-stream/push`, {
+        method: 'GET',
+        headers: { // 在API层你直接调用authGet会自动封装token的，你可以参考其他API.ts的写法
+          'X-Forwarded-User': JSON.stringify({
+            authStatus: 'PASS',
+            authInfo: {
+              userID: 1
+            }
+          })
+        }
+      })
+      const data = await response.json()
+      if (response.ok && data.code === 200) {
+        streamName = data.data.name
+        alert('streamName is:' + streamName)
+      } else {
+        alert('Failed to get info:' + response)
+      }
+    } catch (error) {
+      console.error('Error fetching stream name:', error)
+    }
+  })
+
+  document.getElementById('getVideo').addEventListener('click', async () => {
+    // 使用flv.js设置FLV流
+    try {
+      if (flvjs.isSupported()) {
+        const videoElement = document.getElementById('video')
+        const flvPlayer = flvjs.createPlayer({
+          type: 'flv',
+          url: `${videoUrl}/live?app=course&stream=${streamName}`,
+          cors: true,
+          headers: {
+            'X-Forwarded-User': JSON.stringify({
+              authStatus: 'PASS',
+              authInfo: {
+                userID: 1
+              }
+            })
+          }
+        })
+        flvPlayer.attachMediaElement(videoElement)
+        flvPlayer.load()
+        flvPlayer.play()
+      } else {
+        console.error('FLV format is not supported in this browser.')
+      }
+    } catch (error) {
+      console.error('Error fetching stream name:', error)
+    }
+  })
+</script>
+</body>
+</html>
