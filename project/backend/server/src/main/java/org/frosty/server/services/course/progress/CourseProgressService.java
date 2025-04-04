@@ -139,6 +139,9 @@ public class CourseProgressService {
         var uid = auth.getUserID();
         // for each chapter for each v rs
         var chapters = chapterMapper.getAllChaptersByCourseId(csid);
+        chapters = chapters.stream()
+                .filter(c -> c.getChapterType() == Chapter.ChapterType.teaching)
+                .toList();
         List<CourseProgressController.ChapterProgress> chapterProgresses = new ArrayList<>(chapters.size());
         for (var c : chapters) {
             var cid = c.getChapterId();

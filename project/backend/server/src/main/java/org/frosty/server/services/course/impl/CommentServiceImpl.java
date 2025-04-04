@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
             List<CommentResource> resources = commentResourceMapper.getAllByCommentId(cid);
             List<CommentController.CommentResourceWithAccessKey> resourceWithAccessKeys = new ArrayList<>(resources.size());
             for (var resource : resources) {
-                var accessKey = objectStorageService.getAccessKey(getCommentFileCaseName(uid), resource.getFileName());
+                var accessKey = objectStorageService.getAccessKey(resource.getFileName(),getCommentFileCaseName(uid));
                 resourceWithAccessKeys.add(new CommentController.CommentResourceWithAccessKey(resource, accessKey));
             }
             result.add(new CommentController.CommentWithUserAndFileAndAccessKey(comment, resourceWithAccessKeys));
@@ -80,8 +80,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void uploadFileForComment(CommentResource commentResource, MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID().toString() + file.getSize() + "." + commentResource.getSuffix();
-        fileName = fileName.replace("/", "."); // TODO 防止注入漏洞
+        String fileName = UUID.randomUUID().toString() + file.getSize();
+        fileName = fileName.replace("/", "-")+"."+commentResource.getSuffix(); // TODO 防止注入漏洞
         commentResource.setFileName(fileName);
         commentResourceMapper.insert(commentResource);
         objectStorageService.save(commentResource.getFileName(), file.getBytes());

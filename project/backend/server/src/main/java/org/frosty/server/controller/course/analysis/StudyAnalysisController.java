@@ -117,7 +117,7 @@ public class StudyAnalysisController {
             public static class SingleChapterInfo {
                 private Chapter chapter; // 章节信息
                 private Integer averageScore; // 平均分
-                private Integer maxScore; // 最高分
+                private Integer maxScore; //
                 private Integer completedCount; // 已完成的学生数
                 private Integer maxCompletedCount; // stuCnt*cpters
             }

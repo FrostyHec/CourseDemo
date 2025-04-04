@@ -31,11 +31,11 @@ public class PublicAccessController {
                                   @PathVariable String objName,
                                   HttpServletResponse response) throws Exception {
         Ex.check(accessKeyService.valid(objName, case_name, access_key), Response.getUnauthorized("unauthorized"));
-        try (InputStream inputStream = storageService.getFile(objName)) {
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader("Content-Disposition", "inline; filename=\"" + objName + "\"");
+        try (InputStream inputStream = storageService.getFile(objName);
+             OutputStream outputStream = response.getOutputStream()) {
             // 设置响应的内容类型和头信息
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            response.setHeader("Content-Disposition", "inline; filename=\"" + objName + "\"");
-            OutputStream outputStream = response.getOutputStream();
             byte[] buffer = new byte[BUF_SIZE];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {

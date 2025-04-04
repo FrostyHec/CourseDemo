@@ -32,7 +32,7 @@ public class CourseService {
 
     public void updateCourse(Long id, Course course) {
         // only update name and description, ignore other fields
-        courseMapper.updateCourse(id, course.getCourseName(), course.getDescription());
+        courseMapper.updateCourse(id, course.getCourseName(), course.getDescription(),course.getPublication(),course.getEvaluationType());
     }
 
     public Course getCourse(Long id) {

@@ -174,6 +174,13 @@ public class StudyAnalysisService {
     public StudyAnalysisController.AssignmentChapterSituationList getMyScore(Long cid, Long userId) {
         // 找到课程的所有章节
         List<Chapter> chapters = chapterMapper.getAllChaptersByCourseId(cid);
+        chapters = chapters.stream()
+                .filter(chapter -> chapter.getChapterType() != Chapter.ChapterType.teaching)
+                .toList();
+        if(chapters.isEmpty()) { // TODO?
+            return new StudyAnalysisController.AssignmentChapterSituationList(new ArrayList<>());
+        }
+
         List<Assignment> assignments = assignmentMapper.getAssignmentsByCourseId(cid); // 获取所有作业
 
         // 创建章节映射，将章节 ID 映射到章节信息
@@ -536,11 +543,14 @@ public class StudyAnalysisService {
         // 计算已完成的学生数
         long submittedCount = submissions.size();
 
+        List<Assignment> assignments = assignmentMapper.getAllByChapterId(chapter.getChapterId());
+
         // 计算章节统计信息
         ScoringChapterInfo.SingleChapterInfo chapterInfo = new ScoringChapterInfo.SingleChapterInfo(
                 chapter,
                 (int) submissions.parallelStream().filter(s -> s.getGainedScore() != null).mapToInt(FileSubmission::getGainedScore).average().orElse(0),
-                submissions.parallelStream().filter(s -> s.getGainedScore() != null).mapToInt(FileSubmission::getGainedScore).max().orElse(0),
+                assignments.stream().mapToInt(Assignment::getMaximumScore).sum(),
+//                submissions.parallelStream().filter(s -> s.getGainedScore() != null).mapToInt(FileSubmission::getGainedScore).max().orElse(0),
                 (int) gradedCount,
                 totalStudents
         );

@@ -13,8 +13,11 @@ public interface CourseMapper extends BaseMapper<Course> {
     @Update("UPDATE Courses SET status = #{status} WHERE course_id = #{courseId}")
     void updateCourseStatus(@Param("courseId") Long courseId, @Param("status") String status);
 
-    @Update("UPDATE Courses SET course_name = #{courseName}, description = #{description} WHERE course_id = #{courseId}")
-    void updateCourse(@Param("courseId") Long courseId, @Param("courseName") String name, @Param("description") String description);
+    @Update("UPDATE Courses SET course_name = #{courseName}, description = #{description},publication = #{publication}," +
+            "evaluation_type = #{evaluationType} " +
+            " WHERE course_id = #{courseId}")
+    void updateCourse(@Param("courseId") Long courseId, @Param("courseName") String name, @Param("description") String description,
+                      @Param("publication") Course.PublicationType publication, @Param("evaluationType") Course.CourseEvaluationType evaluationType);
 
     @Select("SELECT * FROM Courses")
     List<Course> getAllCourses();

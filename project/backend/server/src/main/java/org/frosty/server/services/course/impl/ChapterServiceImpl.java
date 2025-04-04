@@ -44,13 +44,13 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Transactional
     @Override
-    public List<Chapter> getAllChaptersForStudentByCourseId(Long uid,Long id) {
-        var courseId = chapterMapper.getCourseId(id);
+    public List<Chapter> getAllChaptersForStudentByCourseId(Long uid,Long courseId) {
+//        var courseId = chapterMapper.getCourseId(id);
         Boolean b = enrollmentMapper.isInvitedStudent(uid,courseId);
         if(b!=null&&b) {
-            return chapterMapper.getAllChaptersForStudentByCourseIdForInvitedStudent(uid, id);
+            return chapterMapper.getAllChaptersForStudentByCourseIdForInvitedStudent(uid, courseId);
         }else{
-            return chapterMapper.getAllChaptersForStudentByCourseIdForPublicStudent(uid, id);
+            return chapterMapper.getAllChaptersForStudentByCourseIdForPublicStudent(uid, courseId);
         }
     }
 }
