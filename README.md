@@ -1,6 +1,6 @@
 <div align=center>
 
-# CourseDemo : CS309 Project
+# CourseDemo : CS309 Final Project
 
 [中文](#项目介绍) /
 [English](#project-introduction)
@@ -8,7 +8,7 @@
 南方科技大学2024秋季 `CS309 面向对象程序设计与分析`期末大作业：**CourseDemo在线学习平台**
 
 Southern University of Science and Technology, Autumn 2024
-`CS309 Object-oriented Analysis and Design` Bonus Project: **CourseDemo-Online learning platform**
+`CS309 Object-oriented Analysis and Design` Final Project: **CourseDemo-Online learning platform**
 
 基于微服务架构from scratch实现的在线学习平台，主要使用SpringBoot3 + Vue3进行开发，包含课程信息与资源管理、课程讨论、作业提交、消息提醒、学习进度与成绩分析、
 教学视频播放、在线直播课程、LLM对话等功能
