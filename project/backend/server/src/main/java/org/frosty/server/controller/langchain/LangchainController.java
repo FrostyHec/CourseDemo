@@ -10,7 +10,6 @@ import org.frosty.auth.entity.TokenInfo;
 import org.frosty.common.constant.PathConstant;
 import org.frosty.common.exception.InternalException;
 import org.frosty.server.entity.bo.langchain.ChatHistory;
-import org.frosty.server.entity.converter.ChatHistoryEntityConverter;
 import org.frosty.server.services.langchain.ChatService;
 import org.frosty.server.services.langchain.LangchainService;
 import org.frosty.server.utils.FrameworkUtils;
@@ -29,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class LangchainController {
     private final LangchainService langchainService;
-    private final ChatHistoryEntityConverter chatHistoryEntityConverter;
+
     private final ChatService chatService;
     
     @PostMapping("/chat")
@@ -63,8 +62,9 @@ public class LangchainController {
             // 调用服务层进行处理
             SingleChatMessage singleChatMessage = new SingleChatMessage();
             singleChatMessage.role = SingleChatMessage.Role.user;
-            singleChatMessage.content = "请你结合先前的对话，生成一个标题以概括这一对话的主题。标题限制在20字以内，" +
-                    "不要存在标点符号，不要输出多余的注释与括号，不要有其它的备注（只包含20字的标题），十分感谢！";
+            singleChatMessage.content = "请你为我们的对话生成一个标题。标题限制在15字以内，并符合先前对话的语言。" +
+                    "标题中不要存在标点符号，回复中也不要出现除了标题之外的内容。" +
+                    "如果你生成了超过15字的标题，我的老板会死掉。";
             chatContext.messages.add(singleChatMessage);
             ChatContext context = chatService.chatWithModel(chatContext);
             TitleEntity title = new TitleEntity();
@@ -77,6 +77,11 @@ public class LangchainController {
 
     @PostMapping("/")
     public ChatEntity createNewChat(@GetToken TokenInfo tokenInfo, @RequestBody TitleEntity titleEntity) {
+        // 依据输入的chatEntity返回title
+        ChatEntity chatEntity = new ChatEntity();
+        chatEntity.setTitle(titleEntity.getTitle());
+
+        ObjectMapper objectMapper = new ObjectMapper();
 //        JsonNode emptyContext = objectMapper.valueToTree(Map.of());// 创建一个空的 JSON 对象
         ChatContext emptyContext = new ChatContext();
 
@@ -85,7 +90,7 @@ public class LangchainController {
                 .setTitle(titleEntity.getTitle())
                 .setContext(emptyContext);
         langchainService.createNewChat(chatHistory);
-        return chatHistoryEntityConverter.toChatEntity(chatHistory);
+        return chatEntity;
     }
 
     @PutMapping("/{id}")
