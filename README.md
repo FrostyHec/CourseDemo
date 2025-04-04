@@ -29,8 +29,6 @@ courses, and LLM discussion.
 
 </div>
 
-[英语翻译]
-
 # Project Introduction
 
 ### Project Structure
